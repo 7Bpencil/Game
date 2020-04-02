@@ -8,6 +8,9 @@
         <e p="App.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
+        <e p="Physics_Engine" t="Include">
+          <e p="Vector.cs" t="Include" />
+        </e>
         <e p="Playground.cs" t="Include" />
         <e p="Program.cs" t="Include" />
         <e p="Properties" t="Include">

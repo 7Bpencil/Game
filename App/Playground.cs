@@ -10,11 +10,10 @@ namespace App
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
+        private Point positionMouse;
         private Point positionPlayer;
         private Point positionPlayerCenter;
-
         private Point playerWidthHeight;
-        private Point positionMouse;
 
         public Playground()
         {
@@ -28,6 +27,7 @@ namespace App
 
         private void SetUpForm()
         {
+            Cursor.Hide();
             DoubleBuffered = true;
             Size = new Size(854, 480);
             Text = "NEW GAME";
@@ -76,10 +76,10 @@ namespace App
             var deltaX = 0;
             var deltaY = 0;
 
-            if (keyPressed == Keys.Down) deltaY = 4;
-            else if (keyPressed == Keys.Left) deltaX = -4;
-            else if (keyPressed == Keys.Up) deltaY = -4;
-            else if (keyPressed == Keys.Right) deltaX = 4;
+            if (keyPressed == Keys.Down || keyPressed == Keys.S) deltaY = 4;
+            else if (keyPressed == Keys.Left || keyPressed == Keys.A) deltaX = -4;
+            else if (keyPressed == Keys.Up || keyPressed == Keys.W) deltaY = -4;
+            else if (keyPressed == Keys.Right || keyPressed == Keys.D) deltaX = 4;
             
             positionPlayer = new Point(positionPlayer.X + deltaX, positionPlayer.Y + deltaY);
             positionPlayerCenter = new Point(positionPlayer.X + playerWidthHeight.X / 2,positionPlayer.Y + playerWidthHeight.Y / 2);
