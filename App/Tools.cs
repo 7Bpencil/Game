@@ -24,12 +24,12 @@ namespace App
             Graphics gfx = Graphics.FromImage(bmp);
 
             //now we set the rotation point to the center of our image
-            gfx.TranslateTransform((float)bmp.Width / 2, (float)bmp.Height / 2);
+            gfx.TranslateTransform((float) bmp.Width / 2, (float) bmp.Height / 2);
 
             //now rotate the image
             gfx.RotateTransform(rotationAngle);
 
-            gfx.TranslateTransform(-(float)bmp.Width / 2, -(float)bmp.Height / 2);
+            gfx.TranslateTransform(-(float) bmp.Width / 2, -(float) bmp.Height / 2);
 
             //set the InterpolationMode to HighQualityBicubic so to ensure a high
             //quality image once it is transformed to the specified size
