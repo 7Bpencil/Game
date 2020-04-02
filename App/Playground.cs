@@ -10,7 +10,8 @@ namespace App
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
-        private Point position;
+        private Point positionPlayer;
+        private Point positionMouse;
 
         public Playground()
         {
@@ -29,7 +30,8 @@ namespace App
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
-            g.FillRectangle(Brushes.Crimson, position.X, position.Y, 50, 50);
+            g.FillRectangle(Brushes.Crimson, positionPlayer.X, positionPlayer.Y, 50, 50);
+            g.FillEllipse(Brushes.Black, positionMouse.X, positionMouse.Y, 10, 10);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -54,7 +56,12 @@ namespace App
             else if (keyPressed == Keys.Up) deltaY = -2;
             else if (keyPressed == Keys.Right) deltaX = 2;
             
-            position = new Point(position.X + deltaX, position.Y + deltaY);
+            positionPlayer = new Point(positionPlayer.X + deltaX, positionPlayer.Y + deltaY);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            positionMouse = new Point(e.X, e.Y);
         }
     }
 }
