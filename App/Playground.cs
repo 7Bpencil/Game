@@ -15,10 +15,18 @@ namespace App
 
         public Playground()
         {
+            setUpForm();
+            positionPlayer = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
             var timer = new Timer();
             timer.Interval = 15;
             timer.Tick += MainLoop;
             timer.Start();
+        }
+
+        private void setUpForm() 
+        {
+            Size = new Size(854, 480);
+            Text = "NEW GAME";
         }
         
         private void MainLoop(object sender, EventArgs args)
