@@ -44,7 +44,7 @@
         <Compile Include="Model\Player.cs" />
         <Compile Include="Physics_Engine\RigidBody\RigidCircle.cs" />
         <Compile Include="Physics_Engine\RigidBody\RigidRectangle.cs" />
-        <Compile Include="Physics_Engine\RigidBody\RigidShape.cs" />
+        <Compile Include="Physics_Engine\RigidBody\IRigidShape.cs" />
         <Compile Include="Physics_Engine\Vector.cs" />
         <Compile Include="Playground.cs" />
         <Compile Include="PlaygroundPhysEngine.cs" />

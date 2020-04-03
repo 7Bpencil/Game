@@ -12,10 +12,10 @@ namespace App
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
-        private List<RigidRectangle> rectangles;
+        private List<IRigidShape> sceneObjects;
         private RigidRectangle player;
         private RigidRectangle playerCenter;
-        private RigidRectangle cursor;
+        private RigidCircle cursor;
 
         public PlaygroundPhysEngine()
         {
@@ -36,6 +36,16 @@ namespace App
             Size = new Size(854, 480);
             Text = "NEW GAME";
         }
+        
+        private void SetUpSceneObjects()
+        {
+            sceneObjects = new List<IRigidShape>();
+            sceneObjects.Add(new RigidRectangle(new Vector(250, 450), 190, 100, -45));
+            sceneObjects.Add(new RigidRectangle(new Vector(440, 110), 160, 100, -17));
+            sceneObjects.Add(new RigidRectangle(new Vector(250, 150), 280, 110, 40));
+            sceneObjects.Add(new RigidRectangle(new Vector(650, 350), 320, 150, 15));
+            sceneObjects.Add(new RigidCircle(new Vector(100, 100), 35));
+        }
 
         private void SetUpPlayer()
         {
@@ -46,18 +56,9 @@ namespace App
 
             player = new RigidRectangle(positionPlayerCenter, playerWidth, playerHeight, 45);
             playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45);
-            cursor = new RigidRectangle(positionPlayerCenter, 5, 5, 0);
+            cursor = new RigidCircle(positionPlayerCenter, 5);
         }
-
-        private void SetUpSceneObjects()
-        {
-            rectangles = new List<RigidRectangle>();
-            rectangles.Add(new RigidRectangle(new Vector(250, 450), 190, 100, -45));
-            rectangles.Add(new RigidRectangle(new Vector(440, 110), 160, 100, -17));
-            rectangles.Add(new RigidRectangle(new Vector(250, 150), 280, 110, 40));
-            rectangles.Add(new RigidRectangle(new Vector(650, 350), 320, 150, 15));
-        }
-
+        
         private void MainLoop(object sender, EventArgs args)
         {
             Move();
@@ -69,7 +70,7 @@ namespace App
             var g = e.Graphics;
             var pen = new Pen(Color.Crimson);
 
-            foreach (var formObject in rectangles)
+            foreach (var formObject in sceneObjects)
                 formObject.Draw(g, pen);
 
             player.Draw(g, pen);

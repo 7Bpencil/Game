@@ -2,12 +2,12 @@
 
 namespace App.Physics_Engine.RigidBody
 {
-    public class RigidRectangle
+    public class RigidRectangle : IRigidShape
     {
         private Vector center;
         public Vector Center
         {
-            get { return center; }
+            get => center;
             set
             {
                 center = value;
@@ -27,7 +27,7 @@ namespace App.Physics_Engine.RigidBody
         private float width;
         public float Width
         {
-            get { return width; }
+            get => width;
             set
             {
                 width = value;
@@ -38,7 +38,7 @@ namespace App.Physics_Engine.RigidBody
         private float height;
         public float Height
         {
-            get { return height; }
+            get => height;
             set
             {
                 height = value;
@@ -63,7 +63,7 @@ namespace App.Physics_Engine.RigidBody
         private readonly Vector[] faceNormals;
         public Vector[] FaceNormals
         {
-            get
+            get 
             {
                 UpdateVectorIfNeeded();
                 return faceNormals;
