@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace App.Physics_Engine.RigidBody
+namespace App.Engine.PhysicsEngine.RigidBody
 {
     public abstract class RigidShape
     {

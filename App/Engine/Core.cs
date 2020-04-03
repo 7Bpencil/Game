@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
-using App.Physics_Engine.RigidBody;
+using App.View;
 
-namespace App.Physics_Engine
+namespace App.Engine
 {
-    public class Core
+    public class Core : ContractCore
     {
-        private PlaygroundPhysEngine view;
+        private ContractView view;
         private HashSet<Keys> pressedKeys;
         private Keys keyPressed;
         private List<RigidShape> sceneObjects;
@@ -17,28 +19,28 @@ namespace App.Physics_Engine
         private RigidShape playerCenter;
         private RigidShape cursor;
 
-        public Core(PlaygroundPhysEngine view)
+        public Core(ContractView view)
         {
             this.view = view;
-            var objectManager = new ObjectManager();
+            var objectManager = new ObjectFactory();
             sceneObjects = objectManager.GetSceneObjects(out player, out playerCenter, out cursor, view.ClientSize.Width, view.ClientSize.Height);
             pressedKeys = new HashSet<Keys>();
         }
 
-        public void GameLoop(object sender, EventArgs args)
+        public override void GameLoop(object sender, EventArgs args)
         {
             UpdatePlayer();
             UpdateObjects();
             view.Render();
         }
 
-        public void UpdateObjects()
+        protected override void UpdateObjects()
         {
             foreach (var formObject in sceneObjects)
                 formObject.Update();
         }
 
-        public void UpdatePlayer()
+        protected override void UpdatePlayer()
         {
             var deltaX = 0;
             var deltaY = 0;
@@ -52,24 +54,24 @@ namespace App.Physics_Engine
             playerCenter.Move(new Vector(deltaX, deltaY));
         }
         
-        public void OnMouseMove(Vector newPosition)
+        public override void OnMouseMove(Vector newPosition)
         {
             cursor.Center = newPosition;
         }
 
-        public void OnKeyDown(Keys keyPressed)
+        public override void OnKeyDown(Keys keyPressed)
         {
             pressedKeys.Add(keyPressed);
             this.keyPressed = keyPressed;
         }
 
-        public void OnKeyUp(Keys keyPressed)
+        public override void OnKeyUp(Keys keyPressed)
         {
             pressedKeys.Remove(keyPressed);
             this.keyPressed = pressedKeys.Any() ? pressedKeys.Min() : Keys.None;
         }
         
-        public List<RigidShape> GetSceneObjects()
+        public override List<RigidShape> GetSceneObjects()
         {
             return sceneObjects;
         }

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace App.Physics_Engine.RigidBody
+namespace App.Engine.PhysicsEngine.RigidBody
 {
     public class RigidRectangle : RigidShape
     {
@@ -16,7 +16,7 @@ namespace App.Physics_Engine.RigidBody
             }
         }
 
-        public Vector topLeft
+        public Vector TopLeft
         {
             get
             {

@@ -40,23 +40,23 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Engine\ContractCore.cs" />
+        <Compile Include="Engine\Core.cs" />
+        <Compile Include="Engine\PhysicsEngine\Physics.cs" />
+        <Compile Include="Engine\PhysicsEngine\RigidBody\RigidCircle.cs" />
+        <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
+        <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
+        <Compile Include="Engine\PhysicsEngine\Vector.cs" />
         <Compile Include="Model\IEntity.cs" />
-        <Compile Include="Model\ContractObjectManager.cs" />
-        <Compile Include="Model\ObjectManager.cs" />
+        <Compile Include="Model\ContractObjectFactory.cs" />
+        <Compile Include="Model\ObjectFactory.cs" />
         <Compile Include="Model\Player.cs" />
-        <Compile Include="Physics_Engine\Core.cs" />
-        <Compile Include="Physics_Engine\ContractCore.cs" />
-        <Compile Include="Physics_Engine\Physics.cs" />
-        <Compile Include="Physics_Engine\RigidBody\RigidCircle.cs" />
-        <Compile Include="Physics_Engine\RigidBody\RigidRectangle.cs" />
-        <Compile Include="Physics_Engine\RigidBody\RigidShape.cs" />
-        <Compile Include="Physics_Engine\Vector.cs" />
-        <Compile Include="Playground.cs" />
-        <Compile Include="PlaygroundPhysEngine.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Tools.cs" />
         <Compile Include="View\ContractView.cs" />
+        <Compile Include="View\PlaygroundDeprecated.cs" />
+        <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

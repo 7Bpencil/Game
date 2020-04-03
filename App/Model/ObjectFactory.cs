@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using App.Physics_Engine;
-using App.Physics_Engine.RigidBody;
+using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Model
 {
-    public class ObjectManager
+    public class ObjectFactory : ContractObjectFactory
     {
-        public ObjectManager()
-        {
-        }
-
-        public List<RigidShape> GetSceneObjects(out RigidShape player, out RigidShape playerCenter, out RigidShape cursor, 
+        public override List<RigidShape> GetSceneObjects(out RigidShape player, out RigidShape playerCenter, out RigidShape cursor, 
             int windowWidth, int windowHeight)
         {
             const float playerWidth = 50;

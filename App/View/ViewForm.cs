@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using App.Physics_Engine;
-using App.Physics_Engine.RigidBody;
+using App.Engine;
+using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 
-namespace App
+namespace App.View
 {
-    public class PlaygroundPhysEngine : Form
+    public class ViewForm : ContractView
     {
-        private Core engineCore;
+        private ContractCore engineCore;
+        protected override ContractCore EngineCore { get; set; }
         private List<RigidShape> sceneObjects;
 
-        public PlaygroundPhysEngine()
+        public ViewForm()
         {
             SetUpForm();
             engineCore = new Core(this);
@@ -31,6 +33,11 @@ namespace App
             Text = "NEW GAME";
         }
 
+        public override void Render()
+        {
+            Invalidate();
+        }
+        
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics; // TODO: move it to somewhere else
@@ -38,11 +45,6 @@ namespace App
 
             foreach (var formObject in sceneObjects)
                 formObject.Draw(g, pen);
-        }
-
-        public void Render()
-        {
-            Invalidate();
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

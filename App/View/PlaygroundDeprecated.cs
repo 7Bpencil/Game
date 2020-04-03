@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace App
+namespace App.View
 {
-    public class Playground : Form
+    public class PlaygroundDeprecated : Form
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
@@ -15,7 +15,7 @@ namespace App
         private Point positionPlayerCenter;
         private Point playerWidthHeight;
 
-        public Playground()
+        public PlaygroundDeprecated()
         {
             SetUpForm();
             SetUpPlayer();

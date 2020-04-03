@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using App.View;
 
 namespace App
 {
@@ -6,7 +7,7 @@ namespace App
     {
         public static void Main(string[] args)
         {
-            var app = new PlaygroundPhysEngine();
+            var app = new ViewForm();
             Application.Run(app);
         }
     }
