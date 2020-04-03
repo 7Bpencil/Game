@@ -32,5 +32,16 @@ namespace App.Physics_Engine.RigidBody
             g.DrawEllipse(pen, -radius / 2, -radius / 2, radius, radius);
             g.Restore(stateBefore);
         }
+
+        public void Update()
+        {
+            if (center.Y < PlaygroundPhysEngine.formHeight)
+                Move(new Vector(0,2));
+        }
+
+        public void Move(Vector delta)
+        {
+            center += delta;
+        }
     }
 }

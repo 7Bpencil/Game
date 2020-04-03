@@ -19,7 +19,7 @@ namespace App.Physics_Engine.RigidBody
         {
             get
             {
-                UpdateVectorIfNeeded();
+                UpdateVertexesIfNeeded();
                 return vertexes[0];
             }
         }
@@ -54,7 +54,7 @@ namespace App.Physics_Engine.RigidBody
         {
             get
             {
-                UpdateVectorIfNeeded();
+                UpdateVertexesIfNeeded();
                 return vertexes;
             }
         }
@@ -65,7 +65,7 @@ namespace App.Physics_Engine.RigidBody
         {
             get 
             {
-                UpdateVectorIfNeeded();
+                UpdateVertexesIfNeeded();
                 return faceNormals;
             }
         }
@@ -120,13 +120,24 @@ namespace App.Physics_Engine.RigidBody
             g.DrawRectangle(pen, -width / 2, -height / 2, width, height);
             g.Restore(stateBefore);
         }
-
-        private void UpdateVectorIfNeeded()
+        
+        private void UpdateVertexesIfNeeded()
         {
             if (vertexesVersion == calculatedVertexesVersion) return;
             RecomputeVertexes();
             RecomputeFaceNormals();
             calculatedVertexesVersion = vertexesVersion;
+        }
+
+        public void Update()
+        {
+            if (center.Y < PlaygroundPhysEngine.formHeight)
+                Move(new Vector(0,2));
+        }
+
+        public void Move(Vector delta)
+        {
+            center += delta;
         }
     }
 }

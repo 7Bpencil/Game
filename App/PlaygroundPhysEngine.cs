@@ -16,6 +16,8 @@ namespace App
         private RigidRectangle player;
         private RigidRectangle playerCenter;
         private RigidCircle cursor;
+        public static int formWidth;
+        public static int formHeight;
 
         public PlaygroundPhysEngine()
         {
@@ -34,6 +36,8 @@ namespace App
             DoubleBuffered = true;
             Size = new Size(854, 480);
             Text = "NEW GAME";
+            formHeight = ClientSize.Height;
+            formWidth = ClientSize.Width;
         }
 
         private void SetUpSceneObjects()
@@ -63,6 +67,7 @@ namespace App
         private void GameLoop(object sender, EventArgs args)
         {
             UpdatePlayer();
+            UpdateObjects();
             Invalidate();
         }
 
@@ -78,6 +83,12 @@ namespace App
 
             player.Center += new Vector(deltaX, deltaY);
             playerCenter.Center += new Vector(deltaX, deltaY);
+        }
+
+        private void UpdateObjects()
+        {
+            foreach (var formObject in sceneObjects)
+                formObject.Update();
         }
 
         protected override void OnPaint(PaintEventArgs e)
