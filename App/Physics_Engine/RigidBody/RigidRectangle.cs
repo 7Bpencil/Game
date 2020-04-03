@@ -74,13 +74,14 @@ namespace App.Physics_Engine.RigidBody
         private long calculatedVertexesVersion;
 
         /// <summary>
-        /// Vertexes are count clockwise from topLeft
-        /// Face Normals are count clockwise from "12 o'clock"
+        /// Rotation is counter-clockwise.  
+        /// Vertexes are count clockwise from topLeft. 
+        /// FaceNormals are count clockwise from "12 o'clock"
         /// </summary>
         /// <param name="center"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        /// <param name="angle"></param>
+        /// <param name="angle">Angle in degrees</param>
         public RigidRectangle(Vector center, float width, float height, float angle)
         {
             this.center = center;
@@ -112,11 +113,11 @@ namespace App.Physics_Engine.RigidBody
         public void Draw(Graphics g, Pen pen)
         {
             var stateBefore = g.Save();
-            if (!topLeft.Equals(Vector.ZeroVector))
-                g.TranslateTransform(topLeft.X, topLeft.Y);
+            if (!center.Equals(Vector.ZeroVector))
+                g.TranslateTransform(center.X, center.Y);
             if (angle != 0)
-                g.RotateTransform(angle);
-            g.DrawRectangle(pen, 0, 0, width, height);
+                g.RotateTransform(-angle);
+            g.DrawRectangle(pen, -width / 2, -height / 2, width, height);
             g.Restore(stateBefore);
         }
 

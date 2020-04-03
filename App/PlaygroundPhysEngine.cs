@@ -12,7 +12,7 @@ namespace App
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
-        private RigidRectangle[] rectangles;
+        private List<RigidRectangle> rectangles;
         private RigidRectangle player;
         private RigidRectangle playerCenter;
         private RigidRectangle cursor;
@@ -20,7 +20,7 @@ namespace App
         public PlaygroundPhysEngine()
         {
             SetUpForm();
-            SetUpFormObjects();
+            SetUpSceneObjects();
             SetUpPlayer();
 
             var timer = new Timer();
@@ -44,17 +44,18 @@ namespace App
             var positionPlayerCenter = (new Vector(ClientSize.Width, ClientSize.Height)
                                         + new Vector(playerWidth, playerHeight)) / 2;
 
-            player = new RigidRectangle(positionPlayerCenter, playerWidth, playerHeight, 0);
-            playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 0);
+            player = new RigidRectangle(positionPlayerCenter, playerWidth, playerHeight, 45);
+            playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45);
             cursor = new RigidRectangle(positionPlayerCenter, 5, 5, 0);
         }
 
-        private void SetUpFormObjects()
+        private void SetUpSceneObjects()
         {
-            rectangles = new RigidRectangle[3];
-            rectangles[0] = new RigidRectangle(new Vector(-100, -100), 200, 200, 0);
-            rectangles[1] = new RigidRectangle(new Vector(300, 100), 1000, 1000, 0);
-            rectangles[2] = new RigidRectangle(new Vector(100, 300), 50, 50, 0);
+            rectangles = new List<RigidRectangle>();
+            rectangles.Add(new RigidRectangle(new Vector(250, 450), 190, 100, -45));
+            rectangles.Add(new RigidRectangle(new Vector(440, 110), 160, 100, -17));
+            rectangles.Add(new RigidRectangle(new Vector(250, 150), 280, 110, 40));
+            rectangles.Add(new RigidRectangle(new Vector(650, 350), 320, 150, 15));
         }
 
         private void MainLoop(object sender, EventArgs args)
