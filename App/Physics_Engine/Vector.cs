@@ -14,6 +14,8 @@ namespace App.Physics_Engine
             Y = y;
         }
 
+        public static Vector ZeroVector = new Vector(0, 0);
+
         public override string ToString()
         {
             return string.Format($"X: {X}, Y: {Y}");
