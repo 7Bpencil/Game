@@ -42,6 +42,8 @@
     <ItemGroup>
         <Compile Include="Model\IEntity.cs" />
         <Compile Include="Model\Player.cs" />
+        <Compile Include="Physics_Engine\RigidBody\RigidCircle.cs" />
+        <Compile Include="Physics_Engine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Physics_Engine\Vector.cs" />
         <Compile Include="Playground.cs" />
         <Compile Include="Program.cs" />
