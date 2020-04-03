@@ -4,6 +4,10 @@ namespace App.Physics_Engine
 {
     public class Vector
     {
+        public Vector()
+        {
+        }
+
         public Vector(float x, float y)
         {
             X = x;
@@ -68,6 +72,55 @@ namespace App.Physics_Engine
         public static Vector operator /(Vector a, float k)
         {
             return new Vector(a.X / k, a.Y / k);
+        }
+
+        /// <summary>
+        /// rotates vector counter-clockwise
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public Vector Rotate(Vector center, float angle)
+        {
+            var x = X - center.X;
+            var y = Y - center.Y;
+            return new Vector
+            {
+                X = (float) (x * Math.Cos(angle) - y * Math.Sin(angle) + center.X),
+                Y = (float) (x * Math.Sin(angle) + y * Math.Cos(angle) + center.Y)
+            };
+        }
+
+        public Vector Normalize()
+        {
+            return Length > 0 ? this * (1 / Length) : this;
+        }
+
+        public static float Distance(Vector a, Vector b)
+        {
+            var x = a.X - b.X;
+            var y = a.Y - b.Y;
+            return (float) Math.Sqrt(x * x + y * y);
+        }
+
+        /// <summary>
+        /// (x1 * x2) + (y1 * y2)
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public float Dot(Vector other)
+        {
+            return X * other.X + Y * other.Y;
+        }
+
+        /// <summary>
+        /// (x1 * y2) - (y1 * x2)
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public float Cross(Vector other)
+        {
+            return X * other.Y - Y * other.X;
         }
     }
 }
