@@ -6,9 +6,7 @@ namespace App
     {
         public static void Main(string[] args)
         {
-            //var app = new Playground();
-            //var app = new PlaygroundPhysEngine();
-            var app = new MainForm();
+            var app = new PlaygroundPhysEngine();
             Application.Run(app);
         }
     }
