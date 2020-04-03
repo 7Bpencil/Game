@@ -5,6 +5,7 @@ namespace App.Physics_Engine.RigidBody
     public class RigidCircle : IRigidShape
     {
         private float radius;
+
         public float Radius
         {
             get => radius;
@@ -12,6 +13,7 @@ namespace App.Physics_Engine.RigidBody
         }
 
         private Vector center;
+
         public Vector Center
         {
             get => center;
@@ -23,7 +25,7 @@ namespace App.Physics_Engine.RigidBody
             this.radius = radius;
             this.center = center;
         }
-        
+
         public void Draw(Graphics g, Pen pen)
         {
             var stateBefore = g.Save();
@@ -36,12 +38,16 @@ namespace App.Physics_Engine.RigidBody
         public void Update()
         {
             if (center.Y < PlaygroundPhysEngine.formHeight)
-                Move(new Vector(0,2));
+                Move(new Vector(0, 2));
         }
 
         public void Move(Vector delta)
         {
             center += delta;
+        }
+
+        public void Rotate(float delta)
+        {
         }
     }
 }

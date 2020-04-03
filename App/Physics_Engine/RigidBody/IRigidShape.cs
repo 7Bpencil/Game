@@ -7,5 +7,6 @@ namespace App.Physics_Engine.RigidBody
         void Draw(Graphics g, Pen pen);
         void Update();
         void Move(Vector delta);
+        void Rotate(float delta);
     }
 }

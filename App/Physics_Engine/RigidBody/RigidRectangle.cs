@@ -5,6 +5,7 @@ namespace App.Physics_Engine.RigidBody
     public class RigidRectangle : IRigidShape
     {
         private Vector center;
+
         public Vector Center
         {
             get => center;
@@ -25,6 +26,7 @@ namespace App.Physics_Engine.RigidBody
         }
 
         private float width;
+
         public float Width
         {
             get => width;
@@ -36,6 +38,7 @@ namespace App.Physics_Engine.RigidBody
         }
 
         private float height;
+
         public float Height
         {
             get => height;
@@ -47,9 +50,10 @@ namespace App.Physics_Engine.RigidBody
         }
 
         public float angle { get; set; }
-        
+
 
         private readonly Vector[] vertexes;
+
         public Vector[] Vertexes
         {
             get
@@ -61,15 +65,16 @@ namespace App.Physics_Engine.RigidBody
 
 
         private readonly Vector[] faceNormals;
+
         public Vector[] FaceNormals
         {
-            get 
+            get
             {
                 UpdateVertexesIfNeeded();
                 return faceNormals;
             }
         }
-        
+
         private long vertexesVersion;
         private long calculatedVertexesVersion;
 
@@ -120,7 +125,7 @@ namespace App.Physics_Engine.RigidBody
             g.DrawRectangle(pen, -width / 2, -height / 2, width, height);
             g.Restore(stateBefore);
         }
-        
+
         private void UpdateVertexesIfNeeded()
         {
             if (vertexesVersion == calculatedVertexesVersion) return;
@@ -132,12 +137,17 @@ namespace App.Physics_Engine.RigidBody
         public void Update()
         {
             if (center.Y < PlaygroundPhysEngine.formHeight)
-                Move(new Vector(0,2));
+                Move(new Vector(0, 2));
         }
 
         public void Move(Vector delta)
         {
             center += delta;
+        }
+
+        public void Rotate(float delta)
+        {
+            angle += delta;
         }
     }
 }
