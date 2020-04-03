@@ -2,7 +2,7 @@
 
 namespace App.Physics_Engine.RigidBody
 {
-    public class RigidCircle : IRigidShape
+    public class RigidCircle : RigidShape
     {
         private float radius;
 
@@ -14,7 +14,7 @@ namespace App.Physics_Engine.RigidBody
 
         private Vector center;
 
-        public Vector Center
+        public override Vector Center
         {
             get => center;
             set => center = value;
@@ -26,7 +26,7 @@ namespace App.Physics_Engine.RigidBody
             this.center = center;
         }
 
-        public void Draw(Graphics g, Pen pen)
+        public override void Draw(Graphics g, Pen pen)
         {
             var stateBefore = g.Save();
             if (!center.Equals(Vector.ZeroVector))
@@ -35,19 +35,22 @@ namespace App.Physics_Engine.RigidBody
             g.Restore(stateBefore);
         }
 
-        public void Update()
+        public override void Update()
         {
-            if (center.Y < PlaygroundPhysEngine.formHeight)
-                Move(new Vector(0, 2));
         }
 
-        public void Move(Vector delta)
+        public override void Move(Vector delta)
         {
             center += delta;
         }
 
-        public void Rotate(float delta)
+        public override void Rotate(float delta)
         {
+        }
+
+        public override bool BoundTest(RigidShape other)
+        {
+            return true;
         }
     }
 }

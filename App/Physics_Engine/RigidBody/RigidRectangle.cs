@@ -2,11 +2,11 @@
 
 namespace App.Physics_Engine.RigidBody
 {
-    public class RigidRectangle : IRigidShape
+    public class RigidRectangle : RigidShape
     {
         private Vector center;
 
-        public Vector Center
+        public override Vector Center
         {
             get => center;
             set
@@ -115,7 +115,7 @@ namespace App.Physics_Engine.RigidBody
             faceNormals[3] = -1 * faceNormals[1];
         }
 
-        public void Draw(Graphics g, Pen pen)
+        public override void Draw(Graphics g, Pen pen)
         {
             var stateBefore = g.Save();
             if (!center.Equals(Vector.ZeroVector))
@@ -134,20 +134,23 @@ namespace App.Physics_Engine.RigidBody
             calculatedVertexesVersion = vertexesVersion;
         }
 
-        public void Update()
+        public override void Update()
         {
-            if (center.Y < PlaygroundPhysEngine.formHeight)
-                Move(new Vector(0, 2));
         }
 
-        public void Move(Vector delta)
+        public override void Move(Vector delta)
         {
             center += delta;
         }
 
-        public void Rotate(float delta)
+        public override void Rotate(float delta)
         {
             angle += delta;
+        }
+
+        public override bool BoundTest(RigidShape other)
+        {
+            return true;
         }
     }
 }
