@@ -40,8 +40,10 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="MainForm.cs" />
         <Compile Include="Model\IEntity.cs" />
         <Compile Include="Model\Player.cs" />
+        <Compile Include="Physics_Engine\Core.cs" />
         <Compile Include="Physics_Engine\RigidBody\RigidCircle.cs" />
         <Compile Include="Physics_Engine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Physics_Engine\RigidBody\IRigidShape.cs" />

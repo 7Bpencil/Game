@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using App.Physics_Engine;
 using App.Physics_Engine.RigidBody;
 
 namespace App
 {
-    public class PlaygroundPhysEngine : Form
+    public class MainForm : Form
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
@@ -16,19 +17,34 @@ namespace App
         private RigidRectangle player;
         private RigidRectangle playerCenter;
         private RigidCircle cursor;
-
-        public PlaygroundPhysEngine()
-        {
+        
+        public MainForm () {
             SetUpForm();
             SetUpSceneObjects();
             SetUpPlayer();
-            
-            var timer = new Timer();
-            timer.Interval = 15; // around 66 fps
-            timer.Tick += MainLoop;
-            timer.Start();
+            Application.Idle += HandleApplicationIdle;
         }
 
+        void HandleApplicationIdle (object sender, EventArgs e) {
+            while(IsApplicationIdle()) {
+                Update();
+                Render();
+            }
+        }
+        
+        bool IsApplicationIdle () {
+            NativeMessage result;
+            return PeekMessage(out result, IntPtr.Zero, (uint)0, (uint)0, (uint)0) == 0;
+        }
+        
+        void Update () {
+            Move();
+        }
+
+        void Render () {
+            Invalidate();
+        }
+        
         private void SetUpForm()
         {
             Cursor.Hide();
@@ -58,39 +74,6 @@ namespace App
             playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45);
             cursor = new RigidCircle(positionPlayerCenter, 5);
         }
-        
-        private void MainLoop(object sender, EventArgs args)
-        {
-            Move();
-            Invalidate();
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var g = e.Graphics;
-            var pen = new Pen(Color.Crimson);
-
-            foreach (var formObject in sceneObjects)
-                formObject.Draw(g, pen);
-
-            player.Draw(g, pen);
-            playerCenter.Draw(g, pen);
-            cursor.Draw(g, pen);
-        }
-
-        public void Move()
-        {
-            var deltaX = 0;
-            var deltaY = 0;
-
-            if (keyPressed == Keys.Down || keyPressed == Keys.S) deltaY = 4;
-            else if (keyPressed == Keys.Left || keyPressed == Keys.A) deltaX = -4;
-            else if (keyPressed == Keys.Up || keyPressed == Keys.W) deltaY = -4;
-            else if (keyPressed == Keys.Right || keyPressed == Keys.D) deltaX = 4;
-
-            player.Center += new Vector(deltaX, deltaY);
-            playerCenter.Center += new Vector(deltaX, deltaY);
-        }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -107,6 +90,47 @@ namespace App
         {
             pressedKeys.Remove(e.KeyCode);
             keyPressed = pressedKeys.Any() ? pressedKeys.Min() : Keys.None;
+        }
+        
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            var pen = new Pen(Color.Crimson);
+
+            foreach (var formObject in sceneObjects)
+                formObject.Draw(g, pen);
+
+            player.Draw(g, pen);
+            playerCenter.Draw(g, pen);
+            cursor.Draw(g, pen);
+        }
+        
+        public void Move()
+        {
+            var deltaX = 0;
+            var deltaY = 0;
+
+            if (keyPressed == Keys.Down || keyPressed == Keys.S) deltaY = 1;
+            else if (keyPressed == Keys.Left || keyPressed == Keys.A) deltaX = -1;
+            else if (keyPressed == Keys.Up || keyPressed == Keys.W) deltaY = -1;
+            else if (keyPressed == Keys.Right || keyPressed == Keys.D) deltaX = 1;
+
+            player.Center += new Vector(deltaX, deltaY);
+            playerCenter.Center += new Vector(deltaX, deltaY);
+        }
+
+        [DllImport("user32.dll")]
+        public static extern int PeekMessage(out NativeMessage message, IntPtr window, uint filterMin, uint filterMax, uint remove);
+        
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NativeMessage
+        {
+            public IntPtr Handle;
+            public uint Message;
+            public IntPtr WParameter;
+            public IntPtr LParameter;
+            public uint Time;
+            public Point Location;
         }
     }
 }
