@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Engine.PhysicsEngine
 {
@@ -7,15 +9,17 @@ namespace App.Engine.PhysicsEngine
         public void Collision(Graphics g)
         {
             /*
+            var sceneObjects = new List<RigidShape>();
+            
             var collisionPen = new Pen(Color.Lime);
-            for (var i = 0; i < PlaygroundPhysEngine.sceneObjects.Count; i++)
+            for (var i = 0; i < sceneObjects.Count; i++)
             {
-                for (var k = i + 1; k < PlaygroundPhysEngine.sceneObjects.Count; k++)
+                for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    if (PlaygroundPhysEngine.sceneObjects[i].BoundTest(PlaygroundPhysEngine.sceneObjects[k]))
+                    if (sceneObjects[i].BoundTest(sceneObjects[k]))
                     {
-                        PlaygroundPhysEngine.sceneObjects[i].Draw(g, collisionPen);
-                        PlaygroundPhysEngine.sceneObjects[k].Draw(g, collisionPen);
+                        sceneObjects[i].Draw(g, collisionPen);
+                        sceneObjects[k].Draw(g, collisionPen);
                     }
                 }
             }
