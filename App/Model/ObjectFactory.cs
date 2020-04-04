@@ -19,14 +19,14 @@ namespace App.Model
             cursor = new RigidCircle(positionPlayerCenter, 5);
             return new List<RigidShape>
             {
-                player,
-                playerCenter,
-                cursor,
                 new RigidRectangle(new Vector(250, 450), 190, 100, -45),
                 new RigidRectangle(new Vector(440, 110), 160, 100, -17),
                 new RigidRectangle(new Vector(250, 150), 280, 110, 40),
                 new RigidRectangle(new Vector(650, 350), 320, 150, 15),
-                new RigidCircle(new Vector(100, 100), 35)
+                new RigidCircle(new Vector(100, 100), 35),
+                cursor,
+                player,
+                playerCenter,
             };
         }
     }
