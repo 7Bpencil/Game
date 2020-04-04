@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace App.Physics_Engine
+namespace App.Engine.PhysicsEngine
 {
     public class Vector
     {
@@ -14,12 +14,14 @@ namespace App.Physics_Engine
             Y = y;
         }
 
+        public static readonly Vector ZeroVector = new Vector(0, 0);
+
         public override string ToString()
         {
             return string.Format($"X: {X}, Y: {Y}");
         }
 
-        protected bool Equals(Vector other)
+        private bool Equals(Vector other)
         {
             return X.Equals(other.X) && Y.Equals(other.Y);
         }
@@ -104,7 +106,7 @@ namespace App.Physics_Engine
         }
 
         /// <summary>
-        /// (x1 * x2) + (y1 * y2)
+        /// x1 * x2 + y1 * y2
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -114,7 +116,7 @@ namespace App.Physics_Engine
         }
 
         /// <summary>
-        /// (x1 * y2) - (y1 * x2)
+        /// x1 * y2 - y1 * x2
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
