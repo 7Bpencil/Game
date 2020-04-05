@@ -73,6 +73,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
                 return faceNormals;
             }
         }
+        
+        private bool isCollided;
+        public override bool IsCollided { get => isCollided; set => isCollided = value; }
 
         private long vertexesVersion;
         private long calculatedVertexesVersion;
@@ -127,6 +130,17 @@ namespace App.Engine.PhysicsEngine.RigidBody
             g.Restore(stateBefore);
         }
 
+        public override void DrawCollision(Graphics g, Pen collisionStrokePen)
+        {
+            var stateBefore = g.Save();
+            if (!center.Equals(Vector.ZeroVector))
+                g.TranslateTransform(center.X, center.Y);
+            if (angle != 0)
+                g.RotateTransform(-angle);
+            g.DrawRectangle(collisionStrokePen, -width / 2, -height / 2, width, height);
+            g.Restore(stateBefore);
+        }
+        
         private void UpdateVertexesIfNeeded()
         {
             if (vertexesVersion == calculatedVertexesVersion) return;
@@ -149,9 +163,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
             angle += delta;
         }
 
-        public override bool BoundTest(RigidShape other)
+        public override void BoundTest(RigidShape other)
         {
-            return true;
+            isCollided = true;
         }
     }
 }

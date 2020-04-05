@@ -41,8 +41,10 @@ namespace App.View
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics; // TODO: move it to somewhere else
+            var collisionStrokePen = new Pen(Color.Lime, 4);
             foreach (var formObject in sceneObjects)
-                formObject.Draw(g);
+                if (formObject.IsCollided) formObject.DrawCollision(g, collisionStrokePen);
+                else formObject.Draw(g);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

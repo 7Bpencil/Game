@@ -15,6 +15,7 @@ namespace App.Engine
         private HashSet<Keys> pressedKeys;
         private Keys keyPressed;
         private List<RigidShape> sceneObjects;
+        private Physics physics;
         private RigidShape player;
         private RigidShape playerCenter;
         private RigidShape cursor;
@@ -23,6 +24,7 @@ namespace App.Engine
         {
             this.view = view;
             var objectManager = new ObjectFactory();
+            physics = new Physics();
             sceneObjects = objectManager.GetSceneObjects(out player, out playerCenter, out cursor, view.ClientSize.Width, view.ClientSize.Height);
             pressedKeys = new HashSet<Keys>();
         }
@@ -36,6 +38,7 @@ namespace App.Engine
 
         protected override void UpdateObjects()
         {
+            physics.CalculateCollisions(sceneObjects);
             foreach (var formObject in sceneObjects)
                 formObject.Update();
         }

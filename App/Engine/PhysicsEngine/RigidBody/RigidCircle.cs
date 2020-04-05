@@ -16,6 +16,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
         public override Pen StrokePen 
         { get => strokePen; set => strokePen = value; }
         
+        private bool isCollided;
+        public override bool IsCollided { get => isCollided; set => isCollided = value; }
+        
 
         /// <summary>
         /// 
@@ -39,6 +42,15 @@ namespace App.Engine.PhysicsEngine.RigidBody
             g.Restore(stateBefore);
         }
 
+        public override void DrawCollision(Graphics g, Pen collisionStrokePen)
+        {
+            var stateBefore = g.Save();
+            if (!center.Equals(Vector.ZeroVector))
+                g.TranslateTransform(center.X, center.Y);
+            g.DrawEllipse(collisionStrokePen, -radius / 2, -radius / 2, radius, radius);
+            g.Restore(stateBefore);
+        }
+
         public override void Update()
         {
         }
@@ -52,9 +64,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
         {
         }
 
-        public override bool BoundTest(RigidShape other)
+        public override void BoundTest(RigidShape other)
         {
-            return true;
+            isCollided = true;
         }
     }
 }
