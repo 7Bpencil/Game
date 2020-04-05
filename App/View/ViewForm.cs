@@ -41,10 +41,8 @@ namespace App.View
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics; // TODO: move it to somewhere else
-            var pen = new Pen(Color.Crimson);
-
             foreach (var formObject in sceneObjects)
-                formObject.Draw(g, pen);
+                formObject.Draw(g);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

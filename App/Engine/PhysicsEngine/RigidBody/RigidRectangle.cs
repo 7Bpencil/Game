@@ -5,7 +5,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
     public class RigidRectangle : RigidShape
     {
         private Vector center;
-
         public override Vector Center
         {
             get => center;
@@ -15,6 +14,10 @@ namespace App.Engine.PhysicsEngine.RigidBody
                 vertexesVersion++;
             }
         }
+
+        private Pen strokePen;
+        public override Pen StrokePen
+        { get => strokePen; set => strokePen = value; }
 
         public Vector TopLeft
         {
@@ -26,7 +29,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
         }
 
         private float width;
-
         public float Width
         {
             get => width;
@@ -38,7 +40,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
         }
 
         private float height;
-
         public float Height
         {
             get => height;
@@ -53,7 +54,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
 
 
         private readonly Vector[] vertexes;
-
         public Vector[] Vertexes
         {
             get
@@ -65,7 +65,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
 
 
         private readonly Vector[] faceNormals;
-
         public Vector[] FaceNormals
         {
             get
@@ -87,12 +86,14 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="angle">Angle in degrees</param>
-        public RigidRectangle(Vector center, float width, float height, float angle)
+        /// <param name="strokePen">Color and Width of stroke</param>
+        public RigidRectangle(Vector center, float width, float height, float angle, Pen strokePen)
         {
             this.center = center;
             this.width = width;
             this.height = height;
             this.angle = angle;
+            this.strokePen = strokePen;
             vertexes = new Vector[4];
             faceNormals = new Vector[4];
             vertexesVersion = 0;
@@ -115,14 +116,14 @@ namespace App.Engine.PhysicsEngine.RigidBody
             faceNormals[3] = -1 * faceNormals[1];
         }
 
-        public override void Draw(Graphics g, Pen pen)
+        public override void Draw(Graphics g)
         {
             var stateBefore = g.Save();
             if (!center.Equals(Vector.ZeroVector))
                 g.TranslateTransform(center.X, center.Y);
             if (angle != 0)
                 g.RotateTransform(-angle);
-            g.DrawRectangle(pen, -width / 2, -height / 2, width, height);
+            g.DrawRectangle(strokePen, -width / 2, -height / 2, width, height);
             g.Restore(stateBefore);
         }
 
