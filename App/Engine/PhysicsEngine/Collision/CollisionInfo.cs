@@ -25,7 +25,7 @@
             this.depth = depth;
             this.normal = normal;
             this.collisionStart = collisionStart;
-            collisionEnd = collisionStart * depth;
+            collisionEnd = collisionStart + this.normal * depth;
         }
 
         public void ChangeDirection()

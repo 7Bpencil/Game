@@ -46,7 +46,7 @@ namespace App.Engine.PhysicsEngine.Collision
                 collisions.Add(new CollisionInfo(
                     collisionDepth,
                     vectorFromFirstToSecond.Normalize(),
-                    vectorFromFirstToSecond / distance * first.Radius));
+                    first.Center + vectorFromFirstToSecond * (1 - second.Radius / distance)));
             }
             else
             {
