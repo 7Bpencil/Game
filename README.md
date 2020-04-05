@@ -13,7 +13,6 @@ Participants:
 
 ### Architecture info
 
-![Alt text](./GameArchitecture.svg)
 <img src="./GameArchitecture.svg">
 
 ##### Очень коротко:
