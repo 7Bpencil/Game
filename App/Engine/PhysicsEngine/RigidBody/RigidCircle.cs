@@ -7,6 +7,8 @@ namespace App.Engine.PhysicsEngine.RigidBody
         private float radius;
         public float Radius
         { get => radius; set => radius = value; }
+        
+        public float Diameter => 2 * radius;
 
         private Vector center;
         public override Vector Center 
@@ -38,7 +40,7 @@ namespace App.Engine.PhysicsEngine.RigidBody
             var stateBefore = g.Save();
             if (!center.Equals(Vector.ZeroVector))
                 g.TranslateTransform(center.X, center.Y);
-            g.DrawEllipse(strokePen, -radius / 2, -radius / 2, radius, radius);
+            g.DrawEllipse(strokePen, -radius, -radius, Diameter, Diameter);
             g.Restore(stateBefore);
         }
 
@@ -47,7 +49,7 @@ namespace App.Engine.PhysicsEngine.RigidBody
             var stateBefore = g.Save();
             if (!center.Equals(Vector.ZeroVector))
                 g.TranslateTransform(center.X, center.Y);
-            g.DrawEllipse(collisionStrokePen, -radius / 2, -radius / 2, radius, radius);
+            g.DrawEllipse(collisionStrokePen, -radius, -radius, Diameter, Diameter);
             g.Restore(stateBefore);
         }
 

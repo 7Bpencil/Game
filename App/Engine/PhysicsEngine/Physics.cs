@@ -7,33 +7,47 @@ namespace App.Engine.PhysicsEngine
     {
         public void CalculateCollisions(List<RigidShape> sceneObjects)
         {
+            ClearColliding(sceneObjects);
             for (var i = 0; i < sceneObjects.Count; i++)
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = BoundTest(sceneObjects[i], sceneObjects[k]);
+                    if (sceneObjects[i] is RigidCircle 
+                        && sceneObjects[k] is RigidCircle 
+                        && AreColliding((RigidCircle) sceneObjects[i], (RigidCircle) sceneObjects[k]))
+                    {
+                        sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
+                    }
                 }
             }
         }
 
-        private static bool BoundTest(RigidShape first, RigidShape second)
+        private static bool AreColliding(RigidShape first, RigidShape second)
         {
             return true;
         }
         
-        private static bool BoundTest(RigidCircle first, RigidCircle second)
+        private static bool AreColliding(RigidCircle first, RigidCircle second)
+        {
+            var distance = (first.Center - second.Center).Length;
+            var collisionLength = first.Radius + second.Radius - distance;
+            return collisionLength > 0;
+        }
+        
+        private static bool AreColliding(RigidRectangle first, RigidRectangle second)
         {
             return true;
         }
         
-        private static bool BoundTest(RigidRectangle first, RigidRectangle second)
+        private static bool AreColliding(RigidRectangle first, RigidCircle second)
         {
             return true;
         }
-        
-        private static bool BoundTest(RigidRectangle first, RigidCircle second)
+
+        private static void ClearColliding(List<RigidShape> sceneObjects)
         {
-            return true;
+            foreach (var sceneObject in sceneObjects)
+                sceneObject.IsCollided = false;
         }
     }
 }
