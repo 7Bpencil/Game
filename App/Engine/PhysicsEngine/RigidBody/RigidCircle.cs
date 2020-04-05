@@ -35,24 +35,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
             this.strokePen = strokePen;
         }
 
-        public override void Draw(Graphics g)
-        {
-            var stateBefore = g.Save();
-            if (!center.Equals(Vector.ZeroVector))
-                g.TranslateTransform(center.X, center.Y);
-            g.DrawEllipse(strokePen, -radius, -radius, Diameter, Diameter);
-            g.Restore(stateBefore);
-        }
-
-        public override void DrawCollision(Graphics g, Pen collisionStrokePen)
-        {
-            var stateBefore = g.Save();
-            if (!center.Equals(Vector.ZeroVector))
-                g.TranslateTransform(center.X, center.Y);
-            g.DrawEllipse(collisionStrokePen, -radius, -radius, Diameter, Diameter);
-            g.Restore(stateBefore);
-        }
-
         public override void Update()
         {
         }

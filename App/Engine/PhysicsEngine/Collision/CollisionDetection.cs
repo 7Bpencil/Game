@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using App.Engine.PhysicsEngine.RigidBody;
 
-namespace App.Engine.PhysicsEngine
+namespace App.Engine.PhysicsEngine.Collision
 {
-    public class Physics
+    public class CollisionDetection
     {
-        public void CalculateCollisions(List<RigidShape> sceneObjects)
+        
+        public List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
         {
+            var collisions = new List<CollisionInfo>();
             ClearColliding(sceneObjects);
             for (var i = 0; i < sceneObjects.Count; i++)
             {
@@ -20,6 +22,8 @@ namespace App.Engine.PhysicsEngine
                     }
                 }
             }
+
+            return collisions;
         }
 
         private static bool AreColliding(RigidShape first, RigidShape second)
@@ -30,8 +34,19 @@ namespace App.Engine.PhysicsEngine
         private static bool AreColliding(RigidCircle first, RigidCircle second)
         {
             var distance = (first.Center - second.Center).Length;
-            var collisionLength = first.Radius + second.Radius - distance;
-            return collisionLength > 0;
+            var collisionDepth = first.Radius + second.Radius - distance;
+            if (collisionDepth < 0)
+                return false;
+            if (collisionDepth != 0)
+            {
+                
+            }
+            else
+            {
+                
+            }
+
+            return true;
         }
         
         private static bool AreColliding(RigidRectangle first, RigidRectangle second)

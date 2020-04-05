@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
 using App.View;
@@ -15,7 +16,8 @@ namespace App.Engine
         private HashSet<Keys> pressedKeys;
         private Keys keyPressed;
         private List<RigidShape> sceneObjects;
-        private Physics physics;
+        private CollisionDetection collisionDetection;
+        private List<CollisionInfo> collisions;
         private RigidShape player;
         private RigidShape playerCenter;
         private RigidShape cursor;
@@ -24,7 +26,7 @@ namespace App.Engine
         {
             this.view = view;
             var objectManager = new ObjectFactory();
-            physics = new Physics();
+            collisionDetection = new CollisionDetection();
             sceneObjects = objectManager.GetSceneObjects(out player, out playerCenter, out cursor, view.ClientSize.Width, view.ClientSize.Height);
             pressedKeys = new HashSet<Keys>();
         }
@@ -38,7 +40,7 @@ namespace App.Engine
 
         protected override void UpdateObjects()
         {
-            physics.CalculateCollisions(sceneObjects);
+            collisions = collisionDetection.CalculateCollisions(sceneObjects);
             foreach (var formObject in sceneObjects)
                 formObject.Update();
         }
@@ -77,6 +79,11 @@ namespace App.Engine
         public override List<RigidShape> GetSceneObjects()
         {
             return sceneObjects;
+        }
+        
+        public override List<CollisionInfo> GetCollisions()
+        {
+            return collisions;
         }
     }
 }

@@ -42,7 +42,8 @@
     <ItemGroup>
         <Compile Include="Engine\ContractCore.cs" />
         <Compile Include="Engine\Core.cs" />
-        <Compile Include="Engine\PhysicsEngine\Physics.cs" />
+        <Compile Include="Engine\PhysicsEngine\Collision\CollisionInfo.cs" />
+        <Compile Include="Engine\PhysicsEngine\Collision\CollisionDetection.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidCircle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />

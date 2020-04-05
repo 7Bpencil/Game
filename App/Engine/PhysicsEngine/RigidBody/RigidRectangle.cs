@@ -118,28 +118,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
             faceNormals[2] = -1 * faceNormals[0];
             faceNormals[3] = -1 * faceNormals[1];
         }
-
-        public override void Draw(Graphics g)
-        {
-            var stateBefore = g.Save();
-            if (!center.Equals(Vector.ZeroVector))
-                g.TranslateTransform(center.X, center.Y);
-            if (angle != 0)
-                g.RotateTransform(-angle);
-            g.DrawRectangle(strokePen, -width / 2, -height / 2, width, height);
-            g.Restore(stateBefore);
-        }
-
-        public override void DrawCollision(Graphics g, Pen collisionStrokePen)
-        {
-            var stateBefore = g.Save();
-            if (!center.Equals(Vector.ZeroVector))
-                g.TranslateTransform(center.X, center.Y);
-            if (angle != 0)
-                g.RotateTransform(-angle);
-            g.DrawRectangle(collisionStrokePen, -width / 2, -height / 2, width, height);
-            g.Restore(stateBefore);
-        }
         
         private void UpdateVertexesIfNeeded()
         {
