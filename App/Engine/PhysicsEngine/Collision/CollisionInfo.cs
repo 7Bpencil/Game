@@ -1,20 +1,18 @@
-﻿using System.Drawing;
-
-namespace App.Engine.PhysicsEngine.Collision
+﻿namespace App.Engine.PhysicsEngine.Collision
 {
     public class CollisionInfo
     {
         private float depth;
-        public float Depth { get; set; }
+        public float Depth => depth;
 
         private Vector normal;
-        public Vector Normal { get; set; }
+        public Vector Normal => normal;
 
         private Vector collisionStart;
-        public Vector CollisionStart { get; set; }
+        public Vector CollisionStart => collisionStart;
 
         private Vector collisionEnd;
-        public Vector CollisionEnd { get; set; }
+        public Vector CollisionEnd => collisionEnd;
 
         /// <summary>
         /// 

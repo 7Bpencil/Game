@@ -1,10 +1,9 @@
-﻿using System.Drawing;
-
-namespace App.Engine.PhysicsEngine.RigidBody
+﻿namespace App.Engine.PhysicsEngine.RigidBody
 {
     public abstract class RigidShape
     {
         public abstract Vector Center { get; set; }
+        public abstract bool CanCollide { get; set; }
         public abstract bool IsCollided { get; set; }
         public abstract void Update();
         public abstract void Move(Vector delta);

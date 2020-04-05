@@ -13,16 +13,16 @@ namespace App.Model
             var positionPlayerCenter = (new Vector(windowWidth, windowHeight)
                                         + new Vector(playerRadius, playerRadius)) / 2;
 
-            player = new RigidCircle(positionPlayerCenter, playerRadius);
-            playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45);
-            cursor = new RigidCircle(positionPlayerCenter, 5);
+            player = new RigidCircle(positionPlayerCenter, playerRadius, true);
+            playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45, false);
+            cursor = new RigidCircle(positionPlayerCenter, 5, false);
             return new List<RigidShape>
             {
-                new RigidRectangle(new Vector(250, 450), 190, 100, -45),
-                new RigidRectangle(new Vector(440, 110), 160, 100, -17),
-                new RigidRectangle(new Vector(250, 150), 280, 110, 40),
-                new RigidRectangle(new Vector(650, 350), 320, 150, 15),
-                new RigidCircle(new Vector(100, 100), 35),
+                new RigidRectangle(new Vector(250, 450), 190, 100, -45, true),
+                new RigidRectangle(new Vector(440, 110), 160, 100, -17, true),
+                new RigidRectangle(new Vector(250, 150), 280, 110, 40, true),
+                new RigidRectangle(new Vector(650, 350), 320, 150, 15, true),
+                new RigidCircle(new Vector(100, 100), 35, true),
                 cursor,
                 player,
                 playerCenter,

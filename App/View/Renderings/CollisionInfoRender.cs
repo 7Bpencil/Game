@@ -5,9 +5,10 @@ namespace App.View.Renderings
 {
     public static class CollisionInfoRender
     {
-        public static void Draw(CollisionInfo collision, Pen collisionStrokePen, Graphics g)
+        public static void Draw(CollisionInfo collision, Pen strokePen, Graphics g)
         {
-            g.DrawLine(collisionStrokePen,
+            if (collision.Depth < 0.01) return;
+            g.DrawLine(strokePen,
                 collision.CollisionStart.X, collision.CollisionStart.Y,
                 collision.CollisionEnd.X, collision.CollisionEnd.Y);
         }

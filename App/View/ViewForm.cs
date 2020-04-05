@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine;
@@ -38,7 +39,7 @@ namespace App.View
             
             strokePen = new Pen(Color.Crimson, 4);
             collisionStrokePen = new Pen(Color.Lime, 4);
-            collisionInfoStrokePen = new Pen(Color.Lime, 4);
+            collisionInfoStrokePen = new Pen(Color.Black, 4);
         }
 
         public override void Render()
@@ -55,9 +56,12 @@ namespace App.View
                 if (formObject.IsCollided) RigidBodyRender.Draw(formObject, collisionStrokePen, g);
                 else RigidBodyRender.Draw(formObject, strokePen, g);
 
-            // TODO it will be enabled when collision info will be done
-            //foreach (var collision in collisions)
-            //    CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
+            if (collisions == null) return;
+            foreach (var collision in collisions)
+            {
+                Console.WriteLine(collision.CollisionStart);
+                CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
+            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

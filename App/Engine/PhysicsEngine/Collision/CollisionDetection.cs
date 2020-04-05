@@ -6,7 +6,6 @@ namespace App.Engine.PhysicsEngine.Collision
 {
     public class CollisionDetection
     {
-        
         public List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
         {
             ClearColliding(sceneObjects);
@@ -16,9 +15,11 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    if (sceneObjects[i] is RigidCircle 
+                    if (sceneObjects[i].CanCollide
+                        && sceneObjects[k].CanCollide
+                        && sceneObjects[i] is RigidCircle 
                         && sceneObjects[k] is RigidCircle 
-                        && AreColliding((RigidCircle) sceneObjects[i], (RigidCircle) sceneObjects[k]))
+                        && AreColliding((RigidCircle) sceneObjects[i], (RigidCircle) sceneObjects[k], collisions))
                     {
                         sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
                     }
@@ -33,7 +34,7 @@ namespace App.Engine.PhysicsEngine.Collision
             return true;
         }
         
-        private static bool AreColliding(RigidCircle first, RigidCircle second, List<CollisionInfo> collisions)
+        private static bool AreColliding(RigidCircle first, RigidCircle second, List<CollisionInfo> collisions) // TODO сделать красиво
         {
             var vectorFromFirstToSecond = second.Center - first.Center; 
             var distance = vectorFromFirstToSecond.Length;

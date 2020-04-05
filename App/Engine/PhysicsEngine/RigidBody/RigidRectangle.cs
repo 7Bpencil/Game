@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace App.Engine.PhysicsEngine.RigidBody
+﻿namespace App.Engine.PhysicsEngine.RigidBody
 {
     public class RigidRectangle : RigidShape
     {
@@ -70,6 +68,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
             }
         }
         
+        private bool canCollide;
+        public override bool CanCollide { get; set; }
+        
         private bool isCollided;
         public override bool IsCollided { get => isCollided; set => isCollided = value; }
 
@@ -85,13 +86,14 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="angle">Angle in degrees</param>
-        /// <param name="strokePen">Color and Width of stroke</param>
-        public RigidRectangle(Vector center, float width, float height, float angle)
+        /// <param name="canCollide">should a collision be calculated</param>
+        public RigidRectangle(Vector center, float width, float height, float angle, bool canCollide)
         {
             this.center = center;
             this.width = width;
             this.height = height;
             this.angle = angle;
+            this.canCollide = canCollide;
             vertexes = new Vector[4];
             faceNormals = new Vector[4];
             vertexesVersion = 0;

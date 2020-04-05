@@ -16,11 +16,9 @@ namespace App.View.Renderings
         
         private static void DrawCircle(RigidCircle shape, Pen strokePen, Graphics g)
         {
-            var stateBefore = g.Save();
-            if (!shape.Center.Equals(Vector.ZeroVector))
-                g.TranslateTransform(shape.Center.X, shape.Center.Y);
-            g.DrawEllipse(strokePen, -shape.Radius, -shape.Radius, shape.Diameter, shape.Diameter);
-            g.Restore(stateBefore);
+            g.DrawEllipse(strokePen,
+                shape.Center.X - shape.Radius, shape.Center.Y - shape.Radius,
+                shape.Diameter, shape.Diameter);
         }
         
         private static void DrawRectangle(RigidRectangle shape, Pen strokePen, Graphics g)

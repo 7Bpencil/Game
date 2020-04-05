@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace App.Engine.PhysicsEngine.RigidBody
+﻿namespace App.Engine.PhysicsEngine.RigidBody
 {
     public class RigidCircle : RigidShape
     {
@@ -14,6 +12,10 @@ namespace App.Engine.PhysicsEngine.RigidBody
         public override Vector Center 
         { get => center; set => center = value; }
 
+        private bool canCollide;
+        public override bool CanCollide 
+        { get => canCollide; set => canCollide = value; }
+
         private bool isCollided;
         public override bool IsCollided { get => isCollided; set => isCollided = value; }
         
@@ -23,11 +25,12 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// </summary>
         /// <param name="center"></param>
         /// <param name="radius"></param>
-        /// <param name="strokePen">Color and Width of stroke</param>
-        public RigidCircle(Vector center, float radius)
+        /// <param name="canCollide">should a collision be calculated</param>
+        public RigidCircle(Vector center, float radius, bool canCollide)
         {
             this.radius = radius;
             this.center = center;
+            this.canCollide = canCollide;
         }
 
         public override void Update()

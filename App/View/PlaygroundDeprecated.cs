@@ -41,7 +41,7 @@ namespace App.View
         
         private void MainLoop(object sender, EventArgs args)
         {
-            Move();
+            MovePlayer();
             Invalidate();
         }
         
@@ -71,7 +71,7 @@ namespace App.View
             keyPressed = pressedKeys.Any() ? pressedKeys.Min() : Keys.None;
         }
         
-        public void Move()
+        public void MovePlayer()
         {
             var deltaX = 0;
             var deltaY = 0;
