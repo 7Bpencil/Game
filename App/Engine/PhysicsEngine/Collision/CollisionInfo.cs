@@ -31,12 +31,5 @@ namespace App.Engine.PhysicsEngine.Collision
             collisionStart = collisionEnd;
             collisionEnd = n;
         }
-        
-        public void Draw(Graphics g, Pen collisionStrokePen)
-        {
-            g.DrawLine(collisionStrokePen,
-                collisionStart.X, collisionStart.Y,
-                collisionEnd.X, collisionEnd.Y);
-        }
     }
 }

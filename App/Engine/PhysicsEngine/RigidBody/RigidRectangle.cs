@@ -15,10 +15,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
             }
         }
 
-        private Pen strokePen;
-        public override Pen StrokePen
-        { get => strokePen; set => strokePen = value; }
-
         public Vector TopLeft
         {
             get
@@ -90,13 +86,12 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// <param name="height"></param>
         /// <param name="angle">Angle in degrees</param>
         /// <param name="strokePen">Color and Width of stroke</param>
-        public RigidRectangle(Vector center, float width, float height, float angle, Pen strokePen)
+        public RigidRectangle(Vector center, float width, float height, float angle)
         {
             this.center = center;
             this.width = width;
             this.height = height;
             this.angle = angle;
-            this.strokePen = strokePen;
             vertexes = new Vector[4];
             faceNormals = new Vector[4];
             vertexesVersion = 0;

@@ -14,10 +14,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
         public override Vector Center 
         { get => center; set => center = value; }
 
-        private Pen strokePen;
-        public override Pen StrokePen 
-        { get => strokePen; set => strokePen = value; }
-        
         private bool isCollided;
         public override bool IsCollided { get => isCollided; set => isCollided = value; }
         
@@ -28,11 +24,10 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// <param name="center"></param>
         /// <param name="radius"></param>
         /// <param name="strokePen">Color and Width of stroke</param>
-        public RigidCircle(Vector center, float radius, Pen strokePen)
+        public RigidCircle(Vector center, float radius)
         {
             this.radius = radius;
             this.center = center;
-            this.strokePen = strokePen;
         }
 
         public override void Update()

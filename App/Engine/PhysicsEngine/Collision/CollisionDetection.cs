@@ -8,8 +8,9 @@ namespace App.Engine.PhysicsEngine.Collision
         
         public List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
         {
-            var collisions = new List<CollisionInfo>();
             ClearColliding(sceneObjects);
+            var collisions = new List<CollisionInfo>();
+            
             for (var i = 0; i < sceneObjects.Count; i++)
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
