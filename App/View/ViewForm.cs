@@ -58,10 +58,7 @@ namespace App.View
 
             if (collisions == null) return;
             foreach (var collision in collisions)
-            {
-                Console.WriteLine(collision.CollisionStart);
                 CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
-            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
