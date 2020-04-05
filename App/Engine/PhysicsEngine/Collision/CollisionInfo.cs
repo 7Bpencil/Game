@@ -16,6 +16,12 @@ namespace App.Engine.PhysicsEngine.Collision
         private Vector collisionEnd;
         public Vector CollisionEnd { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="depth">the smallest amount that the objects interpenetrated</param>
+        /// <param name="normal">the direction along which the collision depth is measured</param>
+        /// <param name="collisionStart"></param>
         public CollisionInfo(float depth, Vector normal, Vector collisionStart)
         {
             this.depth = depth;

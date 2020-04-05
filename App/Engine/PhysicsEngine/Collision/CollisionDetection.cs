@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Engine.PhysicsEngine.Collision
@@ -32,21 +33,28 @@ namespace App.Engine.PhysicsEngine.Collision
             return true;
         }
         
-        private static bool AreColliding(RigidCircle first, RigidCircle second)
+        private static bool AreColliding(RigidCircle first, RigidCircle second, List<CollisionInfo> collisions)
         {
-            var distance = (first.Center - second.Center).Length;
+            var vectorFromFirstToSecond = second.Center - first.Center; 
+            var distance = vectorFromFirstToSecond.Length;
             var collisionDepth = first.Radius + second.Radius - distance;
             if (collisionDepth < 0)
                 return false;
             if (collisionDepth != 0)
             {
-                
+                collisions.Add(new CollisionInfo(
+                    collisionDepth,
+                    vectorFromFirstToSecond.Normalize(),
+                    vectorFromFirstToSecond / distance * first.Radius));
             }
             else
             {
-                
+                var maxRadius = Math.Max(first.Radius, second.Radius);
+                collisions.Add(new CollisionInfo(
+                    maxRadius,
+                    new Vector(0, -1), 
+                    first.Center + new Vector(0,1) * maxRadius));
             }
-
             return true;
         }
         

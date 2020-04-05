@@ -55,6 +55,7 @@ namespace App.View
                 if (formObject.IsCollided) RigidBodyRender.Draw(formObject, collisionStrokePen, g);
                 else RigidBodyRender.Draw(formObject, strokePen, g);
 
+            // TODO it will be enabled when collision info will be done
             //foreach (var collision in collisions)
             //    CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
         }
