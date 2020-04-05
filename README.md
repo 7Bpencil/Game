@@ -13,6 +13,9 @@ Participants:
 
 ### Architecture info
 
+![Alt text](./GameArchitecture.svg)
+<img src="./GameArchitecture.svg">
+
 ##### Очень коротко:
 * Весь движ происходит в **Core.Gameloop** Остальные подсистемы, лишь вызываются им.
 
