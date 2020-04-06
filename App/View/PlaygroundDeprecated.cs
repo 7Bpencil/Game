@@ -6,7 +6,6 @@ using System.Windows.Forms;
 
 namespace App.View
 {
-    public class PlaygroundDeprecated : Form
 
     public partial class PlaygroundDeprecated : Form
     {
