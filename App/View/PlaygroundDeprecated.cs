@@ -7,6 +7,8 @@ using System.Windows.Forms;
 namespace App.View
 {
     public class PlaygroundDeprecated : Form
+
+    public partial class PlaygroundDeprecated : Form
     {
         private readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
         private static Keys keyPressed;
@@ -14,80 +16,70 @@ namespace App.View
         private Point positionPlayer;
         private Point positionPlayerCenter;
         private Point playerWidthHeight;
+        private System.ComponentModel.IContainer components = null;
+        private PictureBox pb;
+        private Bitmap surface = null;
+        private Graphics device;
+        private Bitmap image = null;
+        private PictureBox pb1;
 
         public PlaygroundDeprecated()
         {
-            SetUpForm();
-            SetUpPlayer();
-            var timer = new Timer();
-            timer.Interval = 15;
-            timer.Tick += MainLoop;
-            timer.Start();
-        }
-
-        private void SetUpForm()
-        {
-            Cursor.Hide();
-            DoubleBuffered = true;
-            Size = new Size(854, 480);
-            Text = "NEW GAME";
-        }
-
-        private void SetUpPlayer()
-        {
-            playerWidthHeight = new Point(50, 50);
-            positionPlayer = new Point(ClientSize.Width / 2, ClientSize.Height / 2);
+            this.pb1 = new System.Windows.Forms.PictureBox();
+            this.pb1.Parent = this;//it is really need for drawing and create a scene
+            this.pb1.BackColor = System.Drawing.Color.Black;
+            this.pb1.Location = new System.Drawing.Point(0, 0);
+            this.pb1.Name = "box";
+            this.pb1.Size = new System.Drawing.Size(865, 706);
+            this.pb1.TabStop = false; 
+            ((System.ComponentModel.ISupportInitialize)(this.pb1)).BeginInit();
+            this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.Load += new System.EventHandler(this.Game_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Game_FormClosed);
         }
         
-        private void MainLoop(object sender, EventArgs args)
+        protected override void Dispose(bool disposing)
         {
-            MovePlayer();
-            Invalidate();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void Game_Load(object sender, EventArgs e)
+        {
+            //set up the form
+            this.Text = "Text drawing Demo";
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Size = new Size(865, 706);//this is size of image
+
+            surface = new Bitmap(this.Size.Width, this.Size.Height);
+            pb1.Image = surface;
+            device = Graphics.FromImage(surface);
+            
+            var path = System.IO.Path.GetFullPath(@"img/grass.bmp");
+            image = LoadBitmap(path);
+            device.DrawImage(image, 0, 0);
+        }
+
+        public Bitmap LoadBitmap(string filename)
+        {
+            Bitmap bmp = null;
+            try
+            {
+                bmp = new Bitmap(filename);
+            }
+            catch (Exception ex) { }
+            return bmp;
         }
         
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var g = e.Graphics;
-            
-            g.FillRectangle(Brushes.Crimson, -100, -100, 200, 200);
-            g.FillRectangle(Brushes.Crimson, 300, 300, 50, 50);
-            g.FillRectangle(Brushes.Crimson, 100, 300, 50, 50);
-            g.FillRectangle(Brushes.Crimson, 300, 100, 1000, 1000);
-            
-            g.FillRectangle(Brushes.Cyan, positionPlayer.X, positionPlayer.Y, playerWidthHeight.X, playerWidthHeight.Y);
-            g.FillEllipse(Brushes.Blue, positionPlayerCenter.X - 5, positionPlayerCenter.Y - 5, 10, 10);
-            g.FillEllipse(Brushes.Black, positionMouse.X, positionMouse.Y, 10, 10);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            pressedKeys.Add(e.KeyCode);
-            keyPressed = e.KeyCode;
-        }
-
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            pressedKeys.Remove(e.KeyCode);
-            keyPressed = pressedKeys.Any() ? pressedKeys.Min() : Keys.None;
-        }
         
-        public void MovePlayer()
+        private void Game_FormClosed(object sender, EventArgs e)
         {
-            var deltaX = 0;
-            var deltaY = 0;
-
-            if (keyPressed == Keys.Down || keyPressed == Keys.S) deltaY = 4;
-            else if (keyPressed == Keys.Left || keyPressed == Keys.A) deltaX = -4;
-            else if (keyPressed == Keys.Up || keyPressed == Keys.W) deltaY = -4;
-            else if (keyPressed == Keys.Right || keyPressed == Keys.D) deltaX = 4;
-            
-            positionPlayer = new Point(positionPlayer.X + deltaX, positionPlayer.Y + deltaY);
-            positionPlayerCenter = new Point(positionPlayer.X + playerWidthHeight.X / 2,positionPlayer.Y + playerWidthHeight.Y / 2);
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            positionMouse = new Point(e.X, e.Y);
+            device.Dispose();
+            surface.Dispose();
         }
     }
 }

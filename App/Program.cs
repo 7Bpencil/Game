@@ -7,7 +7,7 @@ namespace App
     {
         public static void Main(string[] args)
         {
-            var app = new ViewForm();
+            var app = new PlaygroundDeprecated();
             Application.Run(app);
         }
     }
