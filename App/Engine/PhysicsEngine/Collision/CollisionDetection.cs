@@ -70,50 +70,48 @@ namespace App.Engine.PhysicsEngine.Collision
         
         private static bool AreColliding(RigidRectangle first, RigidRectangle second, List<CollisionInfo> collisions)
         {
-            var a = FindSmallestSupportPoint(first, second);
-            if (a == null) return false;
-            var b = FindSmallestSupportPoint(second, first);
-            if (b == null) return false;
-            collisions.Add(SmallestCollision(a,b));
+            var firstClosestSupportPoint = FindClosestSupportPoint(first, second);
+            if (firstClosestSupportPoint == null) return false;
+            var secondClosestSupportPoint = FindClosestSupportPoint(second, first);
+            if (secondClosestSupportPoint == null) return false;
+            collisions.Add(SmallestCollision(firstClosestSupportPoint, secondClosestSupportPoint));
             return true;
         }
 
-        private static CollisionInfo FindSmallestSupportPoint(RigidRectangle first, RigidRectangle second)
+        private static CollisionInfo FindClosestSupportPoint(RigidRectangle first, RigidRectangle second)
         {
-            CollisionInfo collision = null;
-            var minCollisionDepth = float.PositiveInfinity;
-            var hasSupportPoint = true;
-            for (var i = 0; i < second.FaceNormals.Length && hasSupportPoint; i++)
+            CollisionInfo closestSupportPoint = null;
+            var minSupportDistance = float.PositiveInfinity;
+            for (var i = 0; i < first.Vertexes.Length; i++)
             {
-                var collisionInfo = FindSupportPoint(-1 * first.FaceNormals[i], first.Vertexes[i], second);
-                hasSupportPoint = collisionInfo != null;
-                if (hasSupportPoint && collisionInfo.Depth < minCollisionDepth)
-                {
-                    minCollisionDepth = collisionInfo.Depth;
-                    collision = collisionInfo;
-                }
+                var pointOnFace = first.Vertexes[i];
+                var negativeFaceNormal = -1 * first.FaceNormals[i];
+                var supportPoint = FindSupportPoint(negativeFaceNormal, pointOnFace, second);
+                if (supportPoint == null) return null;
+                if (supportPoint.Depth >= minSupportDistance) continue;
+                minSupportDistance = supportPoint.Depth;
+                closestSupportPoint = supportPoint;
             }
 
-            return hasSupportPoint ? collision : null;
+            return closestSupportPoint;
         }
         
         private static CollisionInfo FindSupportPoint(Vector negativeFaceNormal, Vector pointOnFace, RigidRectangle rectangle)
         {
-            var maxSupportDist = 0f;
             Vector supportPoint = null;
+            var maxSupportDistance = 0f;
             foreach (var vertex in rectangle.Vertexes)
             {
-                var projection = Vector.ScalarProduct(negativeFaceNormal, vertex - pointOnFace);
-                if (projection > 0f && projection > maxSupportDist)
-                {
-                    maxSupportDist = projection;
-                    supportPoint = vertex;
-                }
+                var vectorFromPointToVertex = vertex - pointOnFace;
+                var projectionLength = Vector.ScalarProduct(negativeFaceNormal, vectorFromPointToVertex);
+                if (projectionLength < maxSupportDistance) continue;
+                supportPoint = vertex;
+                maxSupportDistance = projectionLength;
             }
 
             return supportPoint == null
                 ? null
-                : new CollisionInfo(maxSupportDist, negativeFaceNormal, supportPoint - negativeFaceNormal * maxSupportDist);
+                : new CollisionInfo(maxSupportDistance, -1 * negativeFaceNormal, supportPoint);
         }
 
         private static CollisionInfo SmallestCollision(CollisionInfo first, CollisionInfo second)
