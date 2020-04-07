@@ -17,31 +17,21 @@ namespace App.Engine.PhysicsEngine.Collision
                 {
                     if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
                     if (!sceneObjects[i].CanBound(sceneObjects[k])) continue;
-
-                    if (sceneObjects[i] is RigidCircle
-                        && sceneObjects[k] is RigidCircle
-                        && AreColliding((RigidCircle) sceneObjects[i], (RigidCircle) sceneObjects[k], collisions))
-                    {
+                    if (AreColliding(sceneObjects[i], sceneObjects[k], collisions))
                         sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
-                    }
-                    
-                    
-                    if (sceneObjects[i] is RigidRectangle 
-                        && sceneObjects[k] is RigidRectangle
-                        && AreColliding((RigidRectangle) sceneObjects[i], (RigidRectangle) sceneObjects[k], collisions))
-                    {
-                        sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
-                    }
-                    
                 }
             }
 
             return collisions;
         }
 
-        private static bool AreColliding(RigidShape first, RigidShape second)
+        private static bool AreColliding(RigidShape first, RigidShape second, List<CollisionInfo> collisions)
         {
-            return true; // TODO перенести сюда определение типов
+            if (first is RigidCircle && second is RigidCircle)
+                return AreColliding((RigidCircle) first, (RigidCircle) second, collisions);
+            if (first is RigidRectangle && second is RigidRectangle)
+                return AreColliding((RigidRectangle) first, (RigidRectangle) second, collisions);
+            return false;
         }
         
         private static bool AreColliding(RigidCircle first, RigidCircle second, List<CollisionInfo> collisions) // TODO сделать красиво
