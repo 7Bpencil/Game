@@ -10,16 +10,16 @@ namespace App.Engine.PhysicsEngine.Collision
         {
             ClearColliding(sceneObjects);
             var collisions = new List<CollisionInfo>();
-            
+
             for (var i = 0; i < sceneObjects.Count; i++)
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
-                    if (!sceneObjects[i].CanBound(sceneObjects[k])) continue;
+                    //if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
+                    //if (!sceneObjects[i].CanBound(sceneObjects[k])) continue;
                     var collisionInfo = GetCollisionInfo(sceneObjects[i], sceneObjects[k]);
                     if (collisionInfo == null) continue;
-                    
+
                     sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
                     collisions.Add(collisionInfo);
                 }
@@ -32,18 +32,18 @@ namespace App.Engine.PhysicsEngine.Collision
         {
             if (first is RigidCircle && second is RigidCircle)
                 return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
-            if (first is RigidRectangle && second is RigidRectangle)
-                return GetCollisionInfo((RigidRectangle) first, (RigidRectangle) second);
+            //if (first is RigidRectangle && second is RigidRectangle)   TODO currently is not working
+            //    return GetCollisionInfo((RigidRectangle) first, (RigidRectangle) second);
             if (first is RigidRectangle && second is RigidCircle)
                 return GetCollisionInfo((RigidRectangle) first, (RigidCircle) second);
             if (first is RigidCircle && second is RigidRectangle)
                 return GetCollisionInfo((RigidRectangle) second, (RigidCircle) first);
             return null;
         }
-        
+
         private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second) // TODO сделать красиво
         {
-            var vectorFromFirstToSecond = second.Center - first.Center; 
+            var vectorFromFirstToSecond = second.Center - first.Center;
             var distance = vectorFromFirstToSecond.Length;
             var collisionDepth = first.Radius + second.Radius - distance;
             if (collisionDepth < 0)
@@ -55,20 +55,21 @@ namespace App.Engine.PhysicsEngine.Collision
                     vectorFromFirstToSecond.Normalize(),
                     first.Center + vectorFromFirstToSecond * (1 - second.Radius / distance));
             }
+
             var maxRadius = Math.Max(first.Radius, second.Radius);
             return new CollisionInfo(
                 maxRadius,
-                new Vector(0, -1), 
-                first.Center + new Vector(0,1) * maxRadius);
+                new Vector(0, -1),
+                first.Center + new Vector(0, 1) * maxRadius);
         }
-        
+
         private static CollisionInfo GetCollisionInfo(RigidRectangle first, RigidRectangle second)
         {
             var firstClosestSupportPoint = FindClosestSupportPoint(first, second);
             if (firstClosestSupportPoint == null) return null;
             var secondClosestSupportPoint = FindClosestSupportPoint(second, first);
             if (secondClosestSupportPoint == null) return null;
-            return ShortestCollision(firstClosestSupportPoint,secondClosestSupportPoint);
+            return ShortestCollision(firstClosestSupportPoint, secondClosestSupportPoint);
         }
 
         private static CollisionInfo FindClosestSupportPoint(RigidRectangle first, RigidRectangle second)
@@ -83,8 +84,10 @@ namespace App.Engine.PhysicsEngine.Collision
                 bestDistance = supportPoint.SupportPointDistance;
                 closestSupportPoint = supportPoint;
             }
+
             var bestVec = closestSupportPoint.FaceNormal * closestSupportPoint.SupportPointDistance;
-            return new CollisionInfo(bestDistance, closestSupportPoint.FaceNormal, closestSupportPoint.SupportPoint + bestVec);
+            return new CollisionInfo(bestDistance, closestSupportPoint.FaceNormal,
+                closestSupportPoint.SupportPoint + bestVec);
 
             /*
             CollisionInfo closestSupportPoint = null;
@@ -103,8 +106,9 @@ namespace App.Engine.PhysicsEngine.Collision
             return closestSupportPoint;
             */
         }
-        
-        private static SupportPointInfo FindSupportPoint(Vector negativeFaceNormal, Vector pointOnFace, RigidRectangle rectangle)
+
+        private static SupportPointInfo FindSupportPoint(Vector negativeFaceNormal, Vector pointOnFace,
+            RigidRectangle rectangle)
         {
             Vector supportPoint = null;
             var maxSupportDistance = 0f;
@@ -116,7 +120,7 @@ namespace App.Engine.PhysicsEngine.Collision
                 supportPoint = vertex;
                 maxSupportDistance = projectionLength;
             }
-            
+
             return supportPoint == null
                 ? null
                 : new SupportPointInfo(supportPoint, maxSupportDistance, -1 * negativeFaceNormal);
@@ -130,11 +134,29 @@ namespace App.Engine.PhysicsEngine.Collision
             return new CollisionInfo(first.Depth, first.Normal, first.CollisionStart - depthVec);
         }
 
-        private static CollisionInfo GetCollisionInfo(RigidRectangle first, RigidCircle second)
+        private static CollisionInfo GetCollisionInfo(RigidRectangle rectangle, RigidCircle circle)
+        {
+            var indexNearestEdge = -1;
+            var minProjection = float.PositiveInfinity;
+            for (var i = 0; i < rectangle.Vertexes.Length; i++)
+            {
+                var projection = Vector.ScalarProduct(rectangle.Vertexes[i] - circle.Center, rectangle.FaceNormals[i]);
+                if (projection < 0) return CaseCenterIsOutside(rectangle, circle);
+                if (projection >= minProjection) continue;
+                minProjection = projection;
+                indexNearestEdge = i;
+            }
+            return new CollisionInfo(
+                circle.Radius + minProjection, 
+                rectangle.FaceNormals[indexNearestEdge], 
+                circle.Center - rectangle.FaceNormals[indexNearestEdge] * circle.Radius);
+        }
+
+        private static CollisionInfo CaseCenterIsOutside(RigidRectangle rectangle, RigidCircle circle)
         {
             return null;
         }
-
+        
         private static void ClearColliding(List<RigidShape> sceneObjects)
         {
             foreach (var sceneObject in sceneObjects)

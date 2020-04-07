@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
 using App.Engine.PhysicsEngine;
@@ -47,12 +48,12 @@ namespace App.View
         
         protected override void OnPaint(PaintEventArgs e)
         {
-            var g = e.Graphics; // TODO: move it to somewhere else
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             var collisions = engineCore.GetCollisions();
             
             foreach (var formObject in sceneObjects)
-                if (formObject.IsCollided) RigidBodyRenderer.Draw(formObject, collisionStrokePen, g);
-                else RigidBodyRenderer.Draw(formObject, strokePen, g);
+                RigidBodyRenderer.Draw(formObject, formObject.IsCollided ? collisionStrokePen : strokePen, g);
 
             if (collisions == null) return;
             foreach (var collision in collisions)
