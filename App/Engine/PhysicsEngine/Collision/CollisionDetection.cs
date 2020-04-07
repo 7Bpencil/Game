@@ -15,7 +15,7 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    //if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
+                    if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
                     
                     if (sceneObjects[i] is RigidCircle
                         && sceneObjects[k] is RigidCircle
@@ -111,12 +111,12 @@ namespace App.Engine.PhysicsEngine.Collision
 
             return supportPoint == null
                 ? null
-                : new CollisionInfo(maxSupportDistance, -1 * negativeFaceNormal, supportPoint);
+                : new CollisionInfo(maxSupportDistance, negativeFaceNormal, supportPoint - maxSupportDistance * negativeFaceNormal);
         }
 
         private static CollisionInfo SmallestCollision(CollisionInfo first, CollisionInfo second)
         {
-            return first.Depth >= second.Depth ? first : second;
+            return first.Depth < second.Depth ? first : second;
         }
 
         private static bool AreColliding(RigidRectangle first, RigidCircle second)

@@ -17,7 +17,8 @@
         { get => canCollide; set => canCollide = value; }
 
         private bool isCollided;
-        public override bool IsCollided { get => isCollided; set => isCollided = value; }
+        public override bool IsCollided
+        { get => isCollided; set => isCollided = value; }
         
 
         /// <summary>
