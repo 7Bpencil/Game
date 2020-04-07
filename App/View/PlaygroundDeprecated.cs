@@ -56,8 +56,8 @@ namespace App.View
         public bool Game_Init()
         {
             this.Text = "Sprite Drawing Demo";
-            grass = game.LoadBitmap(@"img/grass.bmp");
-            dragonImage = game.LoadBitmap(@"img/dragon.png");
+            grass = (Bitmap)Image.FromFile("images/grass.bmp");
+            dragonImage = (Bitmap)Image.FromFile("images/dragon.png");
             if (grass is null)
             {
                 MessageBox.Show("Error loading grass.bmp");

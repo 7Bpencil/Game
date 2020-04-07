@@ -63,6 +63,23 @@
         <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="bin\Debug" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="images\dragon.bmp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="images\dragon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="images\dragon128.bmp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="images\grass.bmp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
