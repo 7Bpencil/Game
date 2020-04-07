@@ -60,6 +60,7 @@
         <Compile Include="View\PlaygroundDeprecated.cs" />
         <Compile Include="View\Renderings\CollisionInfoRender.cs" />
         <Compile Include="View\Renderings\RigidBodyRender.cs" />
+        <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
