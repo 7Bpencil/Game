@@ -17,56 +17,58 @@ namespace App.Engine.PhysicsEngine.Collision
                 {
                     if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
                     if (!sceneObjects[i].CanBound(sceneObjects[k])) continue;
-                    if (AreColliding(sceneObjects[i], sceneObjects[k], collisions))
-                        sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
+                    var collisionInfo = GetCollisionInfo(sceneObjects[i], sceneObjects[k]);
+                    if (collisionInfo == null) continue;
+                    
+                    sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
+                    collisions.Add(collisionInfo);
                 }
             }
 
             return collisions;
         }
 
-        private static bool AreColliding(RigidShape first, RigidShape second, List<CollisionInfo> collisions)
+        private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
         {
             if (first is RigidCircle && second is RigidCircle)
-                return AreColliding((RigidCircle) first, (RigidCircle) second, collisions);
+                return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
             if (first is RigidRectangle && second is RigidRectangle)
-                return AreColliding((RigidRectangle) first, (RigidRectangle) second, collisions);
-            return false;
+                return GetCollisionInfo((RigidRectangle) first, (RigidRectangle) second);
+            if (first is RigidRectangle && second is RigidCircle)
+                return GetCollisionInfo((RigidRectangle) first, (RigidCircle) second);
+            if (first is RigidCircle && second is RigidRectangle)
+                return GetCollisionInfo((RigidRectangle) second, (RigidCircle) first);
+            return null;
         }
         
-        private static bool AreColliding(RigidCircle first, RigidCircle second, List<CollisionInfo> collisions) // TODO сделать красиво
+        private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second) // TODO сделать красиво
         {
             var vectorFromFirstToSecond = second.Center - first.Center; 
             var distance = vectorFromFirstToSecond.Length;
             var collisionDepth = first.Radius + second.Radius - distance;
             if (collisionDepth < 0)
-                return false;
+                return null;
             if (collisionDepth != 0)
             {
-                collisions.Add(new CollisionInfo(
+                return new CollisionInfo(
                     collisionDepth,
                     vectorFromFirstToSecond.Normalize(),
-                    first.Center + vectorFromFirstToSecond * (1 - second.Radius / distance)));
+                    first.Center + vectorFromFirstToSecond * (1 - second.Radius / distance));
             }
-            else
-            {
-                var maxRadius = Math.Max(first.Radius, second.Radius);
-                collisions.Add(new CollisionInfo(
-                    maxRadius,
-                    new Vector(0, -1), 
-                    first.Center + new Vector(0,1) * maxRadius));
-            }
-            return true;
+            var maxRadius = Math.Max(first.Radius, second.Radius);
+            return new CollisionInfo(
+                maxRadius,
+                new Vector(0, -1), 
+                first.Center + new Vector(0,1) * maxRadius);
         }
         
-        private static bool AreColliding(RigidRectangle first, RigidRectangle second, List<CollisionInfo> collisions)
+        private static CollisionInfo GetCollisionInfo(RigidRectangle first, RigidRectangle second)
         {
             var firstClosestSupportPoint = FindClosestSupportPoint(first, second);
-            if (firstClosestSupportPoint == null) return false;
+            if (firstClosestSupportPoint == null) return null;
             var secondClosestSupportPoint = FindClosestSupportPoint(second, first);
-            if (secondClosestSupportPoint == null) return false;
-            collisions.Add(ShortestCollision(firstClosestSupportPoint,secondClosestSupportPoint));
-            return true;
+            if (secondClosestSupportPoint == null) return null;
+            return ShortestCollision(firstClosestSupportPoint,secondClosestSupportPoint);
         }
 
         private static CollisionInfo FindClosestSupportPoint(RigidRectangle first, RigidRectangle second)
@@ -128,9 +130,9 @@ namespace App.Engine.PhysicsEngine.Collision
             return new CollisionInfo(first.Depth, first.Normal, first.CollisionStart - depthVec);
         }
 
-        private static bool AreColliding(RigidRectangle first, RigidCircle second)
+        private static CollisionInfo GetCollisionInfo(RigidRectangle first, RigidCircle second)
         {
-            return true;
+            return null;
         }
 
         private static void ClearColliding(List<RigidShape> sceneObjects)
