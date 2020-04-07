@@ -31,7 +31,7 @@ namespace App.View
             this.Load += new System.EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Playground_FormClosed);
             this.KeyDown += new KeyEventHandler(this.PlaygroundDeprecated_KeyDown);
-            this.ResumeLayout(false);
+            //this.ResumeLayout(false);
         }
         
         protected override void Dispose(bool disposing)
@@ -58,6 +58,16 @@ namespace App.View
             this.Text = "Sprite Drawing Demo";
             grass = game.LoadBitmap(@"img/grass.bmp");
             dragonImage = game.LoadBitmap(@"img/dragon.png");
+            if (grass is null)
+            {
+                MessageBox.Show("Error loading grass.bmp");
+                Environment.Exit(0);
+            }
+            if (dragonImage is null)
+            {
+                MessageBox.Show("Error loading dragon.png");
+                Environment.Exit(0);
+            }
             dragonSprite = new Sprite(ref game);
             dragonSprite.Image = dragonImage;
             dragonSprite.Width = 256;

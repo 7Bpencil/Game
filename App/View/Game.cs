@@ -8,12 +8,12 @@ namespace App.View.Renderings
     public class Game
     {
         private System.ComponentModel.IContainer components = null;
-        private Graphics device;
-        private Bitmap surface;
-        private PictureBox pb;
-        private Form frm;
-        private Font font;
-        private bool gameOver;
+        public Graphics device;
+        public Bitmap surface;
+        public PictureBox pb; 
+        public Form frm;
+        public Font font;
+        public bool gameOver;
 
         public Game(ref Form form, int width, int height)
         {
@@ -30,7 +30,7 @@ namespace App.View.Renderings
             pb = new PictureBox();
             pb.Parent = frm;
             //
-            pb.Location = new Point(0, 0);
+            //pb.Location = new Point(0, 0);
             pb.Size = new Size(width, height);
             pb.Dock = DockStyle.Fill;
             pb.BackColor = Color.Black;
@@ -54,6 +54,7 @@ namespace App.View.Renderings
 
         public void Print(int x, int y, string text, Brush color)
         {
+            
             Device.DrawString(text, font, color, (float)x, (float)y);
         }
 
@@ -112,22 +113,22 @@ namespace App.View.Renderings
 
         public void DrawBitmap(ref Bitmap bmp, float x, float y)
         {
-            device.DrawImageUnscaled(bmp, (int)x, (int)y);
+            device.DrawImage(bmp, (int)x, (int)y);
         }
 
         public void DrawBitmap(ref Bitmap bmp, float x, float y, int width, int height)
         {
-            device.DrawImageUnscaled(bmp, (int)x, (int)y, width, height);
+            device.DrawImage(bmp, (int)x, (int)y, width, height);
         }
 
         public void DrawBitmap(ref Bitmap bmp, Point pos)
         {
-            device.DrawImageUnscaled(bmp, pos);
+            device.DrawImage(bmp, pos);
         }
 
         public void DrawBitmap(ref Bitmap bmp, Point pos, Size size)
         {
-            device.DrawImageUnscaled(bmp, pos.X, pos.Y, size.Width, size.Height);
+            device.DrawImage(bmp, pos.X, pos.Y, size.Width, size.Height);
         }
 
         public void Update()

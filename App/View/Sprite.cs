@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using App.View.Renderings;
 
@@ -38,7 +39,7 @@ namespace App.View
             this.game = game;
             position = new PointF(0, 0);
             velocity = new PointF(0, 0);
-            size = new Size(0, 0);
+            size = new Size(28, 28);
             bitmap = null;
             alive = true;
             columns = 1;
@@ -189,6 +190,11 @@ namespace App.View
             frame.Y = (currentFrame / columns) * size.Height;
             frame.Width = size.Width;
             frame.Height = size.Height;
+            if (bitmap is null)
+            {
+                Trace.WriteLine("Error loading dragon.png");
+                Environment.Exit(0);
+            }
             game.Device.DrawImage(bitmap, Bounds, frame, GraphicsUnit.Pixel);
         }
 
