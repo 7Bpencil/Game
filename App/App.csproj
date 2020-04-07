@@ -63,6 +63,14 @@
         <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="Images\dragon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Images\grass.bmp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.

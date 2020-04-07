@@ -56,8 +56,8 @@ namespace App.View
         public bool Game_Init()
         {
             this.Text = "Sprite Drawing Demo";
-            grass = game.LoadBitmap(@"img/grass.bmp");
-            dragonImage = game.LoadBitmap(@"img/dragon.png");
+            grass = (Bitmap)Image.FromFile(@"Images/grass.bmp");
+            dragonImage = (Bitmap)Image.FromFile(@"Images/dragon.png");
             dragonSprite = new Sprite(ref game);
             dragonSprite.Image = dragonImage;
             dragonSprite.Width = 256;
