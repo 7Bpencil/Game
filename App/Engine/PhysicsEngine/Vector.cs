@@ -105,14 +105,9 @@ namespace App.Engine.PhysicsEngine
             return (float) Math.Sqrt(x * x + y * y);
         }
 
-        /// <summary>
-        /// x1 * x2 + y1 * y2
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public float Dot(Vector other)
+        public static float ScalarProduct(Vector first, Vector second)
         {
-            return X * other.X + Y * other.Y;
+            return first.X * second.X + first.Y * second.Y;
         }
 
         /// <summary>

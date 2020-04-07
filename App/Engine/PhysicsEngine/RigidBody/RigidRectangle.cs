@@ -100,7 +100,7 @@
             calculatedVertexesVersion = -1;
         }
 
-        public void RecomputeVertexes()
+        private void RecomputeVertexes()
         {
             vertexes[0] = new Vector(center.X - width / 2, center.Y - height / 2);
             vertexes[1] = new Vector(center.X + width / 2, center.Y - height / 2);
@@ -108,7 +108,7 @@
             vertexes[3] = new Vector(center.X - width / 2, center.Y + height / 2);
         }
 
-        public void RecomputeFaceNormals()
+        private void RecomputeFaceNormals()
         {
             faceNormals[0] = (vertexes[1] - vertexes[2]).Normalize();
             faceNormals[1] = (vertexes[2] - vertexes[3]).Normalize();

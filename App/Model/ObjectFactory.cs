@@ -13,7 +13,7 @@ namespace App.Model
             var positionPlayerCenter = (new Vector(windowWidth, windowHeight)
                                         + new Vector(playerRadius, playerRadius)) / 2;
 
-            player = new RigidCircle(positionPlayerCenter, playerRadius, true);
+            player = new RigidRectangle(positionPlayerCenter, playerRadius, playerRadius, 0, true);
             playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45, false);
             cursor = new RigidCircle(positionPlayerCenter, 5, false);
             return new List<RigidShape>

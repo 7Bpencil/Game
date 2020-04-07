@@ -15,14 +15,23 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    if (sceneObjects[i].CanCollide
-                        && sceneObjects[k].CanCollide
-                        && sceneObjects[i] is RigidCircle 
-                        && sceneObjects[k] is RigidCircle 
+                    //if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
+                    
+                    if (sceneObjects[i] is RigidCircle
+                        && sceneObjects[k] is RigidCircle
                         && AreColliding((RigidCircle) sceneObjects[i], (RigidCircle) sceneObjects[k], collisions))
                     {
                         sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
                     }
+                    
+                    
+                    if (sceneObjects[i] is RigidRectangle 
+                        && sceneObjects[k] is RigidRectangle
+                        && AreColliding((RigidRectangle) sceneObjects[i], (RigidRectangle) sceneObjects[k], collisions))
+                    {
+                        sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
+                    }
+                    
                 }
             }
 
@@ -59,11 +68,46 @@ namespace App.Engine.PhysicsEngine.Collision
             return true;
         }
         
-        private static bool AreColliding(RigidRectangle first, RigidRectangle second)
+        private static bool AreColliding(RigidRectangle first, RigidRectangle second, List<CollisionInfo> collisions)
         {
-            return true;
+            
+            CollisionInfo collision = null;
+            var minCollisionDepth = float.PositiveInfinity;
+            var hasSupportPoint = true;
+            for (var i = 0; i < second.Vertexes.Length && hasSupportPoint; i++)
+            {
+                var collisionInfo = FindSupportPoint(-1 * first.FaceNormals[i], first.Vertexes[i], second);
+                hasSupportPoint = collisionInfo != null;
+            
+                if (hasSupportPoint && collisionInfo.Depth < minCollisionDepth)
+                {
+                    minCollisionDepth = collisionInfo.Depth;
+                    collision = collisionInfo;
+                }
+            }
+            
+            if (hasSupportPoint)
+                collisions.Add(collision);
+            return hasSupportPoint;
         }
-        
+
+        private static CollisionInfo FindSupportPoint(Vector faceNormal, Vector pointOnFace, RigidRectangle rectangle)
+        {
+            var maxSupportDist = 0f;
+            Vector supportPoint = null;
+            foreach (var vertex in rectangle.Vertexes)
+            {
+                var projection = Vector.ScalarProduct(faceNormal, vertex - pointOnFace);
+                if (projection > 0f && projection > maxSupportDist)
+                {
+                    maxSupportDist = projection;
+                    supportPoint = vertex;
+                }
+            }
+
+            return supportPoint == null ? null : new CollisionInfo(maxSupportDist, -1 * faceNormal, supportPoint);
+        }
+
         private static bool AreColliding(RigidRectangle first, RigidCircle second)
         {
             return true;
