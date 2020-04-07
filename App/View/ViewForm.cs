@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine;
@@ -12,7 +11,6 @@ namespace App.View
     public class ViewForm : ContractView
     {
         private ContractCore engineCore;
-        protected override ContractCore EngineCore { get; set; }
         private List<RigidShape> sceneObjects;
         private Pen strokePen;
         private Pen collisionStrokePen;
@@ -53,12 +51,12 @@ namespace App.View
             var collisions = engineCore.GetCollisions();
             
             foreach (var formObject in sceneObjects)
-                if (formObject.IsCollided) RigidBodyRender.Draw(formObject, collisionStrokePen, g);
-                else RigidBodyRender.Draw(formObject, strokePen, g);
+                if (formObject.IsCollided) RigidBodyRenderer.Draw(formObject, collisionStrokePen, g);
+                else RigidBodyRenderer.Draw(formObject, strokePen, g);
 
             if (collisions == null) return;
             foreach (var collision in collisions)
-                CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
+                CollisionInfoRenderer.Draw(collision, collisionInfoStrokePen, g);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

@@ -4,7 +4,7 @@ using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.View.Renderings
 {
-    public static class RigidBodyRender
+    public static class RigidBodyRenderer
     {
         public static void Draw(RigidShape shapeObject, Pen strokePen, Graphics g)
         {

@@ -3,7 +3,7 @@ using App.Engine.PhysicsEngine.Collision;
 
 namespace App.View.Renderings
 {
-    public static class CollisionInfoRender
+    public static class CollisionInfoRenderer
     {
         public static void Draw(CollisionInfo collision, Pen strokePen, Graphics g)
         {
