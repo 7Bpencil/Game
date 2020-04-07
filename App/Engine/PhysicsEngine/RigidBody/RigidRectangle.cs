@@ -13,6 +13,8 @@
             }
         }
 
+        public override float BondRadius => (Center - TopLeft).Length;
+
         public Vector TopLeft
         {
             get
@@ -138,11 +140,6 @@
         public override void Rotate(float delta)
         {
             angle += delta;
-        }
-
-        public override void BoundTest(RigidShape other)
-        {
-            isCollided = true;
         }
     }
 }
