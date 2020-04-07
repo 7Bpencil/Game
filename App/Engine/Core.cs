@@ -19,7 +19,6 @@ namespace App.Engine
         private CollisionDetection collisionDetection;
         private List<CollisionInfo> collisions;
         private RigidShape player;
-        private RigidShape playerCenter;
         private RigidShape cursor;
 
         public Core(ContractView view)
@@ -27,7 +26,7 @@ namespace App.Engine
             this.view = view;
             var objectManager = new ObjectFactory();
             collisionDetection = new CollisionDetection();
-            sceneObjects = objectManager.GetSceneObjects(out player, out playerCenter, out cursor, view.ClientSize.Width, view.ClientSize.Height);
+            sceneObjects = objectManager.GetSceneObjects(out player, out cursor, view.ClientSize.Width, view.ClientSize.Height);
             pressedKeys = new HashSet<Keys>();
         }
 
@@ -56,7 +55,6 @@ namespace App.Engine
             else if (keyPressed == Keys.Right || keyPressed == Keys.D) deltaX = 4;
 
             player.Move(new Vector(deltaX, deltaY));
-            playerCenter.Move(new Vector(deltaX, deltaY));
         }
         
         public override void OnMouseMove(Vector newPosition)

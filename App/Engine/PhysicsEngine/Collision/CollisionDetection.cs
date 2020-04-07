@@ -70,34 +70,40 @@ namespace App.Engine.PhysicsEngine.Collision
         
         private static bool AreColliding(RigidRectangle first, RigidRectangle second, List<CollisionInfo> collisions)
         {
-            
+            var a = FindSmallestSupportPoint(first, second);
+            if (a == null) return false;
+            var b = FindSmallestSupportPoint(second, first);
+            if (b == null) return false;
+            collisions.Add(SmallestCollision(a,b));
+            return true;
+        }
+
+        private static CollisionInfo FindSmallestSupportPoint(RigidRectangle first, RigidRectangle second)
+        {
             CollisionInfo collision = null;
             var minCollisionDepth = float.PositiveInfinity;
             var hasSupportPoint = true;
-            for (var i = 0; i < second.Vertexes.Length && hasSupportPoint; i++)
+            for (var i = 0; i < second.FaceNormals.Length && hasSupportPoint; i++)
             {
                 var collisionInfo = FindSupportPoint(-1 * first.FaceNormals[i], first.Vertexes[i], second);
                 hasSupportPoint = collisionInfo != null;
-            
                 if (hasSupportPoint && collisionInfo.Depth < minCollisionDepth)
                 {
                     minCollisionDepth = collisionInfo.Depth;
                     collision = collisionInfo;
                 }
             }
-            
-            if (hasSupportPoint)
-                collisions.Add(collision);
-            return hasSupportPoint;
-        }
 
-        private static CollisionInfo FindSupportPoint(Vector faceNormal, Vector pointOnFace, RigidRectangle rectangle)
+            return hasSupportPoint ? collision : null;
+        }
+        
+        private static CollisionInfo FindSupportPoint(Vector negativeFaceNormal, Vector pointOnFace, RigidRectangle rectangle)
         {
             var maxSupportDist = 0f;
             Vector supportPoint = null;
             foreach (var vertex in rectangle.Vertexes)
             {
-                var projection = Vector.ScalarProduct(faceNormal, vertex - pointOnFace);
+                var projection = Vector.ScalarProduct(negativeFaceNormal, vertex - pointOnFace);
                 if (projection > 0f && projection > maxSupportDist)
                 {
                     maxSupportDist = projection;
@@ -105,7 +111,14 @@ namespace App.Engine.PhysicsEngine.Collision
                 }
             }
 
-            return supportPoint == null ? null : new CollisionInfo(maxSupportDist, -1 * faceNormal, supportPoint);
+            return supportPoint == null
+                ? null
+                : new CollisionInfo(maxSupportDist, negativeFaceNormal, supportPoint - negativeFaceNormal * maxSupportDist);
+        }
+
+        private static CollisionInfo SmallestCollision(CollisionInfo first, CollisionInfo second)
+        {
+            return first.Depth >= second.Depth ? first : second;
         }
 
         private static bool AreColliding(RigidRectangle first, RigidCircle second)
