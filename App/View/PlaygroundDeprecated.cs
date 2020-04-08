@@ -65,11 +65,7 @@ namespace App.View
             //create tilemap
             tilemap = new tilemapStruct[128 * 128];
             
-            //draw first layer with grass
-            bmpGrass = (Bitmap) Image.FromFile("Images/grass.bmp");
-            gfxSurface = Graphics.FromImage(bmpGrass);
-            gfxSurface.DrawImage(bmpGrass, 0, 0, 800, 600);
-            gfxSurface.Dispose();
+            
 
             //set up level drawing surface
             bmpSurface = new Bitmap(800, 600);
@@ -77,7 +73,20 @@ namespace App.View
             pbSurface.Parent = this;
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
+            
+            //draw first layer with grass
+            bmpGrass = (Bitmap) Image.FromFile("Images/grass.bmp");
+            pbGrass = new PictureBox();
+            pbGrass.Parent = this;
+            pbGrass.BackColor = Color.Black;
+            pbGrass.Dock = DockStyle.Fill;
+            pbGrass.Image = bmpGrass;
+            gfxSurface = Graphics.FromImage(bmpGrass);
+            gfxSurface.DrawImage(bmpGrass, 0, 0, 800, 600);
+
             pbSurface.Image = bmpSurface;
+            
+            
             gfxSurface = Graphics.FromImage(bmpSurface);
 
             //create font
