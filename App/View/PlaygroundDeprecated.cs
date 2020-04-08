@@ -128,7 +128,7 @@ namespace App.View
             {
                 sx = (int) scrollPos.X + x;
                 sy = (int) scrollPos.Y + y;
-                tilenum = tilemap[y * 128 + x].tilenum;
+                tilenum = tilemap[sy * 128 + sx].tilenum;
                 drawTileNumber(x, y, tilenum);
             }
             string text = "Scroll " + scrollPos.ToString();
