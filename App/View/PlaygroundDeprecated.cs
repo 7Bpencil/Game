@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml;
 using App.View.Renderings;
 
 namespace App.View
@@ -11,115 +12,138 @@ namespace App.View
     public partial class PlaygroundDeprecated : Form
     {
         private System.ComponentModel.IContainer components = null;
-        private bool gameOver = false;
-        private int startTime = 0;
-        private int currentTime = 0;
-        public Game game;
-        public Bitmap dragonImage;
-        public Sprite dragonSprite;
-        public Bitmap grass;
-        public int frameCount = 0;
-        public int frameTimer = 0;
-        public float frameRate = 0;
-        public PointF velocity;
-        public int direction = 2;
-            
+
+        public struct tilemapStruct
+        {
+            public int tilenum;
+            public string data1;
+            public bool collidable;
+        }
+
+        const int COLUMNS = 5; //Why only 5?
+
+        //only for surface
+        private Bitmap bmpTiles;
+        private Bitmap bmpSurface;
+        private PictureBox pbSurface;
+        private Graphics gfxSurface;
+        private Font fontArial;
+        private tilemapStruct[] tilemap;
 
         public PlaygroundDeprecated()
         {
-            this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.ClientSize = new System.Drawing.Size(824, 582);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Load += new System.EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Playground_FormClosed);
-            this.KeyDown += new KeyEventHandler(this.PlaygroundDeprecated_KeyDown);
+            this.KeyUp += new KeyEventHandler(this.PlaygroundDeprecated_KeyUp);
             this.ResumeLayout(false);
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
         private void PlaygroundDeprecated_Load(object sender, EventArgs e)
         {
-            Main();
-        }
+            this.Text = "Level Viewer";
+            this.Size = new Size(800 + 16, 600 + 38);
 
-        private void PlaygroundDeprecated_KeyDown(object sender, KeyEventArgs e)
-        {
-            Game_KeyPressed(e.KeyCode);
-        }
+            //create tilemap
+            tilemap = new tilemapStruct[128 * 128];
 
-        public bool Game_Init()
-        {
-            this.Text = "Sprite Drawing Demo";
-            grass = (Bitmap)Image.FromFile(@"Images/grass.bmp");
-            dragonImage = (Bitmap)Image.FromFile(@"Images/dragon.png");
-            dragonSprite = new Sprite(ref game);
-            dragonSprite.Image = dragonImage;
-            dragonSprite.Width = 256;
-            dragonSprite.Height = 256;
-            dragonSprite.Columns = 8;
-            dragonSprite.TotalFrames = 64;
-            dragonSprite.AnimationRate = 20;
-            dragonSprite.X = 250;
-            dragonSprite.Y = 150;
-            return true;
-        }
+            //set up level drawing surface
+            bmpSurface = new Bitmap(800, 600);
+            pbSurface = new PictureBox();
+            pbSurface.Parent = this;
+            pbSurface.BackColor = Color.Black;
+            pbSurface.Dock = DockStyle.Fill;
+            pbSurface.Image = bmpSurface;
+            gfxSurface = Graphics.FromImage(bmpSurface);
 
-        public void Game_Update(int time)
-        {
+            //create font
+            fontArial = new Font("Arial Narrow", 8);
+
+            //load tiles bitmap
+            bmpTiles = new Bitmap("Images/palette.bmp");
             
+            //load the tilemap
+            loadTilemapFile("Levels/level1.level");
+
+            drawTilemap();
         }
 
-        public void Game_Draw()
+        private void loadTilemapFile(string filename)
         {
-            //draw background
-            game.DrawBitmap(ref grass, 0, 0, 800, 600);
-
-            switch (direction)
+            try
             {
-                case 0: velocity = new Point(0, -1);
-                    break;
-                case 2: velocity = new Point(1, 0);
-                    break;
-                case 4: velocity = new Point(0, 1);
-                    break;
-                case 6: velocity = new Point(-1, 0);
-                    break;
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filename);
+                XmlNodeList nodelist = doc.GetElementsByTagName("tiles");
+                foreach (var node in nodelist)
+                {
+                    XmlElement element = (XmlElement) node;
+                    int index = 0;
+                    int value = 0;
+                    string data1 = "";
+                    bool collidable = false;
+                    
+                    //read tile index #
+                    index = Convert.ToInt32(element.GetElementsByTagName("tile")[0].InnerText);
+                    
+                    //read tilenum
+                    value = Convert.ToInt32(element.GetElementsByTagName(
+                        "value")[0].InnerText);
+                    
+                    //read data1
+                    data1 = Convert.ToString(element.GetElementsByTagName(
+                        "data1")[0].InnerText);
+                    
+                    //read collidable
+                    collidable = Convert.ToBoolean(element.GetElementsByTagName(
+                        "collidable")[0].InnerText);
+
+                    tilemap[index].tilenum = value;
+                    tilemap[index].data1 = data1;
+                    tilemap[index].collidable = collidable;
+                }
             }
-
-            dragonSprite.X += velocity.X;
-            dragonSprite.Y += velocity.Y;
-
-            dragonSprite.Animate(direction * 8 + 1, direction * 8 + 7);
-            dragonSprite.Draw();
-            
-            game.Print(0, 0, "press any key to change direction");
+            catch (Exception es)
+            {
+                MessageBox.Show(es.Message);
+            }
         }
 
-        public void Game_End()
+        private void drawTilemap()
         {
-            dragonImage = null;
-            dragonSprite = null;
-            grass = null;
+            for (int x = 0; x < 25; ++x)
+            for (int y = 0; y < 19; ++y)
+            {
+                drawTileNumber(x, y, tilemap[y * 128 + x].tilenum);
+            }
+            
+        }
+
+        public void drawTileNumber(int x, int y, int tile)
+        {
+            //draw tile
+            int sx = (tile % COLUMNS) * 33;//columns it mean columns with tiles in palette
+            int sy = (tile / COLUMNS) * 33;//
+            Rectangle src = new Rectangle(sx, sy, 32, 32);
+            int dx = x * 32;
+            int dy = y * 32;
+            gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
+            
+            //save changes
+            pbSurface.Image = bmpSurface;
         }
         
-        public void Game_KeyPressed(System.Windows.Forms.Keys key)
-        {
-            switch (key)
-            {
-                case Keys.Escape: Shutdown(); break;
-                case Keys.Up: direction = 0; break;
-                case Keys.Right: direction = 2; break;
-                case Keys.Down: direction = 4; break;
-                case Keys.Left: direction = 6; break;
-            }
-        }
-
         public Bitmap LoadBitmap(string filename)
         {
             Bitmap bmp = null;
@@ -127,58 +151,25 @@ namespace App.View
             {
                 bmp = new Bitmap(filename);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+            }
+
             return bmp;
         }
-        
-        
+
+
         private void Playground_FormClosed(object sender, EventArgs e)
         {
-            Shutdown();
+            bmpSurface.Dispose();
+            pbSurface.Dispose();
+            gfxSurface.Dispose();
         }
 
-        public void Shutdown()
+        private void PlaygroundDeprecated_KeyUp(object sender, KeyEventArgs e)
         {
-            gameOver = true;
-        }
-
-        public void Main()
-        {
-            Form form = (Form) this;
-            game = new Game(ref form, width: 800, height: 600);
-            Game_Init();
-            while (!gameOver)
-            {
-                //update time
-                currentTime = Environment.TickCount;
-                
-                //let gameplay code update
-                Game_Update(time: currentTime - startTime);
-                
-                //refresh at 60 fps
-                if (currentTime > startTime + 16)
-                {
-                    //update time
-                    startTime = currentTime;
-                    
-                    //let gameplay code draw
-                    Game_Draw();
-                    
-                    //give the form some cycles
-                    Application.DoEvents();
-                    game.Update();
-                }
-
-                frameCount += 1;
-                if (currentTime > frameTimer + 1000)
-                {
-                    frameTimer = currentTime;
-                    frameRate = frameCount;
-                    frameCount = 0;
-                }
-            }
-            Game_End();
-            Application.Exit();
+            if (e.KeyCode == Keys.Escape)
+                Application.Exit();
         }
     }
 }
