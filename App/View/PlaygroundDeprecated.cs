@@ -20,6 +20,12 @@ namespace App.View
             public bool collidable;
         }
 
+        public struct keyStates
+        {
+            public bool up, down, left, right;
+        }
+        
+
         const int COLUMNS = 5; //Why only 5?
 
         //only for surface
@@ -30,6 +36,9 @@ namespace App.View
         private Font fontArial;
         private tilemapStruct[] tilemap;
         private PointF scrollPos = new PointF(0, 0);
+        private PointF oldScrollPos = new PointF(-1, -1);
+        private keyStates keyState;
+        private Timer timer1;
 
         public PlaygroundDeprecated()
         {
@@ -38,6 +47,7 @@ namespace App.View
             this.Load += new System.EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Playground_FormClosed);
             this.KeyUp += new KeyEventHandler(this.PlaygroundDeprecated_KeyUp);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PlaygroundDeprecated_KeyDown);
             this.ResumeLayout(false);
         }
 
@@ -52,7 +62,7 @@ namespace App.View
 
         private void PlaygroundDeprecated_Load(object sender, EventArgs e)
         {
-            this.Text = "Level Scroller";
+            this.Text = "Smooth Scroller";
             this.Size = new Size(800 + 16, 600 + 38);
 
             //create tilemap
@@ -76,7 +86,39 @@ namespace App.View
             //load the tilemap
             loadTilemapFile("Levels/level1.level");
 
+            //create the timer
+            timer1 = new Timer();
+            timer1.Interval = 20;
+            timer1.Enabled = true;
+            timer1.Tick += new EventHandler(timer1_tick);
+        }
+
+        private void timer1_tick(object sender, EventArgs e)
+        {
+            if (keyState.up)
+            {
+                scrollPos.Y -= 1;
+                if (scrollPos.Y < 0) scrollPos.Y = 0;
+            }
+            if (keyState.down)
+            {
+                scrollPos.Y += 1;
+                if (scrollPos.Y > 127 - 19) scrollPos.Y = 127 - 19;
+            }
+            if (keyState.left)
+            {
+                scrollPos.X -= 1;
+                if (scrollPos.X < 0) scrollPos.X = 0;
+            }
+            if (keyState.right)
+            {
+                scrollPos.X += 1;
+                if (scrollPos.X > 127 - 25) scrollPos.X = 127 - 25;
+            }
+            
             drawTilemap();
+            string text = "Scroll " + scrollPos.ToString();
+            gfxSurface.DrawString(text, fontArial, Brushes.White, 10, 10);
         }
 
         private void loadTilemapFile(string filename)
@@ -181,30 +223,48 @@ namespace App.View
             
                 case Keys.Up:
                 case Keys.W:
-                    scrollPos.Y -= 1;
-                    if (scrollPos.Y < 0) scrollPos.Y = 0;
-                    drawTilemap();
+                    keyState.up = false;
                     break;
 
                 case Keys.Down:
                 case Keys.S:
-                    scrollPos.Y += 1;
-                    if (scrollPos.Y > 127 - 19) scrollPos.Y = 127 - 19;
-                    drawTilemap();
+                    keyState.down = false;
                     break;
 
                 case Keys.Left:
                 case Keys.A:
-                    scrollPos.X -= 1;
-                    if (scrollPos.X < 0) scrollPos.X = 0;
-                    drawTilemap();
+                    keyState.left = false;
                     break;
 
                 case Keys.Right:
                 case Keys.D:
-                    scrollPos.X += 1;
-                    if (scrollPos.X > 127 - 25) scrollPos.X = 127 - 25;
-                    drawTilemap();
+                    keyState.right = false;
+                    break;
+            }
+        }
+
+        private void PlaygroundDeprecated_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                case Keys.W:
+                    keyState.up = true;
+                    break;
+
+                case Keys.Down:
+                case Keys.S:
+                    keyState.down = true;
+                    break;
+
+                case Keys.Left:
+                case Keys.A:
+                    keyState.left = true;
+                    break;
+
+                case Keys.Right:
+                case Keys.D:
+                    keyState.right = true;
                     break;
             }
         }
