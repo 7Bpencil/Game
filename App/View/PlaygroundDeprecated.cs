@@ -21,7 +21,8 @@ namespace App.View
             public bool collidable;
         }
 
-        const int COLUMNS = 5; //Why only 5?
+        const int COLUMNS = 9; //Why only 5?
+        private const int ROWS = 16;
 
         //only for surface
         private Bitmap bmpTiles;
@@ -133,7 +134,7 @@ namespace App.View
                     collidable = Convert.ToBoolean(element.GetElementsByTagName(
                         "collidable")[0].InnerText);
 
-                    tilemap[index].tilenum = 129;
+                    tilemap[index].tilenum = 113;
                     tilemap[index].data1 = data1;
                     tilemap[index].collidable = collidable;
                 }
@@ -157,8 +158,8 @@ namespace App.View
         public void drawTileNumber(int x, int y, int tile)
         {
             //draw tile
-            int sx = (tile % COLUMNS) * 33;//columns it mean columns with tiles in palette
-            int sy = (tile / COLUMNS) * 33;//
+            int sx = (tile % COLUMNS) * ROWS;//columns it mean columns with tiles in palette
+            int sy = (tile / COLUMNS) * ROWS;//
             Rectangle src = new Rectangle(sx, sy, palette_size.Width, palette_size.Height);
             int dx = x * palette_size.Width;
             int dy = y * palette_size.Height;
