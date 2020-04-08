@@ -13,16 +13,16 @@ namespace App.Engine
     public class Core : ContractCore
     {
         private ContractView view;
-        private keyStates keyState;
+        private KeyStates keyState;
         private List<RigidShape> sceneObjects;
         private CollisionDetection collisionDetection;
         private List<CollisionInfo> collisions;
         private RigidShape player;
         private RigidShape cursor;
         
-        class keyStates
+        class KeyStates
         {
-            public bool up, down, left, right;
+            public bool Up, Down, Left, Right;
         }
 
         public Core(ContractView view)
@@ -31,7 +31,7 @@ namespace App.Engine
             var objectManager = new ObjectFactory();
             collisionDetection = new CollisionDetection();
             sceneObjects = objectManager.GetSceneObjects(out player, out cursor, view.ClientSize.Width, view.ClientSize.Height);
-            keyState = new keyStates();
+            keyState = new KeyStates();
         }
 
         public override void GameLoop(object sender, EventArgs args)
@@ -53,10 +53,10 @@ namespace App.Engine
             var deltaX = 0;
             var deltaY = 0;
 
-            if (keyState.right) deltaX += 4;
-            if (keyState.up) deltaY -= 4;
-            if (keyState.left) deltaX -= 4;
-            if (keyState.down) deltaY += 4;
+            if (keyState.Right) deltaX += 4;
+            if (keyState.Up) deltaY -= 4;
+            if (keyState.Left) deltaX -= 4;
+            if (keyState.Down) deltaY += 4;
 
             player.Move(new Vector(deltaX, deltaY));
         }
@@ -72,22 +72,22 @@ namespace App.Engine
             {
                 case Keys.Up:
                 case Keys.W:
-                    keyState.up = true;
+                    keyState.Up = true;
                     break;
 
                 case Keys.Down:
                 case Keys.S:
-                    keyState.down = true;
+                    keyState.Down = true;
                     break;
 
                 case Keys.Left:
                 case Keys.A:
-                    keyState.left = true;
+                    keyState.Left = true;
                     break;
 
                 case Keys.Right:
                 case Keys.D:
-                    keyState.right = true;
+                    keyState.Right = true;
                     break;
             }
         }
@@ -102,22 +102,22 @@ namespace App.Engine
 
                 case Keys.Up:
                 case Keys.W:
-                    keyState.up = false;
+                    keyState.Up = false;
                     break;
 
                 case Keys.Down:
                 case Keys.S:
-                    keyState.down = false;
+                    keyState.Down = false;
                     break;
 
                 case Keys.Left:
                 case Keys.A:
-                    keyState.left = false;
+                    keyState.Left = false;
                     break;
 
                 case Keys.Right:
                 case Keys.D:
-                    keyState.right = false;
+                    keyState.Right = false;
                     break;
             }
         }
