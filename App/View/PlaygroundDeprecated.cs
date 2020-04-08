@@ -29,10 +29,11 @@ namespace App.View
         private Graphics gfxSurface;
         private Font fontArial;
         private tilemapStruct[] tilemap;
+        private PointF scrollPos = new PointF(0, 0);
 
         public PlaygroundDeprecated()
         {
-            this.ClientSize = new System.Drawing.Size(824, 582);
+            this.ClientSize = new System.Drawing.Size(284, 262);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Load += new System.EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Playground_FormClosed);
@@ -46,13 +47,12 @@ namespace App.View
             {
                 components.Dispose();
             }
-
             base.Dispose(disposing);
         }
 
         private void PlaygroundDeprecated_Load(object sender, EventArgs e)
         {
-            this.Text = "Level Viewer";
+            this.Text = "Level Scroller";
             this.Size = new Size(800 + 16, 600 + 38);
 
             //create tilemap
@@ -68,7 +68,7 @@ namespace App.View
             gfxSurface = Graphics.FromImage(bmpSurface);
 
             //create font
-            fontArial = new Font("Arial Narrow", 8);
+            fontArial = new Font("Arial Narrow", 18);
 
             //load tiles bitmap
             bmpTiles = new Bitmap("Images/palette.bmp");
@@ -122,12 +122,17 @@ namespace App.View
 
         private void drawTilemap()
         {
+            int tilenum, sx, sy;
             for (int x = 0; x < 25; ++x)
             for (int y = 0; y < 19; ++y)
             {
-                drawTileNumber(x, y, tilemap[y * 128 + x].tilenum);
+                sx = (int) scrollPos.X + x;
+                sy = (int) scrollPos.Y + y;
+                tilenum = tilemap[y * 128 + x].tilenum;
+                drawTileNumber(x, y, tilenum);
             }
-            
+            string text = "Scroll " + scrollPos.ToString();
+            gfxSurface.DrawString(text, fontArial, Brushes.White, 10, 10);
         }
 
         public void drawTileNumber(int x, int y, int tile)
@@ -168,8 +173,40 @@ namespace App.View
 
         private void PlaygroundDeprecated_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
-                Application.Exit();
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
+                    Application.Exit();
+                    break;
+            
+                case Keys.Up:
+                case Keys.W:
+                    scrollPos.Y -= 1;
+                    if (scrollPos.Y < 0) scrollPos.Y = 0;
+                    drawTilemap();
+                    break;
+
+                case Keys.Down:
+                case Keys.S:
+                    scrollPos.Y += 1;
+                    if (scrollPos.Y > 127 - 19) scrollPos.Y = 127 - 19;
+                    drawTilemap();
+                    break;
+
+                case Keys.Left:
+                case Keys.A:
+                    scrollPos.X -= 1;
+                    if (scrollPos.X < 0) scrollPos.X = 0;
+                    drawTilemap();
+                    break;
+
+                case Keys.Right:
+                case Keys.D:
+                    scrollPos.X += 1;
+                    if (scrollPos.X > 127 - 25) scrollPos.X = 127 - 25;
+                    drawTilemap();
+                    break;
+            }
         }
     }
 }
