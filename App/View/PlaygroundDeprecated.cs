@@ -81,9 +81,11 @@ namespace App.View
             pbGrass.BackColor = Color.Black;
             pbGrass.Dock = DockStyle.Fill;
             pbGrass.Image = bmpGrass;
-            gfxSurface = Graphics.FromImage(bmpGrass);
-            gfxSurface.DrawImage(bmpGrass, 0, 0, 800, 600);
+            gfxGrass = Graphics.FromImage(bmpGrass);
+            gfxGrass.DrawImage(bmpGrass, 0, 0, 800, 600);
 
+            pbGrass.Image = bmpGrass;
+            
             pbSurface.Image = bmpSurface;
             
             
