@@ -91,14 +91,12 @@ namespace App.View
             var level = LevelParser.ParseLevel(levelName);
             foreach (var layer in level.Layers)
             {
-                var k = 0;
                 var tiles = layer.Tiles;
                 for (int i = 0; i < 30; ++i)
                 {
                     for (int j = 0; j < 30; ++j)
                     {
-                        drawTileNumber(j, i, tiles[k]);//i * 30 + j
-                        ++k;
+                        drawTileNumber(j, i, tiles[i * 30 + j] - 1);
                     }
                 }
             }
