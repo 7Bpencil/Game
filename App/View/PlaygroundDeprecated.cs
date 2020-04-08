@@ -206,7 +206,7 @@ namespace App.View
             Rectangle src = new Rectangle(sx, sy, 32, 32);
             int dx = x * 32;
             int dy = y * 32;
-            gfxScrollBuffer.DrawImage(bmpTiles, dx, dx, src, GraphicsUnit.Pixel);
+            gfxScrollBuffer.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
         }
 
         public void drawScrollBuffer()
