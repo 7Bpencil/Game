@@ -147,8 +147,8 @@ namespace App.View
 
         private void drawTilemap()
         {
-            for (int x = 0; x < 25; ++x)
-            for (int y = 0; y < 19; ++y)
+            for (int x = 0; x < 30; ++x)
+            for (int y = 0; y < 30; ++y)
             {
                 drawTileNumber(x, y, tilemap[y * 128 + x].tilenum);
             }
