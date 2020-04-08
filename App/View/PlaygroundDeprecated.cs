@@ -30,8 +30,7 @@ namespace App.View
         private PictureBox pbSurface;
         private Graphics gfxSurface;
         private Font fontArial;
-        private tilemapStruct[] tilemap;
-        
+
         //only for grass
         private Bitmap bmpGrass;
         private PictureBox pbGrass;
@@ -61,12 +60,7 @@ namespace App.View
         private void PlaygroundDeprecated_Load(object sender, EventArgs e)
         {
             this.Text = "Level Viewer";
-            this.Size = new Size(800 + 16, 600 + 38);
-
-            //create tilemap
-            tilemap = new tilemapStruct[128 * 128];
-            
-            
+            this.Size = new Size(800, 600);
 
             //set up level drawing surface
             bmpSurface = new Bitmap(800, 600);
@@ -83,11 +77,10 @@ namespace App.View
             pbGrass.Dock = DockStyle.Fill;
             pbGrass.Image = bmpGrass;
             gfxGrass = Graphics.FromImage(bmpGrass);
-            gfxGrass.DrawImage(bmpGrass, 0, 0, 800, 600);
-
+            gfxGrass.DrawImage(bmpGrass, 0, 0, 800, 600); 
             pbGrass.Image = bmpGrass;
             
-            pbSurface.Image = bmpSurface;
+            /*pbSurface.Image = bmpSurface;
             
             
             gfxSurface = Graphics.FromImage(bmpSurface);
@@ -96,64 +89,10 @@ namespace App.View
             fontArial = new Font("Arial Narrow", 8);
 
             //load tiles bitmap
-            bmpTiles = new Bitmap("Images/sprite_map.png");
-            
-            //load the tilemap
-            loadTilemapFile("Levels/level1.level");
-
-            drawTilemap();
-        }
-
-        private void loadTilemapFile(string filename)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(filename);
-                XmlNodeList nodelist = doc.GetElementsByTagName("tiles");
-                foreach (var node in nodelist)
-                {
-                    XmlElement element = (XmlElement) node;
-                    int index = 0;
-                    int value = 0;
-                    string data1 = "";
-                    bool collidable = false;
-                    
-                    //read tile index #
-                    index = Convert.ToInt32(element.GetElementsByTagName("tile")[0].InnerText);
-                    
-                    //read tilenum
-                    value = Convert.ToInt32(element.GetElementsByTagName(
-                        "value")[0].InnerText);
-                    
-                    //read data1
-                    data1 = Convert.ToString(element.GetElementsByTagName(
-                        "data1")[0].InnerText);
-                    
-                    //read collidable
-                    collidable = Convert.ToBoolean(element.GetElementsByTagName(
-                        "collidable")[0].InnerText);
-
-                    tilemap[index].tilenum = 113;
-                    tilemap[index].data1 = data1;
-                    tilemap[index].collidable = collidable;
-                }
-            }
-            catch (Exception es)
-            {
-                MessageBox.Show(es.Message);
-            }
-        }
-
-        private void drawTilemap()
-        {
-            for (int x = 0; x < 30; ++x)
-            for (int y = 0; y < 30; ++y)
-            {
-                drawTileNumber(x, y, tilemap[y * 128 + x].tilenum);
-            }
+            bmpTiles = new Bitmap("Images/sprite_map.png");*/
             
         }
+        
 
         public void drawTileNumber(int x, int y, int tile)
         {
