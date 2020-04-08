@@ -12,6 +12,7 @@ namespace App.View
     public partial class PlaygroundDeprecated : Form
     {
         private System.ComponentModel.IContainer components = null;
+        private Size palette_size = new Size(64, 64);
 
         public struct tilemapStruct
         {
@@ -71,7 +72,7 @@ namespace App.View
             fontArial = new Font("Arial Narrow", 8);
 
             //load tiles bitmap
-            bmpTiles = new Bitmap("Images/palette.bmp");
+            bmpTiles = new Bitmap("Images/sprite_map.png");
             
             //load the tilemap
             loadTilemapFile("Levels/level1.level");
@@ -109,7 +110,7 @@ namespace App.View
                     collidable = Convert.ToBoolean(element.GetElementsByTagName(
                         "collidable")[0].InnerText);
 
-                    tilemap[index].tilenum = value;
+                    tilemap[index].tilenum = 1;
                     tilemap[index].data1 = data1;
                     tilemap[index].collidable = collidable;
                 }
@@ -135,9 +136,9 @@ namespace App.View
             //draw tile
             int sx = (tile % COLUMNS) * 33;//columns it mean columns with tiles in palette
             int sy = (tile / COLUMNS) * 33;//
-            Rectangle src = new Rectangle(sx, sy, 32, 32);
-            int dx = x * 32;
-            int dy = y * 32;
+            Rectangle src = new Rectangle(sx, sy, palette_size.Width, palette_size.Height);
+            int dx = x * palette_size.Width;
+            int dy = y * palette_size.Height;
             gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
             
             //save changes

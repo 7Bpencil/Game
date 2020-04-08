@@ -73,6 +73,9 @@
       <Content Include="Images\palette.bmp">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="Images\sprite_map.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Levels\level1.level">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
