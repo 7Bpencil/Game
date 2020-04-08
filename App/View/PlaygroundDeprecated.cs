@@ -30,6 +30,12 @@ namespace App.View
         private Graphics gfxSurface;
         private Font fontArial;
         private tilemapStruct[] tilemap;
+        
+        //only for grass
+        private Bitmap bmpGrass;
+        private PictureBox pbGrass;
+        private Graphics gfxGrass;
+        
 
         public PlaygroundDeprecated()
         {
@@ -58,6 +64,12 @@ namespace App.View
 
             //create tilemap
             tilemap = new tilemapStruct[128 * 128];
+            
+            //draw first layer with grass
+            bmpGrass = (Bitmap) Image.FromFile("Images/grass.bmp");
+            gfxSurface = Graphics.FromImage(bmpGrass);
+            gfxSurface.DrawImage(bmpGrass, 0, 0, 800, 600);
+            gfxSurface.Dispose();
 
             //set up level drawing surface
             bmpSurface = new Bitmap(800, 600);
@@ -110,7 +122,7 @@ namespace App.View
                     collidable = Convert.ToBoolean(element.GetElementsByTagName(
                         "collidable")[0].InnerText);
 
-                    tilemap[index].tilenum = 1;
+                    tilemap[index].tilenum = 129;
                     tilemap[index].data1 = data1;
                     tilemap[index].collidable = collidable;
                 }
