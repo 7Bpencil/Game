@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using App.Model.Parser;
 using App.View.Renderings;
 
 namespace App.View
@@ -39,7 +40,7 @@ namespace App.View
 
         public PlaygroundDeprecated()
         {
-            this.ClientSize = new System.Drawing.Size(824, 582);
+            this.ClientSize = new System.Drawing.Size(1920, 1920);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Load += new System.EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Playground_FormClosed);
@@ -60,10 +61,10 @@ namespace App.View
         private void PlaygroundDeprecated_Load(object sender, EventArgs e)
         {
             this.Text = "Level Viewer";
-            this.Size = new Size(800, 600);
+            this.Size = new Size(1920, 1920);
 
             //set up level drawing surface
-            bmpSurface = new Bitmap(800, 600);
+            bmpSurface = new Bitmap(1920, 1920);
             pbSurface = new PictureBox();
             pbSurface.Parent = this;
             pbSurface.BackColor = Color.Black;
@@ -86,18 +87,37 @@ namespace App.View
             //load tiles bitmap
             bmpTiles = new Bitmap("Images/sprite_map.png");
             
+            var levelName = "Levels/secondTry.tmx";
+            var level = LevelParser.ParseLevel(levelName);
+            foreach (var layer in level.Layers)
+            {
+                var k = 0;
+                var tiles = layer.Tiles;
+                for (int i = 0; i < 30; ++i)
+                {
+                    for (int j = 0; j < 30; ++j)
+                    {
+                        drawTileNumber(j, i, tiles[k]);//i * 30 + j
+                        ++k;
+                    }
+                }
+            }
+            
+            
         }
         
 
         public void drawTileNumber(int x, int y, int tile)
         {
             //draw tile
-            int sx = (tile % COLUMNS) * ROWS;//columns it mean columns with tiles in palette
-            int sy = (tile / COLUMNS) * ROWS;//
+            int sx = (tile % COLUMNS) * palette_size.Width;//columns it mean columns with tiles in palette
+            int sy = (tile / COLUMNS) * palette_size.Height;//
             Rectangle src = new Rectangle(sx, sy, palette_size.Width, palette_size.Height);
             int dx = x * palette_size.Width;
             int dy = y * palette_size.Height;
             gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
+            
+            
             
             //save changes
             pbSurface.Image = bmpSurface;

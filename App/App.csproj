@@ -51,6 +51,10 @@
         <Compile Include="Model\IEntity.cs" />
         <Compile Include="Model\ContractObjectFactory.cs" />
         <Compile Include="Model\ObjectFactory.cs" />
+        <Compile Include="Model\Parser\Layer.cs" />
+        <Compile Include="Model\Parser\Level.cs" />
+        <Compile Include="Model\Parser\LevelParser.cs" />
+        <Compile Include="Model\Parser\TileSet.cs" />
         <Compile Include="Model\Player.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +81,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Levels\level1.level">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Levels\secondTry.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
