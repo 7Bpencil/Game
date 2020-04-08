@@ -69,27 +69,22 @@ namespace App.View
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
             
-            //draw first layer with grass
-            bmpGrass = (Bitmap) Image.FromFile("Images/grass.bmp");
-            pbGrass = new PictureBox();
-            pbGrass.Parent = this;
-            pbGrass.BackColor = Color.Black;
-            pbGrass.Dock = DockStyle.Fill;
-            pbGrass.Image = bmpGrass;
-            gfxGrass = Graphics.FromImage(bmpGrass);
-            gfxGrass.DrawImage(bmpGrass, 0, 0, 800, 600); 
-            pbGrass.Image = bmpGrass;
             
-            /*pbSurface.Image = bmpSurface;
+            pbSurface.Image = bmpSurface;
             
             
             gfxSurface = Graphics.FromImage(bmpSurface);
+            
+            //draw first layer with grass
+            bmpGrass = (Bitmap) Image.FromFile("Images/grass.bmp");
+            gfxSurface.DrawImage(bmpGrass, 0, 0);
+            
 
             //create font
             fontArial = new Font("Arial Narrow", 8);
 
             //load tiles bitmap
-            bmpTiles = new Bitmap("Images/sprite_map.png");*/
+            bmpTiles = new Bitmap("Images/sprite_map.png");
             
         }
         
