@@ -16,8 +16,6 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private Vector scrollPosition;
         
-        private Bitmap bmpSurface;
-        private Graphics gfxSurface;
         private Bitmap bmpScrollBuffer;
         private Graphics gfxScrollBuffer;
         private PictureBox pbSurface;
@@ -41,16 +39,17 @@ namespace App.View
             keyState = new KeyStates();
             scrollPosition = Vector.ZeroVector;
             
-            bmpSurface = new Bitmap(sceneSizeInTiles.Width * tileSize, sceneSizeInTiles.Height * tileSize);
-            gfxSurface = Graphics.FromImage(bmpSurface);
             bmpScrollBuffer = new Bitmap(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
             gfxScrollBuffer = Graphics.FromImage(bmpScrollBuffer);
             
+            // that sections looks suspicious
             pbSurface = new PictureBox();
             pbSurface.Parent = this;
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
-            pbSurface.Image = bmpSurface;
+            pbSurface.Image = bmpScrollBuffer;
+            
+            UpdateScrollBuffer();
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -109,7 +108,7 @@ namespace App.View
                         DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
-            pbSurface.Image = bmpSurface;
+            pbSurface.Image = bmpScrollBuffer;
         }
         
         public void DrawTile(int x, int y, int tile)
@@ -120,7 +119,7 @@ namespace App.View
             
             var src = new Rectangle(sx, sy, tileSize, tileSize);
 
-            gfxSurface.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
+            gfxScrollBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
