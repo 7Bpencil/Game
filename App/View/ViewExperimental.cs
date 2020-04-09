@@ -30,7 +30,10 @@ namespace App.View
         
         public ViewExperimental()
         {
-            SetUpView();
+            cameraSizeInTiles = new Size(16, 9);
+            ClientSize = new Size(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
+            Text = "New Game";
+            
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
@@ -54,15 +57,7 @@ namespace App.View
             timer.Tick += TimerTick;
             timer.Start();
         }
-        
-        private void SetUpView()
-        {
-            cameraSizeInTiles = new Size(16, 9);
-            ClientSize = new Size(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
-            Text = "New Game";
-            
-        }
-        
+
         private void TimerTick(object sender, EventArgs e)
         {
             var delta = Vector.ZeroVector;
@@ -114,6 +109,7 @@ namespace App.View
                         DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
+            pbSurface.Image = bmpSurface;
         }
         
         public void DrawTile(int x, int y, int tile)
@@ -125,7 +121,6 @@ namespace App.View
             var src = new Rectangle(sx, sy, tileSize, tileSize);
 
             gfxSurface.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
-            pbSurface.Image = bmpSurface;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
