@@ -42,7 +42,7 @@ namespace App.View
             bitmap = null;
             alive = true;
             columns = 1;
-            totalFrames = 1;
+            totalFrames = 1;//?
             currentFrame = 0;
             animationDir = AnimateDir.FORWARD;
             animationWrap = AnimateWrap.WRAP;
