@@ -13,6 +13,8 @@
             }
         }
 
+        public override float BondRadius => (Center - TopLeft).Length;
+
         public Vector TopLeft
         {
             get
@@ -69,10 +71,12 @@
         }
         
         private bool canCollide;
-        public override bool CanCollide { get; set; }
+        public override bool CanCollide
+        { get => canCollide; set => canCollide = value; }
         
         private bool isCollided;
-        public override bool IsCollided { get => isCollided; set => isCollided = value; }
+        public override bool IsCollided
+        { get => isCollided; set => isCollided = value; }
 
         private long vertexesVersion;
         private long calculatedVertexesVersion;
@@ -100,7 +104,7 @@
             calculatedVertexesVersion = -1;
         }
 
-        public void RecomputeVertexes()
+        private void RecomputeVertexes()
         {
             vertexes[0] = new Vector(center.X - width / 2, center.Y - height / 2);
             vertexes[1] = new Vector(center.X + width / 2, center.Y - height / 2);
@@ -108,7 +112,7 @@
             vertexes[3] = new Vector(center.X - width / 2, center.Y + height / 2);
         }
 
-        public void RecomputeFaceNormals()
+        private void RecomputeFaceNormals()
         {
             faceNormals[0] = (vertexes[1] - vertexes[2]).Normalize();
             faceNormals[1] = (vertexes[2] - vertexes[3]).Normalize();
@@ -136,11 +140,6 @@
         public override void Rotate(float delta)
         {
             angle += delta;
-        }
-
-        public override void BoundTest(RigidShape other)
-        {
-            isCollided = true;
         }
     }
 }

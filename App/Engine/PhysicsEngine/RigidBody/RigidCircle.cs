@@ -17,8 +17,11 @@
         { get => canCollide; set => canCollide = value; }
 
         private bool isCollided;
-        public override bool IsCollided { get => isCollided; set => isCollided = value; }
-        
+        public override bool IsCollided
+        { get => isCollided; set => isCollided = value; }
+
+        public override float BondRadius => radius;
+
 
         /// <summary>
         /// 
@@ -44,11 +47,6 @@
 
         public override void Rotate(float delta) // Because it's meaningless
         {
-        }
-
-        public override void BoundTest(RigidShape other)
-        {
-            isCollided = true;
         }
     }
 }

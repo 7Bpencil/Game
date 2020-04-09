@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
 using App.Engine.PhysicsEngine;
@@ -12,7 +12,6 @@ namespace App.View
     public class ViewForm : ContractView
     {
         private ContractCore engineCore;
-        protected override ContractCore EngineCore { get; set; }
         private List<RigidShape> sceneObjects;
         private Pen strokePen;
         private Pen collisionStrokePen;
@@ -49,19 +48,16 @@ namespace App.View
         
         protected override void OnPaint(PaintEventArgs e)
         {
-            var g = e.Graphics; // TODO: move it to somewhere else
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             var collisions = engineCore.GetCollisions();
             
             foreach (var formObject in sceneObjects)
-                if (formObject.IsCollided) RigidBodyRender.Draw(formObject, collisionStrokePen, g);
-                else RigidBodyRender.Draw(formObject, strokePen, g);
+                RigidBodyRenderer.Draw(formObject, formObject.IsCollided ? collisionStrokePen : strokePen, g);
 
             if (collisions == null) return;
             foreach (var collision in collisions)
-            {
-                Console.WriteLine(collision.CollisionStart);
-                CollisionInfoRender.Draw(collision, collisionInfoStrokePen, g);
-            }
+                CollisionInfoRenderer.Draw(collision, collisionInfoStrokePen, g);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

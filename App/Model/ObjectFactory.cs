@@ -6,7 +6,7 @@ namespace App.Model
 {
     public class ObjectFactory : ContractObjectFactory
     {
-        public override List<RigidShape> GetSceneObjects(out RigidShape player, out RigidShape playerCenter, out RigidShape cursor, 
+        public override List<RigidShape> GetSceneObjects(out RigidShape player, out RigidShape cursor, 
             int windowWidth, int windowHeight)
         {
             const float playerRadius = 50;
@@ -14,7 +14,6 @@ namespace App.Model
                                         + new Vector(playerRadius, playerRadius)) / 2;
 
             player = new RigidCircle(positionPlayerCenter, playerRadius, true);
-            playerCenter = new RigidRectangle(positionPlayerCenter, 10, 10, 45, false);
             cursor = new RigidCircle(positionPlayerCenter, 5, false);
             return new List<RigidShape>
             {
@@ -25,7 +24,6 @@ namespace App.Model
                 new RigidCircle(new Vector(100, 100), 35, true),
                 cursor,
                 player,
-                playerCenter,
             };
         }
     }
