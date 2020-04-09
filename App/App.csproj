@@ -67,6 +67,7 @@
         <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewExperimental.cs" />
         <Compile Include="View\ViewForm.cs" />
+        <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="Images\dragon.png">

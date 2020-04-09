@@ -10,7 +10,7 @@ namespace App
         [STAThread]
         public static void Main(string[] args)
         {
-            var app = new ViewExperimental();
+            var app = new ViewWithExperimentalEngine();
             Application.Run(app);
         }
     }
