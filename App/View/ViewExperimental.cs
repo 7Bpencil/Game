@@ -21,6 +21,9 @@ namespace App.View
         private Graphics gfxScrollBuffer;
         
         private PictureBox pbSurface;
+
+        private Font debugFont;
+        private Brush debugBrush;
         
         
         public class KeyStates
@@ -50,6 +53,9 @@ namespace App.View
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
             pbSurface.Image = bmpScrollBuffer;
+
+            debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
+            debugBrush = new SolidBrush(Color.White);
             
             UpdateScrollBuffer();
             
@@ -62,7 +68,7 @@ namespace App.View
         private void TimerTick(object sender, EventArgs e)
         {
             var delta = Vector.ZeroVector;
-            const int step = 64;
+            const int step = 1;
             if (keyState.Up) 
                 delta.Y -= step;
             if (keyState.Down)
@@ -83,9 +89,9 @@ namespace App.View
 
         private void RemoveEscapingFromScene(Vector position)
         {
-            var rightBorder = (sceneSizeInTiles.Width - 1) * tileSize;
+            var rightBorder = sceneSizeInTiles.Width - cameraSizeInTiles.Width;
             const int leftBorder = 0;
-            var bottomBorder = (sceneSizeInTiles.Height - 1) * tileSize;
+            var bottomBorder = sceneSizeInTiles.Height - cameraSizeInTiles.Height;
             const int topBorder = 0;
             
             if (position.Y < topBorder) position.Y = topBorder;
@@ -101,8 +107,8 @@ namespace App.View
                 for (var x = 0; x <= cameraSizeInTiles.Width; ++x)
                 for (var y = 0; y <= cameraSizeInTiles.Height; ++y)
                 {
-                    var sx = (int) (scrollPosition.X / tileSize) + x;
-                    var sy = (int) (scrollPosition.Y / tileSize) + y;
+                    var sx = (int) scrollPosition.X + x;
+                    var sy = (int) scrollPosition.Y + y;
                     var tileIndex = sy * sceneSizeInTiles.Height + sx;
                     if (tileIndex > layer.Tiles.Length - 1) break;
                     
@@ -110,7 +116,20 @@ namespace App.View
                         DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
+            PrintDebugInfo();
             pbSurface.Image = bmpScrollBuffer;
+        }
+
+        private void PrintDebugInfo()
+        {
+            Print(0, 0, "Scroll Position: " + scrollPosition, debugBrush);
+            Print(0, debugFont.Height, "Camera Size: " + cameraSizeInTiles.Width + " x "+ cameraSizeInTiles.Height, debugBrush);
+            Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
+        }
+
+        private void Print(float x, float y, string text, Brush color)
+        {
+            gfxScrollBuffer.DrawString(text, debugFont, color, x, y);
         }
 
         private void DrawTile(int x, int y, int tile)
@@ -118,9 +137,8 @@ namespace App.View
             var columnsAmountInPalette = bmpTiles.Width / tileSize;
             var sx = tile % columnsAmountInPalette * tileSize;
             var sy = tile / columnsAmountInPalette * tileSize;
-            
-            var src = new Rectangle(sx, sy, tileSize, tileSize);
 
+            var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
             gfxScrollBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
