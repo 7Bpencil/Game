@@ -50,11 +50,11 @@
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
         <Compile Include="Model\IEntity.cs" />
         <Compile Include="Model\ContractObjectFactory.cs" />
+        <Compile Include="Model\LevelData\Layer.cs" />
+        <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\ObjectFactory.cs" />
-        <Compile Include="Model\Parser\Layer.cs" />
-        <Compile Include="Model\Parser\Level.cs" />
         <Compile Include="Model\Parser\LevelParser.cs" />
-        <Compile Include="Model\Parser\TileSet.cs" />
         <Compile Include="Model\Player.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

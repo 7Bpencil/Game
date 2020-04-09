@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace App.View.Renderings
+namespace App.View
 {
     public class Game
     {

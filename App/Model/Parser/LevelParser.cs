@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using App.Model.LevelData;
 
 namespace App.Model.Parser
 {
@@ -14,14 +15,14 @@ namespace App.Model.Parser
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
             doc.Load(levelFilename);
-            var xRoot = doc.DocumentElement;
+            var root = doc.DocumentElement;
 
-            foreach (XmlNode xnode in xRoot)
+            foreach (XmlNode node in root)
             {
-                if (xnode.Name == "tileset")
-                    tileSet.Source = xnode.Attributes[1].Value;
-                else if (xnode.Name == "layer")
-                    layers.Add(ParseLayer(xnode, separators));
+                if (node.Name == "tileset")
+                    tileSet.Source = node.Attributes[1].Value;
+                else if (node.Name == "layer")
+                    layers.Add(ParseLayer(node, separators));
             }
 
             return new Level(tileSet, layers);
@@ -37,10 +38,10 @@ namespace App.Model.Parser
                 Height = int.Parse(xnode.Attributes[3].Value)
             };
 
-            foreach (XmlNode childnode in xnode.ChildNodes)
+            foreach (XmlNode childNode in xnode.ChildNodes)
             {
-                if (childnode.Name != "data") continue;
-                var layerData = childnode.InnerText.Split(separators, StringSplitOptions.None);
+                if (childNode.Name != "data") continue;
+                var layerData = childNode.InnerText.Split(separators, StringSplitOptions.None);
                 newLayer.Tiles = ParseTiles(layerData, newLayer.Width * newLayer.Height);
             }
 
