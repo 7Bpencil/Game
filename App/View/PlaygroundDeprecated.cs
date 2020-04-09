@@ -92,45 +92,12 @@ namespace App.View
             bmpScrollBuffer = new Bitmap(cameraSize.Width * paletteSize.Width, cameraSize.Height * paletteSize.Height);
             gfxScrollBuffer = Graphics.FromImage(bmpScrollBuffer);
             
-            //create the timer
+            updateScrollBuffer();
+            /*//create the timer
             timer1 = new Timer();
             timer1.Interval = 20;
             timer1.Enabled = true;
-            timer1.Tick += new EventHandler(timer1_tick);
-        }
-
-        public void drawTileNumber(int x, int y, int tile)
-        {
-            //draw tile
-            int sx = (tile % COLUMNS) * paletteSize.Width;//columns it mean columns with tiles in palette
-            int sy = (tile / COLUMNS) * paletteSize.Height;//
-            Rectangle src = new Rectangle(sx, sy, paletteSize.Width, paletteSize.Height);
-            int dx = x * paletteSize.Width;
-            int dy = y * paletteSize.Height;
-            gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
-            //save changes
-            pbSurface.Image = bmpSurface;
-        }
-        
-        public void drawScrollBuffer()
-        {
-            //fill scroll buffer only when moving
-            if (scrollPos != oldScrollPos)
-            {
-                updateScrollBuffer();
-                oldScrollPos = scrollPos;
-            }
-            
-            //calculate sub-tile size
-            subtile.X = scrollPos.X % paletteSize.Width;
-            subtile.Y = scrollPos.Y % paletteSize.Height;
-            
-            //create the source rect
-            Rectangle source = new Rectangle((int)subtile.X, (int)subtile.Y,
-                bmpScrollBuffer.Width, bmpScrollBuffer.Height);
-            
-            //draw the scroll viewport
-            gfxSurface.DrawImage(bmpScrollBuffer, 0, 0, source, GraphicsUnit.Pixel);
+            timer1.Tick += new EventHandler(timer1_tick);*/
         }
         
         private void timer1_tick(object sender, EventArgs e)
@@ -169,6 +136,27 @@ namespace App.View
             drawScrollBuffer();
             
             pbSurface.Image = bmpSurface;
+        }    
+        
+        public void drawScrollBuffer()
+        {
+            //fill scroll buffer only when moving
+            if (scrollPos != oldScrollPos)
+            {
+                updateScrollBuffer();
+                oldScrollPos = scrollPos;
+            }
+            
+            //calculate sub-tile size
+            subtile.X = scrollPos.X % paletteSize.Width;
+            subtile.Y = scrollPos.Y % paletteSize.Height;
+            
+            //create the source rect
+            Rectangle source = new Rectangle((int)subtile.X, (int)subtile.Y,
+                bmpScrollBuffer.Width, bmpScrollBuffer.Height);
+            
+            //draw the scroll viewport
+            gfxSurface.DrawImage(bmpScrollBuffer, 0, 0, source, GraphicsUnit.Pixel);
         }
         
         public void updateScrollBuffer()
@@ -185,12 +173,26 @@ namespace App.View
                     {
                         sx = (int) (scrollPos.X / paletteSize.Width) + x;
                         sy = (int) (scrollPos.Y / paletteSize.Height) + y;
-                        drawTileNumber(x, y, tilenum);
+                        drawTileNumber(x, y, tilenum - 1);
                     }
-                    
                 }
             }
         }
+
+        public void drawTileNumber(int x, int y, int tile)
+        {
+            //draw tile
+            int sx = (tile % COLUMNS) * paletteSize.Width;//columns it mean columns with tiles in palette
+            int sy = (tile / COLUMNS) * paletteSize.Height;//
+            Rectangle src = new Rectangle(sx, sy, paletteSize.Width, paletteSize.Height);
+            int dx = x * paletteSize.Width;
+            int dy = y * paletteSize.Height;
+            gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
+            //save changes
+            pbSurface.Image = bmpSurface;
+        }
+        
+        
         
         private void PlaygroundDeprecated_KeyDown(object sender, KeyEventArgs e)
         {
