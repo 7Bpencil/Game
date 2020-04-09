@@ -19,26 +19,31 @@ namespace App.Model.Parser
 
             foreach (XmlNode node in root)
             {
-                if (node.Name == "tileset")
-                    tileSet.Source = node.Attributes[1].Value;
-                else if (node.Name == "layer")
-                    layers.Add(ParseLayer(node, separators));
+                switch (node.Name)
+                {
+                    case "tileset":
+                        tileSet.Source = node.Attributes[1].Value;
+                        break;
+                    case "layer":
+                        layers.Add(ParseLayer(node, separators));
+                        break;
+                }
             }
 
             return new Level(tileSet, layers);
         }
 
-        private static Layer ParseLayer(XmlNode xnode, string[] separators)
+        private static Layer ParseLayer(XmlNode node, string[] separators)
         {
             var newLayer = new Layer
             {
-                Id = int.Parse(xnode.Attributes[0].Value),
-                Name = xnode.Attributes[1].Value,
-                Width = int.Parse(xnode.Attributes[2].Value),
-                Height = int.Parse(xnode.Attributes[3].Value)
+                Id = int.Parse(node.Attributes[0].Value),
+                Name = node.Attributes[1].Value,
+                Width = int.Parse(node.Attributes[2].Value),
+                Height = int.Parse(node.Attributes[3].Value)
             };
 
-            foreach (XmlNode childNode in xnode.ChildNodes)
+            foreach (XmlNode childNode in node.ChildNodes)
             {
                 if (childNode.Name != "data") continue;
                 var layerData = childNode.InnerText.Split(separators, StringSplitOptions.None);
@@ -53,8 +58,7 @@ namespace App.Model.Parser
             var newTiles = new int[tilesAmount];
             var k = 0;
             foreach (var tileIndex in layerData)
-                if (tileIndex != "")
-                    newTiles[k++] = int.Parse(tileIndex);
+                if (tileIndex != "") newTiles[k++] = int.Parse(tileIndex);
             return newTiles;
         }
     }
