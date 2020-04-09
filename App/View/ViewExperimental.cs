@@ -50,23 +50,23 @@ namespace App.View
             pbSurface.Image = bmpSurface;
             
             var timer = new Timer();
-            timer.Interval = 20;
-            timer.Enabled = true;
-            timer.Tick += timerTick;
+            timer.Interval = 15;
+            timer.Tick += TimerTick;
+            timer.Start();
         }
         
         private void SetUpView()
         {
             cameraSizeInTiles = new Size(16, 9);
             ClientSize = new Size(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
-            Text = "Level Viewer";
+            Text = "New Game";
             
         }
         
-        private void timerTick(object sender, EventArgs e)
+        private void TimerTick(object sender, EventArgs e)
         {
             var delta = Vector.ZeroVector;
-            const int step = 4;
+            const int step = 64;
             if (keyState.Up) 
                 delta.Y -= step;
             if (keyState.Down)
@@ -80,7 +80,7 @@ namespace App.View
             {
                 scrollPosition += delta;
                 RemoveEscapingFromScene(scrollPosition);
-                DrawScrollBuffer();
+                UpdateScrollBuffer();
             }
             
         }
@@ -98,17 +98,6 @@ namespace App.View
             if (position.X > rightBorder) position.X = rightBorder;
         }
         
-        public void DrawScrollBuffer()
-        {
-            UpdateScrollBuffer();
-            var subTile = new Vector(scrollPosition.X % tileSize, scrollPosition.Y % tileSize);
-            Rectangle source = new Rectangle(
-                (int) subTile.X, (int) subTile.Y,
-                bmpScrollBuffer.Width, bmpScrollBuffer.Height);
-            
-            gfxSurface.DrawImage(bmpScrollBuffer, 0, 0, source, GraphicsUnit.Pixel);
-        }
-        
         public void UpdateScrollBuffer()
         {
             foreach (var layer in currentLevel.Layers)
@@ -118,9 +107,11 @@ namespace App.View
                 {
                     var sx = (int) (scrollPosition.X / tileSize) + x;
                     var sy = (int) (scrollPosition.Y / tileSize) + y;
-                    var tilenum = layer.Tiles[sy * sceneSizeInTiles.Height + sx];
-                    if (tilenum != 0) 
-                        DrawTile(x, y, tilenum - 1);
+                    var tileIndex = sy * sceneSizeInTiles.Height + sx;
+                    if (tileIndex > layer.Tiles.Length - 1) break;
+                    
+                    if (layer.Tiles[tileIndex] != 0) 
+                        DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
         }
