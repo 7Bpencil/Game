@@ -14,7 +14,7 @@ namespace App.Engine.PhysicsEngine
             Y = y;
         }
 
-        public static readonly Vector ZeroVector = new Vector(0, 0);
+        public static Vector ZeroVector => new Vector(0, 0);
 
         public override string ToString()
         {
@@ -45,11 +45,7 @@ namespace App.Engine.PhysicsEngine
         public float X { get; set; }
         public float Y { get; set; }
 
-        public float Length
-        {
-            get { return (float) Math.Sqrt(X * X + Y * Y); }
-        }
-
+        public float Length => (float) Math.Sqrt(X * X + Y * Y);
 
         public static Vector operator +(Vector a, Vector b)
         {
