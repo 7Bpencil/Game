@@ -50,7 +50,7 @@ namespace App.View
         
         public PlaygroundDeprecated()
         {
-            this.ClientSize = new Size(cameraSize.Width, cameraSize.Height);
+            this.ClientSize = new Size(cameraSize.Width * paletteSize.Width, cameraSize.Height * paletteSize.Height);
             this.AutoScaleMode = AutoScaleMode.Font;
             this.Load += new EventHandler(this.PlaygroundDeprecated_Load);
             this.FormClosed += new FormClosedEventHandler(this.Playground_FormClosed);
@@ -92,12 +92,11 @@ namespace App.View
             bmpScrollBuffer = new Bitmap(cameraSize.Width * paletteSize.Width, cameraSize.Height * paletteSize.Height);
             gfxScrollBuffer = Graphics.FromImage(bmpScrollBuffer);
             
-            updateScrollBuffer();
-            /*//create the timer
+            //create the timer
             timer1 = new Timer();
             timer1.Interval = 20;
             timer1.Enabled = true;
-            timer1.Tick += new EventHandler(timer1_tick);*/
+            timer1.Tick += new EventHandler(timer1_tick);
         }
         
         private void timer1_tick(object sender, EventArgs e)
@@ -111,8 +110,8 @@ namespace App.View
             if (keyState.down)
             {
                 scrollPos.Y += steps;
-                if (scrollPos.Y > cameraSize.Height * paletteSize.Height) scrollPos.Y = 
-                    cameraSize.Height * paletteSize.Height;
+                if (scrollPos.Y > (sceneSize.Height - 1) * paletteSize.Height) scrollPos.Y = 
+                    (sceneSize.Height - 1) * paletteSize.Height;
             }
             if (keyState.left)
             {
@@ -122,8 +121,8 @@ namespace App.View
             if (keyState.right)
             {
                 scrollPos.X += steps;
-                if (scrollPos.X > cameraSize.Width * paletteSize.Width) scrollPos.X = 
-                    cameraSize.Width * paletteSize.Width;
+                if (scrollPos.X > (sceneSize.Width - 1) * paletteSize.Width) scrollPos.X = 
+                    (sceneSize.Width - 1) * paletteSize.Width;
             }
             
             //clear the ground
@@ -136,7 +135,39 @@ namespace App.View
             drawScrollBuffer();
             
             pbSurface.Image = bmpSurface;
-        }    
+        }   
+        
+        public void updateScrollBuffer()
+        {
+            //fill scroll buffer with tiles
+            int tilenum, sx, sy;
+            for (int i = 0; i < level.Layers.Count; ++i)
+            {
+                for (int x = 0; x <= cameraSize.Width; ++x) //here may be mistake!!!
+                for (int y = 0; y <= cameraSize.Height; ++y)
+                {
+                    sx = (int) (scrollPos.X / paletteSize.Width) + x;
+                    sy = (int) (scrollPos.Y / paletteSize.Height) + y;
+                    tilenum = level.Layers[i].Tiles[sy * sceneSize.Height + sx];
+                    if (tilenum != 0) 
+                        drawTileNumber(x, y, tilenum - 1);
+                }
+            }
+        }
+        
+        public void drawTileNumber(int x, int y, int tile)
+        {
+            //draw tile
+            int sx = (tile % COLUMNS) * paletteSize.Width;//columns it mean columns with tiles in palette
+            int sy = (tile / COLUMNS) * paletteSize.Height;//
+            Rectangle src = new Rectangle(sx, sy, paletteSize.Width, paletteSize.Height);
+            int dx = x * paletteSize.Width;
+            int dy = y * paletteSize.Height;
+            gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
+            //save changes
+            pbSurface.Image = bmpSurface;
+        }
+
         
         public void drawScrollBuffer()
         {
@@ -157,39 +188,6 @@ namespace App.View
             
             //draw the scroll viewport
             gfxSurface.DrawImage(bmpScrollBuffer, 0, 0, source, GraphicsUnit.Pixel);
-        }
-        
-        public void updateScrollBuffer()
-        {
-            //fill scroll buffer with tiles
-            int tilenum, sx, sy;
-            for (int i = 0; i < level.Layers.Count; ++i)
-            {
-                for (int y = 0; y <= cameraSize.Height; ++y) //here may be mistake!!!
-                for (int x = 0; x <= cameraSize.Width; ++x)
-                {
-                    tilenum = level.Layers[i].Tiles[y * sceneSize.Height + x];
-                    if (tilenum != 0)
-                    {
-                        sx = (int) (scrollPos.X / paletteSize.Width) + x;
-                        sy = (int) (scrollPos.Y / paletteSize.Height) + y;
-                        drawTileNumber(x, y, tilenum - 1);
-                    }
-                }
-            }
-        }
-
-        public void drawTileNumber(int x, int y, int tile)
-        {
-            //draw tile
-            int sx = (tile % COLUMNS) * paletteSize.Width;//columns it mean columns with tiles in palette
-            int sy = (tile / COLUMNS) * paletteSize.Height;//
-            Rectangle src = new Rectangle(sx, sy, paletteSize.Width, paletteSize.Height);
-            int dx = x * paletteSize.Width;
-            int dy = y * paletteSize.Height;
-            gfxSurface.DrawImage(bmpTiles, dx, dy, src, GraphicsUnit.Pixel);
-            //save changes
-            pbSurface.Image = bmpSurface;
         }
         
         
