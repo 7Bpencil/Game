@@ -64,6 +64,7 @@
         <Compile Include="View\PlaygroundDeprecated.cs" />
         <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />
         <Compile Include="View\Renderings\RigidBodyRenderer.cs" />
+        <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
