@@ -16,10 +16,12 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private Vector scrollPosition;
         
+        private Bitmap bmpTiles;
         private Bitmap bmpScrollBuffer;
         private Graphics gfxScrollBuffer;
+        
         private PictureBox pbSurface;
-        private Bitmap bmpTiles;
+        
         
         public class KeyStates
         {
@@ -91,8 +93,8 @@ namespace App.View
             if (position.X < leftBorder) position.X = leftBorder;
             if (position.X > rightBorder) position.X = rightBorder;
         }
-        
-        public void UpdateScrollBuffer()
+
+        private void UpdateScrollBuffer()
         {
             foreach (var layer in currentLevel.Layers)
             {
@@ -110,8 +112,8 @@ namespace App.View
             }
             pbSurface.Image = bmpScrollBuffer;
         }
-        
-        public void DrawTile(int x, int y, int tile)
+
+        private void DrawTile(int x, int y, int tile)
         {
             var columnsAmountInPalette = bmpTiles.Width / tileSize;
             var sx = tile % columnsAmountInPalette * tileSize;
