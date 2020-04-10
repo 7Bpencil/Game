@@ -71,6 +71,9 @@
         <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Images\boroda.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Images\dragon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -89,6 +92,14 @@
       <Content Include="Levels\secondTry.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <TypeScriptCompile Include="Tiles\base_tiles.tsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </TypeScriptCompile>
+      <TypeScriptCompile Include="Tiles\boroda.tsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </TypeScriptCompile>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
