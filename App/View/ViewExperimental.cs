@@ -14,7 +14,7 @@ namespace App.View
         private Level currentLevel;
         private KeyStates keyState;
         private const int tileSize = 64;
-        private static Size cameraSizeInTiles;
+        private static Size cameraSize;
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
@@ -38,9 +38,9 @@ namespace App.View
         
         public ViewExperimental()
         {
-            cameraSizeInTiles = new Size(16, 9);
-            renderSizeInTiles = new Size(cameraSizeInTiles.Width + 1, cameraSizeInTiles.Height + 1);
-            ClientSize = new Size(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
+            cameraSize = new Size(854, 480);
+            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 1, cameraSize.Height / tileSize + 1);
+            ClientSize = cameraSize;
             Text = "New Game";
             
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
@@ -112,9 +112,9 @@ namespace App.View
 
         private void RemoveEscapingFromScene(Vector position)
         {
-            var rightBorder = (sceneSizeInTiles.Width - cameraSizeInTiles.Width) * tileSize;
+            var rightBorder = sceneSizeInTiles.Width * tileSize - cameraSize.Width;
             const int leftBorder = 0;
-            var bottomBorder = (sceneSizeInTiles.Height - cameraSizeInTiles.Height) * tileSize;
+            var bottomBorder = sceneSizeInTiles.Height * tileSize - cameraSize.Height;
             const int topBorder = 0;
             
             if (position.Y < topBorder) position.Y = topBorder;
@@ -141,7 +141,7 @@ namespace App.View
             }
             PrintDebugInfo();
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
-                cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
+                cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             RigidBodyRenderer.Draw(player, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
@@ -167,7 +167,7 @@ namespace App.View
         private void PrintDebugInfo()
         {
             Print(0, 0, "Scroll Position: " + cameraPosition, debugBrush);
-            Print(0, debugFont.Height, "Camera Size: " + cameraSizeInTiles.Width + " x "+ cameraSizeInTiles.Height, debugBrush);
+            Print(0, debugFont.Height, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
             Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
         }
