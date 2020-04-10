@@ -14,11 +14,13 @@ namespace App.View
         private const int tileSize = 64;
         private static Size cameraSizeInTiles;
         private static Size sceneSizeInTiles;
-        private Vector scrollPosition;
+        private static Size renderSizeInTiles;
+        private Vector cameraPosition;
         
         private Bitmap bmpTiles;
-        private Bitmap bmpScrollBuffer;
-        private Graphics gfxScrollBuffer;
+        private Bitmap bmpRenderBuffer;
+        private Graphics gfxRenderBuffer;
+        private Rectangle srcRect;
         
         private PictureBox pbSurface;
 
@@ -34,6 +36,7 @@ namespace App.View
         public ViewExperimental()
         {
             cameraSizeInTiles = new Size(16, 9);
+            renderSizeInTiles = new Size(cameraSizeInTiles.Width + 1, cameraSizeInTiles.Height + 1);
             ClientSize = new Size(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
             Text = "New Game";
             
@@ -42,17 +45,18 @@ namespace App.View
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
             
             keyState = new KeyStates();
-            scrollPosition = Vector.ZeroVector;
+            cameraPosition = Vector.ZeroVector;
             
-            bmpScrollBuffer = new Bitmap(cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
-            gfxScrollBuffer = Graphics.FromImage(bmpScrollBuffer);
+            bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
+            gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
+            
             
             // that sections looks suspicious
             pbSurface = new PictureBox();
             pbSurface.Parent = this;
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
-            pbSurface.Image = bmpScrollBuffer;
+            pbSurface.Image = bmpRenderBuffer;
 
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
@@ -68,7 +72,7 @@ namespace App.View
         private void TimerTick(object sender, EventArgs e)
         {
             var delta = Vector.ZeroVector;
-            const int step = 1;
+            const int step = 4;
             if (keyState.Up) 
                 delta.Y -= step;
             if (keyState.Down)
@@ -80,8 +84,8 @@ namespace App.View
             
             if (!delta.Equals(Vector.ZeroVector))
             {
-                scrollPosition += delta;
-                RemoveEscapingFromScene(scrollPosition);
+                cameraPosition += delta;
+                RemoveEscapingFromScene(cameraPosition);
                 UpdateScrollBuffer();
             }
             
@@ -89,9 +93,9 @@ namespace App.View
 
         private void RemoveEscapingFromScene(Vector position)
         {
-            var rightBorder = sceneSizeInTiles.Width - cameraSizeInTiles.Width;
+            var rightBorder = (sceneSizeInTiles.Width - cameraSizeInTiles.Width) * tileSize;
             const int leftBorder = 0;
-            var bottomBorder = sceneSizeInTiles.Height - cameraSizeInTiles.Height;
+            var bottomBorder = (sceneSizeInTiles.Height - cameraSizeInTiles.Height) * tileSize;
             const int topBorder = 0;
             
             if (position.Y < topBorder) position.Y = topBorder;
@@ -104,11 +108,11 @@ namespace App.View
         {
             foreach (var layer in currentLevel.Layers)
             {
-                for (var x = 0; x <= cameraSizeInTiles.Width; ++x)
-                for (var y = 0; y <= cameraSizeInTiles.Height; ++y)
+                for (var x = 0; x <= renderSizeInTiles.Width; ++x)
+                for (var y = 0; y <= renderSizeInTiles.Height; ++y)
                 {
-                    var sx = (int) scrollPosition.X + x;
-                    var sy = (int) scrollPosition.Y + y;
+                    var sx = GetLeftTileIndex() + x;
+                    var sy = GetTopTileIndex() + y;
                     var tileIndex = sy * sceneSizeInTiles.Height + sx;
                     if (tileIndex > layer.Tiles.Length - 1) break;
                     
@@ -117,19 +121,39 @@ namespace App.View
                 }
             }
             PrintDebugInfo();
-            pbSurface.Image = bmpScrollBuffer;
+            srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
+                cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
+            gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0,0,srcRect, GraphicsUnit.Pixel);
+            pbSurface.Image = bmpRenderBuffer;
+        }
+
+
+        private int GetLeftTileIndex()
+        {
+            var rem = cameraPosition.X % tileSize;
+            if (rem == 0)
+                return (int) cameraPosition.X / tileSize;
+            return (int) (cameraPosition.X - rem) / tileSize;
+        }
+        
+        private int GetTopTileIndex()
+        {
+            var rem = cameraPosition.Y % tileSize;
+            if (rem == 0)
+                return (int) cameraPosition.Y / tileSize;
+            return (int) (cameraPosition.Y - rem) / tileSize;
         }
 
         private void PrintDebugInfo()
         {
-            Print(0, 0, "Scroll Position: " + scrollPosition, debugBrush);
+            Print(0, 0, "Scroll Position: " + cameraPosition, debugBrush);
             Print(0, debugFont.Height, "Camera Size: " + cameraSizeInTiles.Width + " x "+ cameraSizeInTiles.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
         }
 
         private void Print(float x, float y, string text, Brush color)
         {
-            gfxScrollBuffer.DrawString(text, debugFont, color, x, y);
+            gfxRenderBuffer.DrawString(text, debugFont, color, x, y);
         }
 
         private void DrawTile(int x, int y, int tile)
@@ -139,7 +163,7 @@ namespace App.View
             var sy = tile / columnsAmountInPalette * tileSize;
 
             var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
-            gfxScrollBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
+            gfxRenderBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
