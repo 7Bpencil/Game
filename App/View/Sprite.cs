@@ -15,6 +15,7 @@ namespace App.View
         private int columns;
         private int currentFrame;
         private int lastTime;
+        private int animationRate;
 
         public Sprite()
         {
@@ -26,6 +27,7 @@ namespace App.View
             columns = 1;
             currentFrame = 0;
             lastTime = 0;
+            animationRate = 1000 / 3;
         }
         
         public bool Alive
@@ -53,22 +55,34 @@ namespace App.View
         public int Columns
         { get => columns; set => columns = value; }
 
-        public int CurrentFrame
-        { get  => currentFrame; set => currentFrame = value; }
-
-        /*public void Animate(int startFrame, int endFrame)
+        /*public int CurrentFrame
+        { get  => currentFrame; set => currentFrame = value; }*/
+        
+        public int AnimationRate
         {
+            get => 1000 / animationRate;
+            set
+            {
+                if (value == 0) value = 1;
+                animationRate = 1000 / value;
+            }
+        }
+
+        public void Animate(Graphics device, int startFrame, int endFrame)
+        {
+            if (currentFrame < startFrame || currentFrame > endFrame)
+                currentFrame = startFrame;
+            Draw(device);
             //check animation timing
             var time = Environment.TickCount;
             if (time > lastTime + animationRate) //it need to resolve framerate and animation radnering
             {
                 lastTime = time;
-                currentFrame = 
+                currentFrame++;
             }
         }
-        */
 
-        public void Draw(Graphics device)
+        private void Draw(Graphics device)
         {
             var frame = new Rectangle
             {

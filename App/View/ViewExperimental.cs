@@ -58,7 +58,6 @@ namespace App.View
             playerLegs = new Sprite();
             playerLegs.TopLeft = new Vector(0, 0);
             playerLegs.Alive = true;
-            playerLegs.CurrentFrame = 4;
             playerLegs.Columns = 4;
             playerLegs.Size = new Size(64, 64);
             playerLegs.Image = bmpPlayer;
@@ -67,7 +66,6 @@ namespace App.View
             playerTorso = new Sprite();
             playerTorso.TopLeft = new Vector(0, 0);
             playerTorso.Alive = true;
-            playerTorso.CurrentFrame = 0;
             playerTorso.Columns = 4;
             playerTorso.Size = new Size(64, 64);
             playerTorso.Image = bmpPlayer;
@@ -181,8 +179,8 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            playerLegs.Draw(gfxRenderBuffer);
-            playerTorso.Draw(gfxRenderBuffer);
+            playerLegs.Animate(gfxRenderBuffer, 0, 3);
+            playerTorso.Animate(gfxRenderBuffer, 4, 7);
             pbSurface.Image = bmpRenderBuffer;
         }
 
