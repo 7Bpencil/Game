@@ -2,8 +2,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 using App.Model.LevelData;
 using App.Model.Parser;
+using App.View.Renderings;
 
 namespace App.View
 {
@@ -16,6 +18,7 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
+        private RigidCircle player;
         
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
@@ -30,7 +33,7 @@ namespace App.View
         
         public class KeyStates
         {
-            public bool Up, Down, Left, Right;
+            public bool Up, Down, Left, Right, W, S, A, D;
         }
         
         public ViewExperimental()
@@ -45,7 +48,8 @@ namespace App.View
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
             
             keyState = new KeyStates();
-            cameraPosition = Vector.ZeroVector;
+            cameraPosition = new Vector(500, 200);
+            player = new RigidCircle(new Vector(500, 200), 32, false);
             
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
@@ -71,23 +75,38 @@ namespace App.View
 
         private void TimerTick(object sender, EventArgs e)
         {
-            var delta = Vector.ZeroVector;
+            var deltaCamera = Vector.ZeroVector;
             const int step = 4;
             if (keyState.Up) 
-                delta.Y -= step;
+                deltaCamera.Y -= step;
             if (keyState.Down)
-                delta.Y += step;
+                deltaCamera.Y += step;
             if (keyState.Left)
-                delta.X -= step;
+                deltaCamera.X -= step;
             if (keyState.Right)
-                delta.X += step;
+                deltaCamera.X += step;
             
-            if (!delta.Equals(Vector.ZeroVector))
+            if (keyState.W) 
+                player.Center.Y -= step;
+            if (keyState.S)
+                player.Center.Y += step;
+            if (keyState.A)
+                player.Center.X -= step;
+            if (keyState.D)
+                player.Center.X += step;
+
+            
+            cameraPosition += deltaCamera;
+            RemoveEscapingFromScene(cameraPosition);
+            UpdateScrollBuffer();
+            /*
+            if (!deltaCamera.Equals(Vector.ZeroVector))
             {
-                cameraPosition += delta;
+                cameraPosition += deltaCamera;
                 RemoveEscapingFromScene(cameraPosition);
                 UpdateScrollBuffer();
             }
+            */
             
         }
 
@@ -123,7 +142,8 @@ namespace App.View
             PrintDebugInfo();
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSizeInTiles.Width * tileSize, cameraSizeInTiles.Height * tileSize);
-            gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0,0,srcRect, GraphicsUnit.Pixel);
+            gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
+            RigidBodyRenderer.Draw(player, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
         }
 
@@ -149,6 +169,7 @@ namespace App.View
             Print(0, 0, "Scroll Position: " + cameraPosition, debugBrush);
             Print(0, debugFont.Height, "Camera Size: " + cameraSizeInTiles.Width + " x "+ cameraSizeInTiles.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
+            Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
         }
 
         private void Print(float x, float y, string text, Brush color)
@@ -171,23 +192,31 @@ namespace App.View
             switch (e.KeyCode)
             {
                 case Keys.Up:
-                case Keys.W:
                     keyState.Up = true;
+                    break;
+                case Keys.W:
+                    keyState.W = true;
                     break;
 
                 case Keys.Down:
-                case Keys.S:
                     keyState.Down = true;
+                    break;
+                case Keys.S:
+                    keyState.S = true;
                     break;
 
                 case Keys.Left:
-                case Keys.A:
                     keyState.Left = true;
+                    break;
+                case Keys.A:
+                    keyState.A = true;
                     break;
 
                 case Keys.Right:
-                case Keys.D:
                     keyState.Right = true;
+                    break;
+                case Keys.D:
+                    keyState.D = true;
                     break;
             }
         }
@@ -196,28 +225,32 @@ namespace App.View
         {
             switch (e.KeyCode)
             {
-                case Keys.Escape:
-                    Application.Exit();
-                    break;
-            
                 case Keys.Up:
-                case Keys.W:
                     keyState.Up = false;
+                    break;
+                case Keys.W:
+                    keyState.W = false;
                     break;
 
                 case Keys.Down:
-                case Keys.S:
                     keyState.Down = false;
+                    break;
+                case Keys.S:
+                    keyState.S = false;
                     break;
 
                 case Keys.Left:
-                case Keys.A:
                     keyState.Left = false;
+                    break;
+                case Keys.A:
+                    keyState.A = false;
                     break;
 
                 case Keys.Right:
-                case Keys.D:
                     keyState.Right = false;
+                    break;
+                case Keys.D:
+                    keyState.D = false;
                     break;
             }
         }
