@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -18,7 +19,7 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
-        private RigidCircle player;
+        private Sprite player;
         
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
@@ -44,17 +45,18 @@ namespace App.View
             Text = "New Game";
             
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
-            bmpTiles = new Bitmap("Images/sprite_map.png");
+            bmpTiles = new Bitmap("Images/sprite_map (1).png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
             
             keyState = new KeyStates();
             cameraPosition = new Vector(500, 200);
-            player = new RigidCircle(new Vector(500, 200), 32, false);
-            
+            player = new Sprite(new Vector(0, 0), true, 106, 30, bmpTiles.Width / tileSize, new Size(64, 64));
+            player.Image = bmpTiles;
+
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
             
-            
+            //gfxRenderBuffer.SmoothingMode = SmoothingMode.AntiAlias;
             // that sections looks suspicious
             pbSurface = new PictureBox();
             pbSurface.Parent = this;
@@ -143,7 +145,7 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            player.Draw(gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
         }
 

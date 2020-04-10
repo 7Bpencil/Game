@@ -1,25 +1,13 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using App.Engine.PhysicsEngine;
 
 namespace App.View
 {
     public class Sprite
     {
-        public enum AnimateDir
-        {
-            NONE = 0,
-            FORWARD = 1,
-            BACKWARD = -1
-        }
         
-        public enum AnimateWrap
-        {
-            WRAP = 0,
-            BOUNCE = 1
-        }
-
-        private Game game;
         private Vector position;
         private Vector velocity;
         private Size size;
@@ -28,35 +16,35 @@ namespace App.View
         private int columns;
         private int totalFrames;
         private int currentFrame;
-        private AnimateDir animationDir;
-        private AnimateWrap animationWrap;
+        private Vector center;
+        
         private int lastTime;
         private int animationRate;
 
-        public Sprite(ref Game game)
+        public Sprite()
         {
-            this.game = game;
             position = Vector.ZeroVector;
             velocity = Vector.ZeroVector;
-            size = new Size(0, 0);
+            size = new Size(64, 64);
             bitmap = null;
             alive = true;
             columns = 1;
-            totalFrames = 1; //?
-            currentFrame = 0;
-            animationDir = AnimateDir.FORWARD;
-            animationWrap = AnimateWrap.WRAP;
+            totalFrames = 1;//?
+            currentFrame = 106;
             lastTime = 0;
             animationRate = 30;
         }
 
-        public Sprite(Game game, Vector position, bool alive, int totalFrames, int animationRate) // new constructor
+        public Sprite(Vector position, bool alive, int currentFrame, int animationRate, int columns, Size size) // new constructor
         {
-            this.game = game;
+            this.size = size;
             this.position = position;
+            this.center = new Vector(position.X + size.Width / 2, position.Y + size.Height / 2);
             this.alive = alive;
-            this.totalFrames = totalFrames;
+           // this.totalFrames = totalFrames;
             this.animationRate = animationRate;
+            this.currentFrame = currentFrame;
+            this.columns = columns;
         }
 
         public bool Alive
@@ -95,11 +83,16 @@ namespace App.View
         public int CurrentFrame
         { get  => currentFrame; set => currentFrame = value; }
 
-        public AnimateDir AnimateDirection
-        { get => animationDir; set => animationDir = value; }
-
-        public AnimateWrap AnimateWrapMode
-        { get => animationWrap; set => animationWrap = value; }
+        public Vector Center
+        {
+            get  => center;
+            set
+            {
+                center = value;
+                position.X = center.X - size.Width / 2;
+                position.Y = center.Y - size.Height / 2;
+            }
+        }
 
         public int AnimationRate
         {
@@ -111,7 +104,7 @@ namespace App.View
             }
         }
 
-        public void Animate(int startFrame, int endFrame)
+        /*public void Animate(int startFrame, int endFrame)
         {
             //do we even need to animate?
             if (totalFrames <= 0) return;
@@ -147,9 +140,9 @@ namespace App.View
                         break;
                 }
             }
-        }
+        }*/
 
-        public void Draw()
+        public void Draw(Graphics device)
         {
             var frame = new Rectangle
             {
@@ -158,7 +151,7 @@ namespace App.View
                 Width = size.Width,
                 Height = size.Height
             };
-            game.Device.DrawImage(bitmap, Bounds, frame, GraphicsUnit.Pixel);
+            device.DrawImage(bitmap, Bounds, frame, GraphicsUnit.Pixel);
         }
 
         public RectangleF Bounds => new RectangleF(X, Y, Width, Height);
