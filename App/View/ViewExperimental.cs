@@ -39,7 +39,7 @@ namespace App.View
         public ViewExperimental()
         {
             cameraSize = new Size(854, 480);
-            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 1, cameraSize.Height / tileSize + 1);
+            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
             Text = "New Game";
             
