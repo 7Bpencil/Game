@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using App.Engine.PhysicsEngine;
 
 namespace App.View
@@ -7,68 +8,60 @@ namespace App.View
     public class Sprite
     {
         private Vector center;
-        private Vector _topLeft;
-        private Vector velocity;
-        private Vector prevPos;
-        private Size size;
-        private Bitmap bitmap;
-        private bool alive;
-        private int columns;
-        private int currentFrame;
-        private int lastTime;
-        private int animationRate;
-
-        public Sprite()
-        {
-            velocity = Vector.ZeroVector;
-            size = new Size(64, 64);
-            bitmap = null;
-            alive = true;
-            columns = 1;
-            currentFrame = 0;
-            lastTime = 0;
-            animationRate = 1500 / 3;
-        }
-
         public Vector Center
         {
             get => center;
             set
             {
                 center = value;
-                _topLeft = center - new Vector(Width / 2, Height / 2);
+                centerVersion++;
+            }
+        }
+        
+        private Vector topLeft;
+        public Vector TopLeft
+        {
+            get
+            {
+                if (centerVersion != expectedCenterVersion)
+                    topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
+                expectedCenterVersion = centerVersion = 0;
+                return topLeft;
             }
         }
 
-        public bool Alive
-        { get => alive; set => alive = value; }
-
-        public Bitmap Image
-        { get => bitmap; set => bitmap = value; }
+        private int expectedCenterVersion;
+        private int centerVersion = 0;
         
-        public int StartFrame { get; set; }
-        public int EndFrame { get; set; }
+        private Vector previousPosition;
+        private int startFrame;
+        private int currentFrame;
+        private int endFrame;
+        private Vector velocity;
+        private Size size;
+        private Bitmap bitmap;
+        private int columns;
+        private int lastTime;
+        private int animationRate;
 
-
-        public Vector TopLeft => _topLeft;
-
-        public Vector PreviousPosition
-        { get => prevPos; set => prevPos = value; }
+        public Sprite(Vector center, Bitmap bitmap, int startFrame, int endFrame, Size size, int columns)
+        {
+            this.center = center;
+            topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
+            velocity = Vector.ZeroVector;
+            previousPosition = center;
+            this.size = size;
+            this.bitmap = bitmap;
+            this.columns = columns;
+            this.startFrame = startFrame;
+            this.endFrame = endFrame;
+            currentFrame = 0;
+            lastTime = 0;
+            animationRate = 1500 / 3;
+        }
         
         public Vector Velocity
         { get => velocity; set => velocity = value; }
-
-        public Size Size
-        { get => size; set => size = value; }
-
-        public int Width
-        { get => size.Width; set => size.Width = value; }
-
-        public int Height
-        { get => size.Height; set => size.Height = value; }
-
-        public int Columns
-        { get => columns; set => columns = value; }
 
         /*public int CurrentFrame
         { get  => currentFrame; set => currentFrame = value; }*/
@@ -85,15 +78,14 @@ namespace App.View
 
         public void Animate(Graphics device)
         {
-            if (currentFrame < StartFrame || currentFrame > EndFrame)
-                currentFrame = StartFrame;
+            if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
             Draw(device);
             //check animation timing
             var time = Environment.TickCount;
-            if (time > lastTime + animationRate && !Equals(prevPos, _topLeft)) //it need to resolve framerate and animation rendering
+            if (time > lastTime + animationRate && !previousPosition.Equals(center)) //it need to resolve framerate and animation radnering
             {
                 lastTime = time;
-                prevPos = _topLeft;
+                previousPosition = TopLeft;
                 currentFrame++;
             }
         }
@@ -110,6 +102,6 @@ namespace App.View
             device.DrawImage(bitmap, Bounds, frame, GraphicsUnit.Pixel);
         }
 
-        public RectangleF Bounds => new RectangleF(_topLeft.X, _topLeft.Y, Width, Height);
+        public RectangleF Bounds => new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
     }
 }

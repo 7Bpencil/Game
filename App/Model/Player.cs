@@ -18,7 +18,6 @@ namespace App.Model
         }
 
         public Vector Center => Shape.Center;
-        public Vector TopLeft => Torso.TopLeft;
         public float Radius => Shape.Radius;
     }
 }

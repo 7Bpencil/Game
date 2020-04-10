@@ -68,27 +68,23 @@ namespace App.View
             //create and initialize player legs
             bmpPlayer = new Bitmap("Images/boroda.png");
             var playerLegs = new Sprite
-            {
-                Center = playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
-                Alive = true,
-                Columns = 4,
-                Size = new Size(tileSize, tileSize),
-                Image = bmpPlayer,
-                StartFrame = 4,
-                EndFrame = 7
-            };
+            (
+                playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
+                bmpPlayer,
+                4,
+                7,
+                new Size(64, 64),
+                4);
 
             //create and initialize player body
             var playerTorso = new Sprite
-            {
-                Center = playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
-                Alive = true,
-                Columns = 4,
-                Size = new Size(tileSize, tileSize),
-                Image = bmpPlayer,
-                StartFrame = 0,
-                EndFrame = 3
-            };
+            (
+                playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
+                bmpPlayer,
+                0,
+                3,
+                new Size(64, 64),
+                4);
 
             //create and initialize whole player
             player = new Player
@@ -256,14 +252,15 @@ namespace App.View
             
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
+            
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
             RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            
             player.Legs.Animate(gfxRenderBuffer);
             player.Torso.Animate(gfxRenderBuffer);    
             RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            
             pbSurface.Image = bmpRenderBuffer;
             PrintDebugInfo();
         }
