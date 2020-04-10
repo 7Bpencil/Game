@@ -20,7 +20,7 @@ namespace App.View
         private Vector cameraPosition;
         
         private RigidCircle player;
-        //private RigidCircle cursor;
+        private RigidCircle cursor;
         
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
@@ -28,6 +28,7 @@ namespace App.View
         private Rectangle srcRect;
 
         private Rectangle walkableArea;
+        private Rectangle cursorArea;
         
         private PictureBox pbSurface;
 
@@ -42,9 +43,11 @@ namespace App.View
         
         public ViewExperimental()
         {
-            cameraSize = new Size(854, 480);
+            cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
             walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
+            var q = cameraSize.Height / 5;
+            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
 
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
@@ -57,7 +60,7 @@ namespace App.View
             keyState = new KeyStates();
             cameraPosition = new Vector(500, 200);
             player = new RigidCircle(new Vector(14 * 64, 6 * 64), 32, false);
-            //cursor = new RigidCircle(new Vector(14 * 64, 6 * 64), 5, false);
+            cursor = new RigidCircle(new Vector(14 * 64, 6 * 64), 5, false);
             
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
@@ -69,6 +72,7 @@ namespace App.View
             pbSurface.BackColor = Color.Black;
             pbSurface.Dock = DockStyle.Fill;
             pbSurface.Image = bmpRenderBuffer;
+            pbSurface.MouseMove += Mouse;
 
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
@@ -87,7 +91,8 @@ namespace App.View
             UpdateCamera(step);
             UpdatePlayer(step);
             CorrectPlayer();
-            CorrectCamera(player.Center.ConvertFromWorldToCamera(cameraPosition));
+            CorrectCameraDependsOnCursorPosition();
+            CorrectCameraDependsOnPlayerPosition(player.Center.ConvertFromWorldToCamera(cameraPosition));
             RemoveEscapingFromScene(cameraPosition);
             UpdateScrollBuffer();
             /*
@@ -153,12 +158,24 @@ namespace App.View
             if (position.X > rightBorder) position.X = rightBorder;
         }
 
-        private void CorrectCamera(Vector playerCenterInCamera)
+        private void CorrectCameraDependsOnPlayerPosition(Vector playerCenterInCamera)
         {
             var q = playerCenterInCamera.X - player.Radius - walkableArea.X;
             var b = walkableArea.X + walkableArea.Width - (playerCenterInCamera.X + player.Radius);
             var p = playerCenterInCamera.Y - player.Radius - walkableArea.Y;
             var a = walkableArea.Y + walkableArea.Height - (playerCenterInCamera.Y + player.Radius);
+            if (q < 0) cameraPosition.X += q;
+            if (b < 0) cameraPosition.X -= b;
+            if (p < 0) cameraPosition.Y += p;
+            if (a < 0) cameraPosition.Y -= a;
+        }
+
+        private void CorrectCameraDependsOnCursorPosition()
+        {
+            var q = cursor.Center.X - cursorArea.X;
+            var b = cursorArea.X + cursorArea.Width - cursor.Center.X;
+            var p = cursor.Center.Y - cursorArea.Y;
+            var a = cursorArea.Y + cursorArea.Height - cursor.Center.Y;
             if (q < 0) cameraPosition.X += q;
             if (b < 0) cameraPosition.X -= b;
             if (p < 0) cameraPosition.Y += p;
@@ -186,8 +203,9 @@ namespace App.View
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
+            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
             RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            //RigidBodyRenderer.Draw(cursor, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
             PrintDebugInfo();
         }
@@ -215,7 +233,7 @@ namespace App.View
             Print(0, debugFont.Height, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
             Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
-            //Print(0, 4 * debugFont.Height, "Cursor Position: " + cursor.Center, debugBrush);
+            Print(0, 4 * debugFont.Height, "Cursor Position: " + cursor.Center, debugBrush);
         }
 
         private void Print(float x, float y, string text, Brush color)
@@ -303,6 +321,11 @@ namespace App.View
                     keyState.D = false;
                     break;
             }
+        }
+
+        private void Mouse(object o, MouseEventArgs e)
+        {
+            cursor.Center = new Vector(e.X, e.Y);
         }
     }
 }
