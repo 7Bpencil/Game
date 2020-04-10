@@ -19,10 +19,12 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
-        private Sprite player;
+        private Sprite playerLegs;
+        private Sprite playerTorso;
         
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
+        private Bitmap bmpPlayer;
         private Graphics gfxRenderBuffer;
         private Rectangle srcRect;
         
@@ -45,14 +47,32 @@ namespace App.View
             Text = "New Game";
             
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
-            bmpTiles = new Bitmap("Images/sprite_map (1).png");
+            bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
             
             keyState = new KeyStates();
             cameraPosition = new Vector(500, 200);
-            player = new Sprite(new Vector(0, 0), true, 106, 30, bmpTiles.Width / tileSize, new Size(64, 64));
-            player.Image = bmpTiles;
-
+            
+            //create and inintialize player legs
+            bmpPlayer = new Bitmap("Images/boroda.png");
+            playerLegs = new Sprite();
+            playerLegs.TopLeft = new Vector(0, 0);
+            playerLegs.Alive = true;
+            playerLegs.CurrentFrame = 4;
+            playerLegs.Columns = 4;
+            playerLegs.Size = new Size(64, 64);
+            playerLegs.Image = bmpPlayer;
+            
+            //create and inintialize player body
+            playerTorso = new Sprite();
+            playerTorso.TopLeft = new Vector(0, 0);
+            playerTorso.Alive = true;
+            playerTorso.CurrentFrame = 0;
+            playerTorso.Columns = 4;
+            playerTorso.Size = new Size(64, 64);
+            playerTorso.Image = bmpPlayer;
+            
+            //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
             
@@ -87,15 +107,31 @@ namespace App.View
                 deltaCamera.X -= step;
             if (keyState.Right)
                 deltaCamera.X += step;
-            
-            if (keyState.W) 
-                player.Center.Y -= step;
+
+            if (keyState.W)
+            {
+                playerLegs.TopLeft.Y -= step;
+                playerTorso.TopLeft.Y -= step;
+            }
+
             if (keyState.S)
-                player.Center.Y += step;
+            {
+                playerLegs.TopLeft.Y += step;
+                playerTorso.TopLeft.Y += step;
+            }
+                
             if (keyState.A)
-                player.Center.X -= step;
+            {
+                playerLegs.TopLeft.X -= step;
+                playerTorso.TopLeft.X -= step;
+            }
+                
             if (keyState.D)
-                player.Center.X += step;
+            {
+                playerLegs.TopLeft.X += step;
+                playerTorso.TopLeft.X += step;
+            }
+                
 
             
             cameraPosition += deltaCamera;
@@ -145,7 +181,8 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            player.Draw(gfxRenderBuffer);
+            playerLegs.Draw(gfxRenderBuffer);
+            playerTorso.Draw(gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
         }
 
@@ -171,7 +208,7 @@ namespace App.View
             Print(0, 0, "Scroll Position: " + cameraPosition, debugBrush);
             Print(0, debugFont.Height, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
-            Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
+            Print(0, 3 * debugFont.Height, "Player Position: " + playerLegs.TopLeft, debugBrush);
         }
 
         private void Print(float x, float y, string text, Brush color)

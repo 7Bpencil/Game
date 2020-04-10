@@ -71,6 +71,9 @@
         <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Images\boroda.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Images\dragon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
