@@ -143,7 +143,7 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            RigidBodyRenderer.Draw(player, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
         }
 

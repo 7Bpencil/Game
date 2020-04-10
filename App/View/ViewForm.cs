@@ -52,8 +52,8 @@ namespace App.View
             g.SmoothingMode = SmoothingMode.AntiAlias;
             var collisions = engineCore.GetCollisions();
             
-            foreach (var formObject in sceneObjects)
-                RigidBodyRenderer.Draw(formObject, formObject.IsCollided ? collisionStrokePen : strokePen, g);
+            //foreach (var formObject in sceneObjects) // TODO now this view is deprecated lol
+            //    RigidBodyRenderer.Draw(formObject, formObject.IsCollided ? collisionStrokePen : strokePen, g);
 
             if (collisions == null) return;
             foreach (var collision in collisions)

@@ -115,5 +115,15 @@ namespace App.Engine.PhysicsEngine
         {
             return X * other.Y - Y * other.X;
         }
+
+        public Vector ConvertMathToWindow()
+        {
+            return null;
+        }
+        
+        public Vector ConvertFromWorldToCamera(Vector cameraPosition)
+        {
+            return new Vector(X - cameraPosition.X, Y - cameraPosition.Y);
+        }
     }
 }
