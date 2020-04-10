@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -22,8 +23,12 @@ namespace App.View
         private RigidCircle player;
         private RigidCircle cursor;
         
+        private Sprite playerLegs;
+        private Sprite playerTorso;
+
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
+        private Bitmap bmpPlayer;
         private Graphics gfxRenderBuffer;
         private Rectangle srcRect;
 
@@ -52,7 +57,7 @@ namespace App.View
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
             Text = "New Game";
-
+            
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
@@ -62,6 +67,25 @@ namespace App.View
             player = new RigidCircle(new Vector(14 * 64, 6 * 64), 32, false);
             cursor = new RigidCircle(new Vector(14 * 64, 6 * 64), 5, false);
             
+            //create and inintialize player legs
+            bmpPlayer = new Bitmap("Images/boroda.png");
+            playerLegs = new Sprite();
+            playerLegs.TopLeft = new Vector(0, 0);
+            playerLegs.Alive = true;
+            playerLegs.Columns = 4;
+            playerLegs.Size = new Size(64, 64);
+            playerLegs.Image = bmpPlayer;
+            
+            
+            //create and inintialize player body
+            playerTorso = new Sprite();
+            playerTorso.TopLeft = new Vector(0, 0);
+            playerTorso.Alive = true;
+            playerTorso.Columns = 4;
+            playerTorso.Size = new Size(64, 64);
+            playerTorso.Image = bmpPlayer;
+
+            //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
             
@@ -206,6 +230,8 @@ namespace App.View
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
             RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            playerLegs.Animate(gfxRenderBuffer, 0, 3);
+            playerTorso.Animate(gfxRenderBuffer, 4, 7);    
             pbSurface.Image = bmpRenderBuffer;
             PrintDebugInfo();
         }
