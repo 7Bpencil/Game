@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -46,53 +45,18 @@ namespace App.View
         
         public ViewExperimental()
         {
-            cameraSize = new Size(1280, 720);
-            var p = cameraSize.Height / 3;
-            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
-            var q = cameraSize.Height / 5;
-            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-
-            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
-            ClientSize = cameraSize;
-            Text = "New Game";
             
+            SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
 
             keyState = new KeyStates();
-            cameraPosition = new Vector(0, 0);
+            
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             cursor = new RigidCircle(playerStartPosition, 5, false);
             
-            //create and initialize player legs
-            bmpPlayer = new Bitmap("Images/boroda.png");
-            var playerLegs = new Sprite
-            (
-                playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
-                bmpPlayer,
-                4,
-                7,
-                new Size(64, 64),
-                4);
-
-            //create and initialize player body
-            var playerTorso = new Sprite
-            (
-                playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
-                bmpPlayer,
-                0,
-                3,
-                new Size(64, 64),
-                4);
-
-            //create and initialize whole player
-            player = new Player
-            {
-                Shape = new RigidCircle(playerStartPosition, tileSize / 2, false),
-                Torso = playerTorso,
-                Legs = playerLegs
-            };
+            SetUpPlayer(playerStartPosition);
 
             //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
@@ -116,6 +80,49 @@ namespace App.View
             timer.Interval = 15;
             timer.Tick += TimerTick;
             timer.Start();
+        }
+
+        private void SetUpPlayer(Vector position)
+        {
+            bmpPlayer = new Bitmap("Images/boroda.png");
+            var playerLegs = new Sprite
+            (
+                position,
+                bmpPlayer,
+                4,
+                7,
+                new Size(64, 64),
+                4);
+            
+            var playerTorso = new Sprite
+            (
+                position,
+                bmpPlayer,
+                0,
+                3,
+                new Size(64, 64),
+                4);
+            
+            player = new Player
+            {
+                Shape = new RigidCircle(position, tileSize / 2, false),
+                Torso = playerTorso,
+                Legs = playerLegs
+            };
+        }
+
+        private void SetUpView()
+        {
+            cameraSize = new Size(1280, 720);
+            var p = cameraSize.Height / 3;
+            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
+            var q = cameraSize.Height / 5;
+            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
+
+            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
+            ClientSize = cameraSize;
+            cameraPosition = new Vector(250, 100);
+            Text = "New Game";
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -257,8 +264,8 @@ namespace App.View
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
             RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            player.Legs.Animate(gfxRenderBuffer);
-            player.Torso.Animate(gfxRenderBuffer);    
+            player.Legs.Animate(gfxRenderBuffer, cameraPosition);
+            player.Torso.Animate(gfxRenderBuffer, cameraPosition);    
             RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             
             pbSurface.Image = bmpRenderBuffer;

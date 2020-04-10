@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using App.Engine.PhysicsEngine;
 
 namespace App.View
@@ -29,9 +28,15 @@ namespace App.View
                 return topLeft;
             }
         }
+        
+        private RectangleF GetBoundsInCamera(Vector cameraPosition)
+        {
+            var topLeftInCamera = TopLeft.ConvertFromWorldToCamera(cameraPosition);
+            return new RectangleF(topLeftInCamera.X, topLeftInCamera.Y, size.Width, size.Height);
+        }
 
         private int expectedCenterVersion;
-        private int centerVersion = 0;
+        private int centerVersion;
         
         private Vector previousPosition;
         private int startFrame;
@@ -76,10 +81,10 @@ namespace App.View
             }
         }
 
-        public void Animate(Graphics device)
+        public void Animate(Graphics device, Vector cameraPosition)
         {
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
-            Draw(device);
+            Draw(device, cameraPosition);
             //check animation timing
             var time = Environment.TickCount;
             if (time > lastTime + animationRate && !previousPosition.Equals(center)) //it need to resolve framerate and animation radnering
@@ -90,7 +95,7 @@ namespace App.View
             }
         }
 
-        private void Draw(Graphics device)
+        private void Draw(Graphics device, Vector cameraPosition)
         {
             var frame = new Rectangle
             {
@@ -99,9 +104,7 @@ namespace App.View
                 Width = size.Width,
                 Height = size.Height
             };
-            device.DrawImage(bitmap, Bounds, frame, GraphicsUnit.Pixel);
+            device.DrawImage(bitmap, GetBoundsInCamera(cameraPosition), frame, GraphicsUnit.Pixel);
         }
-
-        public RectangleF Bounds => new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
     }
 }
