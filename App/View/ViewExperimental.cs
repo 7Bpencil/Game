@@ -19,9 +19,10 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
+        
         private Sprite playerLegs;
         private Sprite playerTorso;
-        
+
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
         private Bitmap bmpPlayer;
@@ -62,6 +63,7 @@ namespace App.View
             playerLegs.Size = new Size(64, 64);
             playerLegs.Image = bmpPlayer;
             
+            
             //create and inintialize player body
             playerTorso = new Sprite();
             playerTorso.TopLeft = new Vector(0, 0);
@@ -69,7 +71,7 @@ namespace App.View
             playerTorso.Columns = 4;
             playerTorso.Size = new Size(64, 64);
             playerTorso.Image = bmpPlayer;
-            
+
             //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
@@ -129,9 +131,8 @@ namespace App.View
                 playerLegs.TopLeft.X += step;
                 playerTorso.TopLeft.X += step;
             }
-                
 
-            
+
             cameraPosition += deltaCamera;
             RemoveEscapingFromScene(cameraPosition);
             UpdateScrollBuffer();
@@ -180,7 +181,7 @@ namespace App.View
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             playerLegs.Animate(gfxRenderBuffer, 0, 3);
-            playerTorso.Animate(gfxRenderBuffer, 4, 7);
+            playerTorso.Animate(gfxRenderBuffer, 4, 7);    
             pbSurface.Image = bmpRenderBuffer;
         }
 

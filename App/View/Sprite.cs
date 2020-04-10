@@ -9,6 +9,7 @@ namespace App.View
     {
         private Vector _topLeft;
         private Vector velocity;
+        private Vector prevPos;
         private Size size;
         private Bitmap bitmap;
         private bool alive;
@@ -21,13 +22,14 @@ namespace App.View
         {
             _topLeft = Vector.ZeroVector;
             velocity = Vector.ZeroVector;
+            prevPos = Vector.ZeroVector;
             size = new Size(64, 64);
             bitmap = null;
             alive = true;
             columns = 1;
             currentFrame = 0;
             lastTime = 0;
-            animationRate = 1000 / 3;
+            animationRate = 1500 / 3;
         }
         
         public bool Alive
@@ -75,9 +77,11 @@ namespace App.View
             Draw(device);
             //check animation timing
             var time = Environment.TickCount;
-            if (time > lastTime + animationRate) //it need to resolve framerate and animation radnering
+            if (time > lastTime + animationRate && !Equals(prevPos, _topLeft)) //it need to resolve framerate and animation radnering
             {
                 lastTime = time;
+                prevPos.X = _topLeft.X;
+                prevPos.Y = _topLeft.Y;
                 currentFrame++;
             }
         }
