@@ -45,7 +45,6 @@ namespace App.View
         
         public ViewExperimental()
         {
-            
             SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
@@ -54,21 +53,15 @@ namespace App.View
             keyState = new KeyStates();
             
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
+            SetUpPlayer(playerStartPosition);
             cursor = new RigidCircle(playerStartPosition, 5, false);
             
-            SetUpPlayer(playerStartPosition);
-
             //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
             
-            
-            // that sections looks suspicious
-            pbSurface = new PictureBox();
-            pbSurface.Parent = this;
-            pbSurface.BackColor = Color.Black;
-            pbSurface.Dock = DockStyle.Fill;
-            pbSurface.Image = bmpRenderBuffer;
+            // that sections looks suspicious. It looks like there are many unnecessary things
+            pbSurface = new PictureBox {Parent = this, Dock = DockStyle.Fill, Image = bmpRenderBuffer};
             pbSurface.MouseMove += Mouse;
 
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -80,6 +73,20 @@ namespace App.View
             timer.Interval = 15;
             timer.Tick += TimerTick;
             timer.Start();
+        }
+        
+        private void SetUpView()
+        {
+            cameraSize = new Size(1280, 720);
+            var p = cameraSize.Height / 3;
+            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
+            var q = cameraSize.Height / 5;
+            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
+
+            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
+            ClientSize = cameraSize;
+            cameraPosition = new Vector(250, 100);
+            Text = "New Game";
         }
 
         private void SetUpPlayer(Vector position)
@@ -110,23 +117,10 @@ namespace App.View
                 Legs = playerLegs
             };
         }
-
-        private void SetUpView()
-        {
-            cameraSize = new Size(1280, 720);
-            var p = cameraSize.Height / 3;
-            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
-            var q = cameraSize.Height / 5;
-            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-
-            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
-            ClientSize = cameraSize;
-            cameraPosition = new Vector(250, 100);
-            Text = "New Game";
-        }
-
+        
         private void TimerTick(object sender, EventArgs e)
         {
+            // TODO I think we can make here small optimization: just don't render tiles if camera don't move
             const int step = 6;
             UpdateCamera(step);
             UpdatePlayer(step);
@@ -135,15 +129,9 @@ namespace App.View
             CorrectCameraDependsOnPlayerPosition();
             RemoveEscapingFromScene();
             UpdateScrollBuffer();
-            /*
-            if (!deltaCamera.Equals(Vector.ZeroVector))
-            {
-                cameraPosition += deltaCamera;
-                RemoveEscapingFromScene(cameraPosition);
-                UpdateScrollBuffer();
-            }
-            */
+            RenderObjects();
             
+            PrintDebugInfo();
         }
 
         private void UpdateCamera(int step)
@@ -261,15 +249,13 @@ namespace App.View
                 cameraSize.Width, cameraSize.Height);
             
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            player.Legs.Animate(gfxRenderBuffer, cameraPosition);
-            player.Torso.Animate(gfxRenderBuffer, cameraPosition);    
-            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            
             pbSurface.Image = bmpRenderBuffer;
-            PrintDebugInfo();
+        }
+
+        private void RenderObjects()
+        {
+            player.Legs.DrawNextFrame(gfxRenderBuffer, cameraPosition);
+            player.Torso.DrawNextFrame(gfxRenderBuffer, cameraPosition);
         }
 
 
@@ -291,11 +277,16 @@ namespace App.View
 
         private void PrintDebugInfo()
         {
-            Print(0, 0, "Scroll Position: " + cameraPosition, debugBrush);
-            Print(0, debugFont.Height, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
-            Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
-            Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
-            Print(0, 4 * debugFont.Height, "Cursor Position: " + cursor.Center, debugBrush);
+            Print(0, 0, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
+            Print(0, debugFont.Height, "Scene Size (in Tiles): " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
+            Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + cameraPosition, debugBrush);
+            Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
+            Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
+            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursor.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
+            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
+            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
+            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
         }
 
         private void Print(float x, float y, string text, Brush color)

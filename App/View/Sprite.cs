@@ -34,6 +34,17 @@ namespace App.View
             var topLeftInCamera = TopLeft.ConvertFromWorldToCamera(cameraPosition);
             return new RectangleF(topLeftInCamera.X, topLeftInCamera.Y, size.Width, size.Height);
         }
+        
+        private Rectangle GetCurrentFrameTile()
+        {
+            return new Rectangle
+            {
+                X = currentFrame % columns * size.Width,
+                Y = currentFrame / columns * size.Height,
+                Width = size.Width,
+                Height = size.Height
+            };
+        }
 
         private int expectedCenterVersion;
         private int centerVersion;
@@ -43,6 +54,9 @@ namespace App.View
         private int currentFrame;
         private int endFrame;
         private Vector velocity;
+        public Vector Velocity
+        { get => velocity; set => velocity = value; }
+        
         private Size size;
         private Bitmap bitmap;
         private int columns;
@@ -64,9 +78,6 @@ namespace App.View
             lastTime = 0;
             animationRate = 1500 / 3;
         }
-        
-        public Vector Velocity
-        { get => velocity; set => velocity = value; }
 
         /*public int CurrentFrame
         { get  => currentFrame; set => currentFrame = value; }*/
@@ -81,30 +92,17 @@ namespace App.View
             }
         }
 
-        public void Animate(Graphics device, Vector cameraPosition)
+        public void DrawNextFrame(Graphics graphics, Vector cameraPosition)
         {
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
-            Draw(device, cameraPosition);
-            //check animation timing
+            graphics.DrawImage(bitmap, GetBoundsInCamera(cameraPosition), GetCurrentFrameTile(), GraphicsUnit.Pixel);
             var time = Environment.TickCount;
-            if (time > lastTime + animationRate && !previousPosition.Equals(center)) //it need to resolve framerate and animation radnering
+            if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
             {
                 lastTime = time;
                 previousPosition = TopLeft;
                 currentFrame++;
             }
-        }
-
-        private void Draw(Graphics device, Vector cameraPosition)
-        {
-            var frame = new Rectangle
-            {
-                X = currentFrame % columns * size.Width,
-                Y = currentFrame / columns * size.Height,
-                Width = size.Width,
-                Height = size.Height
-            };
-            device.DrawImage(bitmap, GetBoundsInCamera(cameraPosition), frame, GraphicsUnit.Pixel);
         }
     }
 }
