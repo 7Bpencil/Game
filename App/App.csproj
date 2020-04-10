@@ -61,32 +61,18 @@
         <Compile Include="Tools.cs" />
         <Compile Include="View\ContractView.cs" />
         <Compile Include="View\Game.cs" />
-        <Compile Include="View\PlaygroundDeprecated.cs" />
         <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />
         <Compile Include="View\Renderings\RigidBodyRenderer.cs" />
         <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewExperimental.cs" />
         <Compile Include="View\ViewForm.cs" />
-        <Compile Include="View\ViewWithExperimentalCamera.cs" />
         <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="Images\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Images\dragon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Images\grass.bmp">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Images\palette.bmp">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <Content Include="Images\sprite_map.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Levels\level1.level">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Levels\secondTry.tmx">
