@@ -123,7 +123,7 @@ namespace App.Engine.PhysicsEngine
         
         public Vector ConvertFromWorldToCamera(Vector cameraPosition)
         {
-            return new Vector(X - cameraPosition.X, Y - cameraPosition.Y);
+            return this - cameraPosition;
         }
     }
 }

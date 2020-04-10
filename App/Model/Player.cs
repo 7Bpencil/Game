@@ -1,50 +1,24 @@
-﻿namespace App.Model
+﻿using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
+using App.View;
+
+namespace App.Model
 {
-    public class Player : IEntity
+    public class Player
     {
-        public int HitPoint { get; set; }
-        public string View { get; }
+        public RigidCircle Shape;
+        public Sprite Torso;
+        public Sprite Legs;
 
-        public void Destructibility()
+        public void Move(Vector delta)
         {
-            throw new System.NotImplementedException();
+            Shape.Center += delta;
+            Torso.Center += delta;
+            Legs.Center += delta;
         }
 
-        public void ShowView()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class Environment : IEntity
-    {
-        public int HitPoint { get; set; }
-        public string View { get; }
-
-        public void Destructibility()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ShowView()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class Enemy : IEntity
-    {
-        public int HitPoint { get; set; }
-        public string View { get; }
-
-        public void Destructibility()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ShowView()
-        {
-            throw new System.NotImplementedException();
-        }
+        public Vector Center => Shape.Center;
+        public Vector TopLeft => Torso.TopLeft;
+        public float Radius => Shape.Radius;
     }
 }

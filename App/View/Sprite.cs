@@ -1,12 +1,12 @@
 using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using App.Engine.PhysicsEngine;
 
 namespace App.View
 {
     public class Sprite
     {
+        private Vector center;
         private Vector _topLeft;
         private Vector velocity;
         private Vector prevPos;
@@ -20,9 +20,7 @@ namespace App.View
 
         public Sprite()
         {
-            _topLeft = Vector.ZeroVector;
             velocity = Vector.ZeroVector;
-            prevPos = Vector.ZeroVector;
             size = new Size(64, 64);
             bitmap = null;
             alive = true;
@@ -31,17 +29,32 @@ namespace App.View
             lastTime = 0;
             animationRate = 1500 / 3;
         }
-        
+
+        public Vector Center
+        {
+            get => center;
+            set
+            {
+                center = value;
+                _topLeft = center - new Vector(Width / 2, Height / 2);
+            }
+        }
+
         public bool Alive
         { get => alive; set => alive = value; }
 
         public Bitmap Image
         { get => bitmap; set => bitmap = value; }
         
+        public int StartFrame { get; set; }
+        public int EndFrame { get; set; }
 
-        public Vector TopLeft
-        { get => _topLeft; set => _topLeft = value; }
 
+        public Vector TopLeft => _topLeft;
+
+        public Vector PreviousPosition
+        { get => prevPos; set => prevPos = value; }
+        
         public Vector Velocity
         { get => velocity; set => velocity = value; }
 
@@ -70,18 +83,17 @@ namespace App.View
             }
         }
 
-        public void Animate(Graphics device, int startFrame, int endFrame)
+        public void Animate(Graphics device)
         {
-            if (currentFrame < startFrame || currentFrame > endFrame)
-                currentFrame = startFrame;
+            if (currentFrame < StartFrame || currentFrame > EndFrame)
+                currentFrame = StartFrame;
             Draw(device);
             //check animation timing
             var time = Environment.TickCount;
-            if (time > lastTime + animationRate && !Equals(prevPos, _topLeft)) //it need to resolve framerate and animation radnering
+            if (time > lastTime + animationRate && !Equals(prevPos, _topLeft)) //it need to resolve framerate and animation rendering
             {
                 lastTime = time;
-                prevPos.X = _topLeft.X;
-                prevPos.Y = _topLeft.Y;
+                prevPos = _topLeft;
                 currentFrame++;
             }
         }
@@ -99,10 +111,5 @@ namespace App.View
         }
 
         public RectangleF Bounds => new RectangleF(_topLeft.X, _topLeft.Y, Width, Height);
-        
-        public bool IsColliding(ref Sprite other)
-        {
-            return Bounds.IntersectsWith(other.Bounds);
-        }
     }
 }

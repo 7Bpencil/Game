@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
+using App.Model;
 using App.Model.LevelData;
 using App.Model.Parser;
 using App.View.Renderings;
@@ -20,11 +21,8 @@ namespace App.View
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
         
-        private RigidCircle player;
         private RigidCircle cursor;
-        
-        private Sprite playerLegs;
-        private Sprite playerTorso;
+        private Player player;
 
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
@@ -61,29 +59,44 @@ namespace App.View
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
-            
+
             keyState = new KeyStates();
-            cameraPosition = new Vector(500, 200);
-            player = new RigidCircle(new Vector(14 * 64, 6 * 64), 32, false);
-            cursor = new RigidCircle(new Vector(14 * 64, 6 * 64), 5, false);
+            cameraPosition = new Vector(0, 0);
+            var playerStartPosition = new Vector(14 * 64, 6 * 64);
+            cursor = new RigidCircle(playerStartPosition, 5, false);
             
-            //create and inintialize player legs
+            //create and initialize player legs
             bmpPlayer = new Bitmap("Images/boroda.png");
-            playerLegs = new Sprite();
-            playerLegs.TopLeft = new Vector(0, 0);
-            playerLegs.Alive = true;
-            playerLegs.Columns = 4;
-            playerLegs.Size = new Size(64, 64);
-            playerLegs.Image = bmpPlayer;
-            
-            
-            //create and inintialize player body
-            playerTorso = new Sprite();
-            playerTorso.TopLeft = new Vector(0, 0);
-            playerTorso.Alive = true;
-            playerTorso.Columns = 4;
-            playerTorso.Size = new Size(64, 64);
-            playerTorso.Image = bmpPlayer;
+            var playerLegs = new Sprite
+            {
+                Center = playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
+                Alive = true,
+                Columns = 4,
+                Size = new Size(tileSize, tileSize),
+                Image = bmpPlayer,
+                StartFrame = 4,
+                EndFrame = 7
+            };
+
+            //create and initialize player body
+            var playerTorso = new Sprite
+            {
+                Center = playerStartPosition.ConvertFromWorldToCamera(cameraPosition),
+                Alive = true,
+                Columns = 4,
+                Size = new Size(tileSize, tileSize),
+                Image = bmpPlayer,
+                StartFrame = 0,
+                EndFrame = 3
+            };
+
+            //create and initialize whole player
+            player = new Player
+            {
+                Shape = new RigidCircle(playerStartPosition, tileSize / 2, false),
+                Torso = playerTorso,
+                Legs = playerLegs
+            };
 
             //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
@@ -116,8 +129,8 @@ namespace App.View
             UpdatePlayer(step);
             CorrectPlayer();
             CorrectCameraDependsOnCursorPosition();
-            CorrectCameraDependsOnPlayerPosition(player.Center.ConvertFromWorldToCamera(cameraPosition));
-            RemoveEscapingFromScene(cameraPosition);
+            CorrectCameraDependsOnPlayerPosition();
+            RemoveEscapingFromScene();
             UpdateScrollBuffer();
             /*
             if (!deltaCamera.Equals(Vector.ZeroVector))
@@ -146,48 +159,65 @@ namespace App.View
 
         private void UpdatePlayer(int step)
         {
+            var delta = Vector.ZeroVector;
             if (keyState.W) 
-                player.Center.Y -= step;
+                delta.Y -= step;
             if (keyState.S)
-                player.Center.Y += step;
+                delta.Y += step;
             if (keyState.A)
-                player.Center.X -= step;
+                delta.X -= step;
             if (keyState.D)
-                player.Center.X += step;
+                delta.X += step;
+            player.Move(delta);
         }
 
         private void CorrectPlayer()
         {
+            var delta = Vector.ZeroVector;
             var rightBorder = sceneSizeInTiles.Width * tileSize;
             const int leftBorder = 0;
             var bottomBorder = sceneSizeInTiles.Height * tileSize;
             const int topBorder = 0;
+
+            var a = player.Center.Y - player.Radius - topBorder;
+            var b = player.Center.Y + player.Radius - bottomBorder;
+            var c = player.Center.X - player.Radius - leftBorder;
+            var d = player.Center.X + player.Radius - rightBorder;
+
+            if (a < 0)
+                delta.Y -= a;
+            if (b > 0)
+                delta.Y -= b;
+            if (c < 0)
+                delta.X -= c;
+            if (d > 0)
+                delta.X -= d;
             
-            if (player.Center.Y - player.Radius < topBorder) player.Center.Y = topBorder + player.Radius;
-            if (player.Center.Y + player.Radius > bottomBorder) player.Center.Y = bottomBorder - player.Radius;
-            if (player.Center.X - player.Radius < leftBorder) player.Center.X = leftBorder + player.Radius;
-            if (player.Center.X + player.Radius > rightBorder) player.Center.X = rightBorder - player.Radius;
+            player.Move(delta);
         }
 
-        private void RemoveEscapingFromScene(Vector position)
+        private void RemoveEscapingFromScene()
         {
             var rightBorder = sceneSizeInTiles.Width * tileSize - cameraSize.Width;
             const int leftBorder = 0;
             var bottomBorder = sceneSizeInTiles.Height * tileSize - cameraSize.Height;
             const int topBorder = 0;
             
-            if (position.Y < topBorder) position.Y = topBorder;
-            if (position.Y > bottomBorder) position.Y = bottomBorder;
-            if (position.X < leftBorder) position.X = leftBorder;
-            if (position.X > rightBorder) position.X = rightBorder;
+            if (cameraPosition.Y < topBorder) cameraPosition.Y = topBorder;
+            if (cameraPosition.Y > bottomBorder) cameraPosition.Y = bottomBorder;
+            if (cameraPosition.X < leftBorder) cameraPosition.X = leftBorder;
+            if (cameraPosition.X > rightBorder) cameraPosition.X = rightBorder;
         }
 
-        private void CorrectCameraDependsOnPlayerPosition(Vector playerCenterInCamera)
+        private void CorrectCameraDependsOnPlayerPosition()
         {
+            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(cameraPosition);
+            
             var q = playerCenterInCamera.X - player.Radius - walkableArea.X;
             var b = walkableArea.X + walkableArea.Width - (playerCenterInCamera.X + player.Radius);
             var p = playerCenterInCamera.Y - player.Radius - walkableArea.Y;
             var a = walkableArea.Y + walkableArea.Height - (playerCenterInCamera.Y + player.Radius);
+            
             if (q < 0) cameraPosition.X += q;
             if (b < 0) cameraPosition.X -= b;
             if (p < 0) cameraPosition.Y += p;
@@ -200,6 +230,7 @@ namespace App.View
             var b = cursorArea.X + cursorArea.Width - cursor.Center.X;
             var p = cursor.Center.Y - cursorArea.Y;
             var a = cursorArea.Y + cursorArea.Height - cursor.Center.Y;
+            
             if (q < 0) cameraPosition.X += q;
             if (b < 0) cameraPosition.X -= b;
             if (p < 0) cameraPosition.Y += p;
@@ -228,10 +259,11 @@ namespace App.View
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            playerLegs.Animate(gfxRenderBuffer, 0, 3);
-            playerTorso.Animate(gfxRenderBuffer, 4, 7);    
+            
+            player.Legs.Animate(gfxRenderBuffer);
+            player.Torso.Animate(gfxRenderBuffer);    
+            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
             PrintDebugInfo();
         }
