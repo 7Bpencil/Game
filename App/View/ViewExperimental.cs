@@ -24,6 +24,8 @@ namespace App.View
         private Bitmap bmpRenderBuffer;
         private Graphics gfxRenderBuffer;
         private Rectangle srcRect;
+
+        private Rectangle walkableArea;
         
         private PictureBox pbSurface;
 
@@ -39,6 +41,9 @@ namespace App.View
         public ViewExperimental()
         {
             cameraSize = new Size(854, 480);
+            var p = cameraSize.Height / 3;
+            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
+
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
             Text = "New Game";
@@ -49,7 +54,7 @@ namespace App.View
             
             keyState = new KeyStates();
             cameraPosition = new Vector(500, 200);
-            player = new RigidCircle(new Vector(500, 200), 32, false);
+            player = new RigidCircle(new Vector(14 * 64, 6 * 64), 32, false);
             
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
@@ -75,28 +80,11 @@ namespace App.View
 
         private void TimerTick(object sender, EventArgs e)
         {
-            var deltaCamera = Vector.ZeroVector;
-            const int step = 4;
-            if (keyState.Up) 
-                deltaCamera.Y -= step;
-            if (keyState.Down)
-                deltaCamera.Y += step;
-            if (keyState.Left)
-                deltaCamera.X -= step;
-            if (keyState.Right)
-                deltaCamera.X += step;
-            
-            if (keyState.W) 
-                player.Center.Y -= step;
-            if (keyState.S)
-                player.Center.Y += step;
-            if (keyState.A)
-                player.Center.X -= step;
-            if (keyState.D)
-                player.Center.X += step;
-
-            
-            cameraPosition += deltaCamera;
+            const int step = 6;
+            UpdateCamera(step);
+            UpdatePlayer(step);
+            CorrectPlayer();
+            CorrectCamera(player.Center.ConvertFromWorldToCamera(cameraPosition));
             RemoveEscapingFromScene(cameraPosition);
             UpdateScrollBuffer();
             /*
@@ -110,6 +98,45 @@ namespace App.View
             
         }
 
+        private void UpdateCamera(int step)
+        {
+            var deltaCamera = Vector.ZeroVector;
+            if (keyState.Up) 
+                deltaCamera.Y -= step;
+            if (keyState.Down)
+                deltaCamera.Y += step;
+            if (keyState.Left)
+                deltaCamera.X -= step;
+            if (keyState.Right)
+                deltaCamera.X += step;
+            cameraPosition += deltaCamera;
+        }
+
+        private void UpdatePlayer(int step)
+        {
+            if (keyState.W) 
+                player.Center.Y -= step;
+            if (keyState.S)
+                player.Center.Y += step;
+            if (keyState.A)
+                player.Center.X -= step;
+            if (keyState.D)
+                player.Center.X += step;
+        }
+
+        private void CorrectPlayer()
+        {
+            var rightBorder = sceneSizeInTiles.Width * tileSize;
+            const int leftBorder = 0;
+            var bottomBorder = sceneSizeInTiles.Height * tileSize;
+            const int topBorder = 0;
+            
+            if (player.Center.Y - player.Radius < topBorder) player.Center.Y = topBorder + player.Radius;
+            if (player.Center.Y + player.Radius > bottomBorder) player.Center.Y = bottomBorder - player.Radius;
+            if (player.Center.X - player.Radius < leftBorder) player.Center.X = leftBorder + player.Radius;
+            if (player.Center.X + player.Radius > rightBorder) player.Center.X = rightBorder - player.Radius;
+        }
+
         private void RemoveEscapingFromScene(Vector position)
         {
             var rightBorder = sceneSizeInTiles.Width * tileSize - cameraSize.Width;
@@ -121,6 +148,18 @@ namespace App.View
             if (position.Y > bottomBorder) position.Y = bottomBorder;
             if (position.X < leftBorder) position.X = leftBorder;
             if (position.X > rightBorder) position.X = rightBorder;
+        }
+
+        private void CorrectCamera(Vector playerCenterInCamera)
+        {
+            var q = playerCenterInCamera.X - player.Radius - walkableArea.X;
+            var b = walkableArea.X + walkableArea.Width - (playerCenterInCamera.X + player.Radius);
+            var p = playerCenterInCamera.Y - player.Radius - walkableArea.Y;
+            var a = walkableArea.Y + walkableArea.Height - (playerCenterInCamera.Y + player.Radius);
+            if (q < 0) cameraPosition.X += q;
+            if (b < 0) cameraPosition.X -= b;
+            if (p < 0) cameraPosition.Y += p;
+            if (a < 0) cameraPosition.Y -= a;
         }
 
         private void UpdateScrollBuffer()
@@ -143,6 +182,7 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
+            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
             RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
         }
@@ -225,6 +265,10 @@ namespace App.View
         {
             switch (e.KeyCode)
             {
+                case Keys.Escape:
+                    Application.Exit();
+                    break;
+                
                 case Keys.Up:
                     keyState.Up = false;
                     break;
