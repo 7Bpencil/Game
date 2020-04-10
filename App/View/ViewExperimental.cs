@@ -18,7 +18,9 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
+        
         private RigidCircle player;
+        //private RigidCircle cursor;
         
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
@@ -31,9 +33,9 @@ namespace App.View
 
         private Font debugFont;
         private Brush debugBrush;
-        
-        
-        public class KeyStates
+
+
+        private class KeyStates
         {
             public bool Up, Down, Left, Right, W, S, A, D;
         }
@@ -47,7 +49,7 @@ namespace App.View
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
             Text = "New Game";
-            
+
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
             sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
@@ -55,6 +57,7 @@ namespace App.View
             keyState = new KeyStates();
             cameraPosition = new Vector(500, 200);
             player = new RigidCircle(new Vector(14 * 64, 6 * 64), 32, false);
+            //cursor = new RigidCircle(new Vector(14 * 64, 6 * 64), 5, false);
             
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
@@ -178,13 +181,15 @@ namespace App.View
                         DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
-            PrintDebugInfo();
+            
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
             gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
             RigidBodyRenderer.Draw(player, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            //RigidBodyRenderer.Draw(cursor, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
             pbSurface.Image = bmpRenderBuffer;
+            PrintDebugInfo();
         }
 
 
@@ -210,6 +215,7 @@ namespace App.View
             Print(0, debugFont.Height, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "Scene Size: " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
             Print(0, 3 * debugFont.Height, "Player Position: " + player.Center, debugBrush);
+            //Print(0, 4 * debugFont.Height, "Cursor Position: " + cursor.Center, debugBrush);
         }
 
         private void Print(float x, float y, string text, Brush color)
