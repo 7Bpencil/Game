@@ -29,10 +29,10 @@ namespace App.View
         private Bitmap bmpTiles;
         private Bitmap bmpPlayer;
         
-        private Bitmap bmpRenderBuffer;
-        private Graphics gfxRenderBuffer;
+        private Bitmap bmpTilesBuffer;
+        private Graphics gfxTilesBuffer;
         
-        private BufferedGraphics graphicsBuffer;
+        private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
         
         private Rectangle srcRect;
@@ -64,14 +64,14 @@ namespace App.View
             cursor = new RigidCircle(playerStartPosition, 5, false);
             
             //create and initialize renderer
-            bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
-            gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
+            bmpTilesBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
+            gfxTilesBuffer = Graphics.FromImage(bmpTilesBuffer);
             
             var context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
             using (var g = CreateGraphics())
-                graphicsBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
-            gfxCamera = graphicsBuffer.Graphics;
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
+            gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
             
             previousTopLeftTileIndex = new Vector(0, 0);
@@ -90,7 +90,7 @@ namespace App.View
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            graphicsBuffer.Render(e.Graphics);
+            cameraBuffer.Render(e.Graphics);
         }
 
         private void SetUpView()
@@ -287,7 +287,7 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
-            gfxCamera.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
+            gfxCamera.DrawImage(bmpTilesBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
         }
 
         private void RenderObjects()
@@ -327,7 +327,7 @@ namespace App.View
             var sy = tile / columnsAmountInPalette * tileSize;
 
             var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
-            gfxRenderBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
+            gfxTilesBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
