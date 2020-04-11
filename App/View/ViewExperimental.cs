@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -26,16 +28,18 @@ namespace App.View
         private Bitmap bmpTiles;
         private Bitmap bmpRenderBuffer;
         private Bitmap bmpPlayer;
-        private Graphics gfxRenderBuffer;
+        private BufferedGraphics graphicsBuffer;
+        private Graphics graphics;
         private Rectangle srcRect;
 
         private Rectangle walkableArea;
         private Rectangle cursorArea;
-        
-        private PictureBox pbSurface;
 
         private Font debugFont;
         private Brush debugBrush;
+
+        private Stopwatch clock;
+        
 
 
         private class KeyStates
@@ -57,17 +61,19 @@ namespace App.View
             cursor = new RigidCircle(playerStartPosition, 5, false);
             
             //create and initialize renderer
-            bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
-            gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
+            var context = BufferedGraphicsManager.Current;
+            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
+            using (var g = CreateGraphics())
+                graphicsBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
             
-            // that sections looks suspicious. It looks like there are many unnecessary things
-            pbSurface = new PictureBox {Parent = this, Dock = DockStyle.Fill, Image = bmpRenderBuffer};
-            pbSurface.MouseMove += Mouse;
+            graphics = graphicsBuffer.Graphics;
+            graphics.InterpolationMode = InterpolationMode.Bilinear;
+            //graphics.CompositingQuality = CompositingQuality.HighSpeed;
 
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
-            
-            UpdateScrollBuffer();
+
+            clock = new Stopwatch();
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -128,10 +134,25 @@ namespace App.View
             CorrectCameraDependsOnCursorPosition();
             CorrectCameraDependsOnPlayerPosition();
             RemoveEscapingFromScene();
-            UpdateScrollBuffer();
-            RenderObjects();
+            
+            clock.Start();
+            
+            DrawSceneToBuffer();
+            DrawObjectsToBuffer();
             
             PrintDebugInfo();
+            
+            Invalidate();
+            Update();
+            
+            clock.Stop();
+            Console.WriteLine(clock.ElapsedMilliseconds);
+            clock.Reset();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            graphicsBuffer.Render(e.Graphics);
         }
 
         private void UpdateCamera(int step)
@@ -228,7 +249,7 @@ namespace App.View
             if (a < 0) cameraPosition.Y -= a;
         }
 
-        private void UpdateScrollBuffer()
+        private void DrawSceneToBuffer()
         {
             foreach (var layer in currentLevel.Layers)
             {
@@ -244,18 +265,31 @@ namespace App.View
                         DrawTile(x, y, layer.Tiles[tileIndex] - 1);
                 }
             }
+            //srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
+            //    cameraSize.Width, cameraSize.Height);
             
+            /*
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
             gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            pbSurface.Image = bmpRenderBuffer;
+            */
+        }
+        
+        private void DrawTile(int x, int y, int tile)
+        {
+            var columnsAmountInPalette = bmpTiles.Width / tileSize;
+            var sx = tile % columnsAmountInPalette * tileSize;
+            var sy = tile / columnsAmountInPalette * tileSize;
+
+            var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
+            graphics.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
-        private void RenderObjects()
+        private void DrawObjectsToBuffer()
         {
-            player.Legs.DrawNextFrame(gfxRenderBuffer, cameraPosition);
-            player.Torso.DrawNextFrame(gfxRenderBuffer, cameraPosition);
+            player.Legs.DrawNextFrame(graphics, cameraPosition);
+            player.Torso.DrawNextFrame(graphics, cameraPosition);
         }
 
 
@@ -283,27 +317,17 @@ namespace App.View
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
             Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursor.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
-            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), graphics);
+            graphics.DrawRectangle(new Pen(Color.White), walkableArea);
+            graphics.DrawRectangle(new Pen(Color.White), cursorArea);
+            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), graphics);
         }
 
         private void Print(float x, float y, string text, Brush color)
         {
-            gfxRenderBuffer.DrawString(text, debugFont, color, x, y);
+            graphics.DrawString(text, debugFont, color, x, y);
         }
-
-        private void DrawTile(int x, int y, int tile)
-        {
-            var columnsAmountInPalette = bmpTiles.Width / tileSize;
-            var sx = tile % columnsAmountInPalette * tileSize;
-            var sy = tile / columnsAmountInPalette * tileSize;
-
-            var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
-            gfxRenderBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
-        }
-
+        
         protected override void OnKeyDown(KeyEventArgs e)
         {
             switch (e.KeyCode)
