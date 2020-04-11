@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -31,21 +32,17 @@ namespace App.View
         private Bitmap bmpRenderBuffer;
         private Graphics gfxRenderBuffer;
         
-        private Bitmap bmpCamera;
+        private BufferedGraphics graphicsBuffer;
         private Graphics gfxCamera;
-        
         
         private Rectangle srcRect;
         private Rectangle walkableArea;
         private Rectangle cursorArea;
         
-        private PictureBox pbSurface;
-
         private Font debugFont;
         private Brush debugBrush;
 
         private Stopwatch clock;
-
 
         private class KeyStates
         {
@@ -54,6 +51,7 @@ namespace App.View
         
         public ViewExperimental()
         {
+            DoubleBuffered = true;
             SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
@@ -69,15 +67,15 @@ namespace App.View
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
             
-            bmpCamera = new Bitmap(cameraSize.Width, cameraSize.Height);
-            gfxCamera = Graphics.FromImage(bmpCamera);
+            var context = BufferedGraphicsManager.Current;
+            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
+            using (var g = CreateGraphics())
+                graphicsBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
+            gfxCamera = graphicsBuffer.Graphics;
+            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
             
             previousTopLeftTileIndex = new Vector(0, 0);
             
-            // that sections looks suspicious. It looks like there are many unnecessary things
-            pbSurface = new PictureBox {Parent = this, Dock = DockStyle.Fill, Image = bmpRenderBuffer};
-            pbSurface.MouseMove += Mouse;
-
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             
@@ -89,7 +87,12 @@ namespace App.View
             timer.Tick += TimerTick;
             timer.Start();
         }
-        
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            graphicsBuffer.Render(e.Graphics);
+        }
+
         private void SetUpView()
         {
             cameraSize = new Size(1280, 720);
@@ -135,7 +138,19 @@ namespace App.View
         
         private void TimerTick(object sender, EventArgs e)
         {
-            // TODO I think we can make here small optimization: just don't render tiles if camera don't move
+            UpdateState();
+            clock.Start();
+            
+            RenderView();
+            Invalidate();
+            
+            clock.Stop();
+            Console.WriteLine(clock.ElapsedMilliseconds);
+            clock.Reset();
+        }
+
+        private void UpdateState()
+        {
             const int step = 6;
             UpdateCamera(step);
             UpdatePlayer(step);
@@ -143,16 +158,15 @@ namespace App.View
             CorrectCameraDependsOnCursorPosition();
             CorrectCameraDependsOnPlayerPosition();
             RemoveEscapingFromScene();
-            clock.Start();
-            UpdateScrollBuffer();
-            RenderObjects();
-            
-            PrintDebugInfo();
-            clock.Stop();
-            Console.WriteLine(clock.ElapsedMilliseconds);
-            clock.Reset();
         }
 
+        private void RenderView()
+        {
+            UpdateScrollBuffer();
+            RenderObjects();
+            PrintDebugInfo();
+        }
+        
         private void UpdateCamera(int step)
         {
             var deltaCamera = Vector.ZeroVector;
@@ -274,7 +288,6 @@ namespace App.View
                 cameraSize.Width, cameraSize.Height);
             
             gfxCamera.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            pbSurface.Image = bmpCamera;
         }
 
         private void RenderObjects()
@@ -282,14 +295,11 @@ namespace App.View
             player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
             player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
         }
-
         
         private Vector GetTopLeftTileIndex()
         {
             return new Vector((int) cameraPosition.X / tileSize, (int) cameraPosition.Y / tileSize);
         }
-        
-        
 
         private void PrintDebugInfo()
         {
@@ -392,7 +402,7 @@ namespace App.View
             }
         }
 
-        private void Mouse(object o, MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             cursor.Center = new Vector(e.X, e.Y);
         }
