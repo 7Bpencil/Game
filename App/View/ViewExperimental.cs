@@ -19,16 +19,22 @@ namespace App.View
         private static Size sceneSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
+        private Vector previousTopLeftTileIndex;
         
         private RigidCircle cursor;
         private Player player;
 
         private Bitmap bmpTiles;
-        private Bitmap bmpRenderBuffer;
         private Bitmap bmpPlayer;
+        
+        private Bitmap bmpRenderBuffer;
         private Graphics gfxRenderBuffer;
+        
+        private Bitmap bmpCamera;
+        private Graphics gfxCamera;
+        
+        
         private Rectangle srcRect;
-
         private Rectangle walkableArea;
         private Rectangle cursorArea;
         
@@ -59,6 +65,11 @@ namespace App.View
             //create and initialize renderer
             bmpRenderBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderBuffer = Graphics.FromImage(bmpRenderBuffer);
+            
+            bmpCamera = new Bitmap(cameraSize.Width, cameraSize.Height);
+            gfxCamera = Graphics.FromImage(bmpCamera);
+            
+            previousTopLeftTileIndex = new Vector(0, 0);
             
             // that sections looks suspicious. It looks like there are many unnecessary things
             pbSurface = new PictureBox {Parent = this, Dock = DockStyle.Fill, Image = bmpRenderBuffer};
@@ -230,26 +241,32 @@ namespace App.View
 
         private void UpdateScrollBuffer()
         {
-            foreach (var layer in currentLevel.Layers)
+            var topLeftTileIndex = GetTopLeftTileIndex();
+            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
             {
-                for (var x = 0; x <= renderSizeInTiles.Width; ++x)
-                for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+                foreach (var layer in currentLevel.Layers)
                 {
-                    var sx = GetLeftTileIndex() + x;
-                    var sy = GetTopTileIndex() + y;
-                    var tileIndex = sy * sceneSizeInTiles.Height + sx;
-                    if (tileIndex > layer.Tiles.Length - 1) break;
+                    for (var x = 0; x <= renderSizeInTiles.Width; ++x)
+                    for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+                    {
+                        var sx = (int) topLeftTileIndex.X + x;
+                        var sy = (int) topLeftTileIndex.Y + y;
+                        var tileIndex = sy * sceneSizeInTiles.Height + sx;
+                        if (tileIndex > layer.Tiles.Length - 1) break;
                     
-                    if (layer.Tiles[tileIndex] != 0) 
-                        DrawTile(x, y, layer.Tiles[tileIndex] - 1);
+                        if (layer.Tiles[tileIndex] != 0) 
+                            DrawTile(x, y, layer.Tiles[tileIndex] - 1);
+                    }
                 }
+
+                previousTopLeftTileIndex = topLeftTileIndex;
             }
             
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
-            gfxRenderBuffer.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
-            pbSurface.Image = bmpRenderBuffer;
+            gfxCamera.DrawImage(bmpRenderBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
+            pbSurface.Image = bmpCamera;
         }
 
         private void RenderObjects()
@@ -258,22 +275,13 @@ namespace App.View
             player.Torso.DrawNextFrame(gfxRenderBuffer, cameraPosition);
         }
 
-
-        private int GetLeftTileIndex()
+        
+        private Vector GetTopLeftTileIndex()
         {
-            var rem = cameraPosition.X % tileSize;
-            if (rem == 0)
-                return (int) cameraPosition.X / tileSize;
-            return (int) (cameraPosition.X - rem) / tileSize;
+            return new Vector((int) cameraPosition.X / tileSize, (int) cameraPosition.Y / tileSize);
         }
         
-        private int GetTopTileIndex()
-        {
-            var rem = cameraPosition.Y % tileSize;
-            if (rem == 0)
-                return (int) cameraPosition.Y / tileSize;
-            return (int) (cameraPosition.Y - rem) / tileSize;
-        }
+        
 
         private void PrintDebugInfo()
         {
@@ -283,15 +291,15 @@ namespace App.View
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
             Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursor.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
-            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), walkableArea);
-            gfxRenderBuffer.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxRenderBuffer);
+            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxCamera);
+            gfxCamera.DrawRectangle(new Pen(Color.White), walkableArea);
+            gfxCamera.DrawRectangle(new Pen(Color.White), cursorArea);
+            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxCamera);
         }
 
         private void Print(float x, float y, string text, Brush color)
         {
-            gfxRenderBuffer.DrawString(text, debugFont, color, x, y);
+            gfxCamera.DrawString(text, debugFont, color, x, y);
         }
 
         private void DrawTile(int x, int y, int tile)
