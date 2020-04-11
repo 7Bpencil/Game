@@ -29,8 +29,8 @@ namespace App.View
         private Bitmap bmpTiles;
         private Bitmap bmpPlayer;
         
-        private Bitmap bmpTilesBuffer;
-        private Graphics gfxTilesBuffer;
+        private Bitmap bmpRenderedTiles;
+        private Graphics gfxRenderedTiles;
         
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
@@ -64,8 +64,8 @@ namespace App.View
             cursor = new RigidCircle(playerStartPosition, 5, false);
             
             //create and initialize renderer
-            bmpTilesBuffer = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
-            gfxTilesBuffer = Graphics.FromImage(bmpTilesBuffer);
+            bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
+            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
             
             var context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
@@ -287,7 +287,7 @@ namespace App.View
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
-            gfxCamera.DrawImage(bmpTilesBuffer, 0, 0, srcRect, GraphicsUnit.Pixel);
+            gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, srcRect, GraphicsUnit.Pixel);
         }
 
         private void RenderObjects()
@@ -327,7 +327,7 @@ namespace App.View
             var sy = tile / columnsAmountInPalette * tileSize;
 
             var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
-            gfxTilesBuffer.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
+            gfxRenderedTiles.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
