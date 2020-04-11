@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
@@ -43,6 +44,8 @@ namespace App.View
         private Font debugFont;
         private Brush debugBrush;
 
+        private Stopwatch clock;
+
 
         private class KeyStates
         {
@@ -79,6 +82,7 @@ namespace App.View
             debugBrush = new SolidBrush(Color.White);
             
             UpdateScrollBuffer();
+            clock = new Stopwatch();
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -139,10 +143,14 @@ namespace App.View
             CorrectCameraDependsOnCursorPosition();
             CorrectCameraDependsOnPlayerPosition();
             RemoveEscapingFromScene();
+            clock.Start();
             UpdateScrollBuffer();
             RenderObjects();
             
             PrintDebugInfo();
+            clock.Stop();
+            Console.WriteLine(clock.ElapsedMilliseconds);
+            clock.Reset();
         }
 
         private void UpdateCamera(int step)
@@ -271,8 +279,8 @@ namespace App.View
 
         private void RenderObjects()
         {
-            player.Legs.DrawNextFrame(gfxRenderBuffer, cameraPosition);
-            player.Torso.DrawNextFrame(gfxRenderBuffer, cameraPosition);
+            player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
+            player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
         }
 
         
