@@ -10,7 +10,20 @@ namespace App.Model.Parser
 {
     public static class TileSetParser
     {
-        public static TileSet ParseTileSet(string tileSetFilename)
+        public static Dictionary<string, TileSet> LoadTileSets()
+        {
+            var tileSetFileNames = Directory.GetFiles("Assets/TileSets");
+            var tileSets = new Dictionary<string, TileSet>();
+            foreach (var fileName in tileSetFileNames)
+            {
+                var tileSet = ParseTileSet(fileName);
+                tileSets.Add(tileSet.tileSetName, tileSet);
+            }
+
+            return tileSets;
+        }
+        
+        private static TileSet ParseTileSet(string tileSetFilename)
         {
             var doc = new XmlDocument();
             doc.Load(tileSetFilename);
@@ -26,31 +39,10 @@ namespace App.Model.Parser
                 if (node.Name == "tile")
                 {
                     var id = int.Parse(node.Attributes.GetNamedItem("id").Value);
-                    var collisionShapes = new List<RigidShape>();
-                    foreach (XmlNode childnode in node.ChildNodes)
-                    {
-                        if (childnode.Name == "objectgroup")
-                        {
-                            foreach (XmlNode obj in childnode.ChildNodes)
-                            {
-                                Console.WriteLine(obj.Attributes.GetNamedItem("x").Value);
-                                var x = int.Parse(obj.Attributes.GetNamedItem("x").Value);
-                                var y = int.Parse(obj.Attributes.GetNamedItem("y").Value);
-                                var width = int.Parse(obj.Attributes.GetNamedItem("width").Value);
-                                var height = int.Parse(obj.Attributes.GetNamedItem("height").Value);
-                                var center = new Vector(x + width / 2, y + height / 2);
-                                
-                                if (obj.HasChildNodes)
-                                    collisionShapes.Add(new RigidCircle(center, width, true));
-                                else
-                                    collisionShapes.Add(new RigidRectangle(center, width, height, 0, true));
-                            }
-                        }
-                    }
-                    tiles.Add(id, new Tile(collisionShapes));
+                    tiles.Add(id, new Tile(ParseTileCollisions(node)));
                 }
             }
-            
+
             return new TileSet
             {
                 tileSetName = root.GetAttribute("name"),
@@ -62,17 +54,32 @@ namespace App.Model.Parser
                 tiles = tiles
             };
         }
-
-        public static void LoadTileSets()
+        
+        private static List<RigidShape> ParseTileCollisions(XmlNode tileNode)
         {
-            var tileSetFileNames = Directory.GetFiles("Assets/TileSets");
-            foreach (var fileName in tileSetFileNames)
+            var collisionShapes = new List<RigidShape>();
+            foreach (XmlNode childnode in tileNode.ChildNodes)
             {
-                Console.WriteLine(fileName);
-                var a = ParseTileSet(fileName);
-                Console.WriteLine("-END-");
-                Console.WriteLine();
+                if (childnode.Name != "objectgroup") continue;
+                foreach (XmlNode collision in childnode.ChildNodes)
+                    ParseCollision(collision, collisionShapes);
             }
+
+            return collisionShapes;
+        }
+
+        private static void ParseCollision(XmlNode collision, List<RigidShape> collisionShapes)
+        {
+            var x = int.Parse(collision.Attributes.GetNamedItem("x").Value);
+            var y = int.Parse(collision.Attributes.GetNamedItem("y").Value);
+            var width = int.Parse(collision.Attributes.GetNamedItem("width").Value);
+            var height = int.Parse(collision.Attributes.GetNamedItem("height").Value);
+            var center = new Vector(x + width / 2, y + height / 2);
+            
+            if (collision.HasChildNodes)
+                collisionShapes.Add(new RigidCircle(center, width, true));
+            else
+                collisionShapes.Add(new RigidRectangle(center, width, height, 0, true));
         }
     }
 }
