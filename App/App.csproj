@@ -52,9 +52,11 @@
         <Compile Include="Model\ContractObjectFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\Tile.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\ObjectFactory.cs" />
         <Compile Include="Model\Parser\LevelParser.cs" />
+        <Compile Include="Model\Parser\TileSetParser.cs" />
         <Compile Include="Model\Player.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,23 +71,38 @@
         <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Images\boroda.png">
+      <Content Include="Assets\Images\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Images\sprite_map.png">
+      <Content Include="Assets\Images\plants.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Levels\secondTry.tmx">
+      <Content Include="Assets\Images\sprite_map.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Levels\secondTry.tmx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Levels\test-map.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
     <ItemGroup>
-      <TypeScriptCompile Include="Tiles\base_tiles.tsx">
+      <Folder Include="Assets" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="Assets\TileSets\base_tiles.tsx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </TypeScriptCompile>
-      <TypeScriptCompile Include="Tiles\boroda.tsx">
+      </Content>
+      <Content Include="Assets\TileSets\boroda.tsx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </TypeScriptCompile>
+      </Content>
+      <Content Include="Assets\TileSets\first.tsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileSets\second.tsx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

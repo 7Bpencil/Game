@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Forms;
+using App.Model.LevelData;
+using App.Model.Parser;
 using App.View;
 
 namespace App
@@ -10,8 +12,11 @@ namespace App
         [STAThread]
         public static void Main(string[] args)
         {
+            /*
             var app = new ViewExperimental();
             Application.Run(app);
+            */
+            TileSetParser.LoadTileSets();
         }
     }
 }

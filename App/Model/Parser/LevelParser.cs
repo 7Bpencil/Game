@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Xml;
 using App.Model.LevelData;
@@ -9,8 +9,7 @@ namespace App.Model.Parser
     {
         public static Level ParseLevel(string levelFilename)
         {
-            var layers = new List<Layer>();
-            var tileSet = new TileSet();
+            
 
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
@@ -62,4 +61,4 @@ namespace App.Model.Parser
             return newTiles;
         }
     }
-}
+}*/
