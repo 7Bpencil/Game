@@ -24,10 +24,12 @@ namespace App.View
         private Vector previousTopLeftTileIndex;
         
         private RigidCircle cursor;
+        private Sprite cursorSprite;
         private Player player;
 
         private Bitmap bmpTiles;
         private Bitmap bmpPlayer;
+        private Bitmap bmpCursor;
         
         private Bitmap bmpRenderedTiles;
         private Graphics gfxRenderedTiles;
@@ -62,6 +64,7 @@ namespace App.View
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             SetUpPlayer(playerStartPosition);
             cursor = new RigidCircle(playerStartPosition, 5, false);
+            SetUpCursor(cursor.Center);
             
             //create and initialize renderer
             bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
@@ -105,6 +108,19 @@ namespace App.View
             ClientSize = cameraSize;
             cameraPosition = new Vector(250, 100);
             Text = "New Game";
+        }
+
+        private void SetUpCursor(Vector position)
+        {
+            bmpCursor = new Bitmap("Images/boroda.png");
+            cursorSprite = new Sprite
+            (
+                position,
+                bmpCursor,
+                0,
+                3,
+                new Size(64, 64),
+                4);
         }
 
         private void SetUpPlayer(Vector position)
@@ -294,6 +310,7 @@ namespace App.View
         {
             player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
             player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
+            cursorSprite.DrawNextFrame(gfxCamera, cameraPosition);
         }
         
         private Vector GetTopLeftTileIndex()
@@ -405,6 +422,7 @@ namespace App.View
         protected override void OnMouseMove(MouseEventArgs e)
         {
             cursor.Center = new Vector(e.X, e.Y);
+            cursorSprite.Center = new Vector(e.X, e.Y);
         }
     }
 }
