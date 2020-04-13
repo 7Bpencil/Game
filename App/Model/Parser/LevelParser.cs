@@ -20,8 +20,8 @@ namespace App.Model.Parser
 
             return levels;
         }
-        
-        public static Level ParseLevel(string levelFilename)
+
+        private static Level ParseLevel(string levelFilename)
         {
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();

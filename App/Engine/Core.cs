@@ -31,7 +31,7 @@ namespace App.Engine
             public bool W, S, A, D;
         }
 
-        public Core(View.ViewForm viewForm)
+        public Core(ViewForm viewForm)
         {
             this.viewForm = viewForm;
             SetCamera();

@@ -9,18 +9,13 @@ namespace App.View
     public class ViewForm : Form
     {
         private const int tileSize = 64;
-        
         private Bitmap bmpRenderedTiles;
         private Graphics gfxRenderedTiles;
-        
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
-        
         private Font debugFont;
         private Brush debugBrush;
-        
         private Core engineCore;
-
         private Size cameraSize;
 
         public ViewForm()
@@ -97,15 +92,15 @@ namespace App.View
         {
             engineCore.OnKeyUp(e.KeyCode);
         }
-        
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            cameraBuffer.Render(e.Graphics);
-        }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             engineCore.OnMouseMove(new Vector(e.X, e.Y));
+        }
+        
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            cameraBuffer.Render(e.Graphics);
         }
     }
 }
