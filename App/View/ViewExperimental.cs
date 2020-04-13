@@ -7,7 +7,6 @@ using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
 using App.Model.LevelData;
-using App.Model.Parser;
 using App.View.Renderings;
 
 namespace App.View
@@ -50,18 +49,14 @@ namespace App.View
         {
             SetUpCamera();
             SetUpRenderer();
-            
-            
-
             SetUpView();
-            
-
-            keyState = new KeyStates();
+            SetUpLevel();
             
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             SetUpPlayer(playerStartPosition);
             cursorPosition = playerStartPosition;
             
+            keyState = new KeyStates();
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
@@ -74,34 +69,18 @@ namespace App.View
             timer.Tick += TimerTick;
             timer.Start();
         }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            cameraBuffer.Render(e.Graphics);
-        }
-
-        private void SetUpView()
-        {
-            ClientSize = camera.size;
-            Text = "New Game";
-        }
-
-        private void SetUpLevel()
-        {
-            levelManager = new LevelManager();
-            currentLevel = levelManager.CurrentLevel;
-        }
-
+        
         private void SetUpCamera()
         {
             var cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
-            var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var q = cameraSize.Height / 5;
+            
+            var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
             camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
         }
-
+        
         private void SetUpRenderer()
         {
             DoubleBuffered = true;
@@ -119,10 +98,22 @@ namespace App.View
             
             previousTopLeftTileIndex = new Vector(0, 0);
         }
-
+        
+        private void SetUpView()
+        {
+            ClientSize = camera.size;
+            Text = "New Game";
+        }
+        
+        private void SetUpLevel()
+        {
+            levelManager = new LevelManager();
+            currentLevel = levelManager.CurrentLevel;
+        }
+        
         private void SetUpPlayer(Vector position)
         {
-            bmpPlayer = new Bitmap("Images/boroda.png");
+            bmpPlayer = levelManager.GetTileMap("boroda");
             var playerLegs = new Sprite
             (
                 position,
@@ -148,7 +139,7 @@ namespace App.View
                 Legs = playerLegs
             };
         }
-        
+
         private void TimerTick(object sender, EventArgs e)
         {
             UpdateState();
@@ -334,6 +325,11 @@ namespace App.View
                     keyState.D = false;
                     break;
             }
+        }
+        
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            cameraBuffer.Render(e.Graphics);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
