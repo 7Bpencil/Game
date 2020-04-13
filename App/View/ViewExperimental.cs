@@ -35,7 +35,7 @@ namespace App.View
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
         
-        private Rectangle srcRect;
+        private Rectangle sourceRectangle;
         private Rectangle walkableArea;
         private Rectangle cursorArea;
         
@@ -84,7 +84,7 @@ namespace App.View
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             
-            DrawScrollBuffer();
+            RerenderCamera();
             clock = new Stopwatch();
             
             var timer = new Timer();
@@ -167,7 +167,7 @@ namespace App.View
 
         private void RenderView()
         {
-            DrawScrollBuffer();
+            RerenderCamera();
             RenderObjects();
             PrintDebugInfo();
         }
@@ -266,7 +266,7 @@ namespace App.View
             if (a < 0) cameraPosition.Y -= a;
         }
 
-        private void DrawScrollBuffer()
+        private void RerenderCamera()
         {
             var topLeftTileIndex = GetTopLeftTileIndex();
             if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
@@ -275,7 +275,7 @@ namespace App.View
                 previousTopLeftTileIndex = topLeftTileIndex;
             }
             
-            RerenderCamera();
+            CropRenderedTilesToCamera();
         }
 
         private void RerenderTiles(Vector topLeftTileIndex)
@@ -293,21 +293,35 @@ namespace App.View
                 var sy = (int) topLeftTileIndex.Y + y;
                 var tileIndex = sy * levelSizeInTiles.Height + sx;
                 if (tileIndex > layer.Tiles.Length - 1) break;
-                    
-                if (layer.Tiles[tileIndex] != 0) 
-                    RenderTile(x, y, layer.Tiles[tileIndex] - 1);
+                
+                var tileID = layer.Tiles[tileIndex];
+                if (tileID == 0 ) continue;
+                var tileSetname = levelManager.GetTileSetName(tileID, currentLevel);
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetname));
             }
         }
-
-        private void RerenderCamera()
+        
+        private void RenderTile(int targetX, int targetY, int tileID, Bitmap sourceImage)
         {
-            srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
-                cameraSize.Width, cameraSize.Height);
-            
-            gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, srcRect, GraphicsUnit.Pixel);
+            var src = GetSourceRectangle(tileID, sourceImage.Width / tileSize);
+            gfxRenderedTiles.DrawImage(sourceImage, targetX * tileSize, targetY * tileSize, src, GraphicsUnit.Pixel);
         }
 
+        private Rectangle GetSourceRectangle(int tileID, int columnsInTileMap)
+        {
+            var sourceX = tileID % columnsInTileMap * tileSize;
+            var sourceY = tileID / columnsInTileMap * tileSize;
+            return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
+        }
 
+        private void CropRenderedTilesToCamera()
+        {
+            sourceRectangle = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
+                cameraSize.Width, cameraSize.Height);
+            
+            gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
+        }
+        
         private void RenderObjects()
         {
             player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
@@ -337,17 +351,7 @@ namespace App.View
         {
             gfxCamera.DrawString(text, debugFont, color, x, y);
         }
-
-        private void RenderTile(int x, int y, int tile)
-        {
-            var columnsAmountInPalette = bmpTiles.Width / tileSize;
-            var sx = tile % columnsAmountInPalette * tileSize;
-            var sy = tile / columnsAmountInPalette * tileSize;
-
-            var src = new Rectangle(sx, sy, tileSize - 1, tileSize - 1);
-            gfxRenderedTiles.DrawImage(bmpTiles, x * tileSize, y * tileSize, src, GraphicsUnit.Pixel);
-        }
-
+        
         protected override void OnKeyDown(KeyEventArgs e)
         {
             switch (e.KeyCode)

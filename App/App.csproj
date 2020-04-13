@@ -72,13 +72,13 @@
         <Compile Include="View\ViewWithExperimentalEngine.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Assets\Images\boroda.png">
+      <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Images\plants.png">
+      <Content Include="Assets\TileMaps\plants.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Images\sprite_map.png">
+      <Content Include="Assets\TileMaps\sprite_map.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Levels\secondTry.tmx">

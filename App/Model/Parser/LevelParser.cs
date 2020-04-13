@@ -28,7 +28,7 @@ namespace App.Model.Parser
             doc.Load(levelFilename);
             var root = doc.DocumentElement;
             
-            var tileSetFirstgidFromSource = new Dictionary<string, int>();
+            var tileSetFromFirstgid = new Dictionary<int, string>();
             var layers = new List<Layer>();
 
             foreach (XmlNode node in root)
@@ -37,7 +37,7 @@ namespace App.Model.Parser
                 {
                     var source = node.Attributes.GetNamedItem("source").Value;
                     var firstgid = int.Parse(node.Attributes.GetNamedItem("firstgid").Value);
-                    tileSetFirstgidFromSource.Add(source, firstgid);
+                    tileSetFromFirstgid.Add(firstgid, source);
                 }
 
                 if (node.Name == "layer")
@@ -46,7 +46,7 @@ namespace App.Model.Parser
                 }
             }
 
-            return new Level(tileSetFirstgidFromSource, layers);
+            return new Level(tileSetFromFirstgid, layers);
         }
 
         private static Layer ParseLayer(XmlNode node, string[] separators)

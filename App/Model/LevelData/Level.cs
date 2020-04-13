@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace App.Model.LevelData
 {
     public class Level
     {
-        public Dictionary<string, int> tileSetFirstgidFromSource;
+        public int[] allFirstgid;
+        public Dictionary<int, string> tileSetFromFirstgid;
         public List<Layer> Layers;
 
-        public Level(Dictionary<string, int> tileSetFirstgidFromSource, List<Layer> layers)
+        public Level(Dictionary<int, string> tileSetFromFirstgid, List<Layer> layers)
         {
-            this.tileSetFirstgidFromSource = tileSetFirstgidFromSource;
+            this.tileSetFromFirstgid = tileSetFromFirstgid;
+            allFirstgid = tileSetFromFirstgid.Keys.ToArray();
             Layers = layers;
         }
     }
