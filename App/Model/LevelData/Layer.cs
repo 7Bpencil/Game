@@ -1,13 +1,11 @@
-﻿using System.Data.Common;
-
-namespace App.Model.LevelData
+﻿namespace App.Model.LevelData
 {
     public class Layer
     {
-        public int Id;
-        public string Name;
-        public int WidthInTiles;
-        public int HeightInTiles;
+        public readonly int Id;
+        public readonly string Name;
+        public readonly int WidthInTiles;
+        public readonly int HeightInTiles;
         public int[] Tiles;
 
         public Layer(int id, string name, int widthInTiles, int heightInTiles)

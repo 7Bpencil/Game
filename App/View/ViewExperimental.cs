@@ -15,18 +15,18 @@ namespace App.View
     public class ViewExperimental : Form
     {
         private Level currentLevel;
+        
         private KeyStates keyState;
         private const int tileSize = 64;
         private static Size cameraSize;
-        private static Size sceneSizeInTiles;
+        private static Size levelSizeInTiles;
         private static Size renderSizeInTiles;
         private Vector cameraPosition;
         private Vector previousTopLeftTileIndex;
         
         private RigidCircle cursor;
         private Player player;
-
-        private Bitmap bmpTiles;
+        
         private Bitmap bmpPlayer;
         
         private Bitmap bmpRenderedTiles;
@@ -60,8 +60,7 @@ namespace App.View
             DoubleBuffered = true;
             SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
-            bmpTiles = new Bitmap("Images/sprite_map.png");
-            sceneSizeInTiles = new Size(currentLevel.Layers[0].WidthInTiles, currentLevel.Layers[0].HeightInTiles);
+            levelSizeInTiles = new Size(currentLevel.Layers[0].WidthInTiles, currentLevel.Layers[0].HeightInTiles);
 
             keyState = new KeyStates();
             
@@ -85,7 +84,7 @@ namespace App.View
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             
-            UpdateScrollBuffer();
+            DrawScrollBuffer();
             clock = new Stopwatch();
             
             var timer = new Timer();
@@ -168,7 +167,7 @@ namespace App.View
 
         private void RenderView()
         {
-            UpdateScrollBuffer();
+            DrawScrollBuffer();
             RenderObjects();
             PrintDebugInfo();
         }
@@ -204,9 +203,9 @@ namespace App.View
         private void CorrectPlayer()
         {
             var delta = Vector.ZeroVector;
-            var rightBorder = sceneSizeInTiles.Width * tileSize;
+            var rightBorder = levelSizeInTiles.Width * tileSize;
             const int leftBorder = 0;
-            var bottomBorder = sceneSizeInTiles.Height * tileSize;
+            var bottomBorder = levelSizeInTiles.Height * tileSize;
             const int topBorder = 0;
 
             var a = player.Center.Y - player.Radius - topBorder;
@@ -228,9 +227,9 @@ namespace App.View
 
         private void RemoveEscapingFromScene()
         {
-            var rightBorder = sceneSizeInTiles.Width * tileSize - cameraSize.Width;
+            var rightBorder = levelSizeInTiles.Width * tileSize - cameraSize.Width;
             const int leftBorder = 0;
-            var bottomBorder = sceneSizeInTiles.Height * tileSize - cameraSize.Height;
+            var bottomBorder = levelSizeInTiles.Height * tileSize - cameraSize.Height;
             const int topBorder = 0;
             
             if (cameraPosition.Y < topBorder) cameraPosition.Y = topBorder;
@@ -267,34 +266,47 @@ namespace App.View
             if (a < 0) cameraPosition.Y -= a;
         }
 
-        private void UpdateScrollBuffer()
+        private void DrawScrollBuffer()
         {
             var topLeftTileIndex = GetTopLeftTileIndex();
             if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
             {
-                foreach (var layer in currentLevel.Layers)
-                {
-                    for (var x = 0; x <= renderSizeInTiles.Width; ++x)
-                    for (var y = 0; y <= renderSizeInTiles.Height; ++y)
-                    {
-                        var sx = (int) topLeftTileIndex.X + x;
-                        var sy = (int) topLeftTileIndex.Y + y;
-                        var tileIndex = sy * sceneSizeInTiles.Height + sx;
-                        if (tileIndex > layer.Tiles.Length - 1) break;
-                    
-                        if (layer.Tiles[tileIndex] != 0) 
-                            DrawTile(x, y, layer.Tiles[tileIndex] - 1);
-                    }
-                }
-
+                RerenderTiles(topLeftTileIndex);
                 previousTopLeftTileIndex = topLeftTileIndex;
             }
             
+            RerenderCamera();
+        }
+
+        private void RerenderTiles(Vector topLeftTileIndex)
+        {
+            foreach (var layer in currentLevel.Layers)
+                RenderLayer(layer, topLeftTileIndex);
+        }
+
+        private void RenderLayer(Layer layer, Vector topLeftTileIndex)
+        {
+            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
+            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+            {
+                var sx = (int) topLeftTileIndex.X + x;
+                var sy = (int) topLeftTileIndex.Y + y;
+                var tileIndex = sy * levelSizeInTiles.Height + sx;
+                if (tileIndex > layer.Tiles.Length - 1) break;
+                    
+                if (layer.Tiles[tileIndex] != 0) 
+                    RenderTile(x, y, layer.Tiles[tileIndex] - 1);
+            }
+        }
+
+        private void RerenderCamera()
+        {
             srcRect = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, srcRect, GraphicsUnit.Pixel);
         }
+
 
         private void RenderObjects()
         {
@@ -310,7 +322,7 @@ namespace App.View
         private void PrintDebugInfo()
         {
             Print(0, 0, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
-            Print(0, debugFont.Height, "Scene Size (in Tiles): " + sceneSizeInTiles.Width + " x "+ sceneSizeInTiles.Height, debugBrush);
+            Print(0, debugFont.Height, "Scene Size (in Tiles): " + levelSizeInTiles.Width + " x "+ levelSizeInTiles.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + cameraPosition, debugBrush);
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
@@ -326,7 +338,7 @@ namespace App.View
             gfxCamera.DrawString(text, debugFont, color, x, y);
         }
 
-        private void DrawTile(int x, int y, int tile)
+        private void RenderTile(int x, int y, int tile)
         {
             var columnsAmountInPalette = bmpTiles.Width / tileSize;
             var sx = tile % columnsAmountInPalette * tileSize;

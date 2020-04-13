@@ -20,12 +20,14 @@ namespace App.Model.Parser
 
             return levels;
         }
+        
         public static Level ParseLevel(string levelFilename)
         {
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
             doc.Load(levelFilename);
             var root = doc.DocumentElement;
+            
             var tileSetFirstgidFromSource = new Dictionary<string, int>();
             var layers = new List<Layer>();
 
