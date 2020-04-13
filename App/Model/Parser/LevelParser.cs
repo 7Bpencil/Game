@@ -1,4 +1,5 @@
-﻿/*using System;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Xml;
 using App.Model.LevelData;
@@ -7,10 +8,20 @@ namespace App.Model.Parser
 {
     public static class LevelParser
     {
+        public static List<Level> LoadLevels()
+        {
+            var levelsFileNames = Directory.GetFiles("Assets/TileSets");
+            var levels = new List<Level>();
+            foreach (var fileName in levelsFileNames)
+            {
+                var level = ParseLevel(fileName);
+                levels.Add(level);
+            }
+
+            return levels;
+        }
         public static Level ParseLevel(string levelFilename)
         {
-            
-
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
             doc.Load(levelFilename);
@@ -61,4 +72,4 @@ namespace App.Model.Parser
             return newTiles;
         }
     }
-}*/
+}

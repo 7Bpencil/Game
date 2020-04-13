@@ -16,7 +16,7 @@ namespace App
             var app = new ViewExperimental();
             Application.Run(app);
             */
-            var a = TileSetParser.LoadTileSets();
+            var tileSets = TileSetParser.LoadTileSets();
             Console.WriteLine("BB");
         }
     }
