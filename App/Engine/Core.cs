@@ -114,10 +114,10 @@ namespace App.Engine
                 position,
                 bmpCursor,
                 0,
-                3,
+                9,
                 new Size(64, 64),
-                4);
-            cursor.AnimationRate = 7;
+                10);
+            cursor.AnimationRate = 10;
         }
 
         public void GameLoop(object sender, EventArgs args)
