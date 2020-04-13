@@ -29,6 +29,8 @@ namespace App.Engine
         private Camera camera;
         
         private Vector cursorPosition;
+
+        private int tileSize = 64;
         
         class KeyStates
         {
@@ -151,6 +153,20 @@ namespace App.Engine
             UpdatePlayer(step);
             CorrectPlayer();
             camera.CorrectCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
+        }
+        
+        private void PrintDebugInfo()
+        {
+            var debugInfo = new []
+            {
+                "Camera Size: " + camera.size.Width + " x " + camera.size.Height,
+                "Scene Size (in Tiles): " + currentLevel.levelSizeInTiles.Width + " x " + currentLevel.levelSizeInTiles.Height,
+                "(WAxis) Scroll Position: " + camera.position,
+                "(WAxis) Player Position: " + player.Center,
+                "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position),
+                "(CAxis) Cursor Position: " + cursorPosition
+            };
+            view.PrintDebugInfo(debugInfo);
         }
         
         public override void OnMouseMove(Vector newPosition)

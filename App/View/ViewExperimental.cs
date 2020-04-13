@@ -161,22 +161,10 @@ namespace App.View
             player.Torso.DrawNextFrame(gfxCamera, camera.position);
         }
         
-        private void PrintDebugInfo()
+        public override void PrintDebugInfo(string[] messages)
         {
-            Print(0, 0, "Camera Size: " + camera.size.Width + " x "+ camera.size.Height, debugBrush);
-            Print(0, debugFont.Height, "Scene Size (in Tiles): " + currentLevel.levelSizeInTiles.Width + " x "+ currentLevel.levelSizeInTiles.Height, debugBrush);
-            Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + camera.position, debugBrush);
-            Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
-            Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position), debugBrush);
-            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursorPosition, debugBrush);
-            RigidBodyRenderer.Draw(player.Shape, camera.position, new Pen(Color.Gainsboro, 4), gfxCamera);
-            gfxCamera.DrawRectangle(new Pen(Color.White), camera.walkableArea);
-            gfxCamera.DrawRectangle(new Pen(Color.White), camera.cursorArea);
-        }
-
-        private void Print(float x, float y, string text, Brush color)
-        {
-            gfxCamera.DrawString(text, debugFont, color, x, y);
+            for (var i = 0; i < messages.Length; i++)
+                gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
         }
         
         protected override void OnKeyDown(KeyEventArgs e)
