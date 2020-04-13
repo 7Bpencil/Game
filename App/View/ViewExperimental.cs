@@ -86,10 +86,11 @@ namespace App.View
             
             UpdateScrollBuffer();
             clock = new Stopwatch();
-
-
-            audio = new SoundPlayer("Levels/6b8749f02e4bd7.wav");
-            SystemSounds.Asterisk.Play();
+            
+            SoundPlayer player = new SoundPlayer();
+            player.SoundLocation = @"Levels/302dbd46a9d81a.wav";
+            player.Load();
+            player.Play();
 
             var timer = new Timer();
             timer.Interval = 15;
@@ -231,6 +232,7 @@ namespace App.View
                 delta.X -= step;
             if (keyState.D)
                 delta.X += step;
+            RotatePlayerLegs(delta);
             player.Move(delta);
         }
 
@@ -328,20 +330,13 @@ namespace App.View
             
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, srcRect, GraphicsUnit.Pixel);
         }
-
-        private double GetAngle(double a, double b)
+        private void RotatePlayerLegs(Vector delta)
         {
-            double result = Double.Epsilon;
-            if (a * b > 0 || Math.Abs(a * b) < 1e-8)
-            {
-                if (a > 0) result = -1 * (a - b);
-                else result = Math.Abs(a) - Math.Abs(b);
-            }
-            else
-                result = Math.Abs(a) + Math.Abs(b);
-
-            return result;
+            var dirAngle = Math.Atan2(-delta.Y, delta.X);
+            var angle = 180 / Math.PI * dirAngle;
+            player.Legs.Angle = angle;
         }
+        
         private void UpdatePlayerByMouse(Vector mousePosition)
         {
             var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(cameraPosition);
