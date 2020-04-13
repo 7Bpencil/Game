@@ -4,5 +4,6 @@ namespace App.Model.LevelData
 {
     public class Level
     {
+        private Dictionary<string, int> tileSetFirstgidFromSource;
     }
 }

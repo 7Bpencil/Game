@@ -26,38 +26,42 @@ namespace App.Model.Parser
             var doc = new XmlDocument();
             doc.Load(levelFilename);
             var root = doc.DocumentElement;
+            var tileSetFirstgidFromSource = new Dictionary<string, int>();
+            var layers = new List<Layer>();
 
             foreach (XmlNode node in root)
             {
-                switch (node.Name)
+                if (node.Name == "tileset")
                 {
-                    case "tileset":
-                        tileSet.Source = node.Attributes[1].Value;
-                        break;
-                    case "layer":
-                        layers.Add(ParseLayer(node, separators));
-                        break;
+                    var source = node.Attributes.GetNamedItem("source").Value;
+                    var firstgid = int.Parse(node.Attributes.GetNamedItem("firstgid").Value);
+                    tileSetFirstgidFromSource.Add(source, firstgid);
+                }
+
+                if (node.Name == "layer")
+                {
+                    layers.Add(ParseLayer(node, separators));
                 }
             }
 
-            return new Level(tileSet, layers);
+            return null;
         }
 
         private static Layer ParseLayer(XmlNode node, string[] separators)
         {
             var newLayer = new Layer
-            {
-                Id = int.Parse(node.Attributes[0].Value),
-                Name = node.Attributes[1].Value,
-                Width = int.Parse(node.Attributes[2].Value),
-                Height = int.Parse(node.Attributes[3].Value)
-            };
+            (
+                int.Parse(node.Attributes[0].Value),
+                node.Attributes[1].Value,
+                int.Parse(node.Attributes[2].Value),
+                int.Parse(node.Attributes[3].Value)
+            );
 
             foreach (XmlNode childNode in node.ChildNodes)
             {
                 if (childNode.Name != "data") continue;
                 var layerData = childNode.InnerText.Split(separators, StringSplitOptions.None);
-                newLayer.Tiles = ParseTiles(layerData, newLayer.Width * newLayer.Height);
+                newLayer.Tiles = ParseTiles(layerData, newLayer.WidthInTiles * newLayer.HeightInTiles);
             }
 
             return newLayer;
