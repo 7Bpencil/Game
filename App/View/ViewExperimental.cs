@@ -105,11 +105,11 @@ namespace App.View
             walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var q = cameraSize.Height / 5;
             cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-
+            camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
+            
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
-            
-            cameraPosition = new Vector(250, 100);
+
             Text = "New Game";
         }
 
@@ -158,12 +158,9 @@ namespace App.View
         private void UpdateState()
         {
             const int step = 6;
-            UpdateCamera(step);
             UpdatePlayer(step);
             CorrectPlayer();
-            CorrectCameraDependsOnCursorPosition();
-            CorrectCameraDependsOnPlayerPosition();
-            RemoveEscapingFromScene();
+            camera.CorrectCamera(cursorPosition, player, levelSizeInTiles, tileSize);
         }
 
         private void RenderView()
@@ -171,20 +168,6 @@ namespace App.View
             RerenderCamera();
             RenderObjects();
             PrintDebugInfo();
-        }
-        
-        private void UpdateCamera(int step)
-        {
-            var deltaCamera = Vector.ZeroVector;
-            if (keyState.Up) 
-                deltaCamera.Y -= step;
-            if (keyState.Down)
-                deltaCamera.Y += step;
-            if (keyState.Left)
-                deltaCamera.X -= step;
-            if (keyState.Right)
-                deltaCamera.X += step;
-            cameraPosition += deltaCamera;
         }
 
         private void UpdatePlayer(int step)
@@ -226,22 +209,9 @@ namespace App.View
             player.Move(delta);
         }
 
-        private void RemoveEscapingFromScene()
-        {
-            var rightBorder = levelSizeInTiles.Width * tileSize - cameraSize.Width;
-            const int leftBorder = 0;
-            var bottomBorder = levelSizeInTiles.Height * tileSize - cameraSize.Height;
-            const int topBorder = 0;
-            
-            if (cameraPosition.Y < topBorder) cameraPosition.Y = topBorder;
-            if (cameraPosition.Y > bottomBorder) cameraPosition.Y = bottomBorder;
-            if (cameraPosition.X < leftBorder) cameraPosition.X = leftBorder;
-            if (cameraPosition.X > rightBorder) cameraPosition.X = rightBorder;
-        }
-        
         private void RerenderCamera()
         {
-            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(cameraPosition, tileSize);
+            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
             if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
             {
                 RerenderTiles(topLeftTileIndex);
@@ -281,7 +251,7 @@ namespace App.View
 
         private void CropRenderedTilesToCamera()
         {
-            sourceRectangle = new Rectangle((int) cameraPosition.X % tileSize, (int) cameraPosition.Y % tileSize,
+            sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
                 cameraSize.Width, cameraSize.Height);
             
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
@@ -289,19 +259,19 @@ namespace App.View
         
         private void RenderObjects()
         {
-            player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
-            player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
+            player.Legs.DrawNextFrame(gfxCamera, camera.position);
+            player.Torso.DrawNextFrame(gfxCamera, camera.position);
         }
         
         private void PrintDebugInfo()
         {
             Print(0, 0, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
             Print(0, debugFont.Height, "Scene Size (in Tiles): " + levelSizeInTiles.Width + " x "+ levelSizeInTiles.Height, debugBrush);
-            Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + cameraPosition, debugBrush);
+            Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + camera.position, debugBrush);
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
-            Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
+            Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position), debugBrush);
             Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursorPosition, debugBrush);
-            RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxCamera);
+            RigidBodyRenderer.Draw(player.Shape, camera.position, new Pen(Color.Gainsboro, 4), gfxCamera);
             gfxCamera.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxCamera.DrawRectangle(new Pen(Color.White), cursorArea);
         }

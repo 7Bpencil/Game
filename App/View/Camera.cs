@@ -9,7 +9,37 @@ namespace App.View
         public Vector position;
         public Rectangle walkableArea;
         public Rectangle cursorArea;
-        
+
+        public Size cameraSize;
+
+        public Camera(Vector position, Size cameraSize,  Rectangle walkableArea, Rectangle cursorArea)
+        {
+            this.position = position;
+            this.cameraSize = cameraSize;
+            this.walkableArea = walkableArea;
+            this.cursorArea = cursorArea;
+        }
+
+        public void CorrectCamera(Vector cursorPosition, Player player, Size levelSizeInTiles, int tileSize)
+        { 
+            CorrectCameraDependsOnCursorPosition(cursorPosition);
+            CorrectCameraDependsOnPlayerPosition(player);
+            RemoveEscapingFromScene(levelSizeInTiles, tileSize);
+        }
+
+        private void RemoveEscapingFromScene(Size levelSizeInTiles, int tileSize)
+        {
+            var rightBorder = levelSizeInTiles.Width * tileSize - cameraSize.Width;
+            const int leftBorder = 0;
+            var bottomBorder = levelSizeInTiles.Height * tileSize - cameraSize.Height;
+            const int topBorder = 0;
+            
+            if (position.Y < topBorder) position.Y = topBorder;
+            if (position.Y > bottomBorder) position.Y = bottomBorder;
+            if (position.X < leftBorder) position.X = leftBorder;
+            if (position.X > rightBorder) position.X = rightBorder;
+        }
+
         private void CorrectCameraDependsOnPlayerPosition(Player player)
         {
             var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(position);
