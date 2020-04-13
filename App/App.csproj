@@ -54,6 +54,7 @@
         <Compile Include="Model\LevelData\Level.cs" />
         <Compile Include="Model\LevelData\Tile.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
+        <Compile Include="Model\LevelData\TileTools.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\ObjectFactory.cs" />
         <Compile Include="Model\Parser\LevelParser.cs" />
@@ -62,6 +63,7 @@
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Tools.cs" />
+        <Compile Include="View\Camera.cs" />
         <Compile Include="View\ContractView.cs" />
         <Compile Include="View\Game.cs" />
         <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />

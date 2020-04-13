@@ -21,10 +21,10 @@ namespace App.View
         private static Size cameraSize;
         private static Size levelSizeInTiles;
         private static Size renderSizeInTiles;
-        private Vector cameraPosition;
+        private Camera camera;
         private Vector previousTopLeftTileIndex;
         
-        private RigidCircle cursor;
+        private Vector cursorPosition;
         private Player player;
         
         private Bitmap bmpPlayer;
@@ -66,7 +66,7 @@ namespace App.View
             
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             SetUpPlayer(playerStartPosition);
-            cursor = new RigidCircle(playerStartPosition, 5, false);
+            cursorPosition = playerStartPosition;
             
             //create and initialize renderer
             bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
@@ -108,6 +108,7 @@ namespace App.View
 
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             ClientSize = cameraSize;
+            
             cameraPosition = new Vector(250, 100);
             Text = "New Game";
         }
@@ -237,38 +238,10 @@ namespace App.View
             if (cameraPosition.X < leftBorder) cameraPosition.X = leftBorder;
             if (cameraPosition.X > rightBorder) cameraPosition.X = rightBorder;
         }
-
-        private void CorrectCameraDependsOnPlayerPosition()
-        {
-            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(cameraPosition);
-            
-            var q = playerCenterInCamera.X - player.Radius - walkableArea.X;
-            var b = walkableArea.X + walkableArea.Width - (playerCenterInCamera.X + player.Radius);
-            var p = playerCenterInCamera.Y - player.Radius - walkableArea.Y;
-            var a = walkableArea.Y + walkableArea.Height - (playerCenterInCamera.Y + player.Radius);
-            
-            if (q < 0) cameraPosition.X += q;
-            if (b < 0) cameraPosition.X -= b;
-            if (p < 0) cameraPosition.Y += p;
-            if (a < 0) cameraPosition.Y -= a;
-        }
-
-        private void CorrectCameraDependsOnCursorPosition()
-        {
-            var q = cursor.Center.X - cursorArea.X;
-            var b = cursorArea.X + cursorArea.Width - cursor.Center.X;
-            var p = cursor.Center.Y - cursorArea.Y;
-            var a = cursorArea.Y + cursorArea.Height - cursor.Center.Y;
-            
-            if (q < 0) cameraPosition.X += q;
-            if (b < 0) cameraPosition.X -= b;
-            if (p < 0) cameraPosition.Y += p;
-            if (a < 0) cameraPosition.Y -= a;
-        }
-
+        
         private void RerenderCamera()
         {
-            var topLeftTileIndex = GetTopLeftTileIndex();
+            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(cameraPosition, tileSize);
             if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
             {
                 RerenderTiles(topLeftTileIndex);
@@ -289,29 +262,21 @@ namespace App.View
             for (var x = 0; x <= renderSizeInTiles.Width; ++x)
             for (var y = 0; y <= renderSizeInTiles.Height; ++y)
             {
-                var sx = (int) topLeftTileIndex.X + x;
-                var sy = (int) topLeftTileIndex.Y + y;
-                var tileIndex = sy * levelSizeInTiles.Height + sx;
+                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, levelSizeInTiles.Height);
                 if (tileIndex > layer.Tiles.Length - 1) break;
                 
                 var tileID = layer.Tiles[tileIndex];
                 if (tileID == 0 ) continue;
-                var tileSetname = levelManager.GetTileSetName(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetname));
+                
+                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
             }
         }
         
         private void RenderTile(int targetX, int targetY, int tileID, Bitmap sourceImage)
         {
-            var src = GetSourceRectangle(tileID, sourceImage.Width / tileSize);
+            var src = TileTools.GetSourceRectangle(tileID, sourceImage.Width / tileSize, tileSize);
             gfxRenderedTiles.DrawImage(sourceImage, targetX * tileSize, targetY * tileSize, src, GraphicsUnit.Pixel);
-        }
-
-        private Rectangle GetSourceRectangle(int tileID, int columnsInTileMap)
-        {
-            var sourceX = tileID % columnsInTileMap * tileSize;
-            var sourceY = tileID / columnsInTileMap * tileSize;
-            return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
         }
 
         private void CropRenderedTilesToCamera()
@@ -328,11 +293,6 @@ namespace App.View
             player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
         }
         
-        private Vector GetTopLeftTileIndex()
-        {
-            return new Vector((int) cameraPosition.X / tileSize, (int) cameraPosition.Y / tileSize);
-        }
-
         private void PrintDebugInfo()
         {
             Print(0, 0, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
@@ -340,11 +300,10 @@ namespace App.View
             Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + cameraPosition, debugBrush);
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
-            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursor.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
+            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursorPosition, debugBrush);
             RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxCamera);
             gfxCamera.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxCamera.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxCamera);
         }
 
         private void Print(float x, float y, string text, Brush color)
@@ -426,7 +385,7 @@ namespace App.View
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            cursor.Center = new Vector(e.X, e.Y);
+            cursorPosition = new Vector(e.X, e.Y);
         }
     }
 }
