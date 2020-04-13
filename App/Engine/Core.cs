@@ -13,25 +13,15 @@ namespace App.Engine
     public class Core
     {
         private ViewExperimental view;
-        
         private Stopwatch clock;
-        
         private KeyStates keyState;
-        
         private Level currentLevel;
-        
         private LevelManager levelManager;
-        
         private Player player;
-        
         private Camera camera;
-        
         private Vector cursorPosition;
-
         private const int tileSize = 64;
-        
         private Vector previousTopLeftTileIndex;
-        
         private static Size renderSizeInTiles;
         
         public Size CameraSize => camera.size;

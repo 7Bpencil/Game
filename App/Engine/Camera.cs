@@ -2,13 +2,13 @@ using System.Drawing;
 using App.Engine.PhysicsEngine;
 using App.Model;
 
-namespace App.View
+namespace App.Engine
 {
     public class Camera
     {
         public Vector position;
-        public Rectangle walkableArea;
-        public Rectangle cursorArea;
+        private Rectangle walkableArea;
+        private Rectangle cursorArea;
 
         public Size size;
 

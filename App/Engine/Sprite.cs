@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using App.Engine.PhysicsEngine;
 
-namespace App.View
+namespace App.Engine
 {
     public class Sprite
     {

@@ -40,6 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\ContractCore.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\PhysicsEngine\Collision\CollisionInfo.cs" />
@@ -48,6 +49,7 @@
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
+        <Compile Include="Engine\Sprite.cs" />
         <Compile Include="Model\ContractObjectFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
@@ -62,11 +64,9 @@
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Tools.cs" />
-        <Compile Include="View\Camera.cs" />
         <Compile Include="View\ContractView.cs" />
         <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />
         <Compile Include="View\Renderings\RigidBodyRenderer.cs" />
-        <Compile Include="View\Sprite.cs" />
         <Compile Include="View\ViewExperimental.cs" />
     </ItemGroup>
     <ItemGroup>
