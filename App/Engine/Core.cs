@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -49,6 +50,10 @@ namespace App.Engine
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
+
+            var soundPlayer = new SoundPlayer {SoundLocation = @"Assets\Music\Magna_-_Divide.wav"};
+            soundPlayer.Load();
+            soundPlayer.Play();
         }
         
         private void SetCamera()

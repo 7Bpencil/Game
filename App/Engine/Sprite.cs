@@ -29,12 +29,6 @@ namespace App.Engine
             }
         }
 
-        private RectangleF GetBoundsInCamera(Vector cameraPosition)
-        {
-            var topLeftInCamera = TopLeft.ConvertFromWorldToCamera(cameraPosition);
-            return new RectangleF(topLeftInCamera.X, topLeftInCamera.Y, size.Width, size.Height);
-        }
-        
         private RectangleF GetBounds()
         {
             return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
@@ -58,6 +52,8 @@ namespace App.Engine
         private int startFrame;
         private int currentFrame;
         private int endFrame;
+        
+        private Rectangle destRectInCamera;
         private Vector velocity;
         public Vector Velocity
         { get => velocity; set => velocity = value; }
@@ -87,6 +83,7 @@ namespace App.Engine
             lastTime = 0;
             animationRate = 1500 / 3;
             angle = 0;
+            destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
         }
 
         /*public int CurrentFrame
@@ -102,6 +99,10 @@ namespace App.Engine
             }
         }
         
+        /// <summary>
+        /// Case when coordinates are in camera axis
+        /// </summary>
+        /// <param name="graphics"></param>
         public void DrawNextFrame(Graphics graphics)
         {
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
@@ -115,15 +116,23 @@ namespace App.Engine
             }
         }
 
+        /// <summary>
+        /// Case when coordinates are in world axis
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="cameraPosition"></param>
         public void DrawNextFrame(Graphics graphics, Vector cameraPosition)
         {
             var stateBefore = graphics.Save();
+            
             var centerInCamera = Center.ConvertFromWorldToCamera(cameraPosition);
             if (!centerInCamera.Equals(Vector.ZeroVector))
                 graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
             graphics.RotateTransform((float)-angle);
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
-            graphics.DrawImage(bitmap, new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height), GetCurrentFrameTile(), GraphicsUnit.Pixel);
+            graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);
+            graphics.Restore(stateBefore);
+            
             var time = Environment.TickCount;
             if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
             {
@@ -131,7 +140,6 @@ namespace App.Engine
                 previousPosition = TopLeft;
                 currentFrame++;
             }
-            graphics.Restore(stateBefore);
         }
     }
 }
