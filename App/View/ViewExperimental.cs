@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using App.Engine;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
@@ -11,21 +12,21 @@ using App.View.Renderings;
 
 namespace App.View
 {
-    public class ViewExperimental : Form
+    public class ViewExperimental : ContractView
     {
-        private Level currentLevel;
         
-        private KeyStates keyState;
+        
+        
         private const int tileSize = 64;
         
         private static Size renderSizeInTiles;
-        private Camera camera;
+        
         private Vector previousTopLeftTileIndex;
         
-        private Vector cursorPosition;
-        private Player player;
         
-        private Bitmap bmpPlayer;
+        
+        
+        
         
         private Bitmap bmpRenderedTiles;
         private Graphics gfxRenderedTiles;
@@ -36,9 +37,11 @@ namespace App.View
         private Font debugFont;
         private Brush debugBrush;
 
-        private Stopwatch clock;
+        
 
-        private LevelManager levelManager;
+        
+
+        private ContractCore engineCore;
 
         private class KeyStates
         {
@@ -47,39 +50,29 @@ namespace App.View
         
         public ViewExperimental()
         {
-            SetUpCamera();
+            
             SetUpRenderer();
             SetUpView();
-            SetUpLevel();
             
-            var playerStartPosition = new Vector(14 * 64, 6 * 64);
-            SetUpPlayer(playerStartPosition);
-            cursorPosition = playerStartPosition;
+            engineCore = new Core(this);
+           
             
-            keyState = new KeyStates();
+            
+            
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             
             RerenderCamera();
-            clock = new Stopwatch();
+            
             
             var timer = new Timer();
             timer.Interval = 15;
-            timer.Tick += TimerTick;
+            timer.Tick += engineCore.GameLoop;
             timer.Start();
         }
         
-        private void SetUpCamera()
-        {
-            var cameraSize = new Size(1280, 720);
-            var p = cameraSize.Height / 3;
-            var q = cameraSize.Height / 5;
-            
-            var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
-            var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-            camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
-        }
+
         
         private void SetUpRenderer()
         {
@@ -104,109 +97,16 @@ namespace App.View
             ClientSize = camera.size;
             Text = "New Game";
         }
-        
-        private void SetUpLevel()
-        {
-            levelManager = new LevelManager();
-            currentLevel = levelManager.CurrentLevel;
-        }
-        
-        private void SetUpPlayer(Vector position)
-        {
-            bmpPlayer = levelManager.GetTileMap("boroda");
-            var playerLegs = new Sprite
-            (
-                position,
-                bmpPlayer,
-                4,
-                7,
-                new Size(64, 64),
-                4);
-            
-            var playerTorso = new Sprite
-            (
-                position,
-                bmpPlayer,
-                0,
-                3,
-                new Size(64, 64),
-                4);
-            
-            player = new Player
-            {
-                Shape = new RigidCircle(position, tileSize / 2, false),
-                Torso = playerTorso,
-                Legs = playerLegs
-            };
-        }
 
-        private void TimerTick(object sender, EventArgs e)
-        {
-            UpdateState();
-            clock.Start();
-            
-            RenderView();
-            Invalidate();
-            
-            clock.Stop();
-            Console.WriteLine(clock.ElapsedMilliseconds);
-            clock.Reset();
-        }
-
-        private void UpdateState()
-        {
-            const int step = 6;
-            UpdatePlayer(step);
-            CorrectPlayer();
-            camera.CorrectCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
-        }
-
-        private void RenderView()
+        public override void Render()
         {
             RerenderCamera();
             RenderObjects();
             PrintDebugInfo();
-        }
-
-        private void UpdatePlayer(int step)
-        {
-            var delta = Vector.ZeroVector;
-            if (keyState.W) 
-                delta.Y -= step;
-            if (keyState.S)
-                delta.Y += step;
-            if (keyState.A)
-                delta.X -= step;
-            if (keyState.D)
-                delta.X += step;
-            player.Move(delta);
-        }
-
-        private void CorrectPlayer()
-        {
-            var delta = Vector.ZeroVector;
-            var rightBorder = currentLevel.levelSizeInTiles.Width * tileSize;
-            const int leftBorder = 0;
-            var bottomBorder = currentLevel.levelSizeInTiles.Height * tileSize;
-            const int topBorder = 0;
-
-            var a = player.Center.Y - player.Radius - topBorder;
-            var b = player.Center.Y + player.Radius - bottomBorder;
-            var c = player.Center.X - player.Radius - leftBorder;
-            var d = player.Center.X + player.Radius - rightBorder;
-
-            if (a < 0)
-                delta.Y -= a;
-            if (b > 0)
-                delta.Y -= b;
-            if (c < 0)
-                delta.X -= c;
-            if (d > 0)
-                delta.X -= d;
             
-            player.Move(delta);
+            Invalidate();
         }
-
+        
         private void RerenderCamera()
         {
             var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
@@ -281,50 +181,12 @@ namespace App.View
         
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.W:
-                    keyState.W = true;
-                    break;
-
-                case Keys.S:
-                    keyState.S = true;
-                    break;
-
-                case Keys.A:
-                    keyState.A = true;
-                    break;
-
-                case Keys.D:
-                    keyState.D = true;
-                    break;
-            }
+            engineCore.OnKeyDown(e.KeyCode);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Escape:
-                    Application.Exit();
-                    break;
-                
-                case Keys.W:
-                    keyState.W = false;
-                    break;
-
-                case Keys.S:
-                    keyState.S = false;
-                    break;
-
-                case Keys.A:
-                    keyState.A = false;
-                    break;
-
-                case Keys.D:
-                    keyState.D = false;
-                    break;
-            }
+            engineCore.OnKeyUp(e.KeyCode);
         }
         
         protected override void OnPaint(PaintEventArgs e)
@@ -334,7 +196,7 @@ namespace App.View
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            cursorPosition = new Vector(e.X, e.Y);
+            engineCore.OnMouseMove(new Vector(e.X, e.Y));
         }
     }
 }
