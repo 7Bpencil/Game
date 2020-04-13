@@ -38,9 +38,14 @@ namespace App.Model
             return tileMaps;
         }
 
-        public Bitmap GetTileMap(string tileSetName)
+        public Bitmap GetTileMapByTileSetName(string tileSetName)
         {
             return tileMaps[tileSets[tileSetName].imageSource];
+        }
+        
+        public Bitmap GetTileMapByTileMapName(string tileMapName)
+        {
+            return tileMaps[tileMapName];
         }
 
         public string GetTileSetName(int tileID, Level level)

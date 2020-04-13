@@ -28,11 +28,16 @@ namespace App.Engine
                 return topLeft;
             }
         }
-        
+
         private RectangleF GetBoundsInCamera(Vector cameraPosition)
         {
             var topLeftInCamera = TopLeft.ConvertFromWorldToCamera(cameraPosition);
             return new RectangleF(topLeftInCamera.X, topLeftInCamera.Y, size.Width, size.Height);
+        }
+        
+        private RectangleF GetBounds()
+        {
+            return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
         }
         
         private Rectangle GetCurrentFrameTile()
@@ -62,6 +67,10 @@ namespace App.Engine
         private int columns;
         private int lastTime;
         private int animationRate;
+        
+        private double angle;
+        public double Angle
+        { get => angle; set => angle = value; }
 
         public Sprite(Vector center, Bitmap bitmap, int startFrame, int endFrame, Size size, int columns)
         {
@@ -77,6 +86,7 @@ namespace App.Engine
             currentFrame = 0;
             lastTime = 0;
             animationRate = 1500 / 3;
+            angle = 0;
         }
 
         /*public int CurrentFrame
@@ -91,11 +101,11 @@ namespace App.Engine
                 animationRate = 1000 / value;
             }
         }
-
-        public void DrawNextFrame(Graphics graphics, Vector cameraPosition)
+        
+        public void DrawNextFrame(Graphics graphics)
         {
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
-            graphics.DrawImage(bitmap, GetBoundsInCamera(cameraPosition), GetCurrentFrameTile(), GraphicsUnit.Pixel);
+            graphics.DrawImage(bitmap, GetBounds(), GetCurrentFrameTile(), GraphicsUnit.Pixel);
             var time = Environment.TickCount;
             if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
             {
@@ -103,6 +113,25 @@ namespace App.Engine
                 previousPosition = TopLeft;
                 currentFrame++;
             }
+        }
+
+        public void DrawNextFrame(Graphics graphics, Vector cameraPosition)
+        {
+            var stateBefore = graphics.Save();
+            var centerInCamera = Center.ConvertFromWorldToCamera(cameraPosition);
+            if (!centerInCamera.Equals(Vector.ZeroVector))
+                graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
+            graphics.RotateTransform((float)-angle);
+            if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
+            graphics.DrawImage(bitmap, new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height), GetCurrentFrameTile(), GraphicsUnit.Pixel);
+            var time = Environment.TickCount;
+            if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
+            {
+                lastTime = time;
+                previousPosition = TopLeft;
+                currentFrame++;
+            }
+            graphics.Restore(stateBefore);
         }
     }
 }

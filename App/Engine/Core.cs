@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -18,11 +19,14 @@ namespace App.Engine
         private Level currentLevel;
         private LevelManager levelManager;
         private Player player;
+        private Sprite cursor;
         private Camera camera;
-        private Vector cursorPosition;
         private const int tileSize = 64;
         private Vector previousTopLeftTileIndex;
         private static Size renderSizeInTiles;
+        
+        private List<Sprite> sprites;
+        private List<RigidShape> collisionShapes;
         
         public Size CameraSize => camera.size;
         
@@ -34,11 +38,15 @@ namespace App.Engine
         public Core(ViewForm viewForm)
         {
             this.viewForm = viewForm;
+            
+            sprites = new List<Sprite>();
+            collisionShapes = new List<RigidShape>();
+
             SetCamera();
             SetLevels();
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
-            cursorPosition = playerStartPosition;
             SetPlayer(playerStartPosition);
+            SetCursor(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
         }
@@ -63,7 +71,7 @@ namespace App.Engine
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = levelManager.GetTileMap("boroda.tsx");
+            var bmpPlayer = levelManager.GetTileMapByTileSetName("boroda.tsx");
             var playerLegs = new Sprite
             (
                 position,
@@ -88,6 +96,23 @@ namespace App.Engine
                 Torso = playerTorso,
                 Legs = playerLegs
             };
+            
+            sprites.Add(playerLegs);
+            sprites.Add(playerTorso);
+        }
+
+        private void SetCursor(Vector position)
+        {
+            var bmpCursor = levelManager.GetTileMapByTileMapName("crosshair.png");
+            cursor = new Sprite
+            (
+                position,
+                bmpCursor,
+                0,
+                3,
+                new Size(64, 64),
+                4);
+            cursor.AnimationRate = 7;
         }
 
         public void GameLoop(object sender, EventArgs args)
@@ -106,8 +131,9 @@ namespace App.Engine
         {
             const int step = 6;
             UpdatePlayerPosition(step);
+            UpdatePlayerByMouse();
             CorrectPlayer();
-            camera.UpdateCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
+            camera.UpdateCamera(cursor.Center, player, currentLevel.levelSizeInTiles, tileSize);
         }
         
         private void UpdatePlayerPosition(int step)
@@ -122,6 +148,15 @@ namespace App.Engine
             if (keyState.D)
                 delta.X += step;
             player.Move(delta);
+        }
+        
+        private void UpdatePlayerByMouse()
+        {
+            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(camera.position);
+            var direction = cursor.Center - playerCenterInCamera;
+            var dirAngle = Math.Atan2(-direction.Y, direction.X);
+            var angle = 180 / Math.PI * dirAngle;
+            player.Torso.Angle = angle;
         }
         
         private void CorrectPlayer()
@@ -152,7 +187,8 @@ namespace App.Engine
         private void Render()
         {
             RerenderCamera();
-            RenderObjects();
+            RenderSprites();
+            RenderDebugShapes();
             PrintDebugInfo();
             
             viewForm.Invalidate();
@@ -188,7 +224,7 @@ namespace App.Engine
                 if (tileID == 0 ) continue;
                 
                 var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMapByTileSetName(tileSetName));
             }
         }
 
@@ -206,10 +242,18 @@ namespace App.Engine
             viewForm.RenderCamera(sourceRectangle);
         }
 
-        private void RenderObjects()
+        private void RenderSprites()
         {
-            viewForm.RenderSprite(player.Legs, camera.position);
-            viewForm.RenderSprite(player.Torso, camera.position);
+            foreach (var sprite in sprites)
+                viewForm.RenderSprite(sprite, camera.position);    
+            
+            viewForm.RenderSprite(cursor);
+        }
+
+        private void RenderDebugShapes()
+        {
+            foreach (var shape in collisionShapes)
+                viewForm.RenderShape(shape, camera.position);
         }
         
         private void PrintDebugInfo()
@@ -226,13 +270,13 @@ namespace App.Engine
                 "(WAxis) Scroll Position: " + camera.position,
                 "(WAxis) Player Position: " + player.Center,
                 "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position),
-                "(CAxis) Cursor Position: " + cursorPosition
+                "(CAxis) Cursor Position: " + cursor.Center
             };
         }
 
         public void OnMouseMove(Vector newPosition)
         {
-            cursorPosition = newPosition;
+            cursor.Center = newPosition;
         }
         
         public void OnKeyDown(Keys keyPressed)
