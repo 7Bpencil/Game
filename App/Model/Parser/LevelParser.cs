@@ -10,7 +10,7 @@ namespace App.Model.Parser
     {
         public static List<Level> LoadLevels()
         {
-            var levelsFileNames = Directory.GetFiles("Assets/TileSets");
+            var levelsFileNames = Directory.GetFiles("Assets/Levels");
             var levels = new List<Level>();
             foreach (var fileName in levelsFileNames)
             {

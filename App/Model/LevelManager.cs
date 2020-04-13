@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -32,9 +33,9 @@ namespace App.Model
             var bitmapFileNames = Directory.GetFiles("Assets/TileMaps");
             var tileMaps = new Dictionary<string, Bitmap>();
             foreach (var fileName in bitmapFileNames)
-                tileMaps.Add(fileName, new Bitmap(fileName));
+                tileMaps.Add(Path.GetFileName(fileName), new Bitmap(fileName));
             
-            return this.tileMaps;
+            return tileMaps;
         }
 
         public Bitmap GetTileMap(string tileSetName)
@@ -44,14 +45,14 @@ namespace App.Model
 
         public string GetTileSetName(int tileID, Level level)
         {
-            string tileSetname = null;
+            string tileSetName = null;
             for (var i = 0; i < level.allFirstgid.Length - 1; i++)
             {
                 if (tileID <= level.allFirstgid[i] || tileID >= level.allFirstgid[i + 1]) continue;
-                tileSetname = level.tileSetFromFirstgid[i];
+                tileSetName = level.tileSetFromFirstgid[i];
             }
-
-            return tileSetname ?? level.tileSetFromFirstgid[level.allFirstgid.Length - 1];
+            
+            return tileSetName ?? level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
         }
     }
 }

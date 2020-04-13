@@ -12,7 +12,7 @@ namespace App.Engine
 {
     public class Core
     {
-        private ViewExperimental view;
+        private ViewForm viewForm;
         private Stopwatch clock;
         private KeyStates keyState;
         private Level currentLevel;
@@ -31,9 +31,9 @@ namespace App.Engine
             public bool W, S, A, D;
         }
 
-        public Core(ViewExperimental view)
+        public Core(View.ViewForm viewForm)
         {
-            this.view = view;
+            this.viewForm = viewForm;
             SetCamera();
             SetLevels();
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
@@ -63,7 +63,7 @@ namespace App.Engine
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = levelManager.GetTileMap("boroda");
+            var bmpPlayer = levelManager.GetTileMap("boroda.tsx");
             var playerLegs = new Sprite
             (
                 position,
@@ -155,7 +155,7 @@ namespace App.Engine
             RenderObjects();
             PrintDebugInfo();
             
-            view.Invalidate();
+            viewForm.Invalidate();
         }
 
         private void RerenderCamera()
@@ -195,7 +195,7 @@ namespace App.Engine
         private void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap)
         {
             var src = TileTools.GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
-            view.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
+            viewForm.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
         private void CropRenderedTilesToCamera()
@@ -203,18 +203,18 @@ namespace App.Engine
             var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
                 camera.size.Width, camera.size.Height);
             
-            view.RenderCamera(sourceRectangle);
+            viewForm.RenderCamera(sourceRectangle);
         }
 
         private void RenderObjects()
         {
-            view.RenderSprite(player.Legs, camera.position);
-            view.RenderSprite(player.Torso, camera.position);
+            viewForm.RenderSprite(player.Legs, camera.position);
+            viewForm.RenderSprite(player.Torso, camera.position);
         }
         
         private void PrintDebugInfo()
         {
-            view.PrintMessages(GetDebugInfo());
+            viewForm.PrintMessages(GetDebugInfo());
         }
         
         private string[] GetDebugInfo()

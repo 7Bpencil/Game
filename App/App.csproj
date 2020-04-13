@@ -67,7 +67,7 @@
         <Compile Include="View\ContractView.cs" />
         <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />
         <Compile Include="View\Renderings\RigidBodyRenderer.cs" />
-        <Compile Include="View\ViewExperimental.cs" />
+        <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="Assets\TileMaps\boroda.png">

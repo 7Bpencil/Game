@@ -6,7 +6,7 @@ using App.Engine.PhysicsEngine;
 
 namespace App.View
 {
-    public class ViewExperimental : Form
+    public class ViewForm : Form
     {
         private const int tileSize = 64;
         
@@ -23,7 +23,7 @@ namespace App.View
 
         private Size cameraSize;
 
-        public ViewExperimental()
+        public ViewForm()
         {
             engineCore = new Core(this);
             cameraSize = engineCore.CameraSize;

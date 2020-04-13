@@ -44,7 +44,7 @@ namespace App.Model.Parser
 
             return new TileSet
             {
-                tileSetName = root.GetAttribute("name"),
+                tileSetName = Path.GetFileName(tileSetFilename),
                 tileWidth = int.Parse(root.GetAttribute("tilewidth")),
                 tileHeight = int.Parse(root.GetAttribute("tileheight")),
                 tileCount = int.Parse(root.GetAttribute("tilecount")),
