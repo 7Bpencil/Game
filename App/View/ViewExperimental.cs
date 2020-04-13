@@ -40,32 +40,36 @@ namespace App.View
             timer.Start();
         }
         
-        private void SetUpRenderer()
-        {
-            DoubleBuffered = true;
-            var renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
-            
-            bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
-            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
-            
-            var context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
-            using (var g = CreateGraphics())
-                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
-            
-            gfxCamera = cameraBuffer.Graphics;
-            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
-        }
-        
         private void SetUpView()
         {
             ClientSize = cameraSize;
             Text = "New Game";
         }
-
-        public void RenderTile(Bitmap sourceImage, int x, int y, Rectangle src)
+        
+        private void SetUpRenderer()
         {
-            gfxRenderedTiles.DrawImage(sourceImage, x, y, src, GraphicsUnit.Pixel);
+            DoubleBuffered = true;
+            var renderSizeInTiles = engineCore.GetRenderSizeInTiles();
+            
+            bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
+            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
+         
+            SetCameraBuffer();
+            gfxCamera = cameraBuffer.Graphics;
+            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
+        }
+
+        private void SetCameraBuffer()
+        {
+            var context = BufferedGraphicsManager.Current;
+            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
+            using (var g = CreateGraphics())
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
+        }
+
+        public void RenderTile(Bitmap tileMap, int x, int y, Rectangle src)
+        {
+            gfxRenderedTiles.DrawImage(tileMap, x, y, src, GraphicsUnit.Pixel);
         }
 
         public void RenderCamera(Rectangle sourceRectangle)
@@ -73,9 +77,9 @@ namespace App.View
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
 
-        public void RenderSprite(Sprite obj, Vector cameraPosition)
+        public void RenderSprite(Sprite sprite, Vector cameraPosition)
         {
-            obj.DrawNextFrame(gfxCamera, cameraPosition);
+            sprite.DrawNextFrame(gfxCamera, cameraPosition);
         }
         
         public void PrintMessages(string[] messages)

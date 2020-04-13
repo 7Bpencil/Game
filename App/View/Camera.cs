@@ -20,7 +20,7 @@ namespace App.View
             this.cursorArea = cursorArea;
         }
 
-        public void CorrectCamera(Vector cursorPosition, Player player, Size levelSizeInTiles, int tileSize)
+        public void UpdateCamera(Vector cursorPosition, Player player, Size levelSizeInTiles, int tileSize)
         { 
             CorrectCameraDependsOnCursorPosition(cursorPosition);
             CorrectCameraDependsOnPlayerPosition(player);

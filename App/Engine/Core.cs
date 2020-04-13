@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
-using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
 using App.Model.LevelData;
@@ -36,6 +34,8 @@ namespace App.Engine
         
         private static Size renderSizeInTiles;
         
+        public Size CameraSize => camera.size;
+        
         private class KeyStates
         {
             public bool W, S, A, D;
@@ -43,17 +43,17 @@ namespace App.Engine
 
         public Core(ViewExperimental view)
         {
-            SetUpCamera();
-            SetUpLevel();
+            this.view = view;
+            SetCamera();
+            SetLevels();
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             cursorPosition = playerStartPosition;
-            SetUpPlayer(playerStartPosition);
+            SetPlayer(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
-            
         }
         
-        private void SetUpCamera()
+        private void SetCamera()
         {
             var cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
@@ -62,15 +62,16 @@ namespace App.Engine
             var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
             camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
+            renderSizeInTiles = new Size(camera.size.Width / tileSize + 2, camera.size.Height / tileSize + 2);
         }
         
-        private void SetUpLevel()
+        private void SetLevels()
         {
             levelManager = new LevelManager();
             currentLevel = levelManager.CurrentLevel;
         }
         
-        private void SetUpPlayer(Vector position)
+        private void SetPlayer(Vector position)
         {
             var bmpPlayer = levelManager.GetTileMap("boroda");
             var playerLegs = new Sprite
@@ -111,70 +112,15 @@ namespace App.Engine
             clock.Reset();
         }
         
-        public void Render()
+        private void UpdateState()
         {
-            RerenderCamera();
-            RenderObjects();
-            PrintDebugInfo();
-            
-            view.Invalidate();
+            const int step = 6;
+            UpdatePlayerPosition(step);
+            CorrectPlayer();
+            camera.UpdateCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
         }
         
-        public void RerenderCamera()
-        {
-            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
-            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
-            {
-                RerenderTiles(topLeftTileIndex);
-                previousTopLeftTileIndex = topLeftTileIndex;
-            }
-            
-            CropRenderedTilesToCamera();
-        }
-
-        public void RerenderTiles(Vector topLeftTileIndex)
-        {
-            foreach (var layer in currentLevel.Layers)
-                RenderLayer(layer, topLeftTileIndex);
-        }
-
-        public void RenderLayer(Layer layer, Vector topLeftTileIndex)
-        {
-            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
-            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
-            {
-                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
-                if (tileIndex > layer.Tiles.Length - 1) break;
-                
-                var tileID = layer.Tiles[tileIndex];
-                if (tileID == 0 ) continue;
-                
-                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
-            }
-        }
-        
-        public void RenderTile(int targetX, int targetY, int tileID, Bitmap sourceImage)
-        {
-            var src = TileTools.GetSourceRectangle(tileID, sourceImage.Width / tileSize, tileSize);
-            view.RenderTile(sourceImage, targetX * tileSize, targetY * tileSize, src);
-        }
-
-        public void CropRenderedTilesToCamera()
-        {
-            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
-                camera.size.Width, camera.size.Height);
-            
-            view.RenderCamera(sourceRectangle);
-        }
-        
-        public void RenderObjects()
-        {
-            view.RenderSprite(player.Legs, camera.position);
-            view.RenderSprite(player.Torso, camera.position);
-        }
-
-        private void UpdatePlayer(int step)
+        private void UpdatePlayerPosition(int step)
         {
             var delta = Vector.ZeroVector;
             if (keyState.W) 
@@ -212,13 +158,73 @@ namespace App.Engine
             
             player.Move(delta);
         }
-        
-        private void UpdateState()
+
+        private void Render()
         {
-            const int step = 6;
-            UpdatePlayer(step);
-            CorrectPlayer();
-            camera.CorrectCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
+            RerenderCamera();
+            RenderObjects();
+            PrintDebugInfo();
+            
+            view.Invalidate();
+        }
+
+        private void RerenderCamera()
+        {
+            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
+            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
+            {
+                RerenderTiles(topLeftTileIndex);
+                previousTopLeftTileIndex = topLeftTileIndex;
+            }
+            
+            CropRenderedTilesToCamera();
+        }
+
+        private void RerenderTiles(Vector topLeftTileIndex)
+        {
+            foreach (var layer in currentLevel.Layers)
+                RenderLayer(layer, topLeftTileIndex);
+        }
+
+        private void RenderLayer(Layer layer, Vector topLeftTileIndex)
+        {
+            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
+            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+            {
+                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
+                if (tileIndex > layer.Tiles.Length - 1) break;
+                
+                var tileID = layer.Tiles[tileIndex];
+                if (tileID == 0 ) continue;
+                
+                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
+            }
+        }
+
+        private void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap)
+        {
+            var src = TileTools.GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
+            view.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
+        }
+
+        private void CropRenderedTilesToCamera()
+        {
+            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
+                camera.size.Width, camera.size.Height);
+            
+            view.RenderCamera(sourceRectangle);
+        }
+
+        private void RenderObjects()
+        {
+            view.RenderSprite(player.Legs, camera.position);
+            view.RenderSprite(player.Torso, camera.position);
+        }
+        
+        private void PrintDebugInfo()
+        {
+            view.PrintMessages(GetDebugInfo());
         }
         
         private string[] GetDebugInfo()
@@ -233,13 +239,6 @@ namespace App.Engine
                 "(CAxis) Cursor Position: " + cursorPosition
             };
         }
-
-        private void PrintDebugInfo()
-        {
-            view.PrintMessages(GetDebugInfo());
-        }
-
-        public Size CameraSize => camera.size;
 
         public void OnMouseMove(Vector newPosition)
         {
@@ -293,17 +292,10 @@ namespace App.Engine
                     break;
             }
         }
-        
-        /*
-        public List<RigidShape> GetSceneObjects()
+
+        public Size GetRenderSizeInTiles()
         {
-            return sceneObjects;
+            return renderSizeInTiles;
         }
-        
-        public List<CollisionInfo> GetCollisions()
-        {
-            return collisions;
-        }
-        */
     }
 }
