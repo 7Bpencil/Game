@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Xml.XPath;
+using System.Xml.Xsl;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
@@ -23,7 +25,6 @@ namespace App.View
         private Vector cameraPosition;
         private Vector previousTopLeftTileIndex;
         
-        private RigidCircle cursor;
         private Sprite cursorSprite;
         private Player player;
 
@@ -36,7 +37,7 @@ namespace App.View
         
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
-        
+
         private Rectangle srcRect;
         private Rectangle walkableArea;
         private Rectangle cursorArea;
@@ -63,8 +64,7 @@ namespace App.View
             
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             SetUpPlayer(playerStartPosition);
-            cursor = new RigidCircle(playerStartPosition, 5, false);
-            SetUpCursor(cursor.Center);
+            SetUpCursor(playerStartPosition);
             
             //create and initialize renderer
             bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
@@ -112,7 +112,7 @@ namespace App.View
 
         private void SetUpCursor(Vector position)
         {
-            bmpCursor = new Bitmap("Images/boroda.png");
+            bmpCursor = new Bitmap("Images/crosshair.png");
             cursorSprite = new Sprite
             (
                 position,
@@ -121,6 +121,7 @@ namespace App.View
                 3,
                 new Size(64, 64),
                 4);
+            cursorSprite.AnimationRate = 35;
         }
 
         private void SetUpPlayer(Vector position)
@@ -150,6 +151,7 @@ namespace App.View
                 Torso = playerTorso,
                 Legs = playerLegs
             };
+            player.ViewVector = new Vector(1, 0);
         }
         
         private void TimerTick(object sender, EventArgs e)
@@ -266,10 +268,10 @@ namespace App.View
 
         private void CorrectCameraDependsOnCursorPosition()
         {
-            var q = cursor.Center.X - cursorArea.X;
-            var b = cursorArea.X + cursorArea.Width - cursor.Center.X;
-            var p = cursor.Center.Y - cursorArea.Y;
-            var a = cursorArea.Y + cursorArea.Height - cursor.Center.Y;
+            var q = cursorSprite.Center.X - cursorArea.X;
+            var b = cursorArea.X + cursorArea.Width - cursorSprite.Center.X;
+            var p = cursorSprite.Center.Y - cursorArea.Y;
+            var a = cursorArea.Y + cursorArea.Height - cursorSprite.Center.Y;
             
             if (q < 0) cameraPosition.X += q;
             if (b < 0) cameraPosition.X -= b;
@@ -306,11 +308,35 @@ namespace App.View
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, srcRect, GraphicsUnit.Pixel);
         }
 
+        private double GetAngle(double a, double b)
+        {
+            double result = Double.Epsilon;
+            if (a * b > 0 || Math.Abs(a * b) < 1e-8)
+            {
+                if (a > 0) result = -1 * (a - b);
+                else result = Math.Abs(a) - Math.Abs(b);
+            }
+            else
+                result = Math.Abs(a) + Math.Abs(b);
+
+            return result;
+        }
+        private void UpdatePlayerByMouse(Vector mousePosition)
+        {
+            Vector direction = (mousePosition - player.Center);
+            double dirAngle = Math.Atan2(direction.Y, direction.X);
+            double viewAngle = Math.Atan2(player.ViewVector.Y, player.ViewVector.X);
+            player.ViewVector = direction;
+            double angle = (180 / Math.PI) * GetAngle(dirAngle, viewAngle);
+            player.Legs.Angle = angle;
+            player.Torso.Angle = angle;
+        }
+
         private void RenderObjects()
         {
             player.Legs.DrawNextFrame(gfxCamera, cameraPosition);
             player.Torso.DrawNextFrame(gfxCamera, cameraPosition);
-            cursorSprite.DrawNextFrame(gfxCamera, cameraPosition);
+            cursorSprite.DrawNextFrame(gfxCamera);
         }
         
         private Vector GetTopLeftTileIndex()
@@ -325,11 +351,10 @@ namespace App.View
             Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + cameraPosition, debugBrush);
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
-            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursor.Center.ConvertFromWorldToCamera(cameraPosition), debugBrush);
+            Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursorSprite.Center, debugBrush);
             RigidBodyRenderer.Draw(player.Shape, cameraPosition, new Pen(Color.Gainsboro, 4), gfxCamera);
             gfxCamera.DrawRectangle(new Pen(Color.White), walkableArea);
             gfxCamera.DrawRectangle(new Pen(Color.White), cursorArea);
-            RigidBodyRenderer.Draw(cursor, new Pen(Color.Gainsboro, 4), gfxCamera);
         }
 
         private void Print(float x, float y, string text, Brush color)
@@ -421,8 +446,8 @@ namespace App.View
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            cursor.Center = new Vector(e.X, e.Y);
             cursorSprite.Center = new Vector(e.X, e.Y);
+            UpdatePlayerByMouse(new Vector(e.X, e.Y));
         }
     }
 }
