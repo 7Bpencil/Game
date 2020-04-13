@@ -18,8 +18,7 @@ namespace App.View
         
         private KeyStates keyState;
         private const int tileSize = 64;
-        private static Size cameraSize;
-        private static Size levelSizeInTiles;
+        
         private static Size renderSizeInTiles;
         private Camera camera;
         private Vector previousTopLeftTileIndex;
@@ -35,10 +34,6 @@ namespace App.View
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
         
-        private Rectangle sourceRectangle;
-        private Rectangle walkableArea;
-        private Rectangle cursorArea;
-        
         private Font debugFont;
         private Brush debugBrush;
 
@@ -48,7 +43,7 @@ namespace App.View
 
         private class KeyStates
         {
-            public bool Up, Down, Left, Right, W, S, A, D;
+            public bool W, S, A, D;
         }
         
         public ViewExperimental()
@@ -60,7 +55,6 @@ namespace App.View
             DoubleBuffered = true;
             SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
-            levelSizeInTiles = new Size(currentLevel.Layers[0].WidthInTiles, currentLevel.Layers[0].HeightInTiles);
 
             keyState = new KeyStates();
             
@@ -73,9 +67,9 @@ namespace App.View
             gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
             
             var context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
+            context.MaximumBuffer = new Size(camera.size.Width + 1, camera.size.Height + 1);
             using (var g = CreateGraphics())
-                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, camera.size.Width, camera.size.Height));
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
             
@@ -100,11 +94,11 @@ namespace App.View
 
         private void SetUpView()
         {
-            cameraSize = new Size(1280, 720);
+            var cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
-            walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
+            var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var q = cameraSize.Height / 5;
-            cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
+            var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
             camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
             
             renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
@@ -160,7 +154,7 @@ namespace App.View
             const int step = 6;
             UpdatePlayer(step);
             CorrectPlayer();
-            camera.CorrectCamera(cursorPosition, player, levelSizeInTiles, tileSize);
+            camera.CorrectCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
         }
 
         private void RenderView()
@@ -187,9 +181,9 @@ namespace App.View
         private void CorrectPlayer()
         {
             var delta = Vector.ZeroVector;
-            var rightBorder = levelSizeInTiles.Width * tileSize;
+            var rightBorder = currentLevel.levelSizeInTiles.Width * tileSize;
             const int leftBorder = 0;
-            var bottomBorder = levelSizeInTiles.Height * tileSize;
+            var bottomBorder = currentLevel.levelSizeInTiles.Height * tileSize;
             const int topBorder = 0;
 
             var a = player.Center.Y - player.Radius - topBorder;
@@ -232,7 +226,7 @@ namespace App.View
             for (var x = 0; x <= renderSizeInTiles.Width; ++x)
             for (var y = 0; y <= renderSizeInTiles.Height; ++y)
             {
-                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, levelSizeInTiles.Height);
+                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
                 if (tileIndex > layer.Tiles.Length - 1) break;
                 
                 var tileID = layer.Tiles[tileIndex];
@@ -251,8 +245,8 @@ namespace App.View
 
         private void CropRenderedTilesToCamera()
         {
-            sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
-                cameraSize.Width, cameraSize.Height);
+            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
+                camera.size.Width, camera.size.Height);
             
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
@@ -265,15 +259,15 @@ namespace App.View
         
         private void PrintDebugInfo()
         {
-            Print(0, 0, "Camera Size: " + cameraSize.Width + " x "+ cameraSize.Height, debugBrush);
-            Print(0, debugFont.Height, "Scene Size (in Tiles): " + levelSizeInTiles.Width + " x "+ levelSizeInTiles.Height, debugBrush);
+            Print(0, 0, "Camera Size: " + camera.size.Width + " x "+ camera.size.Height, debugBrush);
+            Print(0, debugFont.Height, "Scene Size (in Tiles): " + currentLevel.levelSizeInTiles.Width + " x "+ currentLevel.levelSizeInTiles.Height, debugBrush);
             Print(0, 2 * debugFont.Height, "(WAxis) Scroll Position: " + camera.position, debugBrush);
             Print(0, 3 * debugFont.Height, "(WAxis) Player Position: " + player.Center, debugBrush);
             Print(0, 4 * debugFont.Height, "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position), debugBrush);
             Print(0, 5 * debugFont.Height, "(CAxis) Cursor Position: " + cursorPosition, debugBrush);
             RigidBodyRenderer.Draw(player.Shape, camera.position, new Pen(Color.Gainsboro, 4), gfxCamera);
-            gfxCamera.DrawRectangle(new Pen(Color.White), walkableArea);
-            gfxCamera.DrawRectangle(new Pen(Color.White), cursorArea);
+            gfxCamera.DrawRectangle(new Pen(Color.White), camera.walkableArea);
+            gfxCamera.DrawRectangle(new Pen(Color.White), camera.cursorArea);
         }
 
         private void Print(float x, float y, string text, Brush color)
@@ -285,30 +279,18 @@ namespace App.View
         {
             switch (e.KeyCode)
             {
-                case Keys.Up:
-                    keyState.Up = true;
-                    break;
                 case Keys.W:
                     keyState.W = true;
                     break;
 
-                case Keys.Down:
-                    keyState.Down = true;
-                    break;
                 case Keys.S:
                     keyState.S = true;
                     break;
 
-                case Keys.Left:
-                    keyState.Left = true;
-                    break;
                 case Keys.A:
                     keyState.A = true;
                     break;
 
-                case Keys.Right:
-                    keyState.Right = true;
-                    break;
                 case Keys.D:
                     keyState.D = true;
                     break;
@@ -323,30 +305,18 @@ namespace App.View
                     Application.Exit();
                     break;
                 
-                case Keys.Up:
-                    keyState.Up = false;
-                    break;
                 case Keys.W:
                     keyState.W = false;
                     break;
 
-                case Keys.Down:
-                    keyState.Down = false;
-                    break;
                 case Keys.S:
                     keyState.S = false;
                     break;
 
-                case Keys.Left:
-                    keyState.Left = false;
-                    break;
                 case Keys.A:
                     keyState.A = false;
                     break;
 
-                case Keys.Right:
-                    keyState.Right = false;
-                    break;
                 case Keys.D:
                     keyState.D = false;
                     break;

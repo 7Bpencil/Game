@@ -10,12 +10,12 @@ namespace App.View
         public Rectangle walkableArea;
         public Rectangle cursorArea;
 
-        public Size cameraSize;
+        public Size size;
 
-        public Camera(Vector position, Size cameraSize,  Rectangle walkableArea, Rectangle cursorArea)
+        public Camera(Vector position, Size size,  Rectangle walkableArea, Rectangle cursorArea)
         {
             this.position = position;
-            this.cameraSize = cameraSize;
+            this.size = size;
             this.walkableArea = walkableArea;
             this.cursorArea = cursorArea;
         }
@@ -29,9 +29,9 @@ namespace App.View
 
         private void RemoveEscapingFromScene(Size levelSizeInTiles, int tileSize)
         {
-            var rightBorder = levelSizeInTiles.Width * tileSize - cameraSize.Width;
+            var rightBorder = levelSizeInTiles.Width * tileSize - size.Width;
             const int leftBorder = 0;
-            var bottomBorder = levelSizeInTiles.Height * tileSize - cameraSize.Height;
+            var bottomBorder = levelSizeInTiles.Height * tileSize - size.Height;
             const int topBorder = 0;
             
             if (position.Y < topBorder) position.Y = topBorder;
