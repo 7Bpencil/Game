@@ -11,11 +11,13 @@ using App.Model;
 using App.Model.LevelData;
 using App.Model.Parser;
 using App.View.Renderings;
+using System.Media;
 
 namespace App.View
 {
     public class ViewExperimental : Form
     {
+        SoundPlayer audio;
         private Level currentLevel;
         private KeyStates keyState;
         private const int tileSize = 64;
@@ -84,11 +86,31 @@ namespace App.View
             
             UpdateScrollBuffer();
             clock = new Stopwatch();
-            
+
+
+            audio = new SoundPlayer("Levels/6b8749f02e4bd7.wav");
+            SystemSounds.Asterisk.Play();
+
             var timer = new Timer();
             timer.Interval = 15;
             timer.Tick += TimerTick;
             timer.Start();
+        }
+        
+        public SoundPlayer LoadSoundFile(string filename)
+        {
+            SoundPlayer sound = null;
+            try
+            {
+                sound = new SoundPlayer();
+                sound.SoundLocation = filename;
+                sound.Load();
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message, "Error loading sound");
+            }
+            return sound;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -151,7 +173,6 @@ namespace App.View
                 Torso = playerTorso,
                 Legs = playerLegs
             };
-            player.ViewVector = new Vector(1, 0);
         }
         
         private void TimerTick(object sender, EventArgs e)
@@ -323,12 +344,10 @@ namespace App.View
         }
         private void UpdatePlayerByMouse(Vector mousePosition)
         {
-            Vector direction = (mousePosition - player.Center);
-            double dirAngle = Math.Atan2(direction.Y, direction.X);
-            double viewAngle = Math.Atan2(player.ViewVector.Y, player.ViewVector.X);
-            player.ViewVector = direction;
-            double angle = (180 / Math.PI) * GetAngle(dirAngle, viewAngle);
-            player.Legs.Angle = angle;
+            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(cameraPosition);
+            var direction = mousePosition - playerCenterInCamera;
+            var dirAngle = Math.Atan2(-direction.Y, direction.X);
+            var angle = 180 / Math.PI * dirAngle;
             player.Torso.Angle = angle;
         }
 

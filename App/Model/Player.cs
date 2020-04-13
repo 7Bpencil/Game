@@ -9,9 +9,6 @@ namespace App.Model
         public RigidCircle Shape;
         public Sprite Torso;
         public Sprite Legs;
-        private Vector viewVector;
-        public Vector ViewVector
-        { get => viewVector; set => viewVector = value; }
 
         public void Move(Vector delta)
         {
