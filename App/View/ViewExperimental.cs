@@ -48,13 +48,13 @@ namespace App.View
         
         public ViewExperimental()
         {
+            SetUpCamera();
+            SetUpRenderer();
             
-            levelManager = new LevelManager();
-            currentLevel = levelManager.CurrentLevel;
             
-            DoubleBuffered = true;
+
             SetUpView();
-            currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
+            
 
             keyState = new KeyStates();
             
@@ -62,18 +62,6 @@ namespace App.View
             SetUpPlayer(playerStartPosition);
             cursorPosition = playerStartPosition;
             
-            //create and initialize renderer
-            bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
-            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
-            
-            var context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(camera.size.Width + 1, camera.size.Height + 1);
-            using (var g = CreateGraphics())
-                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, camera.size.Width, camera.size.Height));
-            gfxCamera = cameraBuffer.Graphics;
-            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
-            
-            previousTopLeftTileIndex = new Vector(0, 0);
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
@@ -94,17 +82,42 @@ namespace App.View
 
         private void SetUpView()
         {
+            ClientSize = camera.size;
+            Text = "New Game";
+        }
+
+        private void SetUpLevel()
+        {
+            levelManager = new LevelManager();
+            currentLevel = levelManager.CurrentLevel;
+        }
+
+        private void SetUpCamera()
+        {
             var cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
             var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var q = cameraSize.Height / 5;
             var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
             camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
-            
-            renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
-            ClientSize = cameraSize;
+        }
 
-            Text = "New Game";
+        private void SetUpRenderer()
+        {
+            DoubleBuffered = true;
+            renderSizeInTiles = new Size(camera.size.Width / tileSize + 2, camera.size.Height / tileSize + 2);
+            
+            bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
+            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
+            
+            var context = BufferedGraphicsManager.Current;
+            context.MaximumBuffer = new Size(camera.size.Width + 1, camera.size.Height + 1);
+            using (var g = CreateGraphics())
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, camera.size.Width, camera.size.Height));
+            gfxCamera = cameraBuffer.Graphics;
+            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
+            
+            previousTopLeftTileIndex = new Vector(0, 0);
         }
 
         private void SetUpPlayer(Vector position)
