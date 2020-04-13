@@ -44,7 +44,7 @@ namespace App.Model.Parser
                 }
             }
 
-            return null;
+            return new Level(tileSetFirstgidFromSource, layers);
         }
 
         private static Layer ParseLayer(XmlNode node, string[] separators)

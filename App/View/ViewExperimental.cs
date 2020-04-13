@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -44,6 +44,8 @@ namespace App.View
 
         private Stopwatch clock;
 
+        private LevelManager levelManager;
+
         private class KeyStates
         {
             public bool Up, Down, Left, Right, W, S, A, D;
@@ -51,11 +53,15 @@ namespace App.View
         
         public ViewExperimental()
         {
+            
+            levelManager = new LevelManager();
+            currentLevel = levelManager.CurrentLevel;
+            
             DoubleBuffered = true;
             SetUpView();
             currentLevel = LevelParser.ParseLevel("Levels/secondTry.tmx");
             bmpTiles = new Bitmap("Images/sprite_map.png");
-            sceneSizeInTiles = new Size(currentLevel.Layers[0].Width, currentLevel.Layers[0].Height);
+            sceneSizeInTiles = new Size(currentLevel.Layers[0].WidthInTiles, currentLevel.Layers[0].HeightInTiles);
 
             keyState = new KeyStates();
             
@@ -407,4 +413,4 @@ namespace App.View
             cursor.Center = new Vector(e.X, e.Y);
         }
     }
-}*/
+}

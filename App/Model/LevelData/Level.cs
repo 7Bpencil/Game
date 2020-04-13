@@ -4,6 +4,13 @@ namespace App.Model.LevelData
 {
     public class Level
     {
-        private Dictionary<string, int> tileSetFirstgidFromSource;
+        public Dictionary<string, int> tileSetFirstgidFromSource;
+        public List<Layer> Layers;
+
+        public Level(Dictionary<string, int> tileSetFirstgidFromSource, List<Layer> layers)
+        {
+            this.tileSetFirstgidFromSource = tileSetFirstgidFromSource;
+            Layers = layers;
+        }
     }
 }
