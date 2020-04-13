@@ -12,9 +12,9 @@ using App.View;
 
 namespace App.Engine
 {
-    public class Core : ContractCore
+    public class Core
     {
-        private ContractView view;
+        private ViewExperimental view;
         
         private Stopwatch clock;
         
@@ -30,14 +30,18 @@ namespace App.Engine
         
         private Vector cursorPosition;
 
-        private int tileSize = 64;
+        private const int tileSize = 64;
         
-        class KeyStates
+        private Vector previousTopLeftTileIndex;
+        
+        private static Size renderSizeInTiles;
+        
+        private class KeyStates
         {
             public bool W, S, A, D;
         }
 
-        public Core(ContractView view)
+        public Core(ViewExperimental view)
         {
             SetUpCamera();
             SetUpLevel();
@@ -95,18 +99,82 @@ namespace App.Engine
             };
         }
 
-        public override void GameLoop(object sender, EventArgs args)
+        public void GameLoop(object sender, EventArgs args)
         {
             UpdateState();
             clock.Start();
             
-            view.Render();
-            
+            Render();
             
             clock.Stop();
             Console.WriteLine(clock.ElapsedMilliseconds);
             clock.Reset();
         }
+        
+        public void Render()
+        {
+            RerenderCamera();
+            RenderObjects();
+            PrintDebugInfo();
+            
+            view.Invalidate();
+        }
+        
+        public void RerenderCamera()
+        {
+            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
+            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
+            {
+                RerenderTiles(topLeftTileIndex);
+                previousTopLeftTileIndex = topLeftTileIndex;
+            }
+            
+            CropRenderedTilesToCamera();
+        }
+
+        public void RerenderTiles(Vector topLeftTileIndex)
+        {
+            foreach (var layer in currentLevel.Layers)
+                RenderLayer(layer, topLeftTileIndex);
+        }
+
+        public void RenderLayer(Layer layer, Vector topLeftTileIndex)
+        {
+            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
+            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+            {
+                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
+                if (tileIndex > layer.Tiles.Length - 1) break;
+                
+                var tileID = layer.Tiles[tileIndex];
+                if (tileID == 0 ) continue;
+                
+                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
+            }
+        }
+        
+        public void RenderTile(int targetX, int targetY, int tileID, Bitmap sourceImage)
+        {
+            var src = TileTools.GetSourceRectangle(tileID, sourceImage.Width / tileSize, tileSize);
+            view.RenderTile(sourceImage, targetX * tileSize, targetY * tileSize, src);
+        }
+
+        public void CropRenderedTilesToCamera()
+        {
+            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
+                camera.size.Width, camera.size.Height);
+            
+            view.RenderCamera(sourceRectangle);
+        }
+        
+        public void RenderObjects()
+        {
+            player.Legs.DrawNextFrame(gfxCamera, camera.position);
+            player.Torso.DrawNextFrame(gfxCamera, camera.position);
+        }
+        
+        
         
         private void UpdatePlayer(int step)
         {
@@ -155,9 +223,9 @@ namespace App.Engine
             camera.CorrectCamera(cursorPosition, player, currentLevel.levelSizeInTiles, tileSize);
         }
         
-        private void PrintDebugInfo()
+        private string[] GetDebugInfo()
         {
-            var debugInfo = new []
+            return new []
             {
                 "Camera Size: " + camera.size.Width + " x " + camera.size.Height,
                 "Scene Size (in Tiles): " + currentLevel.levelSizeInTiles.Width + " x " + currentLevel.levelSizeInTiles.Height,
@@ -166,15 +234,21 @@ namespace App.Engine
                 "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position),
                 "(CAxis) Cursor Position: " + cursorPosition
             };
-            view.PrintDebugInfo(debugInfo);
         }
-        
-        public override void OnMouseMove(Vector newPosition)
+
+        private void PrintDebugInfo()
+        {
+            view.PrintMessages(GetDebugInfo());
+        }
+
+        public Size CameraSize => camera.size;
+
+        public void OnMouseMove(Vector newPosition)
         {
             cursorPosition = newPosition;
         }
         
-        public override void OnKeyDown(Keys keyPressed)
+        public void OnKeyDown(Keys keyPressed)
         {
             switch (keyPressed)
             {
@@ -196,7 +270,7 @@ namespace App.Engine
             }
         }
 
-        public override void OnKeyUp(Keys keyPressed)
+        public void OnKeyUp(Keys keyPressed)
         {
             switch (keyPressed)
             {
@@ -221,15 +295,17 @@ namespace App.Engine
                     break;
             }
         }
-
-        public override List<RigidShape> GetSceneObjects()
+        
+        /*
+        public List<RigidShape> GetSceneObjects()
         {
             return sceneObjects;
         }
         
-        public override List<CollisionInfo> GetCollisions()
+        public List<CollisionInfo> GetCollisions()
         {
             return collisions;
         }
+        */
     }
 }

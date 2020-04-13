@@ -12,21 +12,9 @@ using App.View.Renderings;
 
 namespace App.View
 {
-    public class ViewExperimental : ContractView
+    public class ViewExperimental : Form
     {
-        
-        
-        
         private const int tileSize = 64;
-        
-        private static Size renderSizeInTiles;
-        
-        private Vector previousTopLeftTileIndex;
-        
-        
-        
-        
-        
         
         private Bitmap bmpRenderedTiles;
         private Graphics gfxRenderedTiles;
@@ -36,35 +24,21 @@ namespace App.View
         
         private Font debugFont;
         private Brush debugBrush;
-
         
+        private Core engineCore;
 
-        
+        private Size cameraSize;
 
-        private ContractCore engineCore;
-
-        private class KeyStates
-        {
-            public bool W, S, A, D;
-        }
-        
         public ViewExperimental()
         {
-            
-            SetUpRenderer();
-            SetUpView();
-            
             engineCore = new Core(this);
-           
+            cameraSize = engineCore.CameraSize;
             
-            
-            
+            SetUpView();
+            SetUpRenderer();
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
-            
-            RerenderCamera();
-            
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -77,96 +51,41 @@ namespace App.View
         private void SetUpRenderer()
         {
             DoubleBuffered = true;
-            renderSizeInTiles = new Size(camera.size.Width / tileSize + 2, camera.size.Height / tileSize + 2);
+            var renderSizeInTiles = new Size(cameraSize.Width / tileSize + 2, cameraSize.Height / tileSize + 2);
             
             bmpRenderedTiles = new Bitmap(renderSizeInTiles.Width * tileSize, renderSizeInTiles.Height * tileSize);
             gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
             
             var context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(camera.size.Width + 1, camera.size.Height + 1);
+            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
             using (var g = CreateGraphics())
-                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, camera.size.Width, camera.size.Height));
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
-            
-            previousTopLeftTileIndex = new Vector(0, 0);
         }
         
         private void SetUpView()
         {
-            ClientSize = camera.size;
+            ClientSize = cameraSize;
             Text = "New Game";
         }
 
-        public override void Render()
+        public void RenderTile(Bitmap sourceImage, int x, int y, Rectangle src)
         {
-            RerenderCamera();
-            RenderObjects();
-            PrintDebugInfo();
-            
-            Invalidate();
-        }
-        
-        private void RerenderCamera()
-        {
-            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
-            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
-            {
-                RerenderTiles(topLeftTileIndex);
-                previousTopLeftTileIndex = topLeftTileIndex;
-            }
-            
-            CropRenderedTilesToCamera();
+            gfxRenderedTiles.DrawImage(sourceImage, x, y, src, GraphicsUnit.Pixel);
         }
 
-        private void RerenderTiles(Vector topLeftTileIndex)
+        public void RenderCamera(Rectangle sourceRectangle)
         {
-            foreach (var layer in currentLevel.Layers)
-                RenderLayer(layer, topLeftTileIndex);
-        }
-
-        private void RenderLayer(Layer layer, Vector topLeftTileIndex)
-        {
-            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
-            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
-            {
-                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
-                if (tileIndex > layer.Tiles.Length - 1) break;
-                
-                var tileID = layer.Tiles[tileIndex];
-                if (tileID == 0 ) continue;
-                
-                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSetName));
-            }
-        }
-        
-        private void RenderTile(int targetX, int targetY, int tileID, Bitmap sourceImage)
-        {
-            var src = TileTools.GetSourceRectangle(tileID, sourceImage.Width / tileSize, tileSize);
-            gfxRenderedTiles.DrawImage(sourceImage, targetX * tileSize, targetY * tileSize, src, GraphicsUnit.Pixel);
-        }
-
-        private void CropRenderedTilesToCamera()
-        {
-            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
-                camera.size.Width, camera.size.Height);
-            
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
         
-        private void RenderObjects()
-        {
-            player.Legs.DrawNextFrame(gfxCamera, camera.position);
-            player.Torso.DrawNextFrame(gfxCamera, camera.position);
-        }
-        
-        public override void PrintDebugInfo(string[] messages)
+        public void PrintMessages(string[] messages)
         {
             for (var i = 0; i < messages.Length; i++)
                 gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
         }
-        
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             engineCore.OnKeyDown(e.KeyCode);
