@@ -71,6 +71,9 @@
       <Content Include="Assets\Music\Magna_-_Divide.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="Assets\Sounds\fire_AKM.wav" />
+      <Content Include="Assets\Sounds\fire_M16A4.wav" />
+      <Content Include="Assets\Sounds\fire_TOZ-194.wav" />
       <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -89,9 +92,6 @@
       <Content Include="Assets\Levels\test-map.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Assets\Sounds" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="Assets\TileSets\base_tiles.tsx">
