@@ -1,14 +1,8 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
 using App.Engine.PhysicsEngine;
-using App.Engine.PhysicsEngine.RigidBody;
-using App.Model;
-using App.Model.LevelData;
-using App.View.Renderings;
 
 namespace App.View
 {
@@ -46,8 +40,6 @@ namespace App.View
             timer.Start();
         }
         
-
-        
         private void SetUpRenderer()
         {
             DoubleBuffered = true;
@@ -60,6 +52,7 @@ namespace App.View
             context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
             using (var g = CreateGraphics())
                 cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
+            
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
         }
@@ -78,6 +71,11 @@ namespace App.View
         public void RenderCamera(Rectangle sourceRectangle)
         {
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
+        }
+
+        public void RenderSprite(Sprite obj, Vector cameraPosition)
+        {
+            obj.DrawNextFrame(gfxCamera, cameraPosition);
         }
         
         public void PrintMessages(string[] messages)

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -9,7 +9,7 @@ using App.View.Renderings;
 
 namespace App.View
 {
-    public class ViewForm : ContractView
+    public class DeprecatedViewForm : Form
     {
         private ContractCore engineCore;
         private List<RigidShape> sceneObjects;
@@ -17,7 +17,7 @@ namespace App.View
         private Pen collisionStrokePen;
         private Pen collisionInfoStrokePen;
 
-        public ViewForm()
+        public DeprecatedViewForm()
         {
             SetUpForm();
             engineCore = new Core(this);
@@ -75,4 +75,4 @@ namespace App.View
             engineCore.OnKeyUp(e.KeyCode);
         }
     }
-}
+}*/

@@ -170,12 +170,10 @@ namespace App.Engine
         
         public void RenderObjects()
         {
-            player.Legs.DrawNextFrame(gfxCamera, camera.position);
-            player.Torso.DrawNextFrame(gfxCamera, camera.position);
+            view.RenderSprite(player.Legs, camera.position);
+            view.RenderSprite(player.Torso, camera.position);
         }
-        
-        
-        
+
         private void UpdatePlayer(int step)
         {
             var delta = Vector.ZeroVector;
