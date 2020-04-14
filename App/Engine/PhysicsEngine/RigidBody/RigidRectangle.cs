@@ -134,5 +134,10 @@
         {
             angle += delta;
         }
+        
+        public override RigidShape DeepCopy()
+        {
+            return new RigidRectangle(center, width, height, angle, isStatic, canCollide);
+        }
     }
 }

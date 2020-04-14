@@ -53,16 +53,25 @@ namespace App.Model
             return tileSets[tileSetName];
         }
 
-        public TileSet GetTileSet(int tileID, Level level)
+        public TileSet GetTileSet(ref int tileID, Level level)
         {
             TileSet tileSet = null;
+            var firstgid = 0;
             for (var i = 0; i < level.allFirstgid.Length - 1; i++)
             {
                 if (tileID <= level.allFirstgid[i] || tileID >= level.allFirstgid[i + 1]) continue;
-                tileSet = level.tileSetFromFirstgid[i];
+                tileSet = level.tileSetFromFirstgid[level.allFirstgid[i]];
+                firstgid = level.allFirstgid[i];
+            }
+
+            if (tileSet == null)
+            {
+                tileID -= level.allFirstgid[level.allFirstgid.Length - 1];
+                return level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
             }
             
-            return tileSet ?? level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
+            tileID -= firstgid;
+            return tileSet;
         }
         
         public Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
@@ -74,6 +83,11 @@ namespace App.Model
 
         public List<RigidShape> GetStaticCollisionInfo(Level level) //TODO
         {
+            var collisions = new List<RigidShape>();
+            foreach (var layer in level.Layers)
+            {
+                //collisions.Add();
+            }
             return null;
         }
     }

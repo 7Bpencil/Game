@@ -45,5 +45,10 @@
         public override void Rotate(float delta) // Because it's meaningless
         {
         }
+        
+        public override RigidShape DeepCopy()
+        {
+            return new RigidCircle(center, radius, isStatic, canCollide);
+        }
     }
 }

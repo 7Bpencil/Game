@@ -23,7 +23,7 @@ namespace App.Engine
         private Sprite cursor;
         private Camera camera;
         private const int tileSize = 64;
-        private bool isLevelRendered;
+        private bool isLevelLoaded;
 
         private List<Sprite> sprites;
         private List<RigidShape> collisionShapes;
@@ -121,7 +121,7 @@ namespace App.Engine
 
         public void GameLoop(object sender, EventArgs args)
         {
-            if (!isLevelRendered) RenderLevel();
+            if (!isLevelLoaded) LoadLevel();
             UpdateState();
             clock.Start();
             
@@ -204,26 +204,40 @@ namespace App.Engine
             viewForm.Invalidate();
         }
 
-        private void RenderLevel()
+        private void LoadLevel()
         {
             foreach (var layer in currentLevel.Layers)
                 RenderLayer(layer);
-            isLevelRendered = true;
+            isLevelLoaded = true;
         }
         
         private void RenderLayer(Layer layer)
         {
             for (var x = 0; x <= layer.WidthInTiles; ++x)
-            for (var y = 0; y <= layer.WidthInTiles; ++y)
+            for (var y = 0; y <= layer.HeightInTiles; ++y)
             {
                 var tileIndex = y * layer.WidthInTiles + x;
                 if (tileIndex > layer.Tiles.Length - 1) break;
                 
                 var tileID = layer.Tiles[tileIndex];
-                if (tileID == 0 ) continue;
+                if (tileID == 0) continue;
                 
-                var tileSet = levelManager.GetTileSet(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSet));
+                var tileSet = levelManager.GetTileSet(ref tileID, currentLevel);
+
+                if (tileSet.tiles.ContainsKey(tileID))
+                    LoadTileCollision(tileID, tileSet, new Vector(x * tileSize, y * tileSize));
+                
+                RenderTile(x, y, tileID, levelManager.GetTileMap(tileSet));
+            }
+        }
+
+        private void LoadTileCollision(int tileID, TileSet tileSet, Vector tilePosition)
+        {
+            foreach (var shape in tileSet.tiles[tileID].collisionShapes)
+            {
+                var newShape = shape.DeepCopy();
+                newShape.Move(tilePosition);
+                collisionShapes.Add(newShape);
             }
         }
 
