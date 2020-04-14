@@ -7,27 +7,10 @@ namespace App.Engine
     public class Sprite
     {
         private Vector center;
-        public Vector Center
-        {
-            get => center;
-            set
-            {
-                center = value;
-                centerVersion++;
-            }
-        }
-        
+        public Vector Center => center;
+
         private Vector topLeft;
-        public Vector TopLeft
-        {
-            get
-            {
-                if (centerVersion != expectedCenterVersion)
-                    topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
-                expectedCenterVersion = centerVersion = 0;
-                return topLeft;
-            }
-        }
+        public Vector TopLeft => topLeft;
 
         private RectangleF GetBounds()
         {
@@ -45,9 +28,6 @@ namespace App.Engine
             };
         }
 
-        private int expectedCenterVersion;
-        private int centerVersion;
-        
         private Vector previousPosition;
         private int startFrame;
         private int currentFrame;
@@ -55,8 +35,7 @@ namespace App.Engine
         
         private Rectangle destRectInCamera;
         private Vector velocity;
-        public Vector Velocity
-        { get => velocity; set => velocity = value; }
+        public Vector Velocity { get => velocity; set => velocity = value; }
         
         private Size size;
         private Bitmap bitmap;
@@ -65,8 +44,7 @@ namespace App.Engine
         private int animationRate;
         
         private double angle;
-        public double Angle
-        { get => angle; set => angle = value; }
+        public double Angle { get => angle; set => angle = value; }
 
         public Sprite(Vector center, Bitmap bitmap, int startFrame, int endFrame, Size size, int columns)
         {
@@ -86,8 +64,7 @@ namespace App.Engine
             destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
         }
 
-        /*public int CurrentFrame
-        { get  => currentFrame; set => currentFrame = value; }*/
+        //public int CurrentFrame { get  => currentFrame; set => currentFrame = value; }
         
         public int AnimationRate
         {
@@ -131,6 +108,7 @@ namespace App.Engine
             graphics.RotateTransform((float)-angle);
             if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
             graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);
+           
             graphics.Restore(stateBefore);
             
             var time = Environment.TickCount;
@@ -140,6 +118,18 @@ namespace App.Engine
                 previousPosition = TopLeft;
                 currentFrame++;
             }
+        }
+
+        public void MoveBy(Vector delta)
+        {
+            center += delta;
+            topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);            
+        }
+        
+        public void MoveTo(Vector newCenterPosition)
+        {
+            center = newCenterPosition;
+            topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);            
         }
     }
 }

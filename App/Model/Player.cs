@@ -1,7 +1,6 @@
 ﻿using App.Engine;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
-using App.View;
 
 namespace App.Model
 {
@@ -13,9 +12,9 @@ namespace App.Model
 
         public void Move(Vector delta)
         {
-            Shape.Center += delta;
-            Torso.Center += delta;
-            Legs.Center += delta;
+            Shape.Move(delta);
+            Torso.MoveBy(delta);
+            Legs.MoveBy(delta);
         }
 
         public Vector Center => Shape.Center;

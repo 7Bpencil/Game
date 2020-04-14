@@ -49,14 +49,12 @@
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
         <Compile Include="Engine\Sprite.cs" />
-        <Compile Include="Model\ContractObjectFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
         <Compile Include="Model\LevelData\Tile.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelData\TileTools.cs" />
         <Compile Include="Model\LevelManager.cs" />
-        <Compile Include="Model\ObjectFactory.cs" />
         <Compile Include="Model\Parser\LevelParser.cs" />
         <Compile Include="Model\Parser\TileSetParser.cs" />
         <Compile Include="Model\Player.cs" />

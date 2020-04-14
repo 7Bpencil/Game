@@ -2,17 +2,11 @@
 {
     public class CollisionInfo
     {
-        private float depth;
-        public float Depth => depth;
-
-        private Vector normal;
-        public Vector Normal => normal;
-
-        private Vector collisionStart;
-        public Vector CollisionStart => collisionStart;
-
-        private Vector collisionEnd;
-        public Vector CollisionEnd => collisionEnd;
+        public readonly float Depth;
+        public readonly Vector Normal;
+        public readonly Vector Start;
+        public readonly Vector End;
+        
 
         /// <summary>
         /// 
@@ -22,18 +16,10 @@
         /// <param name="collisionStart"></param>
         public CollisionInfo(float depth, Vector normal, Vector collisionStart)
         {
-            this.depth = depth;
-            this.normal = normal;
-            this.collisionStart = collisionStart;
-            collisionEnd = collisionStart + this.normal * depth;
-        }
-
-        public void ChangeDirection()
-        {
-            normal *= -1;
-            var n = collisionStart;
-            collisionStart = collisionEnd;
-            collisionEnd = n;
+            Depth = depth;
+            Normal = normal;
+            Start = collisionStart;
+            End = collisionStart + normal * depth;
         }
     }
 }

@@ -4,9 +4,9 @@ using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Engine.PhysicsEngine.Collision
 {
-    public class CollisionDetection
+    public static class CollisionDetection
     {
-        public List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
+        public static List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
         {
             ClearColliding(sceneObjects);
             var collisions = new List<CollisionInfo>();
@@ -15,8 +15,11 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    //if (!(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
-                    //if (!sceneObjects[i].CanBound(sceneObjects[k])) continue;
+                    /*
+                    if (sceneObjects[i].IsStatic && sceneObjects[k].IsStatic
+                        || !(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide) 
+                        || !sceneObjects[i].CanBound(sceneObjects[k])) continue;
+                    */
                     var collisionInfo = GetCollisionInfo(sceneObjects[i], sceneObjects[k]);
                     if (collisionInfo == null) continue;
 
@@ -32,8 +35,8 @@ namespace App.Engine.PhysicsEngine.Collision
         {
             if (first is RigidCircle && second is RigidCircle)
                 return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
-            //if (first is RigidRectangle && second is RigidRectangle)   TODO currently is not working
-            //    return GetCollisionInfo((RigidRectangle) first, (RigidRectangle) second);
+            if (first is RigidRectangle && second is RigidRectangle)
+                return GetCollisionInfo((RigidRectangle) first, (RigidRectangle) second);
             if (first is RigidRectangle && second is RigidCircle)
                 return GetCollisionInfo((RigidRectangle) first, (RigidCircle) second);
             if (first is RigidCircle && second is RigidRectangle)
@@ -88,26 +91,11 @@ namespace App.Engine.PhysicsEngine.Collision
             var bestVec = closestSupportPoint.FaceNormal * closestSupportPoint.SupportPointDistance;
             return new CollisionInfo(bestDistance, closestSupportPoint.FaceNormal,
                 closestSupportPoint.SupportPoint + bestVec);
-
-            /*
-            CollisionInfo closestSupportPoint = null;
-            var minSupportDistance = float.PositiveInfinity;
-            for (var i = 0; i < first.Vertexes.Length; i++)
-            {
-                var pointOnFace = first.Vertexes[i];
-                var negativeFaceNormal = -1 * first.FaceNormals[i];
-                var supportPoint = FindSupportPoint(negativeFaceNormal, pointOnFace, second);
-                if (supportPoint == null) return null;
-                if (supportPoint.Depth >= minSupportDistance) continue;
-                minSupportDistance = supportPoint.Depth;
-                closestSupportPoint = supportPoint;
-            }
-
-            return closestSupportPoint;
-            */
         }
 
-        private static SupportPointInfo FindSupportPoint(Vector negativeFaceNormal, Vector pointOnFace,
+        private static SupportPointInfo FindSupportPoint(
+            Vector negativeFaceNormal,
+            Vector pointOnFace,
             RigidRectangle rectangle)
         {
             Vector supportPoint = null;
@@ -129,9 +117,9 @@ namespace App.Engine.PhysicsEngine.Collision
         private static CollisionInfo ShortestCollision(CollisionInfo first, CollisionInfo second)
         {
             if (first.Depth >= second.Depth)
-                return new CollisionInfo(second.Depth, -1 * second.Normal, second.CollisionStart);
+                return new CollisionInfo(second.Depth, -1 * second.Normal, second.Start);
             var depthVec = first.Normal * first.Depth;
-            return new CollisionInfo(first.Depth, first.Normal, first.CollisionStart - depthVec);
+            return new CollisionInfo(first.Depth, first.Normal, first.Start - depthVec);
         }
 
         private static CollisionInfo GetCollisionInfo(RigidRectangle rectangle, RigidCircle circle)
@@ -141,22 +129,51 @@ namespace App.Engine.PhysicsEngine.Collision
             for (var i = 0; i < rectangle.Vertexes.Length; i++)
             {
                 var projection = Vector.ScalarProduct(rectangle.Vertexes[i] - circle.Center, rectangle.FaceNormals[i]);
-                if (projection < 0) return CaseCenterIsOutside(rectangle, circle);
+                if (projection < 0) return CaseCenterIsOutside(-1 * projection, i, rectangle, circle);
                 if (projection >= minProjection) continue;
                 minProjection = projection;
                 indexNearestEdge = i;
             }
+            
             return new CollisionInfo(
-                circle.Radius + minProjection, 
-                rectangle.FaceNormals[indexNearestEdge], 
+                circle.Radius + minProjection,
+                rectangle.FaceNormals[indexNearestEdge],
                 circle.Center - rectangle.FaceNormals[indexNearestEdge] * circle.Radius);
         }
 
-        private static CollisionInfo CaseCenterIsOutside(RigidRectangle rectangle, RigidCircle circle)
+        private static CollisionInfo CaseCenterIsOutside(float minProjection, int nearestEdgeIndex,
+            RigidRectangle rectangle, RigidCircle circle)
         {
-            return null;
+            var v1 = circle.Center - rectangle.Vertexes[nearestEdgeIndex];
+            var v2 = rectangle.Vertexes[(nearestEdgeIndex + 1) % 4] - rectangle.Vertexes[nearestEdgeIndex];
+            var v3 = circle.Center - rectangle.Vertexes[(nearestEdgeIndex + 1) % 4];
+
+            if (Vector.ScalarProduct(v1, v2) < 0)
+            {
+                if (v1.Length >= circle.Radius) return null;
+                return new CollisionInfo(
+                    circle.Radius - v1.Length,
+                    - v1.Normalize(),
+                    circle.Center - v1);
+            }
+
+            if (Vector.ScalarProduct(v3, v2) > 0)
+            {
+                if (v3.Length >= circle.Radius) return null;
+                return new CollisionInfo(
+                    circle.Radius - v3.Length,
+                    - v3.Normalize(),
+                    circle.Center - v3);
+            }
+
+            if (minProjection >= circle.Radius) return null;
+            var radiusVector = rectangle.FaceNormals[nearestEdgeIndex] * circle.Radius;
+            return new CollisionInfo(
+                circle.Radius - minProjection,
+                rectangle.FaceNormals[nearestEdgeIndex],
+                circle.Center - radiusVector);
         }
-        
+
         private static void ClearColliding(List<RigidShape> sceneObjects)
         {
             foreach (var sceneObject in sceneObjects)
@@ -165,9 +182,9 @@ namespace App.Engine.PhysicsEngine.Collision
 
         private class SupportPointInfo
         {
-            public Vector SupportPoint;
-            public float SupportPointDistance;
-            public Vector FaceNormal;
+            public readonly Vector SupportPoint;
+            public readonly float SupportPointDistance;
+            public readonly Vector FaceNormal;
 
             public SupportPointInfo(Vector supportPoint, float supportPointDistance, Vector faceNormal)
             {

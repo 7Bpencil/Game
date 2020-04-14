@@ -76,9 +76,9 @@ namespace App.Model.Parser
             var center = new Vector(x + width / 2, y + height / 2);
             
             if (collision.HasChildNodes)
-                collisionShapes.Add(new RigidCircle(center, width, true));
+                collisionShapes.Add(new RigidCircle(center, width, true, true));
             else
-                collisionShapes.Add(new RigidRectangle(center, width, height, 0, true));
+                collisionShapes.Add(new RigidRectangle(center, width, height, 0, true, true));
         }
     }
 }

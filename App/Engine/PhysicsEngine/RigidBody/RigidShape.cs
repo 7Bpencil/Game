@@ -4,9 +4,9 @@
     {
         public abstract Vector Center { get; set; }
         public abstract float BondRadius { get;}
+        public abstract bool IsStatic { get; set; }
         public abstract bool CanCollide { get; set; }
         public abstract bool IsCollided { get; set; }
-        public abstract void Update();
         public abstract void Move(Vector delta);
         public abstract void Rotate(float delta);
         public bool CanBound(RigidShape other)

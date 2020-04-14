@@ -56,6 +56,11 @@ namespace App.Engine.PhysicsEngine
         {
             return new Vector(a.X - b.X, a.Y - b.Y);
         }
+        
+        public static Vector operator -(Vector a)
+        {
+            return new Vector(-a.X, -a.Y);
+        }
 
         public static Vector operator *(Vector a, float k)
         {

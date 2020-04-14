@@ -70,13 +70,14 @@
             }
         }
         
+        private bool isStatic;
+        public override bool IsStatic { get => isStatic; set => isStatic = value; }
+        
         private bool canCollide;
-        public override bool CanCollide
-        { get => canCollide; set => canCollide = value; }
+        public override bool CanCollide { get => canCollide; set => canCollide = value; }
         
         private bool isCollided;
-        public override bool IsCollided
-        { get => isCollided; set => isCollided = value; }
+        public override bool IsCollided { get => isCollided; set => isCollided = value; }
 
         private long vertexesVersion;
         private long calculatedVertexesVersion;
@@ -91,12 +92,13 @@
         /// <param name="height"></param>
         /// <param name="angle">Angle in degrees</param>
         /// <param name="canCollide">should a collision be calculated</param>
-        public RigidRectangle(Vector center, float width, float height, float angle, bool canCollide)
+        public RigidRectangle(Vector center, float width, float height, float angle, bool isStatic, bool canCollide)
         {
             this.center = center;
             this.width = width;
             this.height = height;
             this.angle = angle;
+            this.isStatic = isStatic;
             this.canCollide = canCollide;
             vertexes = new Vector[4];
             faceNormals = new Vector[4];
@@ -128,13 +130,9 @@
             calculatedVertexesVersion = vertexesVersion;
         }
 
-        public override void Update()
-        {
-        }
-
         public override void Move(Vector delta)
         {
-            center += delta;
+            Center += delta;
         }
 
         public override void Rotate(float delta)

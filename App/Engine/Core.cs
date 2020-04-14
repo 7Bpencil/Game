@@ -94,16 +94,18 @@ namespace App.Engine
                 3,
                 new Size(64, 64),
                 4);
-            
+
+            var playerShape = new RigidCircle(position, tileSize / 2, false, true);
             player = new Player
             {
-                Shape = new RigidCircle(position, tileSize / 2, false),
+                Shape = playerShape,
                 Torso = playerTorso,
                 Legs = playerLegs
             };
             
             sprites.Add(playerLegs);
             sprites.Add(playerTorso);
+            collisionShapes.Add(playerShape);
         }
 
         private void SetCursor(Vector position)
@@ -177,14 +179,10 @@ namespace App.Engine
             var c = player.Center.X - player.Radius - leftBorder;
             var d = player.Center.X + player.Radius - rightBorder;
 
-            if (a < 0)
-                delta.Y -= a;
-            if (b > 0)
-                delta.Y -= b;
-            if (c < 0)
-                delta.X -= c;
-            if (d > 0)
-                delta.X -= d;
+            if (a < 0) delta.Y -= a;
+            if (b > 0) delta.Y -= b;
+            if (c < 0) delta.X -= c;
+            if (d > 0) delta.X -= d;
             
             player.Move(delta);
         }
@@ -281,7 +279,7 @@ namespace App.Engine
 
         public void OnMouseMove(Vector newPosition)
         {
-            cursor.Center = newPosition;
+            cursor.MoveTo(newPosition);
         }
         
         public void OnKeyDown(Keys keyPressed)
