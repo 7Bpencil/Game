@@ -126,7 +126,8 @@
 
         public override void Move(Vector delta)
         {
-            center += delta;
+            center.X += delta.X;
+            center.Y += delta.Y;
             vertexesVersion ++;
         }
 
@@ -137,7 +138,7 @@
         
         public override RigidShape DeepCopy()
         {
-            return new RigidRectangle(center, width, height, angle, isStatic, canCollide);
+            return new RigidRectangle(center.Copy(), width, height, angle, isStatic, canCollide);
         }
     }
 }

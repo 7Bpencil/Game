@@ -13,8 +13,6 @@ namespace App.Model
         public void Move(Vector delta)
         {
             Shape.Move(delta);
-            Torso.MoveBy(delta);
-            Legs.MoveBy(delta);
         }
 
         public Vector Center => Shape.Center;

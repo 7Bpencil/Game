@@ -77,9 +77,11 @@ namespace App.Engine
         private void SetPlayer(Vector position)
         {
             var bmpPlayer = levelManager.GetTileMap(levelManager.GetTileSet("boroda.tsx"));
+            var playerShape = new RigidCircle(position, tileSize / 2, false, true);
+            
             var playerLegs = new Sprite
             (
-                position,
+                playerShape.Center,
                 bmpPlayer,
                 4,
                 7,
@@ -88,14 +90,13 @@ namespace App.Engine
             
             var playerTorso = new Sprite
             (
-                position,
+                playerShape.Center,
                 bmpPlayer,
                 0,
                 3,
                 new Size(64, 64),
                 4);
-
-            var playerShape = new RigidCircle(position, tileSize / 2, false, true);
+            
             player = new Player
             {
                 Shape = playerShape,

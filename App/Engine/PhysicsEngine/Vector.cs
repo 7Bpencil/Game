@@ -130,5 +130,10 @@ namespace App.Engine.PhysicsEngine
         {
             return this - cameraPosition;
         }
+
+        public Vector Copy()
+        {
+            return new Vector(X, Y);
+        }
     }
 }

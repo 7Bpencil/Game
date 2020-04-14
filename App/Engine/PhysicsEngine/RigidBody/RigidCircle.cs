@@ -39,7 +39,8 @@
 
         public override void Move(Vector delta)
         {
-            center += delta;
+            center.X += delta.X;
+            center.Y += delta.Y;
         }
 
         public override void Rotate(float delta) // Because it's meaningless
@@ -48,7 +49,7 @@
         
         public override RigidShape DeepCopy()
         {
-            return new RigidCircle(center, radius, isStatic, canCollide);
+            return new RigidCircle(center.Copy(), radius, isStatic, canCollide);
         }
     }
 }

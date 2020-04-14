@@ -23,11 +23,19 @@ namespace App.Engine.PhysicsEngine.Collision
                     if (collisionInfo == null) continue;
 
                     sceneObjects[i].IsCollided = sceneObjects[k].IsCollided = true;
+                    ResolveCollisionStatically(collisionInfo, sceneObjects[i], sceneObjects[k]);
                     collisions.Add(collisionInfo);
                 }
             }
 
             return collisions;
+        }
+
+        private static void ResolveCollisionStatically(CollisionInfo info, RigidShape first, RigidShape second)
+        {
+            if (second.IsStatic) first.Move(info.Normal * info.Depth);
+            else if (first.IsStatic) second.Move(info.Normal * info.Depth);
+            else second.Move(info.Normal * info.Depth);
         }
 
         private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
@@ -54,8 +62,8 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 return new CollisionInfo(
                     collisionDepth,
-                    vectorFromFirstToSecond.Normalize(),
-                    first.Center + vectorFromFirstToSecond * (1 - second.Radius / distance));
+                    -vectorFromFirstToSecond.Normalize(),
+                    first.Center + vectorFromFirstToSecond.Normalize() * first.Radius);
             }
 
             var maxRadius = Math.Max(first.Radius, second.Radius);
@@ -152,8 +160,8 @@ namespace App.Engine.PhysicsEngine.Collision
                 if (v1.Length >= circle.Radius) return null;
                 return new CollisionInfo(
                     circle.Radius - v1.Length,
-                    - v1.Normalize(),
-                    circle.Center - v1);
+                    v1.Normalize(),
+                    circle.Center - v1.Normalize() * circle.Radius);
             }
 
             if (Vector.ScalarProduct(v3, v2) > 0)
@@ -161,8 +169,8 @@ namespace App.Engine.PhysicsEngine.Collision
                 if (v3.Length >= circle.Radius) return null;
                 return new CollisionInfo(
                     circle.Radius - v3.Length,
-                    - v3.Normalize(),
-                    circle.Center - v3);
+                    v3.Normalize(),
+                    circle.Center - v3.Normalize() * circle.Radius);
             }
 
             if (minProjection >= circle.Radius) return null;
