@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using App.Engine.PhysicsEngine.RigidBody;
 using App.Model.LevelData;
 using App.Model.Parser;
 
@@ -10,8 +10,8 @@ namespace App.Model
     public class LevelManager
     {
         private Dictionary<string, Bitmap> tileMaps;
-        private List<Level> levels;
         private Dictionary<string, TileSet> tileSets;
+        private List<Level> levels;
         private int currentLevelIndex;
         public Level CurrentLevel => levels[currentLevelIndex];
 
@@ -22,9 +22,9 @@ namespace App.Model
 
         public LevelManager()
         {
-            levels = LevelParser.LoadLevels();
-            tileSets = TileSetParser.LoadTileSets();
             tileMaps = LoadTileMaps();
+            tileSets = TileSetParser.LoadTileSets();
+            levels = LevelParser.LoadLevels(tileSets);
             currentLevelIndex = 0;
         }
 
@@ -38,26 +38,43 @@ namespace App.Model
             return tileMaps;
         }
 
-        public Bitmap GetTileMapByTileSetName(string tileSetName)
+        public Bitmap GetTileMap(TileSet tileSet)
         {
-            return tileMaps[tileSets[tileSetName].imageSource];
+            return tileMaps[tileSet.imageSource];
         }
         
-        public Bitmap GetTileMapByTileMapName(string tileMapName)
+        public Bitmap GetTileMap(string tileMapName)
         {
             return tileMaps[tileMapName];
         }
 
-        public string GetTileSetName(int tileID, Level level)
+        public TileSet GetTileSet(string tileSetName)
         {
-            string tileSetName = null;
+            return tileSets[tileSetName];
+        }
+
+        public TileSet GetTileSet(int tileID, Level level)
+        {
+            TileSet tileSet = null;
             for (var i = 0; i < level.allFirstgid.Length - 1; i++)
             {
                 if (tileID <= level.allFirstgid[i] || tileID >= level.allFirstgid[i + 1]) continue;
-                tileSetName = level.tileSetFromFirstgid[i];
+                tileSet = level.tileSetFromFirstgid[i];
             }
             
-            return tileSetName ?? level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
+            return tileSet ?? level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
+        }
+        
+        public Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
+        {
+            var sourceX = tileID % columnsInTileMap * tileSize;
+            var sourceY = tileID / columnsInTileMap * tileSize;
+            return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
+        }
+
+        public List<RigidShape> GetStaticCollisionInfo(Level level) //TODO
+        {
+            return null;
         }
     }
 }

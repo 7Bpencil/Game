@@ -23,10 +23,14 @@ namespace App.View
 
         public ViewForm()
         {
-            engineCore = new Core(this);
+            var screenSize = new Size(
+                SystemInformation.PrimaryMonitorSize.Width,
+                SystemInformation.PrimaryMonitorSize.Height);
+            
+            engineCore = new Core(this, screenSize);
             cameraSize = engineCore.CameraSize;
             
-            SetUpView();
+            SetUpView(screenSize);
             SetUpRenderer();
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -39,10 +43,11 @@ namespace App.View
             timer.Start();
         }
         
-        private void SetUpView()
+        private void SetUpView(Size viewSize)
         {
-            ClientSize = cameraSize;
-            Text = "New Game";
+            ClientSize = viewSize;
+            FormBorderStyle = FormBorderStyle.None;
+            Text = "Cyber Renaissance";
         }
         
         private void SetUpRenderer()

@@ -35,14 +35,14 @@ namespace App.Engine
             public bool W, S, A, D;
         }
 
-        public Core(ViewForm viewForm)
+        public Core(ViewForm viewForm, Size screenSize)
         {
             this.viewForm = viewForm;
             
             sprites = new List<Sprite>();
             collisionShapes = new List<RigidShape>();
 
-            SetCamera();
+            SetCamera(screenSize);
             SetLevels();
             var playerStartPosition = new Vector(14 * 64, 6 * 64);
             SetPlayer(playerStartPosition);
@@ -55,9 +55,8 @@ namespace App.Engine
             soundPlayer.Play();
         }
         
-        private void SetCamera()
+        private void SetCamera(Size cameraSize)
         {
-            var cameraSize = new Size(1280, 720);
             var p = cameraSize.Height / 3;
             var q = cameraSize.Height / 5;
             
@@ -74,7 +73,7 @@ namespace App.Engine
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = levelManager.GetTileMapByTileSetName("boroda.tsx");
+            var bmpPlayer = levelManager.GetTileMap(levelManager.GetTileSet("boroda.tsx"));
             var playerLegs = new Sprite
             (
                 position,
@@ -108,7 +107,7 @@ namespace App.Engine
 
         private void SetCursor(Vector position)
         {
-            var bmpCursor = levelManager.GetTileMapByTileMapName("crosshair.png");
+            var bmpCursor = levelManager.GetTileMap("crosshair.png");
             cursor = new Sprite
             (
                 position,
@@ -139,7 +138,7 @@ namespace App.Engine
             UpdatePlayerPosition(step);
             UpdatePlayerByMouse();
             CorrectPlayer();
-            camera.UpdateCamera(cursor.Center, player, currentLevel.levelSizeInTiles, tileSize);
+            camera.UpdateCamera(cursor.Center, player, currentLevel.LevelSizeInTiles, tileSize);
         }
         
         private void UpdatePlayerPosition(int step)
@@ -177,9 +176,9 @@ namespace App.Engine
         private void CorrectPlayer()
         {
             var delta = Vector.ZeroVector;
-            var rightBorder = currentLevel.levelSizeInTiles.Width * tileSize;
+            var rightBorder = currentLevel.LevelSizeInTiles.Width * tileSize;
             const int leftBorder = 0;
-            var bottomBorder = currentLevel.levelSizeInTiles.Height * tileSize;
+            var bottomBorder = currentLevel.LevelSizeInTiles.Height * tileSize;
             const int topBorder = 0;
 
             var a = player.Center.Y - player.Radius - topBorder;
@@ -217,20 +216,20 @@ namespace App.Engine
             for (var x = 0; x <= layer.WidthInTiles; ++x)
             for (var y = 0; y <= layer.WidthInTiles; ++y)
             {
-                var tileIndex = TileTools.GetTileIndex(x, y, currentLevel.levelSizeInTiles.Height);
+                var tileIndex = y * layer.WidthInTiles + x;
                 if (tileIndex > layer.Tiles.Length - 1) break;
                 
                 var tileID = layer.Tiles[tileIndex];
                 if (tileID == 0 ) continue;
                 
-                var tileSetName = levelManager.GetTileSetName(tileID, currentLevel);
-                RenderTile(x, y, tileID - 1, levelManager.GetTileMapByTileSetName(tileSetName));
+                var tileSet = levelManager.GetTileSet(tileID, currentLevel);
+                RenderTile(x, y, tileID - 1, levelManager.GetTileMap(tileSet));
             }
         }
 
         private void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap)
         {
-            var src = TileTools.GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
+            var src = levelManager.GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
             viewForm.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
@@ -267,7 +266,7 @@ namespace App.Engine
             return new []
             {
                 "Camera Size: " + camera.size.Width + " x " + camera.size.Height,
-                "Scene Size (in Tiles): " + currentLevel.levelSizeInTiles.Width + " x " + currentLevel.levelSizeInTiles.Height,
+                "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
                 "(WAxis) Scroll Position: " + camera.position,
                 "(WAxis) Player Position: " + player.Center,
                 "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position),
@@ -330,7 +329,7 @@ namespace App.Engine
 
         public Size GetRenderSizeInTiles()
         {
-            return currentLevel.levelSizeInTiles;
+            return currentLevel.LevelSizeInTiles;
         }
     }
 }

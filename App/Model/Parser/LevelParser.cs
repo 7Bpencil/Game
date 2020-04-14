@@ -8,27 +8,27 @@ namespace App.Model.Parser
 {
     public static class LevelParser
     {
-        public static List<Level> LoadLevels()
+        public static List<Level> LoadLevels(Dictionary<string, TileSet> tileSets)
         {
             var levelsFileNames = Directory.GetFiles("Assets/Levels");
             var levels = new List<Level>();
             foreach (var fileName in levelsFileNames)
             {
-                var level = ParseLevel(fileName);
+                var level = ParseLevel(fileName, tileSets);
                 levels.Add(level);
             }
 
             return levels;
         }
 
-        private static Level ParseLevel(string levelFilename)
+        private static Level ParseLevel(string levelFileName, Dictionary<string, TileSet> tileSets)
         {
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
-            doc.Load(levelFilename);
+            doc.Load(levelFileName);
             var root = doc.DocumentElement;
             
-            var tileSetFromFirstgid = new Dictionary<int, string>();
+            var tileSetFromFirstgid = new Dictionary<int, TileSet>();
             var layers = new List<Layer>();
 
             foreach (XmlNode node in root)
@@ -37,7 +37,7 @@ namespace App.Model.Parser
                 {
                     var source = node.Attributes.GetNamedItem("source").Value;
                     var firstgid = int.Parse(node.Attributes.GetNamedItem("firstgid").Value);
-                    tileSetFromFirstgid.Add(firstgid, source);
+                    tileSetFromFirstgid.Add(firstgid, tileSets[source]);
                 }
 
                 if (node.Name == "layer")

@@ -7,16 +7,16 @@ namespace App.Model.LevelData
     public class Level
     {
         public int[] allFirstgid;
-        public Dictionary<int, string> tileSetFromFirstgid;
+        public Dictionary<int, TileSet> tileSetFromFirstgid;
         public List<Layer> Layers;
-        public Size levelSizeInTiles;
+        public Size LevelSizeInTiles;
 
-        public Level(Dictionary<int, string> tileSetFromFirstgid, List<Layer> layers)
+        public Level(Dictionary<int, TileSet> tileSetFromFirstgid, List<Layer> layers)
         {
             this.tileSetFromFirstgid = tileSetFromFirstgid;
             allFirstgid = tileSetFromFirstgid.Keys.ToArray();
             Layers = layers;
-            levelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
+            LevelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
         }
     }
 }
