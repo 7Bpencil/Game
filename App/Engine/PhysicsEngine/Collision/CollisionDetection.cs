@@ -15,11 +15,10 @@ namespace App.Engine.PhysicsEngine.Collision
             {
                 for (var k = i + 1; k < sceneObjects.Count; k++)
                 {
-                    /*
                     if (sceneObjects[i].IsStatic && sceneObjects[k].IsStatic
                         || !(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide) 
                         || !sceneObjects[i].CanBound(sceneObjects[k])) continue;
-                    */
+                    
                     var collisionInfo = GetCollisionInfo(sceneObjects[i], sceneObjects[k]);
                     if (collisionInfo == null) continue;
 

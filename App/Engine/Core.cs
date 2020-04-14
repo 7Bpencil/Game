@@ -5,10 +5,12 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
 using App.Model.LevelData;
 using App.View;
+using App.View.Renderings;
 
 namespace App.Engine
 {
@@ -27,6 +29,7 @@ namespace App.Engine
 
         private List<Sprite> sprites;
         private List<RigidShape> collisionShapes;
+        private List<CollisionInfo> collisionInfo;
         
         public Size CameraSize => camera.size;
         
@@ -122,9 +125,9 @@ namespace App.Engine
         public void GameLoop(object sender, EventArgs args)
         {
             if (!isLevelLoaded) LoadLevel();
-            UpdateState();
-            clock.Start();
             
+            clock.Start();
+            UpdateState();
             Render();
             
             clock.Stop();
@@ -139,6 +142,7 @@ namespace App.Engine
             UpdatePlayerByMouse();
             CorrectPlayer();
             camera.UpdateCamera(cursor.Center, player, currentLevel.LevelSizeInTiles, tileSize);
+            collisionInfo = CollisionDetection.CalculateCollisions(collisionShapes);
         }
         
         private void UpdatePlayerPosition(int step)
@@ -199,6 +203,7 @@ namespace App.Engine
             RerenderCamera();
             RenderSprites();
             RenderDebugShapes();
+            RenderCollisionInfo();
             PrintDebugInfo();
             
             viewForm.Invalidate();
@@ -268,6 +273,12 @@ namespace App.Engine
         {
             foreach (var shape in collisionShapes)
                 viewForm.RenderShape(shape, camera.position);
+        }
+
+        private void RenderCollisionInfo()
+        {
+            foreach (var info in collisionInfo)
+                viewForm.RenderCollisionInfo(info, camera.position);
         }
         
         private void PrintDebugInfo()

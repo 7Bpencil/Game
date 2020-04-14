@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
 using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
 using App.View.Renderings;
 
@@ -18,6 +19,7 @@ namespace App.View
         private Font debugFont;
         private Brush debugBrush;
         private Pen debugPen;
+        private Pen collisionPen;
         private Core engineCore;
         private Size cameraSize;
 
@@ -36,6 +38,7 @@ namespace App.View
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             debugPen = new Pen(Color.White, 4);
+            collisionPen = new Pen(Color.Crimson, 4);
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -94,6 +97,11 @@ namespace App.View
         public void RenderShape(RigidShape shape, Vector cameraPosition)
         {
             RigidBodyRenderer.Draw(shape, cameraPosition, debugPen, gfxCamera);
+        }
+
+        public void RenderCollisionInfo(CollisionInfo info, Vector cameraPosition)
+        {
+            CollisionInfoRenderer.Draw(info, cameraPosition, collisionPen, gfxCamera);
         }
         
         public void PrintMessages(string[] messages)

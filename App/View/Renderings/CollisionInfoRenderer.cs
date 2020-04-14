@@ -1,18 +1,21 @@
 ﻿using System.Drawing;
+using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.Collision;
 
 namespace App.View.Renderings
 {
     public static class CollisionInfoRenderer
     {
-        public static void Draw(CollisionInfo collision, Pen strokePen, Graphics g)
+        public static void Draw(CollisionInfo collision, Vector cameraPosition, Pen strokePen, Graphics g)
         {
+            var collisionStartInCamera = collision.Start.ConvertFromWorldToCamera(cameraPosition);
+            var collisionEndInCamera = collision.End.ConvertFromWorldToCamera(cameraPosition);
             g.DrawEllipse(strokePen, 
-                collision.End.X - strokePen.Width, collision.End.Y - strokePen.Width, 
+                collisionEndInCamera.X - strokePen.Width, collisionEndInCamera.Y - strokePen.Width, 
                 2 * strokePen.Width, 2 * strokePen.Width);
             g.DrawLine(strokePen,
-                collision.Start.X, collision.Start.Y,
-                collision.End.X, collision.End.Y);
+                collisionStartInCamera.X, collisionStartInCamera.Y,
+                collisionEndInCamera.X, collisionEndInCamera.Y);
         }
     }
 }
