@@ -8,7 +8,7 @@
         public float Diameter => 2 * radius;
 
         private Vector center;
-        public override Vector Center { get => center; set => center = value; }
+        public override Vector Center => center;
         
         private bool isStatic;
         public override bool IsStatic { get => isStatic; set => isStatic = value; }
@@ -39,7 +39,7 @@
 
         public override void Move(Vector delta)
         {
-            Center += delta;
+            center += delta;
         }
 
         public override void Rotate(float delta) // Because it's meaningless

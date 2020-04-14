@@ -3,15 +3,7 @@
     public class RigidRectangle : RigidShape
     {
         private Vector center;
-        public override Vector Center
-        {
-            get => center;
-            set
-            {
-                center = value;
-                vertexesVersion++;
-            }
-        }
+        public override Vector Center => center;
 
         public override float BondRadius => (Center - TopLeft).Length;
 
@@ -100,8 +92,10 @@
             this.angle = angle;
             this.isStatic = isStatic;
             this.canCollide = canCollide;
+            
             vertexes = new Vector[4];
             faceNormals = new Vector[4];
+            
             vertexesVersion = 0;
             calculatedVertexesVersion = -1;
         }
@@ -132,7 +126,8 @@
 
         public override void Move(Vector delta)
         {
-            Center += delta;
+            center += delta;
+            vertexesVersion ++;
         }
 
         public override void Rotate(float delta)
