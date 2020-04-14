@@ -154,6 +154,8 @@ namespace App.Engine
                 delta.X -= step;
             if (keyState.D)
                 delta.X += step;
+            
+            RotatePlayerLegs(delta);
             player.Move(delta);
         }
         
@@ -164,6 +166,13 @@ namespace App.Engine
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
             player.Torso.Angle = angle;
+        }
+        
+        private void RotatePlayerLegs(Vector delta)
+        {
+            var dirAngle = Math.Atan2(-delta.Y, delta.X);
+            var angle = 180 / Math.PI * dirAngle;
+            player.Legs.Angle = angle;
         }
         
         private void CorrectPlayer()
