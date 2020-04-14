@@ -23,9 +23,8 @@ namespace App.Engine
         private Sprite cursor;
         private Camera camera;
         private const int tileSize = 64;
-        private Vector previousTopLeftTileIndex;
-        private static Size renderSizeInTiles;
-        
+        private bool isLevelRendered;
+
         private List<Sprite> sprites;
         private List<RigidShape> collisionShapes;
         
@@ -65,7 +64,6 @@ namespace App.Engine
             var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
             camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
-            renderSizeInTiles = new Size(camera.size.Width / tileSize + 2, camera.size.Height / tileSize + 2);
         }
         
         private void SetLevels()
@@ -124,6 +122,7 @@ namespace App.Engine
 
         public void GameLoop(object sender, EventArgs args)
         {
+            if (!isLevelRendered) RenderLevel();
             UpdateState();
             clock.Start();
             
@@ -206,30 +205,19 @@ namespace App.Engine
             viewForm.Invalidate();
         }
 
-        private void RerenderCamera()
-        {
-            var topLeftTileIndex = TileTools.GetTopLeftTileIndex(camera.position, tileSize);
-            if (!topLeftTileIndex.Equals(previousTopLeftTileIndex))
-            {
-                RerenderTiles(topLeftTileIndex);
-                previousTopLeftTileIndex = topLeftTileIndex;
-            }
-            
-            CropRenderedTilesToCamera();
-        }
-
-        private void RerenderTiles(Vector topLeftTileIndex)
+        private void RenderLevel()
         {
             foreach (var layer in currentLevel.Layers)
-                RenderLayer(layer, topLeftTileIndex);
+                RenderLayer(layer);
+            isLevelRendered = true;
         }
-
-        private void RenderLayer(Layer layer, Vector topLeftTileIndex)
+        
+        private void RenderLayer(Layer layer)
         {
-            for (var x = 0; x <= renderSizeInTiles.Width; ++x)
-            for (var y = 0; y <= renderSizeInTiles.Height; ++y)
+            for (var x = 0; x <= layer.WidthInTiles; ++x)
+            for (var y = 0; y <= layer.WidthInTiles; ++y)
             {
-                var tileIndex = TileTools.GetTileIndex(x, y, topLeftTileIndex, currentLevel.levelSizeInTiles.Height);
+                var tileIndex = TileTools.GetTileIndex(x, y, currentLevel.levelSizeInTiles.Height);
                 if (tileIndex > layer.Tiles.Length - 1) break;
                 
                 var tileID = layer.Tiles[tileIndex];
@@ -246,14 +234,15 @@ namespace App.Engine
             viewForm.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
-        private void CropRenderedTilesToCamera()
+        private void RerenderCamera()
         {
-            var sourceRectangle = new Rectangle((int) camera.position.X % tileSize, (int) camera.position.Y % tileSize,
+            var sourceRectangle = new Rectangle(
+                (int) camera.position.X, (int) camera.position.Y,
                 camera.size.Width, camera.size.Height);
             
             viewForm.RenderCamera(sourceRectangle);
         }
-
+        
         private void RenderSprites()
         {
             foreach (var sprite in sprites)
@@ -341,7 +330,7 @@ namespace App.Engine
 
         public Size GetRenderSizeInTiles()
         {
-            return renderSizeInTiles;
+            return currentLevel.levelSizeInTiles;
         }
     }
 }
