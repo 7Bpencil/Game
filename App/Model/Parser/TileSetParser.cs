@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using App.Engine.PhysicsEngine;
@@ -81,4 +81,4 @@ namespace App.Model.Parser
                 collisionShapes.Add(new RigidRectangle(center, width, height, 0, true, true));
         }
     }
-}
+}*/

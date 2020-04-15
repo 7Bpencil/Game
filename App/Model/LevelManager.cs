@@ -10,7 +10,6 @@ namespace App.Model
     public class LevelManager
     {
         private Dictionary<string, Bitmap> tileMaps;
-        private Dictionary<string, TileSet> tileSets;
         private List<Level> levels;
         private int currentLevelIndex;
         public Level CurrentLevel => levels[currentLevelIndex];
@@ -23,8 +22,7 @@ namespace App.Model
         public LevelManager()
         {
             tileMaps = LoadTileMaps();
-            tileSets = TileSetParser.LoadTileSets();
-            levels = LevelParser.LoadLevels(tileSets);
+            levels = LevelParser.LoadLevels();
             currentLevelIndex = 0;
         }
 
@@ -37,42 +35,12 @@ namespace App.Model
             
             return tileMaps;
         }
-
-        public Bitmap GetTileMap(TileSet tileSet)
-        {
-            return tileMaps[tileSet.imageSource];
-        }
         
         public Bitmap GetTileMap(string tileMapName)
         {
             return tileMaps[tileMapName];
         }
 
-        public TileSet GetTileSet(string tileSetName)
-        {
-            return tileSets[tileSetName];
-        }
-
-        public TileSet GetTileSet(ref int tileID, Level level)
-        {
-            TileSet tileSet = null;
-            var firstgid = 0;
-            for (var i = 0; i < level.allFirstgid.Length - 1; i++)
-            {
-                if (tileID <= level.allFirstgid[i] || tileID >= level.allFirstgid[i + 1]) continue;
-                tileSet = level.tileSetFromFirstgid[level.allFirstgid[i]];
-                firstgid = level.allFirstgid[i];
-            }
-
-            if (tileSet == null)
-            {
-                tileID -= level.allFirstgid[level.allFirstgid.Length - 1];
-                return level.tileSetFromFirstgid[level.allFirstgid[level.allFirstgid.Length - 1]];
-            }
-            
-            tileID -= firstgid;
-            return tileSet;
-        }
         
         public Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
         {
@@ -81,14 +49,5 @@ namespace App.Model
             return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
         }
 
-        public List<RigidShape> GetStaticCollisionInfo(Level level) //TODO
-        {
-            var collisions = new List<RigidShape>();
-            foreach (var layer in level.Layers)
-            {
-                //collisions.Add();
-            }
-            return null;
-        }
     }
 }

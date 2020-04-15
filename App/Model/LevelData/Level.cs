@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Model.LevelData
 {
     public class Level
     {
-        public int[] allFirstgid;
-        public Dictionary<int, TileSet> tileSetFromFirstgid;
-        public List<Layer> Layers;
         public Size LevelSizeInTiles;
+        public List<Layer> Layers;
+        public List<RigidShape> StaticShapes;
+        public List<Polygon> RaytracingShapes;
 
-        public Level(Dictionary<int, TileSet> tileSetFromFirstgid, List<Layer> layers)
+        public Level(List<Layer> layers, List<RigidShape> staticShapes, List<Polygon> raytracingShapes)
         {
-            this.tileSetFromFirstgid = tileSetFromFirstgid;
-            allFirstgid = tileSetFromFirstgid.Keys.ToArray();
             Layers = layers;
+            StaticShapes = staticShapes;
+            RaytracingShapes = raytracingShapes;
             LevelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
         }
     }

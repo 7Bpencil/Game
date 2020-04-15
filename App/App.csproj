@@ -44,6 +44,8 @@
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\PhysicsEngine\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\PhysicsEngine\Collision\CollisionDetection.cs" />
+        <Compile Include="Engine\PhysicsEngine\Edge.cs" />
+        <Compile Include="Engine\PhysicsEngine\Polygon.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidCircle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
@@ -51,7 +53,6 @@
         <Compile Include="Engine\Sprite.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
-        <Compile Include="Model\LevelData\Tile.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\Parser\LevelParser.cs" />
@@ -64,44 +65,29 @@
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Assets\Levels\thirdTry.tmx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\Music\Magna_-_Divide.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sounds\fire_AKM.wav" />
       <Content Include="Assets\Sounds\fire_M16A4.wav" />
       <Content Include="Assets\Sounds\fire_TOZ-194.wav" />
+      <Content Include="Assets\TileMaps\rooms.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\crosshair.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\TileMaps\plants.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\sprite_map.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Levels\secondTry.tmx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Levels\test-map.tmx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Assets\TileSets\base_tiles.tsx">
+      <TypeScriptCompile Include="Assets\TileSets\rooms.tsx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileSets\boroda.tsx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileSets\first.tsx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileSets\second.tsx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+      </TypeScriptCompile>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
