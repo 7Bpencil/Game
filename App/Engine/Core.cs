@@ -30,6 +30,7 @@ namespace App.Engine
         private List<Sprite> sprites;
         private List<RigidShape> collisionShapes;
         private List<CollisionInfo> collisionInfo;
+        private List<RigidShape>[,] rigidShapeInfo;
         
         public Size CameraSize => camera.size;
         
@@ -72,6 +73,7 @@ namespace App.Engine
         {
             levelManager = new LevelManager();
             currentLevel = levelManager.CurrentLevel;
+            rigidShapeInfo = new List<RigidShape>[currentLevel.LevelSizeInTiles.Width,currentLevel.LevelSizeInTiles.Height];
         }
         
         private void SetPlayer(Vector position)
@@ -231,7 +233,7 @@ namespace App.Engine
                 var tileSet = levelManager.GetTileSet(ref tileID, currentLevel);
 
                 if (tileSet.tiles.ContainsKey(tileID))
-                    LoadTileCollision(tileID, tileSet, new Vector(x * tileSize, y * tileSize));
+                    LoadTileCollision(tileID, tileSet, new Vector(x, y));
                 
                 RenderTile(x, y, tileID, levelManager.GetTileMap(tileSet));
             }
@@ -239,10 +241,13 @@ namespace App.Engine
 
         private void LoadTileCollision(int tileID, TileSet tileSet, Vector tilePosition)
         {
+            rigidShapeInfo[(int) tilePosition.Y, (int)tilePosition.X] = new List<RigidShape>();
             foreach (var shape in tileSet.tiles[tileID].collisionShapes)
             {
                 var newShape = shape.DeepCopy();
-                newShape.Move(tilePosition);
+                newShape.Move(tilePosition * tileSize);
+                
+                rigidShapeInfo[(int) tilePosition.Y, (int)tilePosition.X].Add(newShape);
                 collisionShapes.Add(newShape);
             }
         }
