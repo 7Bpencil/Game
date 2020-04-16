@@ -10,20 +10,20 @@ namespace App.Model.Parser
 {
     public static class LevelParser
     {
-        public static List<Level> LoadLevels()
+        public static List<Level> LoadLevels(Dictionary<string, TileSet> tileSets)
         {
             var levelsFileNames = Directory.GetFiles("Assets/Levels");
             var levels = new List<Level>();
             foreach (var fileName in levelsFileNames)
             {
-                var level = ParseLevel(fileName);
+                var level = ParseLevel(fileName, tileSets);
                 levels.Add(level);
             }
 
             return levels;
         }
 
-        private static Level ParseLevel(string levelFileName)
+        private static Level ParseLevel(string levelFileName, Dictionary<string, TileSet> tileSets)
         {
             var separators = new[] {"\r\n", ","};
             var doc = new XmlDocument();
@@ -33,12 +33,13 @@ namespace App.Model.Parser
             var layers = new List<Layer>();
             var staticShapes = new List<RigidShape>();
             var raytracingShapes = new List<Polygon>();
+            string source = null;
 
             foreach (XmlNode node in root)
             {
                 if (node.Name == "tileset")
                 {
-                    var source = node.Attributes.GetNamedItem("source").Value;
+                    source = node.Attributes.GetNamedItem("source").Value;
                 }
 
                 if (node.Name == "layer")
@@ -56,7 +57,7 @@ namespace App.Model.Parser
                 }
             }
 
-            return new Level(layers, staticShapes, raytracingShapes);
+            return new Level(layers, staticShapes, raytracingShapes, tileSets[source]);
         }
 
         private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)
@@ -68,7 +69,7 @@ namespace App.Model.Parser
                 var y = int.Parse(shape.Attributes.GetNamedItem("y").Value);
                 var width = int.Parse(shape.Attributes.GetNamedItem("width").Value);
                 var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
-                var center = new Vector(x + width, y + height) / 2;
+                var center = new Vector(x + width / 2, y + height / 2);
                 
                 staticShapes.Add(new RigidRectangle(center, width, height, 0, true, true));
             }
@@ -89,7 +90,7 @@ namespace App.Model.Parser
                 polygons.Add(ParsePolygon(points, x, y, separators));
             }
             
-            return null;
+            return polygons;
         }
 
         private static Polygon ParsePolygon(string points, int offsetX, int offsetY, string[] separators)

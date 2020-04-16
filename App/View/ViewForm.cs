@@ -1,4 +1,4 @@
-/*using System.Drawing;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
@@ -11,7 +11,7 @@ namespace App.View
 {
     public class ViewForm : Form
     {
-        private const int tileSize = 64;
+        private readonly int tileSize;
         private Bitmap bmpRenderedTiles;
         private Graphics gfxRenderedTiles;
         private BufferedGraphics cameraBuffer;
@@ -30,6 +30,7 @@ namespace App.View
                 SystemInformation.PrimaryMonitorSize.Height);
             
             engineCore = new Core(this, screenSize);
+            tileSize = engineCore.GetTileSize();
             cameraSize = engineCore.CameraSize;
             
             SetUpView(screenSize);
@@ -84,22 +85,37 @@ namespace App.View
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
 
-        public void RenderSprite(Sprite sprite, Vector cameraPosition)
+        public void RenderSpriteOnCamera(Sprite sprite, Vector cameraPosition)
         {
             sprite.DrawNextFrame(gfxCamera, cameraPosition);
         }
         
-        public void RenderSprite(Sprite sprite)
+        public void RenderSpriteOnCamera(Sprite sprite)
         {
             sprite.DrawNextFrame(gfxCamera);
         }
 
-        public void RenderShape(RigidShape shape, Vector cameraPosition)
+        public void RenderPolygonOnCamera(Polygon polygon, Vector cameraPosition)
+        {
+            PolygonRenderer.Draw(polygon, cameraPosition, debugPen, gfxCamera);
+        }
+        
+        public void RenderPolygonOnWorld(Polygon polygon)
+        {
+            PolygonRenderer.Draw(polygon, debugPen, gfxRenderedTiles);
+        }
+
+        public void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
             RigidBodyRenderer.Draw(shape, cameraPosition, debugPen, gfxCamera);
         }
+        
+        public void RenderShapeOnWorld(RigidShape shape)
+        {
+            RigidBodyRenderer.Draw(shape, debugPen, gfxRenderedTiles);
+        }
 
-        public void RenderCollisionInfo(CollisionInfo info, Vector cameraPosition)
+        public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
         {
             CollisionInfoRenderer.Draw(info, cameraPosition, collisionPen, gfxCamera);
         }
@@ -130,4 +146,4 @@ namespace App.View
             cameraBuffer.Render(e.Graphics);
         }
     }
-}*/
+}

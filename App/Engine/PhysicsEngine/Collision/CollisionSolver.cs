@@ -4,9 +4,9 @@ using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Engine.PhysicsEngine.Collision
 {
-    public static class CollisionDetection
+    public static class CollisionSolver
     {
-        public static List<CollisionInfo> CalculateCollisions(List<RigidShape> sceneObjects)
+        public static List<CollisionInfo> ResolveCollisions(List<RigidShape> sceneObjects)
         {
             ClearColliding(sceneObjects);
             var collisions = new List<CollisionInfo>();

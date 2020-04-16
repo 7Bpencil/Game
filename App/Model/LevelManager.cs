@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using App.Engine.PhysicsEngine.RigidBody;
 using App.Model.LevelData;
 using App.Model.Parser;
 
@@ -10,6 +9,7 @@ namespace App.Model
     public class LevelManager
     {
         private Dictionary<string, Bitmap> tileMaps;
+        private Dictionary<string, TileSet> tileSets;
         private List<Level> levels;
         private int currentLevelIndex;
         public Level CurrentLevel => levels[currentLevelIndex];
@@ -22,7 +22,8 @@ namespace App.Model
         public LevelManager()
         {
             tileMaps = LoadTileMaps();
-            levels = LevelParser.LoadLevels();
+            tileSets = TileSetParser.LoadTileSets(tileMaps);
+            levels = LevelParser.LoadLevels(tileSets);
             currentLevelIndex = 0;
         }
 
@@ -35,13 +36,7 @@ namespace App.Model
             
             return tileMaps;
         }
-        
-        public Bitmap GetTileMap(string tileMapName)
-        {
-            return tileMaps[tileMapName];
-        }
 
-        
         public Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
         {
             var sourceX = tileID % columnsInTileMap * tileSize;
@@ -49,5 +44,9 @@ namespace App.Model
             return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
         }
 
+        public Bitmap GetTileMap(string tileMapName)
+        {
+            return tileMaps[tileMapName];
+        }
     }
 }

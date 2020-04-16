@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,7 +10,6 @@ using App.Engine.PhysicsEngine.RigidBody;
 using App.Model;
 using App.Model.LevelData;
 using App.View;
-using App.View.Renderings;
 
 namespace App.Engine
 {
@@ -24,7 +23,7 @@ namespace App.Engine
         private Player player;
         private Sprite cursor;
         private Camera camera;
-        private const int tileSize = 64;
+        private const int tileSize = 16;
         private bool isLevelLoaded;
 
         private List<Sprite> sprites;
@@ -35,7 +34,8 @@ namespace App.Engine
         
         private class KeyStates
         {
-            public bool W, S, A, D;
+            public bool W, S, A, D, I;
+            public int pressesOnIAmount;
         }
 
         public Core(ViewForm viewForm, Size screenSize)
@@ -47,7 +47,7 @@ namespace App.Engine
 
             SetCamera(screenSize);
             SetLevels();
-            var playerStartPosition = new Vector(14 * 64, 6 * 64);
+            var playerStartPosition = new Vector(14 * 32, 6 * 32);
             SetPlayer(playerStartPosition);
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
@@ -65,7 +65,7 @@ namespace App.Engine
             
             var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
             var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-            camera = new Camera(new Vector(250, 100), cameraSize, walkableArea, cursorArea);
+            camera = new Camera(new Vector(0, 0), cameraSize, walkableArea, cursorArea);
         }
         
         private void SetLevels()
@@ -76,8 +76,8 @@ namespace App.Engine
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = levelManager.GetTileMap(levelManager.GetTileSet("boroda.tsx"));
-            var playerShape = new RigidCircle(position, tileSize / 2, false, true);
+            var bmpPlayer = levelManager.GetTileMap("boroda.png");
+            var playerShape = new RigidCircle(position, bmpPlayer.Height / 4, false, true);
             
             var playerLegs = new Sprite
             (
@@ -85,7 +85,7 @@ namespace App.Engine
                 bmpPlayer,
                 4,
                 7,
-                new Size(64, 64),
+                new Size(32, 32),
                 4);
             
             var playerTorso = new Sprite
@@ -94,7 +94,7 @@ namespace App.Engine
                 bmpPlayer,
                 0,
                 3,
-                new Size(64, 64),
+                new Size(32, 32),
                 4);
             
             player = new Player
@@ -118,7 +118,7 @@ namespace App.Engine
                 bmpCursor,
                 0,
                 9,
-                new Size(64, 64),
+                new Size(32, 32),
                 10);
             cursor.AnimationRate = 10;
         }
@@ -142,8 +142,8 @@ namespace App.Engine
             UpdatePlayerPosition(step);
             UpdatePlayerByMouse();
             CorrectPlayer();
+            collisionInfo = CollisionSolver.ResolveCollisions(collisionShapes);
             camera.UpdateCamera(cursor.Center, player, currentLevel.LevelSizeInTiles, tileSize);
-            collisionInfo = CollisionDetection.CalculateCollisions(collisionShapes);
         }
         
         private void UpdatePlayerPosition(int step)
@@ -203,9 +203,9 @@ namespace App.Engine
         {
             RerenderCamera();
             RenderSprites();
-            RenderDebugShapes();
-            RenderCollisionInfo();
-            PrintDebugInfo();
+            
+            if (keyState.pressesOnIAmount % 2 == 1)
+                RenderDebugInfo();
             
             viewForm.Invalidate();
         }
@@ -214,6 +214,7 @@ namespace App.Engine
         {
             foreach (var layer in currentLevel.Layers)
                 RenderLayer(layer);
+            collisionShapes.AddRange(currentLevel.StaticShapes);
             isLevelLoaded = true;
         }
         
@@ -228,22 +229,7 @@ namespace App.Engine
                 var tileID = layer.Tiles[tileIndex];
                 if (tileID == 0) continue;
                 
-                var tileSet = levelManager.GetTileSet(ref tileID, currentLevel);
-
-                if (tileSet.tiles.ContainsKey(tileID))
-                    LoadTileCollision(tileID, tileSet, new Vector(x * tileSize, y * tileSize));
-                
-                RenderTile(x, y, tileID, levelManager.GetTileMap(tileSet));
-            }
-        }
-
-        private void LoadTileCollision(int tileID, TileSet tileSet, Vector tilePosition)
-        {
-            foreach (var shape in tileSet.tiles[tileID].collisionShapes)
-            {
-                var newShape = shape.DeepCopy();
-                newShape.Move(tilePosition);
-                collisionShapes.Add(newShape);
+                RenderTile(x, y, tileID - 1, currentLevel.TileSet.image);
             }
         }
 
@@ -265,26 +251,35 @@ namespace App.Engine
         private void RenderSprites()
         {
             foreach (var sprite in sprites)
-                viewForm.RenderSprite(sprite, camera.position);    
+                viewForm.RenderSpriteOnCamera(sprite, camera.position);    
             
-            viewForm.RenderSprite(cursor);
+            viewForm.RenderSpriteOnCamera(cursor);
+        }
+        
+        private void RenderDebugInfo()
+        {
+            RenderStaticShapes();
+            RenderRaytracingPolygons();
+            RenderCollisionInfo();
+            viewForm.PrintMessages(GetDebugInfo());
         }
 
-        private void RenderDebugShapes()
+        private void RenderStaticShapes()
         {
-            foreach (var shape in collisionShapes)
-                viewForm.RenderShape(shape, camera.position);
+            foreach (var shape in currentLevel.StaticShapes)
+                viewForm.RenderShapeOnCamera(shape, camera.position);
         }
 
         private void RenderCollisionInfo()
         {
             foreach (var info in collisionInfo)
-                viewForm.RenderCollisionInfo(info, camera.position);
+                viewForm.RenderCollisionInfoOnCamera(info, camera.position);
         }
         
-        private void PrintDebugInfo()
+        private void RenderRaytracingPolygons()
         {
-            viewForm.PrintMessages(GetDebugInfo());
+            foreach (var polygon in currentLevel.RaytracingShapes)
+                viewForm.RenderPolygonOnCamera(polygon, camera.position);
         }
         
         private string[] GetDebugInfo()
@@ -324,6 +319,11 @@ namespace App.Engine
                 case Keys.D:
                     keyState.D = true;
                     break;
+                
+                case Keys.I:
+                    keyState.I = true;
+                    keyState.pressesOnIAmount++;
+                    break;
             }
         }
 
@@ -350,6 +350,10 @@ namespace App.Engine
                 case Keys.D:
                     keyState.D = false;
                     break;
+                
+                case Keys.I:
+                    keyState.I = false;
+                    break;
             }
         }
 
@@ -357,5 +361,10 @@ namespace App.Engine
         {
             return currentLevel.LevelSizeInTiles;
         }
+
+        public int GetTileSize()
+        {
+            return tileSize;
+        }
     }
-}*/
+}
