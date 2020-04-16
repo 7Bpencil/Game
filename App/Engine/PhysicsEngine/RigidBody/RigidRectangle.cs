@@ -1,12 +1,12 @@
-﻿namespace App.Engine.PhysicsEngine.RigidBody
+﻿using System;
+
+namespace App.Engine.PhysicsEngine.RigidBody
 {
     public class RigidRectangle : RigidShape
     {
         private Vector center;
         public override Vector Center => center;
-
-        public override float BondRadius => (Center - TopLeft).Length;
-
+        
         public Vector TopLeft
         {
             get
@@ -16,31 +16,14 @@
             }
         }
 
-        private float width;
-        public float Width
-        {
-            get => width;
-            set
-            {
-                width = value;
-                vertexesVersion++;
-            }
-        }
-
-        private float height;
-        public float Height
-        {
-            get => height;
-            set
-            {
-                height = value;
-                vertexesVersion++;
-            }
-        }
+        public readonly float Width;
+        public readonly float Height;
+        
+        private readonly float bondRadius;
+        public override float BondRadius => bondRadius;
 
         public float angle { get; set; }
-
-
+        
         private readonly Vector[] vertexes;
         public Vector[] Vertexes
         {
@@ -50,7 +33,6 @@
                 return vertexes;
             }
         }
-
 
         private readonly Vector[] faceNormals;
         public Vector[] FaceNormals
@@ -87,8 +69,8 @@
         public RigidRectangle(Vector center, float width, float height, float angle, bool isStatic, bool canCollide)
         {
             this.center = center;
-            this.width = width;
-            this.height = height;
+            Width = width;
+            Height = height;
             this.angle = angle;
             this.isStatic = isStatic;
             this.canCollide = canCollide;
@@ -98,14 +80,16 @@
             
             vertexesVersion = 0;
             calculatedVertexesVersion = -1;
+
+            bondRadius = (float) Math.Sqrt(width * width + height * height) / 2;
         }
 
         private void RecomputeVertexes()
         {
-            vertexes[0] = new Vector(center.X - width / 2, center.Y - height / 2);
-            vertexes[1] = new Vector(center.X + width / 2, center.Y - height / 2);
-            vertexes[2] = new Vector(center.X + width / 2, center.Y + height / 2);
-            vertexes[3] = new Vector(center.X - width / 2, center.Y + height / 2);
+            vertexes[0] = new Vector(center.X - Width / 2, center.Y - Height / 2);
+            vertexes[1] = new Vector(center.X + Width / 2, center.Y - Height / 2);
+            vertexes[2] = new Vector(center.X + Width / 2, center.Y + Height / 2);
+            vertexes[3] = new Vector(center.X - Width / 2, center.Y + Height / 2);
         }
 
         private void RecomputeFaceNormals()
@@ -138,7 +122,7 @@
         
         public override RigidShape DeepCopy()
         {
-            return new RigidRectangle(center.Copy(), width, height, angle, isStatic, canCollide);
+            return new RigidRectangle(center.Copy(), Width, Height, angle, isStatic, canCollide);
         }
     }
 }

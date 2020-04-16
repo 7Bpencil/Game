@@ -34,9 +34,22 @@ namespace App.Model.Parser
             var staticShapes = new List<RigidShape>();
             var raytracingShapes = new List<Polygon>();
             string source = null;
+            Vector playerStartPosition = null;
 
             foreach (XmlNode node in root)
             {
+                if (node.Name == "properties")
+                {
+                    foreach (XmlNode property in node.ChildNodes)
+                    {
+                        if (property.Attributes.GetNamedItem("name").Value == "player position")
+                        {
+                            var vector = property.Attributes.GetNamedItem("value").Value.Split(',');
+                            playerStartPosition = new Vector(int.Parse(vector[0]), int.Parse(vector[1]));                            
+                        }
+                    }
+                }
+                
                 if (node.Name == "tileset")
                 {
                     source = node.Attributes.GetNamedItem("source").Value;
@@ -57,7 +70,7 @@ namespace App.Model.Parser
                 }
             }
 
-            return new Level(layers, staticShapes, raytracingShapes, tileSets[source]);
+            return new Level(layers, staticShapes, raytracingShapes, tileSets[source], playerStartPosition);
         }
 
         private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)

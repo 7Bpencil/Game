@@ -23,11 +23,10 @@ namespace App.Engine
         private Player player;
         private Sprite cursor;
         private Camera camera;
-        private const int tileSize = 16;
+        private const int tileSize = 32;
         private bool isLevelLoaded;
 
         private List<Sprite> sprites;
-        private List<RigidShape> collisionShapes;
         private List<CollisionInfo> collisionInfo;
         
         public Size CameraSize => camera.size;
@@ -43,11 +42,10 @@ namespace App.Engine
             this.viewForm = viewForm;
             
             sprites = new List<Sprite>();
-            collisionShapes = new List<RigidShape>();
 
             SetCamera(screenSize);
             SetLevels();
-            var playerStartPosition = new Vector(14 * 32, 6 * 32);
+            var playerStartPosition = currentLevel.PlayerStartPosition;
             SetPlayer(playerStartPosition);
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
@@ -85,7 +83,7 @@ namespace App.Engine
                 bmpPlayer,
                 4,
                 7,
-                new Size(32, 32),
+                new Size(64, 64),
                 4);
             
             var playerTorso = new Sprite
@@ -94,7 +92,7 @@ namespace App.Engine
                 bmpPlayer,
                 0,
                 3,
-                new Size(32, 32),
+                new Size(64, 64),
                 4);
             
             player = new Player
@@ -106,7 +104,7 @@ namespace App.Engine
             
             sprites.Add(playerLegs);
             sprites.Add(playerTorso);
-            collisionShapes.Add(playerShape);
+            currentLevel.Shapes.Add(playerShape);
         }
 
         private void SetCursor(Vector position)
@@ -118,7 +116,7 @@ namespace App.Engine
                 bmpCursor,
                 0,
                 9,
-                new Size(32, 32),
+                new Size(64, 64),
                 10);
             cursor.AnimationRate = 10;
         }
@@ -142,7 +140,7 @@ namespace App.Engine
             UpdatePlayerPosition(step);
             UpdatePlayerByMouse();
             CorrectPlayer();
-            collisionInfo = CollisionSolver.ResolveCollisions(collisionShapes);
+            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
             camera.UpdateCamera(cursor.Center, player, currentLevel.LevelSizeInTiles, tileSize);
         }
         
@@ -214,7 +212,6 @@ namespace App.Engine
         {
             foreach (var layer in currentLevel.Layers)
                 RenderLayer(layer);
-            collisionShapes.AddRange(currentLevel.StaticShapes);
             isLevelLoaded = true;
         }
         
@@ -258,15 +255,15 @@ namespace App.Engine
         
         private void RenderDebugInfo()
         {
-            RenderStaticShapes();
+            RenderShapes();
             RenderRaytracingPolygons();
             RenderCollisionInfo();
             viewForm.PrintMessages(GetDebugInfo());
         }
 
-        private void RenderStaticShapes()
+        private void RenderShapes()
         {
-            foreach (var shape in currentLevel.StaticShapes)
+            foreach (var shape in currentLevel.Shapes)
                 viewForm.RenderShapeOnCamera(shape, camera.position);
         }
 

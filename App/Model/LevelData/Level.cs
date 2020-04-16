@@ -8,17 +8,19 @@ namespace App.Model.LevelData
     public class Level
     {
         public Size LevelSizeInTiles;
+        public Vector PlayerStartPosition;
         public TileSet TileSet;
         public List<Layer> Layers;
-        public List<RigidShape> StaticShapes;
+        public List<RigidShape> Shapes;
         public List<Polygon> RaytracingShapes;
 
-        public Level(List<Layer> layers, List<RigidShape> staticShapes, List<Polygon> raytracingShapes, TileSet tileSet)
+        public Level(List<Layer> layers, List<RigidShape> shapes, List<Polygon> raytracingShapes, TileSet tileSet, Vector playerStartPosition)
         {
             Layers = layers;
             TileSet = tileSet;
-            StaticShapes = staticShapes;
+            Shapes = shapes;
             RaytracingShapes = raytracingShapes;
+            PlayerStartPosition = playerStartPosition;
             LevelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
         }
     }
