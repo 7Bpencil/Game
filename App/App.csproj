@@ -67,6 +67,9 @@
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Assets\Levels\generated_level.tmx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\Levels\thirdTry.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

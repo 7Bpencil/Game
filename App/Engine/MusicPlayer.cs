@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Media;
 using System.Threading;
 using System.Xml;
@@ -9,26 +7,20 @@ namespace App.Engine
 {
     public class MusicPlayer
     {
-        private SoundPlayer[] music;
-        private Dictionary<string, int> playList;
+        private Dictionary<string, SoundPlayer> playList;
+        private Dictionary<string, int> musicDuration;
         
         public MusicPlayer()
         {
-            var musicFileNames = Directory.GetFiles("Assets/Music");
-            LoadPlayList();
-            music = new SoundPlayer[musicFileNames.Length - 1];
-            for (var i = 0; i < musicFileNames.Length - 1;)
-            {
-                if (musicFileNames[i][musicFileNames[i].Length - 1] == 'l') continue;
-                music[i] = new SoundPlayer {SoundLocation = musicFileNames[i]};
-                music[i].Load();
-                i++;
-            }
+            musicDuration = LoadPlayList();
+            playList = new Dictionary<string, SoundPlayer>();
+            foreach (var musicFileName in musicDuration.Keys)
+                playList.Add(musicFileName, new SoundPlayer {SoundLocation = musicFileName});
         }
 
-        public void LoadPlayList()
+        private Dictionary<string, int> LoadPlayList()
         {
-            playList = new Dictionary<string, int>();
+            var playList = new Dictionary<string, int>();
             
             var doc = new XmlDocument();
             doc.Load(@"Assets\Music\PlayList.xml");
@@ -40,14 +32,16 @@ namespace App.Engine
                     node.Attributes.GetNamedItem("title").Value,
                     int.Parse(node.Attributes.GetNamedItem("duration").Value));    
             }
+
+            return playList;
         }
 
         public void PlayPlaylist()
         {
-            foreach (var theme in music)
+            foreach (var theme in playList.Keys)
             {
-                theme.Play();
-                Thread.Sleep(playList[theme.SoundLocation] * 1000);
+                playList[theme].Play();
+                Thread.Sleep(musicDuration[theme] * 1000);
             }
         }
     }

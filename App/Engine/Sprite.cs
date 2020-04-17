@@ -59,7 +59,7 @@ namespace App.Engine
             this.endFrame = endFrame;
             currentFrame = 0;
             lastTime = 0;
-            animationRate = 1500 / 3;
+            animationRate = 100;
             angle = 0;
             destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
         }

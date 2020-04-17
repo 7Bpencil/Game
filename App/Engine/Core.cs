@@ -70,6 +70,7 @@ namespace App.Engine
         private void SetLevels()
         {
             levelManager = new LevelManager();
+            levelManager.MoveNextLevel();
             currentLevel = levelManager.CurrentLevel;
         }
         
@@ -86,7 +87,7 @@ namespace App.Engine
                 7,
                 new Size(64, 64),
                 4);
-            
+
             var playerTorso = new Sprite
             (
                 playerShape.Center,
@@ -95,7 +96,7 @@ namespace App.Engine
                 3,
                 new Size(64, 64),
                 4);
-            
+
             player = new Player
             {
                 Shape = playerShape,
@@ -103,8 +104,8 @@ namespace App.Engine
                 Legs = playerLegs
             };
             
-            sprites.Add(playerLegs);
-            sprites.Add(playerTorso);
+            sprites.Add(player.Legs);
+            sprites.Add(player.Torso);
             currentLevel.Shapes.Add(playerShape);
         }
 
@@ -119,7 +120,6 @@ namespace App.Engine
                 9,
                 new Size(64, 64),
                 10);
-            cursor.AnimationRate = 10;
         }
 
         public void GameLoop(object sender, EventArgs args)

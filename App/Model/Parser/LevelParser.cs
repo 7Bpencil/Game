@@ -25,7 +25,7 @@ namespace App.Model.Parser
 
         private static Level ParseLevel(string levelFileName, Dictionary<string, TileSet> tileSets)
         {
-            var separators = new[] {"\r\n", ","};
+            var separators = new[] {"\r\n", ",", "\n"};
             var doc = new XmlDocument();
             doc.Load(levelFileName);
             var root = doc.DocumentElement;

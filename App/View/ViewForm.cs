@@ -28,7 +28,7 @@ namespace App.View
             var screenSize = new Size(
                 SystemInformation.PrimaryMonitorSize.Width,
                 SystemInformation.PrimaryMonitorSize.Height);
-            
+
             engineCore = new Core(this, screenSize);
             tileSize = engineCore.GetTileSize();
             cameraSize = engineCore.CameraSize;
