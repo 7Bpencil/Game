@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Media;
 using System.Threading;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
@@ -30,7 +29,7 @@ namespace App.Engine
         private List<Sprite> sprites;
         private List<CollisionInfo> collisionInfo;
 
-        public Size CameraSize => camera.size;
+        public Size CameraSize => camera.Size;
         
         private class KeyStates
         {
@@ -43,28 +42,25 @@ namespace App.Engine
             this.viewForm = viewForm;
             
             sprites = new List<Sprite>();
-
-            SetCamera(screenSize);
+            
             SetLevels();
             var playerStartPosition = currentLevel.PlayerStartPosition;
             SetPlayer(playerStartPosition);
+            SetCamera(playerStartPosition, screenSize);
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
             
+            /*
             var musicPlayer = new MusicPlayer();
             var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
             soundEngineThread.Start();
+            */
         }
         
-        private void SetCamera(Size cameraSize)
+        private void SetCamera(Vector playerPosition, Size cameraSize)
         {
-            var p = cameraSize.Height / 3;
-            var q = cameraSize.Height / 5;
-            
-            var walkableArea = new Rectangle(p, p, cameraSize.Width - 2 * p, cameraSize.Height - 2 * p);
-            var cursorArea = new Rectangle(q, q, cameraSize.Width - 2 * q, cameraSize.Height - 2 * q);
-            camera = new Camera(new Vector(0, 0), cameraSize, walkableArea, cursorArea);
+            camera = new Camera(playerPosition, cameraSize);
         }
         
         private void SetLevels()
@@ -127,6 +123,7 @@ namespace App.Engine
             if (!isLevelLoaded) LoadLevel();
             
             clock.Start();
+            
             UpdateState();
             Render();
             
@@ -138,14 +135,14 @@ namespace App.Engine
         private void UpdateState()
         {
             const int step = 6;
-            UpdatePlayerPosition(step);
+            var delta = UpdatePlayerPosition(step);
             UpdatePlayerByMouse();
             CorrectPlayer();
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
-            camera.UpdateCamera(cursor.Center, player, currentLevel.LevelSizeInTiles, tileSize);
+            camera.UpdateCamera(player.Center, player.Radius, delta, step, currentLevel.LevelSizeInTiles, tileSize);
         }
         
-        private void UpdatePlayerPosition(int step)
+        private Vector UpdatePlayerPosition(int step)
         {
             var delta = Vector.ZeroVector;
             if (keyState.W) 
@@ -159,11 +156,13 @@ namespace App.Engine
             
             RotatePlayerLegs(delta);
             player.Move(delta);
+            
+            return delta;
         }
         
         private void UpdatePlayerByMouse()
         {
-            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(camera.position);
+            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(camera.Position);
             var direction = cursor.Center - playerCenterInCamera;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
@@ -174,7 +173,7 @@ namespace App.Engine
         {
             var dirAngle = Math.Atan2(-delta.Y, delta.X);
             var angle = 180 / Math.PI * dirAngle;
-            player.Legs.Angle = angle;
+            if (!delta.Equals(Vector.ZeroVector)) player.Legs.Angle = angle;
         }
         
         private void CorrectPlayer()
@@ -240,8 +239,8 @@ namespace App.Engine
         private void RerenderCamera()
         {
             var sourceRectangle = new Rectangle(
-                (int) camera.position.X, (int) camera.position.Y,
-                camera.size.Width, camera.size.Height);
+                (int) camera.Position.X, (int) camera.Position.Y,
+                camera.Size.Width, camera.Size.Height);
             
             viewForm.RenderCamera(sourceRectangle);
         }
@@ -249,7 +248,7 @@ namespace App.Engine
         private void RenderSprites()
         {
             foreach (var sprite in sprites)
-                viewForm.RenderSpriteOnCamera(sprite, camera.position);    
+                viewForm.RenderSpriteOnCamera(sprite, camera.Position);    
             
             viewForm.RenderSpriteOnCamera(cursor);
         }
@@ -265,30 +264,30 @@ namespace App.Engine
         private void RenderShapes()
         {
             foreach (var shape in currentLevel.Shapes)
-                viewForm.RenderShapeOnCamera(shape, camera.position);
+                viewForm.RenderShapeOnCamera(shape, camera.Position);
         }
 
         private void RenderCollisionInfo()
         {
             foreach (var info in collisionInfo)
-                viewForm.RenderCollisionInfoOnCamera(info, camera.position);
+                viewForm.RenderCollisionInfoOnCamera(info, camera.Position);
         }
         
         private void RenderRaytracingPolygons()
         {
             foreach (var polygon in currentLevel.RaytracingShapes)
-                viewForm.RenderPolygonOnCamera(polygon, camera.position);
+                viewForm.RenderPolygonOnCamera(polygon, camera.Position);
         }
         
         private string[] GetDebugInfo()
         {
             return new []
             {
-                "Camera Size: " + camera.size.Width + " x " + camera.size.Height,
+                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
                 "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
-                "(WAxis) Scroll Position: " + camera.position,
+                "(WAxis) Scroll Position: " + camera.Position,
                 "(WAxis) Player Position: " + player.Center,
-                "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.position),
+                "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.Position),
                 "(CAxis) Cursor Position: " + cursor.Center
             };
         }
