@@ -1,27 +1,32 @@
 using System;
 using System.Drawing;
 using App.Engine.PhysicsEngine;
+using App.Engine.PhysicsEngine.RigidBody;
 
 namespace App.Engine
 {
     public class Camera
     {
-        private Vector cameraPosition;
-        public Vector Position => cameraPosition;
+        private Vector position;
+        public Vector Position => position;
         private Vector chaserPosition;
+        private readonly float playerRadius;
+        public readonly Size Size;
+        public readonly Vector cameraCenter;
 
-        public Size Size;
-
-        public Camera(Vector playerPosition, Size size)
+        public Camera(Vector playerPosition, float playerRadius, Size size)
         {
-            cameraPosition = playerPosition - new Vector(size.Width, size.Height) / 2;
+            position = playerPosition - new Vector(size.Width, size.Height) / 2;
             chaserPosition = playerPosition.Copy();
             Size = size;
+            cameraCenter = new Vector(size.Width, size.Height) / 2;
+            this.playerRadius = playerRadius;
         }
 
-        public void UpdateCamera(Vector playerPosition, float playerRadius, Vector delta, int step, Size levelSizeInTiles, int tileSize)
+        public void UpdateCamera(Vector playerPosition, Vector playerPositionDelta, Vector cursorPosition, int step)
         {
-            CorrectCameraDependsOnPlayerPosition(playerPosition, playerRadius, delta, step);
+            CorrectCameraDependsOnPlayerPosition(playerPosition, playerPositionDelta, step);
+            CorrectCameraDependsOnCursorPosition(cursorPosition);
             //RemoveEscapingFromScene(levelSizeInTiles, tileSize);
         }
 
@@ -32,30 +37,40 @@ namespace App.Engine
             var bottomBorder = levelSizeInTiles.Height * tileSize - Size.Height;
             const int topBorder = 0;
             
-            if (cameraPosition.Y < topBorder) cameraPosition.Y = topBorder;
-            if (cameraPosition.Y > bottomBorder) cameraPosition.Y = bottomBorder;
-            if (cameraPosition.X < leftBorder) cameraPosition.X = leftBorder;
-            if (cameraPosition.X > rightBorder) cameraPosition.X = rightBorder;
+            if (position.Y < topBorder) position.Y = topBorder;
+            if (position.Y > bottomBorder) position.Y = bottomBorder;
+            if (position.X < leftBorder) position.X = leftBorder;
+            if (position.X > rightBorder) position.X = rightBorder;
         }
 
-        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, float playerRadius, Vector delta, float step)
+        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerPositionDelta, float step)
         {
             var dist = (chaserPosition - playerPosition).Length; 
             
-            if (delta.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
-                delta = 8 * (playerPosition - chaserPosition).Normalize();
+            if (playerPositionDelta.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
+                playerPositionDelta = 8 * (playerPosition - chaserPosition).Normalize();
             else if (dist > playerRadius)
-                delta = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
+                playerPositionDelta = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
             else 
-                delta = delta.Normalize() * (step - 4);
+                playerPositionDelta = playerPositionDelta.Normalize() * (step - 4);
 
-            chaserPosition += delta;
-            cameraPosition += delta;
+            chaserPosition += playerPositionDelta;
+            position += playerPositionDelta;
         }
 
-        private void CorrectCameraDependsOnCursorPosition()
+        private void CorrectCameraDependsOnCursorPosition(Vector cursorPosition)
         {
-            
+            position = chaserPosition + (cursorPosition - chaserPosition).Normalize() * playerRadius * 2 - cameraCenter;
+        }
+
+        public RigidCircle GetChaser()
+        {
+            return new RigidCircle(chaserPosition, 32, false, false);
+        }
+
+        public RigidCircle GetRing()
+        {
+            return new RigidCircle(chaserPosition, 2 * playerRadius, false, false);
         }
     }
 }

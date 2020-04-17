@@ -46,7 +46,7 @@ namespace App.Engine
             SetLevels();
             var playerStartPosition = currentLevel.PlayerStartPosition;
             SetPlayer(playerStartPosition);
-            SetCamera(playerStartPosition, screenSize);
+            camera = new Camera(playerStartPosition, player.Radius, screenSize);
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
@@ -55,12 +55,7 @@ namespace App.Engine
             var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
             soundEngineThread.Start();
         }
-        
-        private void SetCamera(Vector playerPosition, Size cameraSize)
-        {
-            camera = new Camera(playerPosition, cameraSize);
-        }
-        
+
         private void SetLevels()
         {
             levelManager = new LevelManager();
@@ -114,6 +109,7 @@ namespace App.Engine
                 9,
                 new Size(64, 64),
                 10);
+            sprites.Add(cursor);
         }
 
         public void GameLoop(object sender, EventArgs args)
@@ -134,10 +130,12 @@ namespace App.Engine
         {
             const int step = 6;
             var delta = UpdatePlayerPosition(step);
+            cursor.MoveBy(viewForm.GetCursorDiff() + delta);
+            viewForm.CursorReset();
             UpdatePlayerByMouse();
             CorrectPlayer();
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
-            camera.UpdateCamera(player.Center, player.Radius, delta, step, currentLevel.LevelSizeInTiles, tileSize);
+            camera.UpdateCamera(player.Center, delta, cursor.Center, step);
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -160,8 +158,7 @@ namespace App.Engine
         
         private void UpdatePlayerByMouse()
         {
-            var playerCenterInCamera = player.Center.ConvertFromWorldToCamera(camera.Position);
-            var direction = cursor.Center - playerCenterInCamera;
+            var direction = cursor.Center - player.Center;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
             player.Torso.Angle = angle;
@@ -202,7 +199,7 @@ namespace App.Engine
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 RenderDebugInfo();
-            
+
             viewForm.Invalidate();
         }
 
@@ -246,9 +243,7 @@ namespace App.Engine
         private void RenderSprites()
         {
             foreach (var sprite in sprites)
-                viewForm.RenderSpriteOnCamera(sprite, camera.Position);    
-            
-            viewForm.RenderSpriteOnCamera(cursor);
+                viewForm.RenderSpriteOnCamera(sprite, camera.Position);
         }
         
         private void RenderDebugInfo()
@@ -256,14 +251,11 @@ namespace App.Engine
             RenderShapes();
             RenderRaytracingPolygons();
             RenderCollisionInfo();
-            var a = camera.Size.Width / 2;
-            var b = camera.Size.Height / 2;
-            var vert = new Edge(a, 0, a, camera.Size.Height);
-            var horiz = new Edge(0, b, camera.Size.Width, b);
-            viewForm.RenderEdgeOnCamera(vert);
-            viewForm.RenderEdgeOnCamera(horiz);
+            viewForm.RenderDebugCross();
+            viewForm.RenderShapeOnCamera(camera.GetChaser(), camera.Position);
+            viewForm.RenderShapeOnCamera(camera.GetRing(), camera.Position);
             viewForm.RenderEdgeOnCamera(
-                new Edge(cursor.Center, player.Center.ConvertFromWorldToCamera(camera.Position)));
+                new Edge(cursor.Center.ConvertFromWorldToCamera(camera.Position), player.Center.ConvertFromWorldToCamera(camera.Position)));
             viewForm.PrintMessages(GetDebugInfo());
         }
 
@@ -296,11 +288,6 @@ namespace App.Engine
                 "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.Position),
                 "(CAxis) Cursor Position: " + cursor.Center
             };
-        }
-
-        public void OnMouseMove(Vector newPosition)
-        {
-            cursor.MoveTo(newPosition);
         }
         
         public void OnKeyDown(Keys keyPressed)

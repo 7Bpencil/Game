@@ -22,12 +22,14 @@ namespace App.View
         private Pen collisionPen;
         private Core engineCore;
         private Size cameraSize;
+        private Point screenCenter;        
 
         public ViewForm()
         {
             var screenSize = new Size(
                 SystemInformation.PrimaryMonitorSize.Width,
                 SystemInformation.PrimaryMonitorSize.Height);
+            screenCenter = new Point(screenSize.Width / 2, screenSize.Height / 2);
 
             engineCore = new Core(this, screenSize);
             tileSize = engineCore.GetTileSize();
@@ -53,8 +55,8 @@ namespace App.View
             FormBorderStyle = FormBorderStyle.None;
             Text = "Cyber Renaissance";
             
-            //Cursor.Hide();
-            //Cursor.Clip = new Rectangle(16, 16, viewSize.Width - 32, viewSize.Height - 32);
+            Cursor.Hide();
+            CursorReset();
         }
         
         private void SetUpRenderer()
@@ -124,9 +126,26 @@ namespace App.View
                 gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
         }
 
-        public Cursor GetCursor()
+        public void RenderDebugCross()
         {
-            return Cursor;
+            var a = cameraSize.Width / 2;
+            var b = cameraSize.Height / 2;
+            var vert = new Edge(a, 0, a, cameraSize.Height);
+            var horiz = new Edge(0, b, cameraSize.Width, b);
+            RenderEdgeOnCamera(vert);
+            RenderEdgeOnCamera(horiz);
+        }
+
+        public Vector GetCursorDiff()
+        {
+            return new Vector(
+                Cursor.Position.X - screenCenter.X,
+                Cursor.Position.Y - screenCenter.Y);
+        }
+
+        public void CursorReset()
+        {
+            Cursor.Position = screenCenter;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -139,11 +158,6 @@ namespace App.View
             engineCore.OnKeyUp(e.KeyCode);
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            engineCore.OnMouseMove(new Vector(e.X, e.Y));
-        }
-        
         protected override void OnPaint(PaintEventArgs e)
         {
             cameraBuffer.Render(e.Graphics);
