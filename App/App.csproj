@@ -42,6 +42,7 @@
     <ItemGroup>
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
+        <Compile Include="Engine\MusicPlayer.cs" />
         <Compile Include="Engine\PhysicsEngine\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\PhysicsEngine\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\PhysicsEngine\Edge.cs" />
@@ -69,7 +70,13 @@
       <Content Include="Assets\Levels\thirdTry.tmx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Music\Magna_-_Divide.wav">
+      <Content Include="Assets\Music\LifeDaTrash.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Music\MagnaDivide.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Music\PlayList.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sounds\fire_AKM.wav" />

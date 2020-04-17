@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Media;
+using System.Threading;
 using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.Collision;
@@ -28,7 +29,7 @@ namespace App.Engine
 
         private List<Sprite> sprites;
         private List<CollisionInfo> collisionInfo;
-        
+
         public Size CameraSize => camera.size;
         
         private class KeyStates
@@ -50,10 +51,10 @@ namespace App.Engine
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
             clock = new Stopwatch();
-
-            var soundPlayer = new SoundPlayer {SoundLocation = @"Assets\Music\Magna_-_Divide.wav"};
-            soundPlayer.Load();
-            soundPlayer.Play();
+            
+            var musicPlayer = new MusicPlayer();
+            var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
+            soundEngineThread.Start();
         }
         
         private void SetCamera(Size cameraSize)
