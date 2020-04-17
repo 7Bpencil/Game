@@ -52,6 +52,9 @@ namespace App.View
             ClientSize = viewSize;
             FormBorderStyle = FormBorderStyle.None;
             Text = "Cyber Renaissance";
+            
+            //Cursor.Hide();
+            //Cursor.Clip = new Rectangle(16, 16, viewSize.Width - 32, viewSize.Height - 32);
         }
         
         private void SetUpRenderer()
@@ -99,20 +102,15 @@ namespace App.View
         {
             PolygonRenderer.Draw(polygon, cameraPosition, debugPen, gfxCamera);
         }
-        
-        public void RenderPolygonOnWorld(Polygon polygon)
+
+        public void RenderEdgeOnCamera(Edge edge)
         {
-            PolygonRenderer.Draw(polygon, debugPen, gfxRenderedTiles);
+            EdgeRenderer.Draw(edge, debugPen, gfxCamera);
         }
 
         public void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
             RigidBodyRenderer.Draw(shape, cameraPosition, debugPen, gfxCamera);
-        }
-        
-        public void RenderShapeOnWorld(RigidShape shape)
-        {
-            RigidBodyRenderer.Draw(shape, debugPen, gfxRenderedTiles);
         }
 
         public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
@@ -124,6 +122,11 @@ namespace App.View
         {
             for (var i = 0; i < messages.Length; i++)
                 gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
+        }
+
+        public Cursor GetCursor()
+        {
+            return Cursor;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

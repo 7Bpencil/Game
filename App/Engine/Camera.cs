@@ -16,7 +16,7 @@ namespace App.Engine
         {
             cameraPosition = playerPosition - new Vector(size.Width, size.Height) / 2;
             chaserPosition = playerPosition.Copy();
-            this.Size = size;
+            Size = size;
         }
 
         public void UpdateCamera(Vector playerPosition, float playerRadius, Vector delta, int step, Size levelSizeInTiles, int tileSize)
@@ -44,13 +44,18 @@ namespace App.Engine
             
             if (delta.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
                 delta = 8 * (playerPosition - chaserPosition).Normalize();
-            else if (dist > 3 * playerRadius)
-                delta = (playerPosition - chaserPosition).Normalize() * (dist - 3 * playerRadius);
+            else if (dist > playerRadius)
+                delta = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
             else 
                 delta = delta.Normalize() * (step - 4);
 
             chaserPosition += delta;
             cameraPosition += delta;
+        }
+
+        private void CorrectCameraDependsOnCursorPosition()
+        {
+            
         }
     }
 }

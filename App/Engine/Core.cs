@@ -51,11 +51,9 @@ namespace App.Engine
             keyState = new KeyStates();
             clock = new Stopwatch();
             
-            /*
             var musicPlayer = new MusicPlayer();
             var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
             soundEngineThread.Start();
-            */
         }
         
         private void SetCamera(Vector playerPosition, Size cameraSize)
@@ -156,7 +154,7 @@ namespace App.Engine
             
             RotatePlayerLegs(delta);
             player.Move(delta);
-            
+
             return delta;
         }
         
@@ -258,6 +256,14 @@ namespace App.Engine
             RenderShapes();
             RenderRaytracingPolygons();
             RenderCollisionInfo();
+            var a = camera.Size.Width / 2;
+            var b = camera.Size.Height / 2;
+            var vert = new Edge(a, 0, a, camera.Size.Height);
+            var horiz = new Edge(0, b, camera.Size.Width, b);
+            viewForm.RenderEdgeOnCamera(vert);
+            viewForm.RenderEdgeOnCamera(horiz);
+            viewForm.RenderEdgeOnCamera(
+                new Edge(cursor.Center, player.Center.ConvertFromWorldToCamera(camera.Position)));
             viewForm.PrintMessages(GetDebugInfo());
         }
 

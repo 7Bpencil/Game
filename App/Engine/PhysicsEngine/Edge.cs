@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
-
 namespace App.Engine.PhysicsEngine
 {
-    public class Edge
+    public struct Edge
     {
         public Vector Start;
         public Vector End;
