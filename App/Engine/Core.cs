@@ -253,7 +253,6 @@ namespace App.Engine
             RenderCollisionInfo();
             viewForm.RenderDebugCross();
             viewForm.RenderShapeOnCamera(camera.GetChaser(), camera.Position);
-            viewForm.RenderShapeOnCamera(camera.GetRing(), camera.Position);
             viewForm.RenderEdgeOnCamera(
                 new Edge(cursor.Center.ConvertFromWorldToCamera(camera.Position), player.Center.ConvertFromWorldToCamera(camera.Position)));
             viewForm.PrintMessages(GetDebugInfo());

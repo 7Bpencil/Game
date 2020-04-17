@@ -60,17 +60,12 @@ namespace App.Engine
 
         private void CorrectCameraDependsOnCursorPosition(Vector cursorPosition)
         {
-            position = chaserPosition + (cursorPosition - chaserPosition).Normalize() * playerRadius * 2 - cameraCenter;
+            position = chaserPosition + (cursorPosition - chaserPosition).Normalize() * playerRadius - cameraCenter;
         }
 
         public RigidCircle GetChaser()
         {
             return new RigidCircle(chaserPosition, 32, false, false);
-        }
-
-        public RigidCircle GetRing()
-        {
-            return new RigidCircle(chaserPosition, 2 * playerRadius, false, false);
         }
     }
 }
