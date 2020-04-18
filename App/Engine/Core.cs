@@ -129,13 +129,16 @@ namespace App.Engine
         private void UpdateState()
         {
             const int step = 6;
+            var previousPosition = player.Center.Copy();
             var delta = UpdatePlayerPosition(step);
-            cursor.MoveBy(viewForm.GetCursorDiff() + delta);
-            viewForm.CursorReset();
-            UpdatePlayerByMouse();
             CorrectPlayer();
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
+            
+            var actualDelta = player.Center - previousPosition;
+            cursor.MoveBy(viewForm.GetCursorDiff() + actualDelta);
+            UpdatePlayerByMouse();
             camera.UpdateCamera(player.Center, delta, cursor.Center, step);
+            viewForm.CursorReset();
         }
         
         private Vector UpdatePlayerPosition(int step)
