@@ -23,9 +23,9 @@ namespace App.Engine
             this.playerRadius = playerRadius;
         }
 
-        public void UpdateCamera(Vector playerPosition, Vector playerPositionDelta, Vector cursorPosition, int step)
+        public void UpdateCamera(Vector playerPosition, Vector playerVelocity, Vector cursorPosition, int step)
         {
-            CorrectCameraDependsOnPlayerPosition(playerPosition, playerPositionDelta, step);
+            CorrectCameraDependsOnPlayerPosition(playerPosition, playerVelocity, step);
             CorrectCameraDependsOnCursorPosition(cursorPosition);
             //RemoveEscapingFromScene(levelSizeInTiles, tileSize);
         }
@@ -43,19 +43,19 @@ namespace App.Engine
             if (position.X > rightBorder) position.X = rightBorder;
         }
 
-        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerPositionDelta, float step)
+        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerVelocity, float step)
         {
             var dist = (chaserPosition - playerPosition).Length; 
             
-            if (playerPositionDelta.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
-                playerPositionDelta = 8 * (playerPosition - chaserPosition).Normalize();
+            if (playerVelocity.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
+                playerVelocity = 8 * (playerPosition - chaserPosition).Normalize();
             else if (dist > playerRadius)
-                playerPositionDelta = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
+                playerVelocity = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
             else 
-                playerPositionDelta = playerPositionDelta.Normalize() * (step - 4);
+                playerVelocity = playerVelocity.Normalize() * (step - 4);
 
-            chaserPosition += playerPositionDelta;
-            position += playerPositionDelta;
+            chaserPosition += playerVelocity;
+            position += playerVelocity;
         }
 
         private void CorrectCameraDependsOnCursorPosition(Vector cursorPosition)

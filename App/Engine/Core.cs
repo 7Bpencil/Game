@@ -130,14 +130,15 @@ namespace App.Engine
         {
             const int step = 6;
             var previousPosition = player.Center.Copy();
-            var delta = UpdatePlayerPosition(step);
+            var velocity = UpdatePlayerPosition(step);
+            RotatePlayerLegs(velocity);
             CorrectPlayer();
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
             
-            var actualDelta = player.Center - previousPosition;
-            cursor.MoveBy(viewForm.GetCursorDiff() + actualDelta);
+            var positionDelta = player.Center - previousPosition;
+            cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
             UpdatePlayerByMouse();
-            camera.UpdateCamera(player.Center, delta, cursor.Center, step);
+            camera.UpdateCamera(player.Center, velocity, cursor.Center, step);
             viewForm.CursorReset();
         }
         
@@ -153,9 +154,7 @@ namespace App.Engine
             if (keyState.D)
                 delta.X += step;
             
-            RotatePlayerLegs(delta);
             player.Move(delta);
-
             return delta;
         }
         
