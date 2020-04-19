@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
@@ -12,6 +13,7 @@ namespace App.Engine.Render
         private ViewForm view;
         private Graphics gfxRenderedTiles;
         private Bitmap bmpRenderedTiles;
+        private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
 
         private readonly Font debugFont;
@@ -19,17 +21,36 @@ namespace App.Engine.Render
         private readonly Pen debugPen;
         private readonly Pen collisionPen;
 
-        public RenderMachine(ViewForm view, Graphics gfxRenderedTiles, Bitmap bmpRenderedTiles, Graphics gfxCamera)
+        public RenderMachine(ViewForm view, Size cameraSize)
         {
             this.view = view;
-            this.gfxRenderedTiles = gfxRenderedTiles;
-            this.bmpRenderedTiles = bmpRenderedTiles;
-            this.gfxCamera = gfxCamera;
+            
+            var renderSize = new Size(45 * 32, 40 * 32); // TODO remove this const
+            SetCameraBuffer(cameraSize);
+            SetUpRenderer(renderSize, cameraSize);
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
             debugPen = new Pen(Color.White, 4);
             collisionPen = new Pen(Color.Crimson, 4);
+        }
+        
+        private void SetUpRenderer(Size renderSize, Size cameraSize)
+        {
+            bmpRenderedTiles = new Bitmap(renderSize.Width, renderSize.Height);
+            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
+         
+            SetCameraBuffer(cameraSize);
+            gfxCamera = cameraBuffer.Graphics;
+            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
+        }
+
+        private void SetCameraBuffer(Size cameraSize)
+        {
+            var context = BufferedGraphicsManager.Current;
+            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
+            using (var g = view.CreateGraphics())
+                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
         }
 
         public void Invalidate()
@@ -91,6 +112,11 @@ namespace App.Engine.Render
             var horizontalEdge = new Edge(0, b, cameraSize.Width, b);
             RenderEdgeOnCamera(verticalEdge);
             RenderEdgeOnCamera(horizontalEdge);
+        }
+
+        public BufferedGraphics GetCameraBuffer()
+        {
+            return cameraBuffer;
         }
     }
 }

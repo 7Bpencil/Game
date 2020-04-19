@@ -261,11 +261,5 @@ namespace App.Engine
                     break;
             }
         }
-
-        public Size GetRenderSize()
-        {
-            var size = currentLevel.LevelSizeInTiles; 
-            return new Size(size.Width * tileSize, size.Height * tileSize);
-        }
     }
 }

@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using App.Engine;
 using App.Engine.PhysicsEngine;
@@ -9,11 +8,7 @@ namespace App.View
 {
     public class ViewForm : Form
     {
-        private Bitmap bmpRenderedTiles;
-        private Graphics gfxRenderedTiles;
         private BufferedGraphics cameraBuffer;
-        private Graphics gfxCamera;
-
         private Core engineCore;
         private readonly Point screenCenter;        
 
@@ -23,14 +18,12 @@ namespace App.View
                 SystemInformation.PrimaryMonitorSize.Width,
                 SystemInformation.PrimaryMonitorSize.Height);
             screenCenter = new Point(screenSize.Width / 2, screenSize.Height / 2);
+            SetUpView(screenSize);
 
-            var renderMachine = new RenderMachine(this, gfxRenderedTiles, bmpRenderedTiles, gfxCamera);
+            var renderMachine = new RenderMachine(this, screenSize);
             var renderPipeline = new RenderPipeline(renderMachine);
             engineCore = new Core(this, screenSize, renderPipeline);
-            
-            SetUpView(screenSize);
-            var renderSize = engineCore.GetRenderSize();
-            SetUpRenderer(renderSize, screenSize);
+            cameraBuffer = renderMachine.GetCameraBuffer();
             
             var timer = new Timer();
             timer.Interval = 15;
@@ -40,6 +33,7 @@ namespace App.View
         
         private void SetUpView(Size viewSize)
         {
+            DoubleBuffered = true;
             ClientSize = viewSize;
             FormBorderStyle = FormBorderStyle.None;
 
@@ -47,26 +41,6 @@ namespace App.View
             CursorReset();
         }
         
-        private void SetUpRenderer(Size renderSize, Size cameraSize)
-        {
-            DoubleBuffered = true;
-
-            bmpRenderedTiles = new Bitmap(renderSize.Width, renderSize.Height);
-            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
-         
-            SetCameraBuffer(cameraSize);
-            gfxCamera = cameraBuffer.Graphics;
-            gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
-        }
-
-        private void SetCameraBuffer(Size cameraSize)
-        {
-            var context = BufferedGraphicsManager.Current;
-            context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
-            using (var g = CreateGraphics())
-                cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
-        }
-
         public Vector GetCursorDiff()
         {
             return new Vector(
