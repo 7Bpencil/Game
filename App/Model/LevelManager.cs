@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using App.Model.DataParser;
 using App.Model.LevelData;
-using App.Model.Parser;
 
 namespace App.Model
 {
@@ -35,13 +35,6 @@ namespace App.Model
                 tileMaps.Add(Path.GetFileName(fileName), new Bitmap(fileName));
             
             return tileMaps;
-        }
-
-        public Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
-        {
-            var sourceX = tileID % columnsInTileMap * tileSize;
-            var sourceY = tileID / columnsInTileMap * tileSize;
-            return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
         }
 
         public Bitmap GetTileMap(string tileMapName)

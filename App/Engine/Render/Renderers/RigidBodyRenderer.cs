@@ -2,7 +2,7 @@
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
 
-namespace App.View.Renderings
+namespace App.Engine.Render.Renderers
 {
     public static class RigidBodyRenderer
     {

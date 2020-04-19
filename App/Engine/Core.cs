@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.Collision;
 using App.Engine.PhysicsEngine.RigidBody;
+using App.Engine.Render;
 using App.Model;
 using App.Model.LevelData;
 using App.View;
@@ -16,6 +17,7 @@ namespace App.Engine
     public class Core
     {
         private ViewForm viewForm;
+        private RenderPipeline renderPipeline;
         private Stopwatch clock;
         private KeyStates keyState;
         private Level currentLevel;
@@ -29,17 +31,16 @@ namespace App.Engine
         private List<Sprite> sprites;
         private List<CollisionInfo> collisionInfo;
 
-        public Size CameraSize => camera.Size;
-        
         private class KeyStates
         {
             public bool W, S, A, D, I;
             public int pressesOnIAmount;
         }
 
-        public Core(ViewForm viewForm, Size screenSize)
+        public Core(ViewForm viewForm, Size screenSize, RenderPipeline renderPipeline)
         {
             this.viewForm = viewForm;
+            this.renderPipeline = renderPipeline;
             
             sprites = new List<Sprite>();
             
@@ -114,12 +115,22 @@ namespace App.Engine
 
         public void GameLoop(object sender, EventArgs args)
         {
-            if (!isLevelLoaded) LoadLevel();
+            if (!isLevelLoaded)
+            {
+                renderPipeline.Load(currentLevel);
+                isLevelLoaded = true;
+            }
             
             clock.Start();
             
             UpdateState();
-            Render();
+            renderPipeline.Start(camera.Position, camera.Size, sprites);
+            
+            if (keyState.pressesOnIAmount % 2 == 1)
+                renderPipeline.RenderDebugInfo(
+                    camera.Position, camera.Size, currentLevel.Shapes, collisionInfo,
+                    currentLevel.RaytracingPolygons, cursor.Center, player.Center,
+                    camera.GetChaser(), currentLevel.LevelSizeInTiles);
             
             clock.Stop();
             Console.WriteLine(clock.ElapsedMilliseconds);
@@ -194,103 +205,6 @@ namespace App.Engine
             player.Move(delta);
         }
 
-        private void Render()
-        {
-            RerenderCamera();
-            RenderSprites();
-            
-            if (keyState.pressesOnIAmount % 2 == 1)
-                RenderDebugInfo();
-
-            viewForm.Invalidate();
-        }
-
-        private void LoadLevel()
-        {
-            foreach (var layer in currentLevel.Layers)
-                RenderLayer(layer);
-            isLevelLoaded = true;
-        }
-        
-        private void RenderLayer(Layer layer)
-        {
-            for (var x = 0; x <= layer.WidthInTiles; ++x)
-            for (var y = 0; y <= layer.HeightInTiles; ++y)
-            {
-                var tileIndex = y * layer.WidthInTiles + x;
-                if (tileIndex > layer.Tiles.Length - 1) break;
-                
-                var tileID = layer.Tiles[tileIndex];
-                if (tileID == 0) continue;
-                
-                RenderTile(x, y, tileID - 1, currentLevel.TileSet.image);
-            }
-        }
-
-        private void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap)
-        {
-            var src = levelManager.GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
-            viewForm.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
-        }
-
-        private void RerenderCamera()
-        {
-            var sourceRectangle = new Rectangle(
-                (int) camera.Position.X, (int) camera.Position.Y,
-                camera.Size.Width, camera.Size.Height);
-            
-            viewForm.RenderCamera(sourceRectangle);
-        }
-        
-        private void RenderSprites()
-        {
-            foreach (var sprite in sprites)
-                viewForm.RenderSpriteOnCamera(sprite, camera.Position);
-        }
-        
-        private void RenderDebugInfo()
-        {
-            RenderShapes();
-            RenderRaytracingPolygons();
-            RenderCollisionInfo();
-            viewForm.RenderDebugCross();
-            viewForm.RenderShapeOnCamera(camera.GetChaser(), camera.Position);
-            viewForm.RenderEdgeOnCamera(
-                new Edge(cursor.Center.ConvertFromWorldToCamera(camera.Position), player.Center.ConvertFromWorldToCamera(camera.Position)));
-            viewForm.PrintMessages(GetDebugInfo());
-        }
-
-        private void RenderShapes()
-        {
-            foreach (var shape in currentLevel.Shapes)
-                viewForm.RenderShapeOnCamera(shape, camera.Position);
-        }
-
-        private void RenderCollisionInfo()
-        {
-            foreach (var info in collisionInfo)
-                viewForm.RenderCollisionInfoOnCamera(info, camera.Position);
-        }
-        
-        private void RenderRaytracingPolygons()
-        {
-            foreach (var polygon in currentLevel.RaytracingShapes)
-                viewForm.RenderPolygonOnCamera(polygon, camera.Position);
-        }
-        
-        private string[] GetDebugInfo()
-        {
-            return new []
-            {
-                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
-                "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
-                "(WAxis) Scroll Position: " + camera.Position,
-                "(WAxis) Player Position: " + player.Center,
-                "(CAxis) Player Position: " + player.Center.ConvertFromWorldToCamera(camera.Position),
-                "(CAxis) Cursor Position: " + cursor.Center
-            };
-        }
-        
         public void OnKeyDown(Keys keyPressed)
         {
             switch (keyPressed)
@@ -348,14 +262,10 @@ namespace App.Engine
             }
         }
 
-        public Size GetRenderSizeInTiles()
+        public Size GetRenderSize()
         {
-            return currentLevel.LevelSizeInTiles;
-        }
-
-        public int GetTileSize()
-        {
-            return tileSize;
+            var size = currentLevel.LevelSizeInTiles; 
+            return new Size(size.Width * tileSize, size.Height * tileSize);
         }
     }
 }

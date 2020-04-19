@@ -4,7 +4,7 @@ using System.IO;
 using System.Xml;
 using App.Model.LevelData;
 
-namespace App.Model.Parser
+namespace App.Model.DataParser
 {
     public static class TileSetParser
     {

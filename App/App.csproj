@@ -51,20 +51,22 @@
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
+        <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\PolygonRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\RigidBodyRenderer.cs" />
+        <Compile Include="Engine\Render\RenderMachine.cs" />
+        <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
-        <Compile Include="Model\Parser\LevelParser.cs" />
-        <Compile Include="Model\Parser\TileSetParser.cs" />
+        <Compile Include="Model\DataParser\LevelParser.cs" />
+        <Compile Include="Model\DataParser\TileSetParser.cs" />
         <Compile Include="Model\Player.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="View\Renderings\CollisionInfoRenderer.cs" />
-        <Compile Include="View\Renderings\EdgeRenderer.cs" />
-        <Compile Include="View\Renderings\PolygonRenderer.cs" />
-        <Compile Include="View\Renderings\RigidBodyRenderer.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>

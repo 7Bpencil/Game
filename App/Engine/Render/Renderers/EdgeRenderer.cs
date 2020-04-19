@@ -1,7 +1,7 @@
 using System.Drawing;
 using App.Engine.PhysicsEngine;
 
-namespace App.View.Renderings
+namespace App.Engine.Render.Renderers
 {
     public static class EdgeRenderer
     {
