@@ -26,7 +26,6 @@ namespace App.Engine.Render
             this.view = view;
             
             var renderSize = new Size(45 * 32, 40 * 32); // TODO remove this const
-            SetCameraBuffer(cameraSize);
             SetUpRenderer(renderSize, cameraSize);
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
