@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Media;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidBody;
+using App.Model.Entities;
 
 namespace App.Model.Weapons
 {
@@ -42,14 +43,14 @@ namespace App.Model.Weapons
 
         public override void IncrementTick() => ticksFromLastFire++;
         
-        public override List<Bullet> Fire(Vector playerPosition, RigidCircle cursor)
+        public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
         {
             if (ticksFromLastFire < firePeriod 
                 || ammo == 0) return null;
             
             var spray = new List<Bullet>();
             
-            var direction = (cursor.Center - playerPosition).Normalize();
+            var direction = (cursor.Position - playerPosition).Normalize();
             var position = playerPosition + direction * 30;
             spray.Add(new Bullet(
                 position,

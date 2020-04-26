@@ -22,17 +22,18 @@ namespace App.Engine
         private RenderPipeline renderPipeline;
         private Stopwatch clock;
         private KeyStates keyState;
-        private MouseState mouseState;
         private Level currentLevel;
+        private MouseState mouseState;
         private LevelManager levelManager;
         private Player player;
-        private Sprite cursor;
+        private CustomCursor cursor;
         private Camera camera;
         private const int tileSize = 32;
         private bool isLevelLoaded;
 
         private List<Sprite> sprites;
         private List<CollisionInfo> collisionInfo;
+        private List<Bullet> bullets;
 
         private class KeyStates
         {
@@ -51,6 +52,7 @@ namespace App.Engine
             this.renderPipeline = renderPipeline;
             
             sprites = new List<Sprite>();
+            bullets = new List<Bullet>();
             
             SetLevels();
             var playerStartPosition = currentLevel.PlayerStartPosition;
@@ -112,15 +114,20 @@ namespace App.Engine
         private void SetCursor(Vector position)
         {
             var bmpCursor = levelManager.GetTileMap("crosshair.png");
-            cursor = new Sprite
+
+            var cursorPosition = position.Copy();
+            var shape = new RigidCircle(cursorPosition, 3, false, true);
+            var cursorSprite = new Sprite
             (
-                position,
+                cursorPosition,
                 bmpCursor,
                 0,
                 9,
                 new Size(64, 64),
                 10);
-            sprites.Add(cursor);
+            
+            cursor = new CustomCursor(shape, cursorSprite);
+            sprites.Add(cursorSprite);
         }
 
         public void GameLoop(object sender, EventArgs args)
@@ -139,7 +146,7 @@ namespace App.Engine
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
                     camera.Position, camera.Size, currentLevel.Shapes, collisionInfo,
-                    currentLevel.RaytracingEdges, cursor.Center, player.Center,
+                    currentLevel.RaytracingEdges, cursor.Position, player.Center,
                     camera.GetChaser(), currentLevel.LevelSizeInTiles);
             
             clock.Stop();
@@ -151,15 +158,22 @@ namespace App.Engine
         {
             const int step = 6;
             var previousPosition = player.Center.Copy();
-            var velocity = UpdatePlayerPosition(step);
-            RotatePlayerLegs(velocity);
+            var playerVelocity = UpdatePlayerPosition(step);
             CorrectPlayer();
-            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
             
+            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
             var positionDelta = player.Center - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
             UpdatePlayerByMouse();
-            camera.UpdateCamera(player.Center, velocity, cursor.Center, step);
+            RotatePlayerLegs(playerVelocity);
+
+            if (mouseState.LMB)
+            {
+                var firedBullets = player.CurrentWeapon.Fire(player.Center, cursor);
+                if (firedBullets != null) bullets.AddRange(firedBullets);
+            }
+            
+            camera.UpdateCamera(player.Center, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
         }
         
@@ -181,7 +195,7 @@ namespace App.Engine
         
         private void UpdatePlayerByMouse()
         {
-            var direction = cursor.Center - player.Center;
+            var direction = cursor.Position - player.Center;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
             player.Torso.Angle = angle;
