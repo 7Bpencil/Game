@@ -210,7 +210,7 @@ namespace App.Engine.PhysicsEngine.Collision
             var distanceVector = closestPoint - circle.Center;
             var distance = distanceVector.Length;
             return distance <= circle.Radius 
-                ? new CollisionInfo(distance, distanceVector.Normalize(), closestPoint) 
+                ? new CollisionInfo(circle.Radius - distance, -distanceVector.Normalize(), closestPoint) 
                 : null;
         }
 

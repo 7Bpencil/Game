@@ -16,9 +16,11 @@ namespace App.Engine.Render.Renderers
         public static void Draw(RigidShape shapeObject, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             if (shapeObject is RigidOBB)
-                DrawRectangle((RigidOBB) shapeObject, cameraPosition, strokePen, g);
+                DrawOBB((RigidOBB) shapeObject, cameraPosition, strokePen, g);
             else if (shapeObject is RigidCircle)
                 DrawCircle((RigidCircle) shapeObject, cameraPosition, strokePen, g);
+            else if (shapeObject is RigidAABB)
+                DrawAABB((RigidAABB) shapeObject, cameraPosition, strokePen, g);
         }
         
         /// <summary>
@@ -30,9 +32,11 @@ namespace App.Engine.Render.Renderers
         public static void Draw(RigidShape shapeObject, Pen strokePen, Graphics g)
         {
             if (shapeObject is RigidOBB)
-                DrawRectangle((RigidOBB) shapeObject, strokePen, g);
+                DrawOBB((RigidOBB) shapeObject, strokePen, g);
             else if (shapeObject is RigidCircle)
                 DrawCircle((RigidCircle) shapeObject, strokePen, g);
+            else if (shapeObject is RigidAABB)
+                DrawAABB((RigidAABB) shapeObject, strokePen, g);
         }
         
         private static void DrawCircle(RigidCircle shape, Vector cameraPosition, Pen strokePen, Graphics g)
@@ -50,7 +54,7 @@ namespace App.Engine.Render.Renderers
                 shape.Diameter, shape.Diameter);
         }
         
-        private static void DrawRectangle(RigidOBB shape, Vector cameraPosition, Pen strokePen, Graphics g)
+        private static void DrawOBB(RigidOBB shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             var inCameraPosition = shape.Center.ConvertFromWorldToCamera(cameraPosition);
             var stateBefore = g.Save();
@@ -62,7 +66,7 @@ namespace App.Engine.Render.Renderers
             g.Restore(stateBefore);
         }
         
-        private static void DrawRectangle(RigidOBB shape, Pen strokePen, Graphics g)
+        private static void DrawOBB(RigidOBB shape, Pen strokePen, Graphics g)
         {
             var stateBefore = g.Save();
             if (!shape.Center.Equals(Vector.ZeroVector))
@@ -71,6 +75,18 @@ namespace App.Engine.Render.Renderers
                 g.RotateTransform(-shape.angle);
             g.DrawRectangle(strokePen, -shape.Width / 2, -shape.Height / 2, shape.Width, shape.Height);
             g.Restore(stateBefore);
+        }
+        
+        private static void DrawAABB(RigidAABB shape, Vector cameraPosition, Pen strokePen, Graphics g)
+        {
+            var inCameraPosition = shape.MinPoint.ConvertFromWorldToCamera(cameraPosition);
+            g.DrawRectangle(strokePen, inCameraPosition.X, inCameraPosition.Y, shape.Width, shape.Height);
+            
+        }
+        
+        private static void DrawAABB(RigidAABB shape, Pen strokePen, Graphics g)
+        {
+            g.DrawRectangle(strokePen, shape.MinPoint.X, shape.MinPoint.Y, shape.Width, shape.Height);
         }
     }
 }

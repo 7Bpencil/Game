@@ -60,7 +60,6 @@ namespace App.Engine
         private void SetLevels()
         {
             levelManager = new LevelManager();
-            levelManager.MoveNextLevel();
             currentLevel = levelManager.CurrentLevel;
         }
         
