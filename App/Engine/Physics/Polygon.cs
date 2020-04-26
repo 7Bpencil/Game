@@ -11,10 +11,10 @@ namespace App.Engine.Physics
             Edges = edges;
         }
 
-        public void Move(Vector delta)
+        public void MoveBy(Vector delta)
         {
             foreach (var edge in Edges)
-                edge.Move(delta);    
+                edge.MoveBy(delta);    
         }
     }
 }

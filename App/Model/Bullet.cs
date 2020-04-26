@@ -27,7 +27,7 @@ namespace App.Model
         public void Move()
         {
             position += velocity;
-            shape.Move(velocity);
+            shape.MoveBy(velocity);
         }
 
         private static float CalculateBulletPenetration(Vector bulletVelocity, float bulletWeight)

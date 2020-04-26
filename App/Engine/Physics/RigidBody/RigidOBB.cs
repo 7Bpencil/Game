@@ -106,6 +106,13 @@
             center.Y += delta.Y;
             vertexesVersion ++;
         }
+        
+        public override void MoveTo(Vector newPosition)
+        {
+            center.X = newPosition.X;
+            center.Y = newPosition.Y;
+            vertexesVersion ++;
+        }
 
         public override RigidShape Copy()
         {

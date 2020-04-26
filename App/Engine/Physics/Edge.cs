@@ -17,7 +17,7 @@ namespace App.Engine.Physics
             End = new Vector(x2, y2);
         }
 
-        public void Move(Vector delta)
+        public void MoveBy(Vector delta)
         {
             Start += delta;
             End += delta;

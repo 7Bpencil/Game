@@ -63,13 +63,14 @@
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
         <Compile Include="Model\Bullet.cs" />
+        <Compile Include="Model\Entities\Player.cs" />
+        <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\DataParser\LevelParser.cs" />
         <Compile Include="Model\DataParser\TileSetParser.cs" />
-        <Compile Include="Model\Player.cs" />
         <Compile Include="Model\Weapon.cs" />
         <Compile Include="Model\Weapons\AK303.cs" />
         <Compile Include="Model\Weapons\MP6.cs" />

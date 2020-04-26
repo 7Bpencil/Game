@@ -9,6 +9,7 @@ using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidBody;
 using App.Engine.Render;
 using App.Model;
+using App.Model.Entities;
 using App.Model.LevelData;
 using App.Model.Weapons;
 using App.View;

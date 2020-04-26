@@ -121,7 +121,8 @@ namespace App.Engine.Physics
 
         public Vector Normalize()
         {
-            return Length > 0 ? this * (1 / Length) : this;
+            var thisLength = Length;
+            return thisLength > 0 ? this / thisLength : this;
         }
 
         public static float Distance(Vector a, Vector b)

@@ -4,17 +4,17 @@ using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidBody;
 
-namespace App.Model
+namespace App.Model.Entities
 {
     public class Player
     {
         public RigidCircle Shape;
-        public Sprite Torso;
-        public Sprite Legs;
-        
         public Vector Center => Shape.Center;
         public float Radius => Shape.Radius;
         
+        public Sprite Torso;
+        public Sprite Legs;
+
         private List<Weapon> weapons;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
@@ -24,8 +24,8 @@ namespace App.Model
             Shape = shape;
             Torso = torso;
             Legs = legs;
-            currentWeaponIndex = 0;
             weapons = startWeapons;
+            currentWeaponIndex = 0;
         }
 
         public void MoveBy(Vector delta)

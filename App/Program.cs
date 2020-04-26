@@ -4,7 +4,6 @@ using App.View;
 
 namespace App
 {
-    
     internal class Program
     {
         [STAThread]

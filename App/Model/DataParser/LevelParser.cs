@@ -125,7 +125,7 @@ namespace App.Model.DataParser
                 int.Parse(p[0]), int.Parse(p[1])));
 
             var polygon = new Polygon(edges);
-            polygon.Move(new Vector(offsetX, offsetY));
+            polygon.MoveBy(new Vector(offsetX, offsetY));
             return polygon;
         }
 

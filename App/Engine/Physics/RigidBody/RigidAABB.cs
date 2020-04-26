@@ -34,6 +34,11 @@ namespace App.Engine.Physics.RigidBody
         {
             throw new System.NotImplementedException();
         }
+        
+        public override void MoveTo(Vector newPosition)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public override RigidShape Copy()
         {

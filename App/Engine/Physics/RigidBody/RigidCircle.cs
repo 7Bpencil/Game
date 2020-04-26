@@ -39,6 +39,12 @@
             center.X += delta.X;
             center.Y += delta.Y;
         }
+        
+        public override void MoveTo(Vector newPosition)
+        {
+            center.X = newPosition.X;
+            center.Y = newPosition.Y;
+        }
 
         public override RigidShape Copy()
         {
