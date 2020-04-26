@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine;
-using App.Engine.PhysicsEngine;
+using App.Engine.Physics;
 using App.Engine.Render;
 
 namespace App.View

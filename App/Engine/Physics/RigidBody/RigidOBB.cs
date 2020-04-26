@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace App.Engine.PhysicsEngine.RigidBody
+﻿namespace App.Engine.Physics.RigidBody
 {
     public class RigidOBB : RigidShape
     {

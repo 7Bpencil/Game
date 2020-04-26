@@ -1,8 +1,8 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using App.Engine.PhysicsEngine;
-using App.Engine.PhysicsEngine.Collision;
-using App.Engine.PhysicsEngine.RigidBody;
+using App.Engine.Physics;
+using App.Engine.Physics.Collision;
+using App.Engine.Physics.RigidBody;
 using App.Engine.Render.Renderers;
 using App.View;
 

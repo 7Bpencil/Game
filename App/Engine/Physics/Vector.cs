@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace App.Engine.PhysicsEngine
+namespace App.Engine.Physics
 {
     public class Vector
     {

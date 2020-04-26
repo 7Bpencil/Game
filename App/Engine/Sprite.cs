@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-using App.Engine.PhysicsEngine;
+using App.Engine.Physics;
 
 namespace App.Engine
 {

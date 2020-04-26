@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using App.Engine.PhysicsEngine;
-using App.Engine.PhysicsEngine.RigidBody;
+using App.Engine.Physics;
+using App.Engine.Physics.RigidBody;
 using App.Model.LevelData;
 
 namespace App.Model.DataParser

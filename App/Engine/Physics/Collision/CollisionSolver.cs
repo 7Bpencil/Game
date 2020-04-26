@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using App.Engine.PhysicsEngine.RigidBody;
+using App.Engine.Physics.RigidBody;
 
-namespace App.Engine.PhysicsEngine.Collision
+namespace App.Engine.Physics.Collision
 {
     public static class CollisionSolver
     {

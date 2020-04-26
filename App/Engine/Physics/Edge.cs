@@ -1,4 +1,4 @@
-namespace App.Engine.PhysicsEngine
+namespace App.Engine.Physics
 {
     public struct Edge
     {

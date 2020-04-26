@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
-using App.Engine.PhysicsEngine;
+using App.Engine.Physics;
 
 namespace App.Engine.Render.Renderers
 {

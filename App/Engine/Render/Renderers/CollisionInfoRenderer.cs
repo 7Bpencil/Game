@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
-using App.Engine.PhysicsEngine;
-using App.Engine.PhysicsEngine.Collision;
+using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 
 namespace App.Engine.Render.Renderers
 {

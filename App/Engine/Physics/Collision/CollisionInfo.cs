@@ -1,4 +1,4 @@
-﻿namespace App.Engine.PhysicsEngine.Collision
+﻿namespace App.Engine.Physics.Collision
 {
     public class CollisionInfo
     {

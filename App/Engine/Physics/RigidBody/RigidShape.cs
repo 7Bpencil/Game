@@ -1,4 +1,4 @@
-﻿namespace App.Engine.PhysicsEngine.RigidBody
+﻿namespace App.Engine.Physics.RigidBody
 {
     public abstract class RigidShape
     {

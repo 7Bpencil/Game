@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using App.Engine.PhysicsEngine;
+using App.Engine.Physics;
 
 namespace App.Model
 {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace App.Engine.PhysicsEngine
+namespace App.Engine.Physics
 {
     public class Polygon
     {

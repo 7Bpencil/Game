@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using App.Engine.PhysicsEngine;
+using App.Engine.Physics;
 
 namespace App.Engine.Render
 {
