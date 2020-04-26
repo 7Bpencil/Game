@@ -37,27 +37,29 @@ namespace App.Engine.Physics.Collision
 
         private static float[] AreCollideWithStatic(Bullet bullet, RigidCircle circle)
         {
-            var dX = bullet.position.X - circle.Center.X;
-            var dY = bullet.position.Y - circle.Center.Y;
-            var dVx = bullet.velocity.X;
-            var dVy = bullet.velocity.Y;
-            // t^2 * (dVx^2 + dVy^2) + 2t(dX * dVx + dY * dVy) + (dX^2 + dY^2 - R^2) = 0
-
-            var a = dVx * dVx + dVy * dVy;
-            var b = dX * dVx + dY * dVy;
-            var D = 4 * (b * b - a * (dX * dX + dY * dY - circle.Radius * circle.Radius));
-            if (D < 0) return null;
-
-            var delA = 1 / (2 * a);
-            var sqrtD = (float) Math.Sqrt(D);
-
-            var t1 = (-2 * b - sqrtD) * delA;
-            var t2 = (-2 * b + sqrtD) * delA;
-
-            return new[] {t1, t2};
+            return GetPenetrationTimeWithMovingCircle(bullet, circle, Vector.ZeroVector);
         }
 
         private static float[] AreCollideWithDynamic(Bullet bullet, RigidCircle circle, Vector circleVelocity)
+        {
+            var time = GetPenetrationTimeWithMovingCircle(bullet, circle, circleVelocity);
+            if (time == null) return null;
+            var t1 = time[0];
+            var t2 = time[1];
+
+            // TODO there could be great optimization but it's really case specific
+            if (t1 > 1) return null;
+
+            var ist1 = t1 > 0;
+            var ist2 = t2 > 0 && t2 < 1;
+
+            if (ist1 && ist2) return new[] {t1, t2};
+            if (ist1) return new[] {t1};
+            if (ist2) return new[] {t2};
+            return null;
+        }
+
+        private static float[] GetPenetrationTimeWithMovingCircle(Bullet bullet, RigidCircle circle, Vector circleVelocity)
         {
             var dX = bullet.position.X - circle.Center.X;
             var dY = bullet.position.Y - circle.Center.Y;
@@ -73,19 +75,11 @@ namespace App.Engine.Physics.Collision
             var delA = 1 / (2 * a);
             var sqrtD = (float) Math.Sqrt(D);
 
-            var t1 = (-2 * b - sqrtD) * delA;
-            var t2 = (-2 * b + sqrtD) * delA;
-
-            // TODO there could be great optimization but it's really case specific
-            if (t1 > 1) return null;
-
-            var ist1 = t1 > 0;
-            var ist2 = t2 > 0 && t2 < 1;
-
-            if (ist1 && ist2) return new[] {t1, t2};
-            if (ist1) return new[] {t1};
-            if (ist2) return new[] {t2};
-            return null;
+            return new[]
+            {
+                (-2 * b - sqrtD) * delA,
+                (-2 * b + sqrtD) * delA
+            };
         }
     }
 }
