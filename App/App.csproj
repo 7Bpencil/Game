@@ -43,6 +43,7 @@
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\MusicPlayer.cs" />
+        <Compile Include="Engine\Physics\Collision\BulletCollisionSolver.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
