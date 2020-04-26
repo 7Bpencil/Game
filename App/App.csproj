@@ -49,7 +49,7 @@
         <Compile Include="Engine\PhysicsEngine\Polygon.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidAABB.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidCircle.cs" />
-        <Compile Include="Engine\PhysicsEngine\RigidBody\RigidRectangle.cs" />
+        <Compile Include="Engine\PhysicsEngine\RigidBody\RigidOBB.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />

@@ -15,8 +15,8 @@ namespace App.Engine.Render.Renderers
         /// <param name="g"></param>
         public static void Draw(RigidShape shapeObject, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            if (shapeObject is RigidRectangle)
-                DrawRectangle((RigidRectangle) shapeObject, cameraPosition, strokePen, g);
+            if (shapeObject is RigidOBB)
+                DrawRectangle((RigidOBB) shapeObject, cameraPosition, strokePen, g);
             else if (shapeObject is RigidCircle)
                 DrawCircle((RigidCircle) shapeObject, cameraPosition, strokePen, g);
         }
@@ -29,8 +29,8 @@ namespace App.Engine.Render.Renderers
         /// <param name="g"></param>
         public static void Draw(RigidShape shapeObject, Pen strokePen, Graphics g)
         {
-            if (shapeObject is RigidRectangle)
-                DrawRectangle((RigidRectangle) shapeObject, strokePen, g);
+            if (shapeObject is RigidOBB)
+                DrawRectangle((RigidOBB) shapeObject, strokePen, g);
             else if (shapeObject is RigidCircle)
                 DrawCircle((RigidCircle) shapeObject, strokePen, g);
         }
@@ -50,7 +50,7 @@ namespace App.Engine.Render.Renderers
                 shape.Diameter, shape.Diameter);
         }
         
-        private static void DrawRectangle(RigidRectangle shape, Vector cameraPosition, Pen strokePen, Graphics g)
+        private static void DrawRectangle(RigidOBB shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             var inCameraPosition = shape.Center.ConvertFromWorldToCamera(cameraPosition);
             var stateBefore = g.Save();
@@ -62,7 +62,7 @@ namespace App.Engine.Render.Renderers
             g.Restore(stateBefore);
         }
         
-        private static void DrawRectangle(RigidRectangle shape, Pen strokePen, Graphics g)
+        private static void DrawRectangle(RigidOBB shape, Pen strokePen, Graphics g)
         {
             var stateBefore = g.Save();
             if (!shape.Center.Equals(Vector.ZeroVector))

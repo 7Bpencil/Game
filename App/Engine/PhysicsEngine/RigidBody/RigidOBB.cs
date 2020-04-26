@@ -2,7 +2,7 @@
 
 namespace App.Engine.PhysicsEngine.RigidBody
 {
-    public class RigidRectangle : RigidShape
+    public class RigidOBB : RigidShape
     {
         private Vector center;
         public override Vector Center => center;
@@ -18,9 +18,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
 
         public readonly float Width;
         public readonly float Height;
-        
-        private readonly float bondRadius;
-        public override float BondRadius => bondRadius;
 
         public float angle { get; set; }
         
@@ -66,7 +63,7 @@ namespace App.Engine.PhysicsEngine.RigidBody
         /// <param name="height"></param>
         /// <param name="angle">Angle in degrees</param>
         /// <param name="canCollide">should a collision be calculated</param>
-        public RigidRectangle(Vector center, float width, float height, float angle, bool isStatic, bool canCollide)
+        public RigidOBB(Vector center, float width, float height, float angle, bool isStatic, bool canCollide)
         {
             this.center = center;
             Width = width;
@@ -80,8 +77,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
             
             vertexesVersion = 0;
             calculatedVertexesVersion = -1;
-
-            bondRadius = (float) Math.Sqrt(width * width + height * height) / 2;
         }
 
         private void RecomputeVertexes()
@@ -115,14 +110,9 @@ namespace App.Engine.PhysicsEngine.RigidBody
             vertexesVersion ++;
         }
 
-        public override void Rotate(float delta)
+        public override RigidShape Copy()
         {
-            angle += delta;
-        }
-        
-        public override RigidShape DeepCopy()
-        {
-            return new RigidRectangle(center.Copy(), Width, Height, angle, isStatic, canCollide);
+            return new RigidOBB(center.Copy(), Width, Height, angle, isStatic, canCollide);
         }
     }
 }

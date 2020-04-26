@@ -84,7 +84,7 @@ namespace App.Model.DataParser
                 var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
                 var center = new Vector(x + width / 2, y + height / 2);
                 
-                staticShapes.Add(new RigidRectangle(center, width, height, 0, true, true));
+                staticShapes.Add(new RigidOBB(center, width, height, 0, true, true));
             }
 
             return staticShapes;

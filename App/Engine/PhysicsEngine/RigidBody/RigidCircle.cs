@@ -19,8 +19,6 @@
         private bool isCollided;
         public override bool IsCollided { get => isCollided; set => isCollided = value; }
 
-        public override float BondRadius => radius;
-
 
         /// <summary>
         /// 
@@ -43,11 +41,7 @@
             center.Y += delta.Y;
         }
 
-        public override void Rotate(float delta) // Because it's meaningless
-        {
-        }
-        
-        public override RigidShape DeepCopy()
+        public override RigidShape Copy()
         {
             return new RigidCircle(center.Copy(), radius, isStatic, canCollide);
         }
