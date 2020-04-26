@@ -6,17 +6,20 @@ namespace App.Engine.Render.Renderers
 {
     public static class VisibilityPolygonRenderer
     {
-        public static void Draw(Vector lightSourcePosition, List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Brush brush, Graphics g)
+        public static void Draw(
+            Vector lightSourcePosition,
+            List<Raytracing.RaytracingPoint> visibilityPolygonPoints,
+            Vector cameraPosition, Brush brush, Graphics g)
         {
             for (var i = 0; i < visibilityPolygonPoints.Count - 1; i++)
                 FillTriangle(
-                    lightSourcePosition,
-                    visibilityPolygonPoints[i].position,
-                    visibilityPolygonPoints[i + 1].position, brush, g);
+                    lightSourcePosition.ConvertFromWorldToCamera(cameraPosition),
+                    visibilityPolygonPoints[i].position.ConvertFromWorldToCamera(cameraPosition),
+                    visibilityPolygonPoints[i + 1].position.ConvertFromWorldToCamera(cameraPosition), brush, g);
             FillTriangle(
-                lightSourcePosition,
-                visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].position,
-                visibilityPolygonPoints[0].position, brush, g);
+                lightSourcePosition.ConvertFromWorldToCamera(cameraPosition),
+                visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].position.ConvertFromWorldToCamera(cameraPosition),
+                visibilityPolygonPoints[0].position.ConvertFromWorldToCamera(cameraPosition), brush, g);
         }
         
         private static void FillTriangle(Vector a, Vector b, Vector c, Brush brush, Graphics g)
