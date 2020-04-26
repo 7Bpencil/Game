@@ -3,6 +3,7 @@ using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShape;
+using App.Model.Entities;
 using App.Model.LevelData;
 
 namespace App.Engine.Render
@@ -25,14 +26,17 @@ namespace App.Engine.Render
         }
         
         public void Start(
-            Vector playerPosition, Vector cameraPosition, Size cameraSize,
-            List<Sprite> sprites, List<Edge> raytracingEdges)
+            Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
+            List<Sprite> sprites, List<Bullet> bullets, List<Edge> raytracingEdges)
         {
             var visibilityPolygons = 
                 Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
             renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
+            RenderBullets(bullets, cameraPosition);
+            RenderDynamicPenetrations(bullets, cameraPosition);
+            renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
 
             renderMachine.Invalidate();
         }
@@ -45,14 +49,15 @@ namespace App.Engine.Render
         }
         
         public void RenderDebugInfo(
-            Vector cameraPosition, Size cameraSize, List<RigidShape> shapes, 
-            List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, 
+            Vector cameraPosition, Size cameraSize, List<RigidShape> shapes, List<ShootingRangeTarget> targets,
+            List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Bullet> bullets, 
             Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser,
             Size levelSizeInTiles)
         {
             RenderShapes(shapes, cameraPosition);
             RenderRaytracingEdges(raytracingEdges, cameraPosition);
             RenderCollisionInfo(collisionInfo, cameraPosition);
+            RenderStaticPenetrations(bullets, cameraPosition);
             renderMachine.RenderDebugCross(cameraSize);
             renderMachine.RenderShapeOnCamera(cameraChaser, cameraPosition);
             renderMachine.RenderEdgeOnCamera(
@@ -60,6 +65,7 @@ namespace App.Engine.Render
                     playerPosition.ConvertFromWorldToCamera(cameraPosition)));
             renderMachine.PrintMessages(
                 GetDebugInfo(cameraPosition, cameraSize, playerPosition, cursorPosition, levelSizeInTiles));
+            RenderEnemyInfo(targets, cameraPosition);
         }
         
         private void RenderLayer(Layer layer, Bitmap levelTileMap, int tileSize)
@@ -115,7 +121,51 @@ namespace App.Engine.Render
             foreach (var edge in raytracingEdges)
                 renderMachine.RenderEdgeOnCamera(edge, cameraPosition);
         }
+
+        private void RenderBullets(List<Bullet> bullets, Vector cameraPosition)
+        {
+            foreach (var bullet in bullets)
+            {
+                if (bullet == null) continue;
+                renderMachine.RenderEdgeOnCamera(bullet.shape, cameraPosition);
+            }
+        }
+
+        private void RenderDynamicPenetrations(List<Bullet> bullets, Vector cameraPositions)
+        {
+            foreach (var bullet in bullets)
+            {
+                if (bullet == null) continue;
+                foreach (var point in bullet.collisionWithDynamicInfo)
+                    renderMachine.RenderPoint(point, cameraPositions);
+            }
+        }
         
+        private void RenderStaticPenetrations(List<Bullet> bullets, Vector cameraPositions)
+        {
+            foreach (var bullet in bullets)
+            {
+                if (bullet == null) continue;
+                foreach (var points in bullet.collisionWithStaticInfo)
+                {
+                    renderMachine.RenderPoint(points[0], cameraPositions);
+                    renderMachine.RenderPoint(points[1], cameraPositions);
+                }
+            }
+        }
+
+        private void RenderEnemyInfo(List<ShootingRangeTarget> targets, Vector cameraPosition)
+        {
+            foreach (var t in targets)
+            {
+                var position = new Vector(
+                    t.collisionShape.Center.X - t.collisionShape.Radius / 2,
+                    t.collisionShape.Center.Y - t.collisionShape.Radius / 2);
+                var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
+                renderMachine.PrintString(t.Health + "\n" + t.Armour, positionInCamera);    
+            }
+        }
+
         private Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
         {
             var sourceX = tileID % columnsInTileMap * tileSize;

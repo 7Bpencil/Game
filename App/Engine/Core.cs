@@ -171,12 +171,14 @@ namespace App.Engine
             clock.Start();
             
             UpdateState();
-            renderPipeline.Start(player.Center, camera.Position, camera.Size, sprites, currentLevel.RaytracingEdges);
+            renderPipeline.Start(
+                player.Center, camera.Position, camera.Size, player.CurrentWeapon,
+                sprites, bullets, currentLevel.RaytracingEdges);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
-                    camera.Position, camera.Size, currentLevel.Shapes, collisionInfo,
-                    currentLevel.RaytracingEdges, cursor.Position, player.Center,
+                    camera.Position, camera.Size, currentLevel.Shapes, targets, collisionInfo,
+                    currentLevel.RaytracingEdges, bullets, cursor.Position, player.Center,
                     camera.GetChaser(), currentLevel.LevelSizeInTiles);
             
             clock.Stop();

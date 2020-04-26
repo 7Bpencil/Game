@@ -12,14 +12,14 @@ namespace App.Engine
         private Vector chaserPosition;
         private readonly float playerRadius;
         public readonly Size Size;
-        public readonly Vector cameraCenter;
+        public readonly Vector CameraCenter;
 
         public Camera(Vector playerPosition, float playerRadius, Size size)
         {
             position = playerPosition - new Vector(size.Width, size.Height) / 2;
             chaserPosition = playerPosition.Copy();
             Size = size;
-            cameraCenter = new Vector(size.Width, size.Height) / 2;
+            CameraCenter = new Vector(size.Width, size.Height) / 2;
             this.playerRadius = playerRadius;
         }
 
@@ -60,7 +60,7 @@ namespace App.Engine
 
         private void CorrectCameraDependsOnCursorPosition(Vector cursorPosition)
         {
-            position = chaserPosition + (cursorPosition - chaserPosition).Normalize() * playerRadius - cameraCenter;
+            position = chaserPosition + (cursorPosition - chaserPosition).Normalize() * playerRadius - CameraCenter;
         }
 
         public RigidCircle GetChaser()

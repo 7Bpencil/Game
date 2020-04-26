@@ -22,6 +22,7 @@ namespace App.Engine.Render
         private readonly Pen shapePen;
         private readonly Pen collisionPen;
         private readonly Pen raytracingEdgePen;
+        private readonly Brush penetrationBrush;
 
         public RenderMachine(ViewForm view, Size cameraSize)
         {
@@ -35,6 +36,7 @@ namespace App.Engine.Render
             shapePen = new Pen(Color.White, 4);
             collisionPen = new Pen(Color.Crimson, 4);
             raytracingEdgePen = new Pen(Color.Salmon, 4);
+            penetrationBrush = new SolidBrush(Color.Maroon);
         }
         
         private void SetUpRenderer(Size renderSize, Size cameraSize)
@@ -111,11 +113,26 @@ namespace App.Engine.Render
         {
             CollisionInfoRenderer.Draw(info, cameraPosition, collisionPen, gfxCamera);
         }
+
+        public void RenderPoint(Vector point, Vector cameraPosition)
+        {
+            VectorRenderer.Fill(point, cameraPosition, penetrationBrush, gfxCamera);
+        }
         
         public void PrintMessages(string[] messages)
         {
             for (var i = 0; i < messages.Length; i++)
                 gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
+        }
+
+        public void PrintString(string message, Vector position)
+        {
+            gfxCamera.DrawString(message, debugFont, debugBrush, position.X, position.Y);
+        }
+
+        public void RenderHUD(string weaponInfo, Size cameraSize)
+        {
+            gfxCamera.DrawString(weaponInfo, debugFont, debugBrush, 0, cameraSize.Height - debugFont.Height);
         }
 
         public void RenderDebugCross(Size cameraSize)
