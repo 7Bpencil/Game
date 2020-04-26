@@ -57,6 +57,7 @@
         <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\PolygonRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\RigidBodyRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\VisibilityPolygonRenderer.cs" />
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
