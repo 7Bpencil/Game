@@ -1,9 +1,43 @@
 ﻿using System;
+using System.Drawing;
 
 namespace App.Engine.PhysicsEngine
 {
     public class Vector
     {
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public float this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0:
+                        X = value;
+                        break;
+                    case 1:
+                        Y = value;
+                        break;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
+            }
+        }
+
         public Vector()
         {
         }
@@ -42,9 +76,6 @@ namespace App.Engine.PhysicsEngine
             }
         }
 
-        public float X { get; set; }
-        public float Y { get; set; }
-
         public float Length => (float) Math.Sqrt(X * X + Y * Y);
 
         public static Vector operator +(Vector a, Vector b)
@@ -56,7 +87,7 @@ namespace App.Engine.PhysicsEngine
         {
             return new Vector(a.X - b.X, a.Y - b.Y);
         }
-        
+
         public static Vector operator -(Vector a)
         {
             return new Vector(-a.X, -a.Y);
@@ -74,23 +105,17 @@ namespace App.Engine.PhysicsEngine
 
         public static Vector operator /(Vector a, float k)
         {
-            return new Vector(a.X / k, a.Y / k);
+            var d = 1 / k;
+            return a * d;
         }
 
-        /// <summary>
-        /// rotates vector counter-clockwise
-        /// </summary>
-        /// <param name="center"></param>
-        /// <param name="angle"></param>
-        /// <returns></returns>
-        public Vector Rotate(Vector center, float angle)
+        public Vector Rotate(float angleInDegrees)
         {
-            var x = X - center.X;
-            var y = Y - center.Y;
+            var angle = angleInDegrees / 180 * Math.PI;
             return new Vector
             {
-                X = (float) (x * Math.Cos(angle) - y * Math.Sin(angle) + center.X),
-                Y = (float) (x * Math.Sin(angle) + y * Math.Cos(angle) + center.Y)
+                X = (float) (X * Math.Cos(angle) - Y * Math.Sin(angle)),
+                Y = (float) (X * Math.Sin(angle) + Y * Math.Cos(angle))
             };
         }
 
@@ -111,29 +136,29 @@ namespace App.Engine.PhysicsEngine
             return first.X * second.X + first.Y * second.Y;
         }
 
-        /// <summary>
-        /// x1 * y2 - y1 * x2
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public float Cross(Vector other)
+        public static float VectorProduct(Vector first, Vector second)
         {
-            return X * other.Y - Y * other.X;
+            return first.X * second.Y - first.Y * second.X;
         }
 
-        public Vector ConvertMathToWindow()
-        {
-            return null;
-        }
-        
         public Vector ConvertFromWorldToCamera(Vector cameraPosition)
         {
             return this - cameraPosition;
         }
 
-        public Vector Copy()
+        public Vector ConvertFromCameraToWorld(Vector cameraPosition)
         {
-            return new Vector(X, Y);
+            return this + cameraPosition;
         }
+
+        public Vector GetNormal()
+        {
+            if (Math.Abs(Y) < 0.01) return new Vector(0, 1);
+            return new Vector(1, -X / Y).Normalize();
+        }
+
+        public Vector Copy() => new Vector(X, Y);
+
+        public PointF GetPoint() => new PointF(X, Y);
     }
 }
