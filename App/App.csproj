@@ -47,7 +47,6 @@
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
-        <Compile Include="Engine\Physics\Polygon.cs" />
         <Compile Include="Engine\Physics\RigidBody\RigidAABB.cs" />
         <Compile Include="Engine\Physics\RigidBody\RigidCircle.cs" />
         <Compile Include="Engine\Physics\RigidBody\RigidOBB.cs" />
@@ -56,7 +55,6 @@
         <Compile Include="Engine\Render\Raytracing.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
-        <Compile Include="Engine\Render\Renderers\PolygonRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\RigidBodyRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\VisibilityPolygonRenderer.cs" />
         <Compile Include="Engine\Render\RenderMachine.cs" />

@@ -1,6 +1,6 @@
 namespace App.Engine.Physics
 {
-    public struct Edge
+    public class Edge
     {
         public Vector Start;
         public Vector End;

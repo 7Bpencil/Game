@@ -32,7 +32,7 @@ namespace App.Model.DataParser
             
             var layers = new List<Layer>();
             var staticShapes = new List<RigidShape>();
-            var raytracingShapes = new List<Polygon>();
+            var raytracingEdges = new List<Edge>();
             string source = null;
             Vector playerStartPosition = null;
 
@@ -66,11 +66,11 @@ namespace App.Model.DataParser
                     if (nodeContentName == "StaticShapes")
                         staticShapes = ParseStaticShapes(node);
                     if (nodeContentName == "RaytracingPolygons")
-                        raytracingShapes = ParseRaytracingPolygons(node);
+                        raytracingEdges = ParseRaytracingEdges(node);
                 }
             }
 
-            return new Level(layers, staticShapes, raytracingShapes, tileSets[source], playerStartPosition);
+            return new Level(layers, staticShapes, raytracingEdges, tileSets[source], playerStartPosition);
         }
 
         private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)
@@ -93,27 +93,27 @@ namespace App.Model.DataParser
             return staticShapes;
         }
 
-        private static List<Polygon> ParseRaytracingPolygons(XmlNode raytracingShapesNode)
+        private static List<Edge> ParseRaytracingEdges(XmlNode raytracingPolygonsNode)
         {
-            var polygons = new List<Polygon>();
+            var edges = new List<Edge>();
             var separators = new[] {" ", ","};
             
-            foreach (XmlNode polygonRaw in raytracingShapesNode.ChildNodes)
+            foreach (XmlNode polygonRaw in raytracingPolygonsNode.ChildNodes)
             {
                 var x = int.Parse(polygonRaw.Attributes.GetNamedItem("x").Value);
                 var y = int.Parse(polygonRaw.Attributes.GetNamedItem("y").Value);
                 var points = polygonRaw.ChildNodes[0].Attributes.GetNamedItem("points").Value; 
-                polygons.Add(ParsePolygon(points, x, y, separators));
+                edges.AddRange(ParsePolygon(points, x, y, separators));
             }
             
-            return polygons;
+            return edges;
         }
 
-        private static Polygon ParsePolygon(string points, int offsetX, int offsetY, string[] separators)
+        private static List<Edge> ParsePolygon(string points, int offsetX, int offsetY, string[] separators)
         {
             var p = points.Split(separators, StringSplitOptions.None);
             var edges = new List<Edge>();
-            for (var i = 0; i < p.Length - 3; i+=2)
+            for (var i = 0; i < p.Length - 3; i += 2)
             {
                 edges.Add(new Edge(
                     int.Parse(p[i]), int.Parse(p[i + 1]),
@@ -123,10 +123,9 @@ namespace App.Model.DataParser
             edges.Add(new Edge(
                 int.Parse(p[p.Length - 2]), int.Parse(p[p.Length - 1]),
                 int.Parse(p[0]), int.Parse(p[1])));
-
-            var polygon = new Polygon(edges);
-            polygon.MoveBy(new Vector(offsetX, offsetY));
-            return polygon;
+            
+            edges.MoveBy(new Vector(offsetX, offsetY));
+            return edges;
         }
 
         private static Layer ParseLayer(XmlNode node, string[] separators)
@@ -156,6 +155,12 @@ namespace App.Model.DataParser
             foreach (var tileIndex in layerData)
                 if (tileIndex != "") newTiles[k++] = int.Parse(tileIndex);
             return newTiles;
+        }
+
+        private static void MoveBy(this List<Edge> edges, Vector delta)
+        {
+            foreach (var edge in edges)
+                edge.MoveBy(delta);
         }
     }
 }

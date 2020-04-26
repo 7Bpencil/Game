@@ -132,7 +132,7 @@ namespace App.Engine
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
                     camera.Position, camera.Size, currentLevel.Shapes, collisionInfo,
-                    currentLevel.RaytracingPolygons, cursor.Center, player.Center,
+                    currentLevel.RaytracingEdges, cursor.Center, player.Center,
                     camera.GetChaser(), currentLevel.LevelSizeInTiles);
             
             clock.Stop();

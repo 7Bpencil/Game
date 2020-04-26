@@ -33,12 +33,12 @@ namespace App.Engine.Render
         
         public void RenderDebugInfo(
             Vector cameraPosition, Size cameraSize, List<RigidShape> shapes, 
-            List<CollisionInfo> collisionInfo, List<Polygon> raytracingPolygons, 
+            List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, 
             Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser,
             Size levelSizeInTiles)
         {
             RenderShapes(shapes, cameraPosition);
-            RenderRaytracingPolygons(raytracingPolygons, cameraPosition);
+            RenderRaytracingEdges(raytracingEdges, cameraPosition);
             RenderCollisionInfo(collisionInfo, cameraPosition);
             renderMachine.RenderDebugCross(cameraSize);
             renderMachine.RenderShapeOnCamera(cameraChaser, cameraPosition);
@@ -97,10 +97,10 @@ namespace App.Engine.Render
                 renderMachine.RenderCollisionInfoOnCamera(info, cameraPosition);
         }
         
-        private void RenderRaytracingPolygons(List<Polygon> raytracingPolygons, Vector cameraPosition)
+        private void RenderRaytracingEdges(List<Edge> raytracingEdges, Vector cameraPosition)
         {
-            foreach (var polygon in raytracingPolygons)
-                renderMachine.RenderPolygonOnCamera(polygon, cameraPosition);
+            foreach (var edge in raytracingEdges)
+                renderMachine.RenderEdgeOnCamera(edge, cameraPosition);
         }
         
         private Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)

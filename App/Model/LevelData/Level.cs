@@ -12,14 +12,14 @@ namespace App.Model.LevelData
         public TileSet TileSet;
         public List<Layer> Layers;
         public List<RigidShape> Shapes;
-        public List<Polygon> RaytracingPolygons;
+        public List<Edge> RaytracingEdges;
 
-        public Level(List<Layer> layers, List<RigidShape> shapes, List<Polygon> raytracingPolygons, TileSet tileSet, Vector playerStartPosition)
+        public Level(List<Layer> layers, List<RigidShape> shapes, List<Edge> raytracingEdges, TileSet tileSet, Vector playerStartPosition)
         {
             Layers = layers;
             TileSet = tileSet;
             Shapes = shapes;
-            RaytracingPolygons = raytracingPolygons;
+            RaytracingEdges = raytracingEdges;
             PlayerStartPosition = playerStartPosition;
             LevelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
         }

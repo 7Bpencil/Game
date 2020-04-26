@@ -18,8 +18,9 @@ namespace App.Engine.Render
 
         private readonly Font debugFont;
         private readonly Brush debugBrush;
-        private readonly Pen debugPen;
+        private readonly Pen shapePen;
         private readonly Pen collisionPen;
+        private readonly Pen raytracingEdgePen;
 
         public RenderMachine(ViewForm view, Size cameraSize)
         {
@@ -30,8 +31,9 @@ namespace App.Engine.Render
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
-            debugPen = new Pen(Color.White, 4);
+            shapePen = new Pen(Color.White, 4);
             collisionPen = new Pen(Color.Crimson, 4);
+            raytracingEdgePen = new Pen(Color.Salmon, 4);
         }
         
         private void SetUpRenderer(Size renderSize, Size cameraSize)
@@ -76,20 +78,20 @@ namespace App.Engine.Render
         {
             sprite.DrawNextFrame(gfxCamera);
         }
-
-        public void RenderPolygonOnCamera(Polygon polygon, Vector cameraPosition)
-        {
-            PolygonRenderer.Draw(polygon, cameraPosition, debugPen, gfxCamera);
-        }
-
+        
         public void RenderEdgeOnCamera(Edge edge)
         {
-            EdgeRenderer.Draw(edge, debugPen, gfxCamera);
+            EdgeRenderer.Draw(edge, raytracingEdgePen, gfxCamera);
+        }
+
+        public void RenderEdgeOnCamera(Edge edge, Vector cameraPosition)
+        {
+            EdgeRenderer.Draw(edge, cameraPosition, raytracingEdgePen, gfxCamera);
         }
 
         public void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
-            RigidBodyRenderer.Draw(shape, cameraPosition, debugPen, gfxCamera);
+            RigidBodyRenderer.Draw(shape, cameraPosition, shapePen, gfxCamera);
         }
 
         public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
@@ -109,8 +111,8 @@ namespace App.Engine.Render
             var b = cameraSize.Height / 2;
             var verticalEdge = new Edge(a, 0, a, cameraSize.Height);
             var horizontalEdge = new Edge(0, b, cameraSize.Width, b);
-            RenderEdgeOnCamera(verticalEdge);
-            RenderEdgeOnCamera(horizontalEdge);
+            EdgeRenderer.Draw(verticalEdge, shapePen, gfxCamera);
+            EdgeRenderer.Draw(horizontalEdge, shapePen, gfxCamera);
         }
 
         public BufferedGraphics GetCameraBuffer()
