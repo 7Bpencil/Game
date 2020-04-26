@@ -46,9 +46,8 @@ namespace App.Engine.PhysicsEngine.RigidBody
         
         private bool canCollide;
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
-        
-        private bool isCollided;
-        public override bool IsCollided { get => isCollided; set => isCollided = value; }
+
+        public override bool IsCollided { get; set; }
 
         private long vertexesVersion;
         private long calculatedVertexesVersion;

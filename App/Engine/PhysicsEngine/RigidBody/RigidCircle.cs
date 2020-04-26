@@ -3,7 +3,7 @@
     public class RigidCircle : RigidShape
     {
         private float radius;
-        public float Radius { get => radius; set => radius = value; }
+        public float Radius => radius;
         
         public float Diameter => 2 * radius;
 
@@ -16,8 +16,7 @@
         private bool canCollide;
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
 
-        private bool isCollided;
-        public override bool IsCollided { get => isCollided; set => isCollided = value; }
+        public override bool IsCollided { get; set; }
 
 
         /// <summary>
