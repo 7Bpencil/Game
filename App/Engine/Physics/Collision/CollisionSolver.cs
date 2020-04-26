@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 
 namespace App.Engine.Physics.Collision
 {
     public static class CollisionSolver
     {
-        public static List<CollisionInfo> ResolveCollisions(List<RigidShape.RigidShape> sceneObjects)
+        public static List<CollisionInfo> ResolveCollisions(List<RigidShape> sceneObjects)
         {
             ClearColliding(sceneObjects);
             var collisions = new List<CollisionInfo>();
@@ -30,14 +30,14 @@ namespace App.Engine.Physics.Collision
             return collisions;
         }
 
-        private static void ResolveCollisionStatically(CollisionInfo info, RigidShape.RigidShape first, RigidShape.RigidShape second)
+        private static void ResolveCollisionStatically(CollisionInfo info, RigidShape first, RigidShape second)
         {
             if (second.IsStatic) first.MoveBy(info.Normal * info.Depth);
             else if (first.IsStatic) second.MoveBy(info.Normal * info.Depth);
             else second.MoveBy(info.Normal * info.Depth);
         }
 
-        private static CollisionInfo GetCollisionInfo(RigidShape.RigidShape first, RigidShape.RigidShape second)
+        private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
         {
             if (first is RigidCircle && second is RigidCircle)
                 return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
@@ -184,7 +184,7 @@ namespace App.Engine.Physics.Collision
                 circle.Center - radiusVector);
         }
 
-        private static void ClearColliding(List<RigidShape.RigidShape> sceneObjects)
+        private static void ClearColliding(List<RigidShape> sceneObjects)
         {
             foreach (var sceneObject in sceneObjects)
                 sceneObject.IsCollided = false;

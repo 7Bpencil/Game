@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 using App.Model.LevelData;
 
 namespace App.Model.DataParser

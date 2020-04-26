@@ -1,12 +1,12 @@
 using System;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
 
 namespace App.Engine.Physics.Collision
 {
     public static class BulletCollisionSolver
     {
-        public static float[] AreCollideWithStatic(Bullet bullet, RigidShape.RigidShape staticBody)
+        public static float[] AreCollideWithStatic(Bullet bullet, RigidShape staticBody)
         {
             if (staticBody is RigidAABB)
                 return AreCollide(bullet, (RigidAABB) staticBody);

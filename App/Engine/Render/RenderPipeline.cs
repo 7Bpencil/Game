@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
 using App.Model.LevelData;
 

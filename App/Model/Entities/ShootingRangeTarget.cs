@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 
 namespace App.Model.Entities
 {

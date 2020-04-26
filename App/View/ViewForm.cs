@@ -26,7 +26,7 @@ namespace App.View
             cameraBuffer = renderMachine.GetCameraBuffer();
             
             var timer = new Timer();
-            timer.Interval = 15;
+            timer.Interval = 16;
             timer.Tick += engineCore.GameLoop;
             timer.Start();
         }

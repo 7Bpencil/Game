@@ -47,10 +47,10 @@
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
-        <Compile Include="Engine\Physics\RigidShape\RigidAABB.cs" />
-        <Compile Include="Engine\Physics\RigidShape\RigidCircle.cs" />
-        <Compile Include="Engine\Physics\RigidShape\RigidOBB.cs" />
-        <Compile Include="Engine\Physics\RigidShape\RigidShape.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidOBB.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidShape.cs" />
         <Compile Include="Engine\Physics\Vector.cs" />
         <Compile Include="Engine\Render\Raytracing.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />

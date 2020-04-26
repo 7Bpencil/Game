@@ -1,4 +1,4 @@
-namespace App.Engine.Physics.RigidShape
+namespace App.Engine.Physics.RigidShapes
 {
     public class RigidAABB : RigidShape
     {

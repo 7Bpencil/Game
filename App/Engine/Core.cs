@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
-using App.Engine.Physics.RigidShape;
+using App.Engine.Physics.RigidShapes;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
@@ -303,14 +303,14 @@ namespace App.Engine
 
                 var e = bullets[i].shape.End - bullets[i].shape.Start;
                 var shouldBeDestroyed = false;
+                /*
                 foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
                 {
-                    if (Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2 
-                        && !bullets[i].CanPenetrate(vectorPair))
-                    {
-                        shouldBeDestroyed = true;
-                    }
-                }
+                    if (!(Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2)
+                        || bullets[i].CanPenetrate(vectorPair)) continue;
+                    shouldBeDestroyed = true;
+                    break;
+                }*/
 
                 if (shouldBeDestroyed) bullets[i] = null;
             }
