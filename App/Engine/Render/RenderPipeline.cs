@@ -23,6 +23,19 @@ namespace App.Engine.Render
 
             renderMachine.Invalidate();
         }
+        
+        public void Start(
+            Vector playerPosition, Vector cameraPosition, Size cameraSize,
+            List<Sprite> sprites, List<Edge> raytracingEdges)
+        {
+            var visibilityPolygons = 
+                Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
+            RerenderCamera(cameraPosition, cameraSize);
+            renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
+            RenderSprites(sprites, cameraPosition);
+
+            renderMachine.Invalidate();
+        }
 
         public void Load(Level currentLevel)
         {

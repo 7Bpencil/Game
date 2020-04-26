@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using App.Engine.Physics;
@@ -92,6 +93,18 @@ namespace App.Engine.Render
         public void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
             RigidBodyRenderer.Draw(shape, cameraPosition, shapePen, gfxCamera);
+        }
+
+        public void RenderVisibilityPolygon(
+            Vector lightSourcePosition, 
+            List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Vector cameraPosition)
+        {
+            VisibilityPolygonRenderer.Draw(
+                lightSourcePosition,
+                visibilityPolygonPoints,
+                cameraPosition,
+                new HatchBrush(HatchStyle.Cross, Color.Gold, Color.Empty),
+                gfxCamera);
         }
 
         public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)

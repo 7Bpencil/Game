@@ -127,7 +127,7 @@ namespace App.Engine
             clock.Start();
             
             UpdateState();
-            renderPipeline.Start(camera.Position, camera.Size, sprites);
+            renderPipeline.Start(player.Center, camera.Position, camera.Size, sprites, currentLevel.RaytracingEdges);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
