@@ -12,7 +12,7 @@ namespace App.Model
 
         public void Move(Vector delta)
         {
-            Shape.Move(delta);
+            Shape.MoveBy(delta);
         }
 
         public Vector Center => Shape.Center;

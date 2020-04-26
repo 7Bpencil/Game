@@ -32,9 +32,9 @@ namespace App.Engine.PhysicsEngine.Collision
 
         private static void ResolveCollisionStatically(CollisionInfo info, RigidShape first, RigidShape second)
         {
-            if (second.IsStatic) first.Move(info.Normal * info.Depth);
-            else if (first.IsStatic) second.Move(info.Normal * info.Depth);
-            else second.Move(info.Normal * info.Depth);
+            if (second.IsStatic) first.MoveBy(info.Normal * info.Depth);
+            else if (first.IsStatic) second.MoveBy(info.Normal * info.Depth);
+            else second.MoveBy(info.Normal * info.Depth);
         }
 
         private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)

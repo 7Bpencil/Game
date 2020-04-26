@@ -6,7 +6,7 @@
         public abstract bool IsStatic { get; set; }
         public abstract bool CanCollide { get; set; }
         public abstract bool IsCollided { get; set; }
-        public abstract void Move(Vector delta);
+        public abstract void MoveBy(Vector delta);
         public abstract RigidShape Copy();
     }
 }

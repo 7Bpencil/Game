@@ -34,7 +34,7 @@
             this.canCollide = canCollide;
         }
 
-        public override void Move(Vector delta)
+        public override void MoveBy(Vector delta)
         {
             center.X += delta.X;
             center.Y += delta.Y;

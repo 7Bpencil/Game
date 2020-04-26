@@ -30,7 +30,7 @@ namespace App.Engine.PhysicsEngine.RigidBody
             center = minPoint + new Vector(Width, Height) / 2;
         }
 
-        public override void Move(Vector delta)
+        public override void MoveBy(Vector delta)
         {
             throw new System.NotImplementedException();
         }
