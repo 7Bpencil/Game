@@ -82,9 +82,12 @@ namespace App.Model.DataParser
                 var y = int.Parse(shape.Attributes.GetNamedItem("y").Value);
                 var width = int.Parse(shape.Attributes.GetNamedItem("width").Value);
                 var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
-                var center = new Vector(x + width / 2, y + height / 2);
                 
-                staticShapes.Add(new RigidOBB(center, width, height, 0, true, true));
+                staticShapes.Add(new RigidAABB(
+                        new Vector(x, y), 
+                        new Vector(x + width, y + height), 
+                        true, 
+                        true));
             }
 
             return staticShapes;

@@ -47,6 +47,10 @@ namespace App.Engine.PhysicsEngine.Collision
                 return GetCollisionInfo((RigidOBB) first, (RigidCircle) second);
             if (first is RigidCircle && second is RigidOBB)
                 return GetCollisionInfo((RigidOBB) second, (RigidCircle) first);
+            if (first is RigidAABB && second is RigidCircle)
+                return GetCollisionInfo((RigidAABB) first, (RigidCircle) second);
+            if (first is RigidCircle && second is RigidAABB)
+                return GetCollisionInfo((RigidAABB) second, (RigidCircle) first);
             return null;
         }
 
@@ -200,7 +204,7 @@ namespace App.Engine.PhysicsEngine.Collision
             }
         }
         
-        private static CollisionInfo GetCollisionInfo(RigidCircle circle, RigidAABB rectangle)
+        private static CollisionInfo GetCollisionInfo(RigidAABB rectangle, RigidCircle circle)
         {
             var closestPoint = GetClosestPoint(circle.Center, rectangle);
             var distanceVector = closestPoint - circle.Center;

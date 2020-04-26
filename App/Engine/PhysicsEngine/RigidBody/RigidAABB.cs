@@ -27,7 +27,6 @@ namespace App.Engine.PhysicsEngine.RigidBody
 
             Width = maxPoint.X - minPoint.X;
             Height = maxPoint.Y - minPoint.Y;
-            
             center = minPoint + new Vector(Width, Height) / 2;
         }
 
