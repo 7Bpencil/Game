@@ -65,8 +65,8 @@ namespace App.Model.DataParser
                     var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
                     if (nodeContentName == "StaticShapes")
                         staticShapes = ParseStaticShapes(node);
-                    if (nodeContentName == "RaytracingShapes")
-                        raytracingShapes = ParseRaytracingShapes(node);
+                    if (nodeContentName == "RaytracingPolygons")
+                        raytracingShapes = ParseRaytracingPolygons(node);
                 }
             }
 
@@ -93,7 +93,7 @@ namespace App.Model.DataParser
             return staticShapes;
         }
 
-        private static List<Polygon> ParseRaytracingShapes(XmlNode raytracingShapesNode)
+        private static List<Polygon> ParseRaytracingPolygons(XmlNode raytracingShapesNode)
         {
             var polygons = new List<Polygon>();
             var separators = new[] {" ", ","};
