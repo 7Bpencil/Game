@@ -271,6 +271,7 @@ namespace App.Engine
                 if (bullets[i].collisionWithStaticInfo.Count == 0)
                     foreach (var obstacle in currentLevel.Shapes)
                     {
+                        if (obstacle.Center.Equals(player.Center)) continue;
                         var penetrationTime = BulletCollisionSolver.AreCollideWithStatic(bullets[i], obstacle);
                         if (penetrationTime == null) continue;
 
@@ -303,14 +304,14 @@ namespace App.Engine
 
                 var e = bullets[i].shape.End - bullets[i].shape.Start;
                 var shouldBeDestroyed = false;
-                /*
+                
                 foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
                 {
                     if (!(Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2)
                         || bullets[i].CanPenetrate(vectorPair)) continue;
                     shouldBeDestroyed = true;
                     break;
-                }*/
+                }
 
                 if (shouldBeDestroyed) bullets[i] = null;
             }
