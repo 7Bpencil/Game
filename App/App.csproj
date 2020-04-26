@@ -52,6 +52,7 @@
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidOBB.cs" />
         <Compile Include="Engine\PhysicsEngine\RigidBody\RigidShape.cs" />
         <Compile Include="Engine\PhysicsEngine\Vector.cs" />
+        <Compile Include="Engine\Render\Raytracing.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\PolygonRenderer.cs" />
