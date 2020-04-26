@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 using App.Engine.Render.Renderers;
 using App.View;
 

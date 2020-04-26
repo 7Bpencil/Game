@@ -6,12 +6,12 @@ using System.Threading;
 using System.Windows.Forms;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
+using App.Model.Entities.Weapons;
 using App.Model.LevelData;
-using App.Model.Weapons;
 using App.View;
 
 namespace App.Engine
@@ -34,6 +34,7 @@ namespace App.Engine
         private List<Sprite> sprites;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
+        private List<ShootingRangeTarget> targets;
 
         private class KeyStates
         {
@@ -55,6 +56,7 @@ namespace App.Engine
             bullets = new List<Bullet>();
             
             SetLevels();
+            SetTargets();
             var playerStartPosition = currentLevel.PlayerStartPosition;
             SetPlayer(playerStartPosition);
             camera = new Camera(playerStartPosition, player.Radius, screenSize);
@@ -130,6 +132,34 @@ namespace App.Engine
             sprites.Add(cursorSprite);
         }
 
+        private void SetTargets()
+        {
+            targets = new List<ShootingRangeTarget>
+            {
+                new ShootingRangeTarget(
+                    100,
+                    50,
+                    new RigidCircle(new Vector(50, 260), 30, false, true),
+                    new Vector(5, 0),
+                    80,
+                    false),
+                new ShootingRangeTarget(
+                    200,
+                    100,
+                    new RigidCircle(new Vector(450, 580), 30, false, true),
+                    new Vector(-5, 0),
+                    80,
+                    false),
+                new ShootingRangeTarget(
+                    50,
+                    300,
+                    new RigidCircle(new Vector(40, 200), 30, false, true),
+                    new Vector(1, 5),
+                    80,
+                    false)
+            };
+        }
+
         public void GameLoop(object sender, EventArgs args)
         {
             if (!isLevelLoaded)
@@ -172,6 +202,8 @@ namespace App.Engine
                 var firedBullets = player.CurrentWeapon.Fire(player.Center, cursor);
                 if (firedBullets != null) bullets.AddRange(firedBullets);
             }
+            
+            UpdateEntities();
             
             camera.UpdateCamera(player.Center, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
@@ -227,6 +259,71 @@ namespace App.Engine
             if (d > 0) delta.X -= d;
             
             player.MoveBy(delta);
+        }
+
+        private void UpdateEntities()
+        {
+            for (var i = 0; i < bullets.Count; i++)
+            {
+                if (bullets[i] == null) continue;
+                if (bullets[i].collisionWithStaticInfo.Count == 0)
+                    foreach (var obstacle in currentLevel.Shapes)
+                    {
+                        var penetrationTime = BulletCollisionSolver.AreCollideWithStatic(bullets[i], obstacle);
+                        if (penetrationTime == null) continue;
+
+                        var penetrationPlace = new []
+                        {
+                            bullets[i].position + bullets[i].velocity * penetrationTime[0],
+                            bullets[i].position + bullets[i].velocity * penetrationTime[1]
+                        };
+
+                        bullets[i].collisionWithStaticInfo.Add(penetrationPlace);
+                    }
+
+                foreach (var target in targets)
+                {
+                    var c = BulletCollisionSolver.AreCollideWithDynamic(bullets[i], target.collisionShape, target.Velocity);
+                    if (c == null) continue;
+
+                    var a = new List<Vector>();
+                    foreach (var time in c)
+                        a.Add(bullets[i].position + bullets[i].velocity * time);
+
+                    bullets[i].collisionWithDynamicInfo.AddRange(a);
+                    target.TakeHit(bullets[i].damage);
+                    if (target.isDead)
+                    {
+                        target.MoveTo(target.collisionShape.Center + target.Velocity * c[0]);
+                        target.ChangeVelocity(Vector.ZeroVector);
+                    }
+                }
+
+                var e = bullets[i].shape.End - bullets[i].shape.Start;
+                var shouldBeDestroyed = false;
+                foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
+                {
+                    if (Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2 
+                        && !bullets[i].CanPenetrate(vectorPair))
+                    {
+                        shouldBeDestroyed = true;
+                    }
+                }
+
+                if (shouldBeDestroyed) bullets[i] = null;
+            }
+
+            foreach (var b in bullets)
+            {
+                b?.Move();
+            }
+
+            foreach (var t in targets)
+            {
+                t.IncrementTick();
+            }
+            
+            player.IncrementWeaponsTick();
         }
 
         public void OnKeyDown(Keys keyPressed)

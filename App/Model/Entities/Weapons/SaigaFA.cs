@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Media;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidBody;
-using App.Model.Entities;
 
-namespace App.Model.Weapons
+namespace App.Model.Entities.Weapons
 {
-    public class AK303 : Weapon
+    public class SaigaFA : Weapon
     {
         private readonly Random r;
         private readonly SoundPlayer fireSound;
@@ -27,17 +25,17 @@ namespace App.Model.Weapons
         private readonly int firePeriod;
         private int ticksFromLastFire;
 
-        public AK303(int ammo)
+        public SaigaFA(int ammo)
         {
-            name = "AK-303";
-            capacity = 30;
-            firePeriod = 5;
+            name = "Saiga Full-Auto";
+            capacity = 20;
+            firePeriod = 8;
             ticksFromLastFire = 0;
-            bulletWeight = 1f;
+            bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();
             
-            fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_AK303.wav"};
+            fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_SaigaFA.wav"};
             fireSound.Load();
         }
 
@@ -51,22 +49,29 @@ namespace App.Model.Weapons
             var spray = new List<Bullet>();
             
             var direction = (cursor.Position - playerPosition).Normalize();
-            var position = playerPosition + direction * 40;
-            spray.Add(new Bullet(
-                position,
-                direction * 40,
-                bulletWeight,
-                new Edge(playerPosition.Copy(), position),
-                40));
+                
+            const int shotsAmount = 6;
+            for (var i = 0; i < shotsAmount; i++)
+            {
+                var offset = new Vector(r.Next(-3, 3), r.Next(-3, 3)) / 30;
+                var e = direction + offset;
+                var position = playerPosition + e * 40;
+                spray.Add(new Bullet(
+                    position,
+                    e * 35,
+                    bulletWeight,
+                    new Edge(playerPosition.Copy(), position),
+                    10));
+            }
             
             ammo--;
             ticksFromLastFire = 0;
             fireSound.Play();
-            cursor.MoveBy(direction.GetNormal() * r.Next(-30, 30) + new Vector(r.Next(2, 2), r.Next(2, 2)));
+            cursor.MoveBy(new Vector(r.Next(-20, 20), r.Next(-20, 20)));
 
             return spray;
         }
-        
+
         public override void AddAmmo(int amount)
         {
             if (amount > ammo) ammo = amount;

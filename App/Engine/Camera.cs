@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 
 namespace App.Engine
 {

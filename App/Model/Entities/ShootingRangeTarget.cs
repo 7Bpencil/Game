@@ -1,5 +1,6 @@
+using System.Windows.Forms;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 
 namespace App.Model.Entities
 {
@@ -10,17 +11,21 @@ namespace App.Model.Entities
         public bool isDead;
         public RigidCircle collisionShape;
         private int tick;
+        private int ticksForMovement;
         
         private Vector velocity;
         public Vector Velocity => velocity;
+        public Vector Center => collisionShape.Center;
         
-        public ShootingRangeTarget(int health, int armour, RigidCircle collisionShape, Vector velocity, bool isDead)
+        public ShootingRangeTarget(
+            int health, int armour, RigidCircle collisionShape, Vector velocity, int ticksForMovement, bool isDead)
         {
             Health = health;
             Armour = armour;
             this.collisionShape = collisionShape;
             this.velocity = velocity;
             this.isDead = isDead;
+            this.ticksForMovement = ticksForMovement;
         }
         
         public void TakeHit(int damage)
@@ -42,7 +47,7 @@ namespace App.Model.Entities
         public void IncrementTick()
         {
             tick++;
-            if (tick > 80)
+            if (tick > ticksForMovement)
             {
                 tick = 0;
                 velocity = -velocity;

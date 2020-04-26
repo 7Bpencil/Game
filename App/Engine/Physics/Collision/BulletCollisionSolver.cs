@@ -1,12 +1,20 @@
 using System;
-using App.Engine.Physics.RigidBody;
-using App.Model;
+using App.Engine.Physics.RigidShape;
+using App.Model.Entities;
 
 namespace App.Engine.Physics.Collision
 {
     public static class BulletCollisionSolver
     {
-        private static float[] AreCollideWithStatic(Bullet bullet, RigidAABB rectangle)
+        public static float[] AreCollideWithStatic(Bullet bullet, RigidShape.RigidShape staticBody)
+        {
+            if (staticBody is RigidAABB)
+                return AreCollide(bullet, (RigidAABB) staticBody);
+            if (staticBody is RigidCircle)
+                return AreCollide(bullet, (RigidCircle) staticBody);
+            return null;
+        }
+        private static float[] AreCollide(Bullet bullet, RigidAABB rectangle)
         {
             var tMin = 0f;
             var tMax = float.PositiveInfinity;
@@ -35,12 +43,12 @@ namespace App.Engine.Physics.Collision
             return new[] {tMin, tMax};
         }
 
-        private static float[] AreCollideWithStatic(Bullet bullet, RigidCircle circle)
+        private static float[] AreCollide(Bullet bullet, RigidCircle circle)
         {
             return GetPenetrationTimeWithMovingCircle(bullet, circle, Vector.ZeroVector);
         }
 
-        private static float[] AreCollideWithDynamic(Bullet bullet, RigidCircle circle, Vector circleVelocity)
+        public static float[] AreCollideWithDynamic(Bullet bullet, RigidCircle circle, Vector circleVelocity)
         {
             var time = GetPenetrationTimeWithMovingCircle(bullet, circle, circleVelocity);
             if (time == null) return null;

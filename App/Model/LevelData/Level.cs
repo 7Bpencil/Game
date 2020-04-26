@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 
 namespace App.Model.LevelData
 {

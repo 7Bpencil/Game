@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using App.Engine.Physics;
-using App.Model.Entities;
 
-namespace App.Model
+namespace App.Model.Entities
 {
     public abstract class Weapon
     {

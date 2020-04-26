@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using App.Engine.Physics;
 
-namespace App.Model
+namespace App.Model.Entities
 {
     public class Bullet
     {

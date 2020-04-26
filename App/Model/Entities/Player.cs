@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
-using App.Engine.Physics.RigidBody;
+using App.Engine.Physics.RigidShape;
 
 namespace App.Model.Entities
 {
