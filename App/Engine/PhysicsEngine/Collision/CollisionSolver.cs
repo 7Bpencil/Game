@@ -200,5 +200,28 @@ namespace App.Engine.PhysicsEngine.Collision
                 FaceNormal = faceNormal;
             }
         }
+        
+        private static CollisionInfo GetCollisionInfo(RigidCircle circle, RigidAABB rectangle)
+        {
+            var closestPoint = GetClosestPoint(circle.Center, rectangle);
+            var distanceVector = closestPoint - circle.Center;
+            var distance = distanceVector.Length;
+            return distance <= circle.Radius 
+                ? new CollisionInfo(distance, distanceVector.Normalize(), closestPoint) 
+                : null;
+        }
+
+        private static Vector GetClosestPoint(Vector point, RigidAABB rectangle)
+        {
+            var result = Vector.ZeroVector;
+            for (var i = 0; i < 2; i++) {
+                var v = point[i];
+                if (v < rectangle.MinPoint[i]) v = rectangle.MinPoint[i];
+                if (v > rectangle.MaxPoint[i]) v = rectangle.MaxPoint[i];
+                result[i] = v;
+            }
+
+            return result;
+        }
     }
 }
