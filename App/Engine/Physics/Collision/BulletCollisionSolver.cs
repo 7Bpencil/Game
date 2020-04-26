@@ -6,39 +6,36 @@ namespace App.Engine.Physics.Collision
 {
     public static class BulletCollisionSolver
     {
-        private static float[] AreCollide(Bullet bullet, RigidAABB rectangle)
+        private static float[] AreCollideWithStatic(Bullet bullet, RigidAABB rectangle)
         {
             var tMin = 0f;
             var tMax = float.PositiveInfinity;
             for (var i = 0; i < 2; i++)
             {
-                if (Math.Abs(bullet.velocity[i]) < 0.01)
+                if (Math.Abs(bullet.velocity[i]) < 0.01
+                    && (bullet.position[i] < rectangle.MinPoint[i]
+                        || bullet.position[i] > rectangle.MaxPoint[i]))
+                    return null;
+                
+                var ood = 1.0f / bullet.velocity[i];
+                var t1 = (rectangle.MinPoint[i] - bullet.position[i]) * ood;
+                var t2 = (rectangle.MaxPoint[i] - bullet.position[i]) * ood;
+                if (t1 > t2)
                 {
-                    if (bullet.position[i] < rectangle.MinPoint[i] || bullet.position[i] > rectangle.MaxPoint[i])
-                        return null;
+                    var buf = t1;
+                    t1 = t2;
+                    t2 = buf;
                 }
-                else
-                {
-                    var ood = 1.0f / bullet.velocity[i];
-                    var t1 = (rectangle.MinPoint[i] - bullet.position[i]) * ood;
-                    var t2 = (rectangle.MaxPoint[i] - bullet.position[i]) * ood;
-                    if (t1 > t2)
-                    {
-                        var buf = t1;
-                        t1 = t2;
-                        t2 = buf;
-                    }
 
-                    tMin = Math.Max(tMin, t1);
-                    tMax = Math.Min(tMax, t2);
-                    if (tMin > tMax) return null;
-                }
+                tMin = Math.Max(tMin, t1);
+                tMax = Math.Min(tMax, t2);
+                if (tMin > tMax) return null;
             }
 
             return new[] {tMin, tMax};
         }
-        
-        private static float[] AreCollide(Bullet bullet, RigidCircle circle)
+
+        private static float[] AreCollideWithStatic(Bullet bullet, RigidCircle circle)
         {
             var dX = bullet.position.X - circle.Center.X;
             var dY = bullet.position.Y - circle.Center.Y;
@@ -60,7 +57,7 @@ namespace App.Engine.Physics.Collision
             return new[] {t1, t2};
         }
 
-        private static float[] AreCollideDynamically(Bullet bullet, RigidCircle circle, Vector circleVelocity)
+        private static float[] AreCollideWithDynamic(Bullet bullet, RigidCircle circle, Vector circleVelocity)
         {
             var dX = bullet.position.X - circle.Center.X;
             var dY = bullet.position.Y - circle.Center.Y;
@@ -84,8 +81,8 @@ namespace App.Engine.Physics.Collision
 
             var ist1 = t1 > 0;
             var ist2 = t2 > 0 && t2 < 1;
-            
-            if (ist1 && ist2) return new[] {t1, t2,};
+
+            if (ist1 && ist2) return new[] {t1, t2};
             if (ist1) return new[] {t1};
             if (ist2) return new[] {t2};
             return null;
