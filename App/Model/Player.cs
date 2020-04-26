@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using App.Engine;
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
-using ParallelDrawingTest.Weapons;
 
 namespace App.Model
 {

@@ -2,7 +2,7 @@
 using App.Engine.PhysicsEngine;
 using App.Engine.PhysicsEngine.RigidBody;
 
-namespace ParallelDrawingTest.Weapons
+namespace App.Model
 {
     public abstract class Weapon
     {

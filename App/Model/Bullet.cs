@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using App.Engine.PhysicsEngine;
 
-namespace ParallelDrawingTest.Weapons
+namespace App.Model
 {
     public class Bullet
     {

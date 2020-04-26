@@ -10,8 +10,8 @@ using App.Engine.PhysicsEngine.RigidBody;
 using App.Engine.Render;
 using App.Model;
 using App.Model.LevelData;
+using App.Model.Weapons;
 using App.View;
-using ParallelDrawingTest.Weapons;
 
 namespace App.Engine
 {
