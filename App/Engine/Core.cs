@@ -11,6 +11,7 @@ using App.Engine.Render;
 using App.Model;
 using App.Model.LevelData;
 using App.View;
+using ParallelDrawingTest.Weapons;
 
 namespace App.Engine
 {
@@ -86,12 +87,14 @@ namespace App.Engine
                 new Size(64, 64),
                 4);
 
-            player = new Player
+            var weapons = new List<Weapon>
             {
-                Shape = playerShape,
-                Torso = playerTorso,
-                Legs = playerLegs
+                new AK303(30),
+                new Shotgun(8),
+                new SaigaFA(20),
+                new MP6(40)
             };
+            player = new Player(playerShape, playerTorso, playerLegs, weapons);
             
             sprites.Add(player.Legs);
             sprites.Add(player.Torso);
@@ -164,7 +167,7 @@ namespace App.Engine
             if (keyState.D)
                 delta.X += step;
             
-            player.Move(delta);
+            player.MoveBy(delta);
             return delta;
         }
         
@@ -201,7 +204,7 @@ namespace App.Engine
             if (c < 0) delta.X -= c;
             if (d > 0) delta.X -= d;
             
-            player.Move(delta);
+            player.MoveBy(delta);
         }
 
         public void OnKeyDown(Keys keyPressed)
