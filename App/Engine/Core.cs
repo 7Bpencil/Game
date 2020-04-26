@@ -22,6 +22,7 @@ namespace App.Engine
         private RenderPipeline renderPipeline;
         private Stopwatch clock;
         private KeyStates keyState;
+        private MouseState mouseState;
         private Level currentLevel;
         private LevelManager levelManager;
         private Player player;
@@ -39,6 +40,11 @@ namespace App.Engine
             public int pressesOnIAmount;
         }
 
+        private class MouseState
+        {
+            public bool LMB;
+        }
+
         public Core(ViewForm viewForm, Size screenSize, RenderPipeline renderPipeline)
         {
             this.viewForm = viewForm;
@@ -52,6 +58,7 @@ namespace App.Engine
             camera = new Camera(playerStartPosition, player.Radius, screenSize);
             SetCursor(playerStartPosition);
             keyState = new KeyStates();
+            mouseState = new MouseState();
             clock = new Stopwatch();
             
             var musicPlayer = new MusicPlayer();
@@ -263,6 +270,22 @@ namespace App.Engine
                     keyState.I = false;
                     break;
             }
+        }
+        
+        public void OnMouseWheel(int wheelDelta)
+        {
+            if (wheelDelta > 0) player.MoveNextWeapon();
+            else player.MovePreviousWeapon();
+        }
+
+        public void OnMouseDown(MouseButtons buttons)
+        {
+            if (buttons == MouseButtons.Left) mouseState.LMB = true;
+        }
+
+        public void OnMouseUp(MouseButtons buttons)
+        {
+            if (buttons == MouseButtons.Left) mouseState.LMB = false;
         }
     }
 }

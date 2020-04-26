@@ -62,6 +62,21 @@ namespace App.View
         {
             engineCore.OnKeyUp(e.KeyCode);
         }
+        
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            engineCore.OnMouseWheel(e.Delta);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            engineCore.OnMouseDown(e.Button);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            engineCore.OnMouseUp(e.Button);
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
