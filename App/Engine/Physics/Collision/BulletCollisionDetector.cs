@@ -4,7 +4,7 @@ using App.Model.Entities;
 
 namespace App.Engine.Physics.Collision
 {
-    public static class BulletCollisionSolver
+    public static class BulletCollisionDetector
     {
         public static float[] AreCollideWithStatic(Bullet bullet, RigidShape staticBody)
         {

@@ -39,18 +39,21 @@ namespace App.Engine.Physics.Collision
 
         private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
         {
-            if (first is RigidCircle && second is RigidCircle)
-                return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
-            if (first is RigidOBB && second is RigidOBB)
-                return GetCollisionInfo((RigidOBB) first, (RigidOBB) second);
-            if (first is RigidOBB && second is RigidCircle)
-                return GetCollisionInfo((RigidOBB) first, (RigidCircle) second);
-            if (first is RigidCircle && second is RigidOBB)
-                return GetCollisionInfo((RigidOBB) second, (RigidCircle) first);
             if (first is RigidAABB && second is RigidCircle)
                 return GetCollisionInfo((RigidAABB) first, (RigidCircle) second);
             if (first is RigidCircle && second is RigidAABB)
                 return GetCollisionInfo((RigidAABB) second, (RigidCircle) first);
+            
+            if (first is RigidCircle && second is RigidCircle)
+                return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
+            
+            if (first is RigidOBB && second is RigidOBB)
+                return GetCollisionInfo((RigidOBB) first, (RigidOBB) second);
+            
+            if (first is RigidOBB && second is RigidCircle)
+                return GetCollisionInfo((RigidOBB) first, (RigidCircle) second);
+            if (first is RigidCircle && second is RigidOBB)
+                return GetCollisionInfo((RigidOBB) second, (RigidCircle) first);
             return null;
         }
 

@@ -272,7 +272,7 @@ namespace App.Engine
                     foreach (var obstacle in currentLevel.Shapes)
                     {
                         if (obstacle.Center.Equals(player.Center)) continue;
-                        var penetrationTime = BulletCollisionSolver.AreCollideWithStatic(bullets[i], obstacle);
+                        var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullets[i], obstacle);
                         if (penetrationTime == null) continue;
 
                         var penetrationPlace = new []
@@ -286,7 +286,7 @@ namespace App.Engine
 
                 foreach (var target in targets)
                 {
-                    var c = BulletCollisionSolver.AreCollideWithDynamic(bullets[i], target.collisionShape, target.Velocity);
+                    var c = BulletCollisionDetector.AreCollideWithDynamic(bullets[i], target.collisionShape, target.Velocity);
                     if (c == null) continue;
 
                     var a = new List<Vector>();
