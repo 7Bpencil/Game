@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Media;
+using System.Drawing;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -25,6 +25,9 @@ namespace App.Model.Entities.Weapons
         private readonly int firePeriod;
         private int ticksFromLastFire;
 
+        public override Bitmap HUDicon { get; }
+        public override Bitmap CollectableIcon { get; }
+
         public MP6(int ammo)
         {
             name = "MP6";
@@ -34,6 +37,9 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 0.7f;
             this.ammo = ammo;
             r = new Random();
+            
+            HUDicon = new Bitmap(@"Assets\TileMaps\Weapons\MP6_hud.png");
+            CollectableIcon = new Bitmap(@"Assets\TileMaps\Weapons\MP6_icon.png");
             
             //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_MP6.wav"};
             //fireSound.Load();

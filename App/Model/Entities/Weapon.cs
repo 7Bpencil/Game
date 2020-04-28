@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using App.Engine.Physics;
 
 namespace App.Model.Entities
@@ -12,5 +13,7 @@ namespace App.Model.Entities
         public abstract void IncrementTick();
         public abstract float BulletWeight { get; }
         public abstract void AddAmmo(int amount);
+        public abstract Bitmap HUDicon { get;}
+        public abstract Bitmap CollectableIcon { get;}
     }
 }

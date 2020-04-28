@@ -9,7 +9,7 @@ namespace App.Model.Entities
     public class Player
     {
         public RigidCircle Shape;
-        public Vector Center => Shape.Center;
+        public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
         
         public PlayerBodySprite Torso;

@@ -27,13 +27,14 @@ namespace App.Engine.Render
         
         public void Start(
             Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
-            List<Sprite> sprites, List<Bullet> bullets, List<Edge> raytracingEdges)
+            List<Sprite> sprites, List<Bullet> bullets, List<Edge> raytracingEdges, List<Collectable> items)
         {
             var visibilityPolygons = 
                 Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
             renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
+            RenderCollectablesSprites(items, cameraPosition);
             RenderBullets(bullets, cameraPosition);
             RenderDynamicPenetrations(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
@@ -50,11 +51,11 @@ namespace App.Engine.Render
         
         public void RenderDebugInfo(
             Vector cameraPosition, Size cameraSize, List<RigidShape> shapes, List<ShootingRangeTarget> targets,
-            List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Bullet> bullets, 
-            Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser,
-            Size levelSizeInTiles)
+            List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Collectable> items, List<Bullet> bullets,
+            Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser, string[] debugInfo)
         {
             RenderShapes(shapes, cameraPosition);
+            RenderCollectablesShapes(items, cameraPosition);
             RenderRaytracingEdges(raytracingEdges, cameraPosition);
             RenderCollisionInfo(collisionInfo, cameraPosition);
             RenderStaticPenetrations(bullets, cameraPosition);
@@ -63,8 +64,7 @@ namespace App.Engine.Render
             renderMachine.RenderEdgeOnCamera(
                 new Edge(cursorPosition.ConvertFromWorldToCamera(cameraPosition),
                     playerPosition.ConvertFromWorldToCamera(cameraPosition)));
-            renderMachine.PrintMessages(
-                GetDebugInfo(cameraPosition, cameraSize, playerPosition, cursorPosition, levelSizeInTiles));
+            renderMachine.PrintMessages(debugInfo);
             RenderEnemyInfo(targets, cameraPosition);
         }
         
@@ -102,6 +102,24 @@ namespace App.Engine.Render
         {
             foreach (var sprite in sprites)
                 renderMachine.RenderSpriteOnCamera(sprite, cameraPosition);
+        }
+        
+        private void RenderCollectablesSprites(List<Collectable> items, Vector cameraPosition)
+        {
+            foreach (var item in items)
+            {
+                if (item == null) continue;
+                renderMachine.RenderSpriteOnCamera(item.Icon, cameraPosition);
+            }
+        }
+        
+        private void RenderCollectablesShapes(List<Collectable> items, Vector cameraPosition)
+        {
+            foreach (var item in items)
+            {
+                if (item == null) continue;
+                renderMachine.RenderShapeOnCamera(item.CollisionShape, cameraPosition);
+            }
         }
 
         private void RenderShapes(List<RigidShape> shapes, Vector cameraPosition)
@@ -171,20 +189,6 @@ namespace App.Engine.Render
             var sourceX = tileID % columnsInTileMap * tileSize;
             var sourceY = tileID / columnsInTileMap * tileSize;
             return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
-        }
-        
-        private string[] GetDebugInfo(
-            Vector cameraPosition, Size cameraSize, Vector playerPosition, Vector cursorPosition, Size levelSizeInTiles)
-        {
-            return new []
-            {
-                "Camera Size: " + cameraSize.Width + " x " + cameraSize.Height,
-                "Scene Size (in Tiles): " + levelSizeInTiles.Width + " x " + levelSizeInTiles.Height,
-                "(WAxis) Scroll Position: " + cameraPosition,
-                "(WAxis) Player Position: " + playerPosition,
-                "(CAxis) Player Position: " + playerPosition.ConvertFromWorldToCamera(cameraPosition),
-                "(CAxis) Cursor Position: " + cursorPosition
-            };
         }
     }
 }

@@ -37,7 +37,7 @@ namespace App.Engine.Physics.Collision
             else second.MoveBy(info.Normal * info.Depth);
         }
 
-        private static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
+        public static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
         {
             if (first is RigidAABB && second is RigidCircle)
                 return GetCollisionInfo((RigidAABB) first, (RigidCircle) second);

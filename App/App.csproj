@@ -62,7 +62,6 @@
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
-        <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
@@ -37,6 +36,8 @@ namespace App.Engine
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
         private List<Collectable> collectables;
+
+        private string updateTime;
 
         private class KeyStates
         {
@@ -79,8 +80,15 @@ namespace App.Engine
             
             collectables = new List<Collectable>
             {
-                new Collectable(new RigidCircle(new Vector(600, 200), 48, true, true), new AK303(30)),
-                new Collectable(new RigidCircle(new Vector(600, 300), 48, true, true), new SaigaFA(20))
+                new Collectable(
+                    new RigidCircle(new Vector(600, 300), 40, true, true),
+                    new AK303(30)),
+                new Collectable(
+                    new RigidCircle(new Vector(600, 400), 40, true, true),
+                    new SaigaFA(20)),
+                new Collectable(
+                new RigidCircle(new Vector(600, 500), 40, true, true),
+                new MP6(40))
             };
         }
         
@@ -111,10 +119,7 @@ namespace App.Engine
 
             var weapons = new List<Weapon>
             {
-                new AK303(30),
                 new Shotgun(8),
-                new SaigaFA(20),
-                new MP6(40)
             };
             player = new Player(playerShape, playerTorso, playerLegs, weapons);
             
@@ -182,43 +187,51 @@ namespace App.Engine
             clock.Start();
             
             UpdateState();
+            
+            clock.Stop();
+            var lTime = clock.ElapsedMilliseconds;
+            clock.Reset();
+            clock.Start();
+            
             renderPipeline.Start(
-                player.Center, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, bullets, currentLevel.RaytracingEdges);
+                player.Position, camera.Position, camera.Size, player.CurrentWeapon,
+                sprites, bullets, currentLevel.RaytracingEdges, collectables);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
                     camera.Position, camera.Size, currentLevel.Shapes, targets, collisionInfo,
-                    currentLevel.RaytracingEdges, bullets, cursor.Position, player.Center,
-                    camera.GetChaser(), currentLevel.LevelSizeInTiles);
+                    currentLevel.RaytracingEdges, collectables, bullets, cursor.Position, player.Position,
+                    camera.GetChaser(), GetDebugInfo());
             
             clock.Stop();
-            Console.WriteLine(clock.ElapsedMilliseconds);
+            var rTime = clock.ElapsedMilliseconds;
             clock.Reset();
+            updateTime = "logic=" + lTime + "ms render=" + rTime + "ms";
         }
         
         private void UpdateState()
         {
             const int step = 6;
-            var previousPosition = player.Center.Copy();
+            var previousPosition = player.Position.Copy();
             var playerVelocity = UpdatePlayerPosition(step);
             CorrectPlayer();
             
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
-            var positionDelta = player.Center - previousPosition;
+            var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
             if (mouseState.LMB)
             {
-                var firedBullets = player.CurrentWeapon.Fire(player.Center, cursor);
+                var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
                 if (firedBullets != null) bullets.AddRange(firedBullets);
             }
-            
+
+            UpdateCollectables();
             UpdateEntities();
             
-            camera.UpdateCamera(player.Center, playerVelocity, cursor.Position, step);
+            camera.UpdateCamera(player.Position, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
             
             foreach (var sprite in sprites)
@@ -243,7 +256,7 @@ namespace App.Engine
         
         private void UpdatePlayerByMouse()
         {
-            var direction = cursor.Position - player.Center;
+            var direction = cursor.Position - player.Position;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
             player.Torso.Angle = angle;
@@ -264,10 +277,10 @@ namespace App.Engine
             var bottomBorder = currentLevel.LevelSizeInTiles.Height * tileSize;
             const int topBorder = 0;
 
-            var a = player.Center.Y - player.Radius - topBorder;
-            var b = player.Center.Y + player.Radius - bottomBorder;
-            var c = player.Center.X - player.Radius - leftBorder;
-            var d = player.Center.X + player.Radius - rightBorder;
+            var a = player.Position.Y - player.Radius - topBorder;
+            var b = player.Position.Y + player.Radius - bottomBorder;
+            var c = player.Position.X - player.Radius - leftBorder;
+            var d = player.Position.X + player.Radius - rightBorder;
 
             if (a < 0) delta.Y -= a;
             if (b > 0) delta.Y -= b;
@@ -285,7 +298,7 @@ namespace App.Engine
                 if (bullets[i].collisionWithStaticInfo.Count == 0)
                     foreach (var obstacle in currentLevel.Shapes)
                     {
-                        if (obstacle.Center.Equals(player.Center)) continue;
+                        if (obstacle.Center.Equals(player.Position)) continue;
                         var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullets[i], obstacle);
                         if (penetrationTime == null) continue;
 
@@ -341,6 +354,32 @@ namespace App.Engine
             }
             
             player.IncrementWeaponsTick();
+        }
+
+        private void UpdateCollectables()
+        {
+            for (var i = 0; i < collectables.Count; i++)
+            {
+                if (collectables[i] == null) continue;
+                var collision = CollisionSolver.GetCollisionInfo(player.Shape, collectables[i].CollisionShape);
+                if (collision == null) continue;
+                player.AddWeapon(collectables[i].Item);
+                collectables[i] = null;
+            }
+        }
+        
+        private string[] GetDebugInfo()
+        {
+            return new []
+            {
+                updateTime,
+                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
+                "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
+                "(WAxis) Scroll Position: " + camera.Position,
+                "(WAxis) Player Position: " + player.Position,
+                "(CAxis) Player Position: " + player.Position.ConvertFromWorldToCamera(camera.Position),
+                "(CAxis) Cursor Position: " + cursor.Position
+            };
         }
 
         public void OnKeyDown(Keys keyPressed)

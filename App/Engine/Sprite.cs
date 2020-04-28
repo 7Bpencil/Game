@@ -26,7 +26,7 @@ namespace App.Engine
         
         private double angle;
         public double Angle { get => angle; set => angle = value; }
-        
+
         private RectangleF GetBounds()
         {
             return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Media;
+using System.Drawing;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -25,6 +25,9 @@ namespace App.Model.Entities.Weapons
         private readonly int firePeriod;
         private int ticksFromLastFire;
 
+        public override Bitmap HUDicon { get; }
+        public override Bitmap CollectableIcon { get; }
+
         public SaigaFA(int ammo)
         {
             name = "Saiga Full-Auto";
@@ -34,6 +37,9 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();
+            
+            HUDicon = new Bitmap(@"Assets\TileMaps\Weapons\SaigaFA_hud.png");
+            CollectableIcon = new Bitmap(@"Assets\TileMaps\Weapons\SaigaFA_icon.png");
             
             //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_SaigaFA.wav"};
             //fireSound.Load();

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Media;
+using System.Drawing;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -25,6 +25,10 @@ namespace App.Model.Entities.Weapons
         private readonly int firePeriod;
         private int ticksFromLastFire;
 
+        public override Bitmap HUDicon { get; }
+        public override Bitmap CollectableIcon { get; }
+
+
         public AK303(int ammo)
         {
             name = "AK-303";
@@ -34,6 +38,9 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 1f;
             this.ammo = ammo;
             r = new Random();
+            
+            HUDicon = new Bitmap(@"Assets\TileMaps\Weapons\AK303_hud.png");
+            CollectableIcon = new Bitmap(@"Assets\TileMaps\Weapons\AK303_icon.png");
             
             //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_AK303.wav"};
             //fireSound.Load();
