@@ -85,6 +85,7 @@ namespace App.Engine
             (
                 playerShape.Center,
                 bmpPlayer,
+                7,
                 4,
                 7,
                 new Size(64, 64),
@@ -94,6 +95,7 @@ namespace App.Engine
             (
                 playerShape.Center,
                 bmpPlayer,
+                7,
                 0,
                 3,
                 new Size(64, 64),
@@ -123,6 +125,7 @@ namespace App.Engine
             (
                 cursorPosition,
                 bmpCursor,
+                3,
                 0,
                 9,
                 new Size(64, 64),
@@ -209,6 +212,9 @@ namespace App.Engine
             
             camera.UpdateCamera(player.Center, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
+
+            foreach (var sprite in sprites)
+                sprite.IncrementTick();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -305,13 +311,13 @@ namespace App.Engine
                 var e = bullets[i].shape.End - bullets[i].shape.Start;
                 var shouldBeDestroyed = false;
                 
-                foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
-                {
-                    if (!(Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2)
-                        || bullets[i].CanPenetrate(vectorPair)) continue;
-                    shouldBeDestroyed = true;
-                    break;
-                }
+                //foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
+                //{
+                //    if (!(Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2)
+                //        || bullets[i].CanPenetrate(vectorPair)) continue;
+                //    shouldBeDestroyed = true;
+                //    break;
+                //}
 
                 if (shouldBeDestroyed) bullets[i] = null;
             }

@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using App.Engine.Physics;
 
@@ -29,68 +28,52 @@ namespace App.Engine
         }
 
         private Vector previousPosition;
-        private int startFrame;
+        private readonly int startFrame;
         private int currentFrame;
-        private int endFrame;
+        private readonly int endFrame;
+
+        private readonly Rectangle destRectInCamera;
+
+        private readonly Size size;
+        private readonly Bitmap bitmap;
+        private readonly int columns;
         
-        private Rectangle destRectInCamera;
-        private Vector velocity;
-        public Vector Velocity { get => velocity; set => velocity = value; }
-        
-        private Size size;
-        private Bitmap bitmap;
-        private int columns;
-        private int lastTime;
-        private int animationRate;
+        private readonly int framePeriod;
+        private int ticksFromLastFrame;
         
         private double angle;
         public double Angle { get => angle; set => angle = value; }
 
-        public Sprite(Vector center, Bitmap bitmap, int startFrame, int endFrame, Size size, int columns)
+        public Sprite(Vector center, Bitmap bitmap, int framePeriod, int startFrame, int endFrame, Size size, int columns)
         {
             this.center = center;
             topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
-            velocity = Vector.ZeroVector;
-            previousPosition = center;
+            previousPosition = topLeft;
+            angle = 0;
+            
             this.size = size;
             this.bitmap = bitmap;
             this.columns = columns;
-            this.startFrame = startFrame;
-            this.endFrame = endFrame;
-            currentFrame = 0;
-            lastTime = 0;
-            animationRate = 100;
-            angle = 0;
             destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
+            
+            this.startFrame = startFrame;
+            currentFrame = startFrame;
+            this.endFrame = endFrame;
+            
+            this.framePeriod = framePeriod;
+            ticksFromLastFrame = 0;
         }
 
-        //public int CurrentFrame { get  => currentFrame; set => currentFrame = value; }
-        
-        public int AnimationRate
-        {
-            get => 1000 / animationRate;
-            set
-            {
-                if (value == 0) value = 1;
-                animationRate = 1000 / value;
-            }
-        }
-        
+
         /// <summary>
         /// Case when coordinates are in camera axis
         /// </summary>
         /// <param name="graphics"></param>
         public void DrawNextFrame(Graphics graphics)
         {
-            if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
+            if (currentFrame > endFrame) currentFrame = startFrame;
             graphics.DrawImage(bitmap, GetBounds(), GetCurrentFrameTile(), GraphicsUnit.Pixel);
-            var time = Environment.TickCount;
-            if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
-            {
-                lastTime = time;
-                previousPosition = TopLeft;
-                currentFrame++;
-            }
+            UpdateFrame();
         }
 
         /// <summary>
@@ -106,18 +89,12 @@ namespace App.Engine
             if (!centerInCamera.Equals(Vector.ZeroVector))
                 graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
             graphics.RotateTransform((float)-angle);
-            if (currentFrame < startFrame || currentFrame > endFrame) currentFrame = startFrame;
+            if (currentFrame > endFrame) currentFrame = startFrame;
             graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);
            
             graphics.Restore(stateBefore);
             
-            var time = Environment.TickCount;
-            if (time > lastTime + animationRate && !previousPosition.Equals(center)) // That check is need to resolve framerate and animation rendering
-            {
-                lastTime = time;
-                previousPosition = TopLeft;
-                currentFrame++;
-            }
+            UpdateFrame();
         }
 
         public void MoveBy(Vector delta)
@@ -130,6 +107,17 @@ namespace App.Engine
         {
             center = newCenterPosition;
             topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);            
+        }
+        
+        public void IncrementTick() => ticksFromLastFrame++;
+
+        private void UpdateFrame()
+        {
+            if (ticksFromLastFrame > framePeriod)
+            {
+                ticksFromLastFrame = 0;
+                currentFrame++;
+            }
         }
     }
 }
