@@ -71,7 +71,6 @@ namespace App.Engine
         /// <param name="graphics"></param>
         public void DrawNextFrame(Graphics graphics)
         {
-            if (currentFrame > endFrame) currentFrame = startFrame;
             graphics.DrawImage(bitmap, GetBounds(), GetCurrentFrameTile(), GraphicsUnit.Pixel);
             UpdateFrame();
         }
@@ -86,10 +85,8 @@ namespace App.Engine
             var stateBefore = graphics.Save();
             
             var centerInCamera = Center.ConvertFromWorldToCamera(cameraPosition);
-            if (!centerInCamera.Equals(Vector.ZeroVector))
-                graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
+            graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
             graphics.RotateTransform((float)-angle);
-            if (currentFrame > endFrame) currentFrame = startFrame;
             graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);
            
             graphics.Restore(stateBefore);
@@ -118,6 +115,7 @@ namespace App.Engine
                 ticksFromLastFrame = 0;
                 currentFrame++;
             }
+            if (currentFrame > endFrame) currentFrame = startFrame;
         }
     }
 }
