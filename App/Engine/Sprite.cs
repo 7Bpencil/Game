@@ -5,18 +5,34 @@ namespace App.Engine
 {
     public class Sprite
     {
-        private Vector center;
+        protected Vector center;
         public Vector Center => center;
 
-        private Vector topLeft;
+        protected Vector topLeft;
         public Vector TopLeft => topLeft;
 
+        protected readonly int startFrame;
+        protected int currentFrame;
+        protected readonly int endFrame;
+
+        private readonly Rectangle destRectInCamera;
+
+        private readonly Size size;
+        private readonly Bitmap bitmap;
+        private readonly int columns;
+        
+        protected readonly int framePeriod;
+        protected int ticksFromLastFrame;
+        
+        private double angle;
+        public double Angle { get => angle; set => angle = value; }
+        
         private RectangleF GetBounds()
         {
             return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
         }
         
-        private Rectangle GetCurrentFrameTile()
+        protected virtual Rectangle GetCurrentFrameTile()
         {
             return new Rectangle
             {
@@ -27,28 +43,10 @@ namespace App.Engine
             };
         }
 
-        private Vector previousPosition;
-        private readonly int startFrame;
-        private int currentFrame;
-        private readonly int endFrame;
-
-        private readonly Rectangle destRectInCamera;
-
-        private readonly Size size;
-        private readonly Bitmap bitmap;
-        private readonly int columns;
-        
-        private readonly int framePeriod;
-        private int ticksFromLastFrame;
-        
-        private double angle;
-        public double Angle { get => angle; set => angle = value; }
-
         public Sprite(Vector center, Bitmap bitmap, int framePeriod, int startFrame, int endFrame, Size size, int columns)
         {
             this.center = center;
             topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
-            previousPosition = topLeft;
             angle = 0;
             
             this.size = size;
@@ -63,8 +61,7 @@ namespace App.Engine
             this.framePeriod = framePeriod;
             ticksFromLastFrame = 0;
         }
-
-
+        
         /// <summary>
         /// Case when coordinates are in camera axis
         /// </summary>
@@ -72,7 +69,6 @@ namespace App.Engine
         public void DrawNextFrame(Graphics graphics)
         {
             graphics.DrawImage(bitmap, GetBounds(), GetCurrentFrameTile(), GraphicsUnit.Pixel);
-            UpdateFrame();
         }
 
         /// <summary>
@@ -90,8 +86,6 @@ namespace App.Engine
             graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);
            
             graphics.Restore(stateBefore);
-            
-            UpdateFrame();
         }
 
         public void MoveBy(Vector delta)
@@ -105,17 +99,19 @@ namespace App.Engine
             center = newCenterPosition;
             topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);            
         }
-        
-        public void IncrementTick() => ticksFromLastFrame++;
 
-        private void UpdateFrame()
+        /// <summary>
+        /// Default method loops through frames
+        /// </summary>
+        public virtual void UpdateFrame()
         {
+            ticksFromLastFrame++;
             if (ticksFromLastFrame > framePeriod)
             {
                 ticksFromLastFrame = 0;
                 currentFrame++;
+                if (currentFrame > endFrame) currentFrame = startFrame;
             }
-            if (currentFrame > endFrame) currentFrame = startFrame;
         }
     }
 }

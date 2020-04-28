@@ -8,6 +8,7 @@ using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Render;
+using App.Engine.Sprites;
 using App.Model;
 using App.Model.Entities;
 using App.Model.Entities.Weapons;
@@ -81,17 +82,17 @@ namespace App.Engine
             var bmpPlayer = levelManager.GetTileMap("boroda.png");
             var playerShape = new RigidCircle(position, bmpPlayer.Height / 4, false, true);
             
-            var playerLegs = new Sprite
+            var playerLegs = new PlayerBodySprite
             (
                 playerShape.Center,
                 bmpPlayer,
-                7,
-                4,
-                7,
+                2,
+                14,
+                27,
                 new Size(64, 64),
-                4);
+                14);
 
-            var playerTorso = new Sprite
+            var playerTorso = new PlayerBodySprite
             (
                 playerShape.Center,
                 bmpPlayer,
@@ -99,7 +100,7 @@ namespace App.Engine
                 0,
                 3,
                 new Size(64, 64),
-                4);
+                14);
 
             var weapons = new List<Weapon>
             {
@@ -212,9 +213,9 @@ namespace App.Engine
             
             camera.UpdateCamera(player.Center, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
-
+            
             foreach (var sprite in sprites)
-                sprite.IncrementTick();
+                sprite.UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)

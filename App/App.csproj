@@ -61,6 +61,8 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
+        <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
+        <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Player.cs" />
@@ -106,7 +108,7 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\boroda.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\rooms.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
