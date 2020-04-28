@@ -64,6 +64,7 @@
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
+        <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
@@ -118,6 +119,30 @@
       </Content>
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Assets\TileMaps\Weapons\AK303_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\AK303_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\MP6_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\MP6_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\SaigaFA_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\SaigaFA_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\Shotgun_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\Weapons\Shotgun_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\TileSets\rooms.tsx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

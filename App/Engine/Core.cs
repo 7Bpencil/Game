@@ -36,6 +36,7 @@ namespace App.Engine
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
+        private List<Collectable> collectables;
 
         private class KeyStates
         {
@@ -75,6 +76,12 @@ namespace App.Engine
         {
             levelManager = new LevelManager();
             currentLevel = levelManager.CurrentLevel;
+            
+            collectables = new List<Collectable>
+            {
+                new Collectable(new RigidCircle(new Vector(600, 200), 48, true, true), new AK303(30)),
+                new Collectable(new RigidCircle(new Vector(600, 300), 48, true, true), new SaigaFA(20))
+            };
         }
         
         private void SetPlayer(Vector position)
