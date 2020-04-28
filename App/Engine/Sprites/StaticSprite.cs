@@ -5,7 +5,8 @@ namespace App.Engine.Sprites
 {
     public class StaticSprite : Sprite
     {
-        private Rectangle frameTile;
+        private readonly Rectangle frameTile;
+        protected override Rectangle GetCurrentFrameTile() => frameTile;
         
         public StaticSprite(Vector center, Bitmap bitmap, int framePeriod, int startFrame, int endFrame, Size size, int columns) : base(center, bitmap, framePeriod, startFrame, endFrame, size, columns)
         {
@@ -17,12 +18,7 @@ namespace App.Engine.Sprites
                 Height = size.Height
             };
         }
-
-        protected override Rectangle GetCurrentFrameTile()
-        {
-            return frameTile;
-        }
-
+        
         /// <summary>
         /// Does nothing (because it's static, LOL)
         /// </summary>
