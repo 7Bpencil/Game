@@ -65,9 +65,9 @@ namespace App.Engine
             mouseState = new MouseState();
             clock = new Stopwatch();
             
-            var musicPlayer = new MusicPlayer();
-            var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
-            soundEngineThread.Start();
+            //var musicPlayer = new MusicPlayer();
+            //var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
+            //soundEngineThread.Start();
         }
 
         private void SetLevels()

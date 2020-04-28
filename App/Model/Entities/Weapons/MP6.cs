@@ -8,7 +8,7 @@ namespace App.Model.Entities.Weapons
     public class MP6 : Weapon
     {
         private readonly Random r;
-        private readonly SoundPlayer fireSound;
+        //private readonly SoundPlayer fireSound;
 
         private readonly string name;
         public override string Name => name;
@@ -35,8 +35,8 @@ namespace App.Model.Entities.Weapons
             this.ammo = ammo;
             r = new Random();
             
-            fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_MP6.wav"};
-            fireSound.Load();
+            //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_MP6.wav"};
+            //fireSound.Load();
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
@@ -59,7 +59,7 @@ namespace App.Model.Entities.Weapons
             
             ammo--;
             ticksFromLastFire = 0;
-            fireSound.Play();
+            //fireSound.Play();
             cursor.MoveBy(new Vector(r.Next(-10, 10), r.Next(-10, 10)));
 
             return spray;
