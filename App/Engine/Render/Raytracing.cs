@@ -67,18 +67,18 @@ namespace App.Engine.Render
             }
 
             var uniquePoints = points.Distinct(Comparer);
-            return uniquePoints.OrderBy(n => n.angle).ToList();
+            return uniquePoints.OrderBy(n => n.Angle).ToList();
         }
 
-        public class RaytracingPoint
+        public readonly struct RaytracingPoint
         {
-            public readonly float angle;
-            public readonly Vector position;
+            public readonly float Angle;
+            public readonly Vector Position;
 
             public RaytracingPoint(float angle, Vector position)
             {
-                this.angle = angle;
-                this.position = position;
+                Angle = angle;
+                Position = position;
             }
         }
         
@@ -86,13 +86,13 @@ namespace App.Engine.Render
         {
             public bool Equals(RaytracingPoint first, RaytracingPoint second)
             {
-                return Math.Abs(first.position.X - second.position.X) < 0.1f
-                       && Math.Abs(first.position.Y - second.position.Y) < 0.1f;
+                return Math.Abs(first.Position.X - second.Position.X) < 0.1f
+                       && Math.Abs(first.Position.Y - second.Position.Y) < 0.1f;
             }
 
             public int GetHashCode(RaytracingPoint point)
             {
-                return (int) point.angle + point.position.GetHashCode();
+                return (int) point.Angle + point.Position.GetHashCode();
             }
         }
     }
