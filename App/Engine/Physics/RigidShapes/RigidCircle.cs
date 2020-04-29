@@ -2,12 +2,12 @@
 {
     public class RigidCircle : RigidShape
     {
-        private float radius;
+        private readonly float radius;
         public float Radius => radius;
         
         public float Diameter => 2 * radius;
 
-        private Vector center;
+        private readonly Vector center;
         public override Vector Center => center;
         
         private bool isStatic;

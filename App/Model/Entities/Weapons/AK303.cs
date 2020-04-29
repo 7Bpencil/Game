@@ -9,7 +9,6 @@ namespace App.Model.Entities.Weapons
     public class AK303 : Weapon
     {
         private readonly Random r;
-        //private readonly SoundPlayer fireSound;
 
         private readonly string name;
         public override string Name => name;
@@ -46,9 +45,6 @@ namespace App.Model.Entities.Weapons
             TopDownView = new Sprite(
                 Vector.ZeroVector, new Bitmap( @"Assets\TileMaps\Weapons\top_down_view.png"),
                 0, 0, 0, new Size(85, 64), 1);
-            
-            //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_AK303.wav"};
-            //fireSound.Load();
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
@@ -71,7 +67,6 @@ namespace App.Model.Entities.Weapons
             
             ammo--;
             ticksFromLastFire = 0;
-            //fireSound.Play();
             cursor.MoveBy(direction.GetNormal() * r.Next(-30, 30) + new Vector(r.Next(2, 2), r.Next(2, 2)));
 
             return spray;

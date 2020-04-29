@@ -27,20 +27,6 @@ namespace App.Engine
         {
             CorrectCameraDependsOnPlayerPosition(playerPosition, playerVelocity, step);
             CorrectCameraDependsOnCursorPosition(cursorPosition);
-            //RemoveEscapingFromScene(levelSizeInTiles, tileSize);
-        }
-
-        private void RemoveEscapingFromScene(Size levelSizeInTiles, int tileSize)
-        {
-            var rightBorder = levelSizeInTiles.Width * tileSize - Size.Width;
-            const int leftBorder = 0;
-            var bottomBorder = levelSizeInTiles.Height * tileSize - Size.Height;
-            const int topBorder = 0;
-            
-            if (position.Y < topBorder) position.Y = topBorder;
-            if (position.Y > bottomBorder) position.Y = bottomBorder;
-            if (position.X < leftBorder) position.X = leftBorder;
-            if (position.X > rightBorder) position.X = rightBorder;
         }
 
         private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerVelocity, float step)

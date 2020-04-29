@@ -9,7 +9,6 @@ namespace App.Model.Entities.Weapons
     public class MP6 : Weapon
     {
         private readonly Random r;
-        //private readonly SoundPlayer fireSound;
 
         private readonly string name;
         public override string Name => name;
@@ -45,9 +44,6 @@ namespace App.Model.Entities.Weapons
             TopDownView = new Sprite(
                 Vector.ZeroVector, new Bitmap( @"Assets\TileMaps\Weapons\top_down_view.png"),
                 0, 2, 2, new Size(85, 64), 1);
-            
-            //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_MP6.wav"};
-            //fireSound.Load();
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
@@ -70,7 +66,6 @@ namespace App.Model.Entities.Weapons
             
             ammo--;
             ticksFromLastFire = 0;
-            //fireSound.Play();
             cursor.MoveBy(new Vector(r.Next(-10, 10), r.Next(-10, 10)));
 
             return spray;

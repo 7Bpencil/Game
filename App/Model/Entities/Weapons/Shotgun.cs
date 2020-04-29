@@ -9,7 +9,6 @@ namespace App.Model.Entities.Weapons
     public class Shotgun : Weapon
     {
         private readonly Random r;
-        //private readonly SoundPlayer fireSound;
 
         private readonly string name;
         public override string Name => name;
@@ -45,9 +44,6 @@ namespace App.Model.Entities.Weapons
             TopDownView = new Sprite(
                 Vector.ZeroVector, new Bitmap( @"Assets\TileMaps\Weapons\top_down_view.png"),
                 0, 1, 1, new Size(85, 64), 1);
-
-            //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_Shotgun.wav"};
-            //fireSound.Load();
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
@@ -77,7 +73,6 @@ namespace App.Model.Entities.Weapons
 
             ammo--;
             ticksFromLastFire = 0;
-            //fireSound.Play();
             cursor.MoveBy(new Vector(r.Next(-40, 40), r.Next(-40, 40)));
 
             return spray;
