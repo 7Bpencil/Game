@@ -16,6 +16,8 @@ namespace App.Engine.Render
         private Bitmap bmpRenderedTiles;
         private BufferedGraphics cameraBuffer;
         private Graphics gfxCamera;
+        private Bitmap bmpShadowMask;
+        private Graphics gfxShadowMask;
 
         private readonly Font debugFont;
         private readonly Brush debugBrush;
@@ -23,6 +25,9 @@ namespace App.Engine.Render
         private readonly Pen collisionPen;
         private readonly Pen raytracingEdgePen;
         private readonly Brush penetrationBrush;
+
+        private readonly Brush transparentBrush;
+        private Color shadowColor;
 
         public RenderMachine(ViewForm view, Size cameraSize)
         {
@@ -37,6 +42,9 @@ namespace App.Engine.Render
             collisionPen = new Pen(Color.Crimson, 4);
             raytracingEdgePen = new Pen(Color.Salmon, 4);
             penetrationBrush = new SolidBrush(Color.Maroon);
+            
+            transparentBrush = new SolidBrush(Color.FromArgb(0, Color.Empty));
+            shadowColor = Color.FromArgb(128, Color.Black);
         }
         
         private void SetUpRenderer(Size renderSize, Size cameraSize)
@@ -47,6 +55,10 @@ namespace App.Engine.Render
             SetCameraBuffer(cameraSize);
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
+            
+            bmpShadowMask = new Bitmap(cameraSize.Width, cameraSize.Height);
+            gfxShadowMask = Graphics.FromImage(bmpShadowMask);
+            gfxShadowMask.CompositingMode = CompositingMode.SourceCopy;
         }
 
         private void SetCameraBuffer(Size cameraSize)
@@ -59,6 +71,7 @@ namespace App.Engine.Render
 
         public void Invalidate()
         {
+            gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
             view.Invalidate();
         }
 
@@ -101,12 +114,14 @@ namespace App.Engine.Render
             Vector lightSourcePosition, 
             List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Vector cameraPosition)
         {
+            gfxShadowMask.Clear(shadowColor);
+            
             VisibilityPolygonRenderer.Draw(
                 lightSourcePosition,
                 visibilityPolygonPoints,
                 cameraPosition,
-                new HatchBrush(HatchStyle.Cross, Color.Gold, Color.Empty),
-                gfxCamera);
+                transparentBrush,
+                gfxShadowMask);
         }
 
         public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
