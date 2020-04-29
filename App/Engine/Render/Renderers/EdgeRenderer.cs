@@ -7,8 +7,8 @@ namespace App.Engine.Render.Renderers
     {
         public static void Draw(Edge edge, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var edgeStartInCamera = edge.Start.ConvertFromWorldToCamera(cameraPosition);
-            var edgeEndInCamera = edge.End.ConvertFromWorldToCamera(cameraPosition);
+            var edgeStartInCamera = Vector.ConvertFromWorldToCamera(edge.Start, cameraPosition);
+            var edgeEndInCamera = Vector.ConvertFromWorldToCamera(edge.End, cameraPosition);
             g.DrawLine(strokePen,
                 edgeStartInCamera.X, edgeStartInCamera.Y,
                 edgeEndInCamera.X, edgeEndInCamera.Y);

@@ -38,10 +38,6 @@ namespace App.Engine.Physics
             }
         }
 
-        public Vector()
-        {
-        }
-
         public Vector(float x, float y)
         {
             X = x;
@@ -52,7 +48,7 @@ namespace App.Engine.Physics
 
         public override string ToString()
         {
-            return string.Format($"X: {X}, Y: {Y}");
+            return "X=" + X + " Y=" + Y;
         }
 
         private bool Equals(Vector other)
@@ -113,10 +109,10 @@ namespace App.Engine.Physics
         {
             var angle = angleInDegrees / 180 * Math.PI;
             return new Vector
-            {
+            (
                 X = (float) (X * Math.Cos(angle) - Y * Math.Sin(angle)),
                 Y = (float) (X * Math.Sin(angle) + Y * Math.Cos(angle))
-            };
+            );
         }
 
         public Vector Normalize()
@@ -142,14 +138,14 @@ namespace App.Engine.Physics
             return first.X * second.Y - first.Y * second.X;
         }
 
-        public Vector ConvertFromWorldToCamera(Vector cameraPosition)
+        public static Vector ConvertFromWorldToCamera(Vector vector, Vector cameraPosition)
         {
-            return this - cameraPosition;
+            return vector - cameraPosition;
         }
 
-        public Vector ConvertFromCameraToWorld(Vector cameraPosition)
+        public static Vector ConvertFromCameraToWorld(Vector vector, Vector cameraPosition)
         {
-            return this + cameraPosition;
+            return vector + cameraPosition;
         }
 
         public Vector GetNormal()

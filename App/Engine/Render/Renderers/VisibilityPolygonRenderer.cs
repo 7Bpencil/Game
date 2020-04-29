@@ -13,13 +13,13 @@ namespace App.Engine.Render.Renderers
         {
             for (var i = 0; i < visibilityPolygonPoints.Count - 1; i++)
                 FillTriangle(
-                    lightSourcePosition.ConvertFromWorldToCamera(cameraPosition),
-                    visibilityPolygonPoints[i].position.ConvertFromWorldToCamera(cameraPosition),
-                    visibilityPolygonPoints[i + 1].position.ConvertFromWorldToCamera(cameraPosition), brush, g);
+                    Vector.ConvertFromWorldToCamera(lightSourcePosition, cameraPosition),
+                    Vector.ConvertFromWorldToCamera(visibilityPolygonPoints[i].position, cameraPosition),
+                    Vector.ConvertFromWorldToCamera(visibilityPolygonPoints[i + 1].position, cameraPosition), brush, g);
             FillTriangle(
-                lightSourcePosition.ConvertFromWorldToCamera(cameraPosition),
-                visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].position.ConvertFromWorldToCamera(cameraPosition),
-                visibilityPolygonPoints[0].position.ConvertFromWorldToCamera(cameraPosition), brush, g);
+                Vector.ConvertFromWorldToCamera(lightSourcePosition, cameraPosition),
+                Vector.ConvertFromWorldToCamera(visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].position, cameraPosition),
+                Vector.ConvertFromWorldToCamera(visibilityPolygonPoints[0].position, cameraPosition), brush, g);
         }
         
         private static void FillTriangle(Vector a, Vector b, Vector c, Brush brush, Graphics g)

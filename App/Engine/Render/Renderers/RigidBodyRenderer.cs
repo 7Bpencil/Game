@@ -41,7 +41,7 @@ namespace App.Engine.Render.Renderers
         
         private static void DrawCircle(RigidCircle shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var inCameraPosition = shape.Center.ConvertFromWorldToCamera(cameraPosition);
+            var inCameraPosition = Vector.ConvertFromWorldToCamera(shape.Center, cameraPosition);
             g.DrawEllipse(strokePen,
                 inCameraPosition.X - shape.Radius, inCameraPosition.Y - shape.Radius,
                 shape.Diameter, shape.Diameter);
@@ -56,7 +56,7 @@ namespace App.Engine.Render.Renderers
         
         private static void DrawOBB(RigidOBB shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var inCameraPosition = shape.Center.ConvertFromWorldToCamera(cameraPosition);
+            var inCameraPosition = Vector.ConvertFromWorldToCamera(shape.Center, cameraPosition);
             var stateBefore = g.Save();
             if (!shape.Center.Equals(Vector.ZeroVector))
                 g.TranslateTransform(inCameraPosition.X, inCameraPosition.Y);
@@ -79,7 +79,7 @@ namespace App.Engine.Render.Renderers
         
         private static void DrawAABB(RigidAABB shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var inCameraPosition = shape.MinPoint.ConvertFromWorldToCamera(cameraPosition);
+            var inCameraPosition = Vector.ConvertFromWorldToCamera(shape.MinPoint, cameraPosition);
             g.DrawRectangle(strokePen, inCameraPosition.X, inCameraPosition.Y, shape.Width, shape.Height);
             
         }

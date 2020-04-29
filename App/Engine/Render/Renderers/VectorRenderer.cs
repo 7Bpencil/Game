@@ -12,7 +12,7 @@ namespace App.Engine.Render.Renderers
         
         public static void Fill(Vector vector, Vector cameraPosition, Brush brush, Graphics g)
         {
-            var vectorPositionInCamera = vector.ConvertFromWorldToCamera(cameraPosition);
+            var vectorPositionInCamera = Vector.ConvertFromWorldToCamera(vector, cameraPosition);
             g.FillEllipse(brush, vectorPositionInCamera.X - 3, vectorPositionInCamera.Y - 3, 6, 6);
         }
     }

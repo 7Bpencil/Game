@@ -80,7 +80,7 @@ namespace App.Engine
         {
             var stateBefore = graphics.Save();
             
-            var centerInCamera = Center.ConvertFromWorldToCamera(cameraPosition);
+            var centerInCamera = Vector.ConvertFromWorldToCamera(Center, cameraPosition);
             graphics.TranslateTransform(centerInCamera.X, centerInCamera.Y);
             graphics.RotateTransform((float)-angle);
             graphics.DrawImage(bitmap, destRectInCamera, GetCurrentFrameTile(), GraphicsUnit.Pixel);

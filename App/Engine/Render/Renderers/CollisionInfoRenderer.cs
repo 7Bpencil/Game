@@ -8,8 +8,8 @@ namespace App.Engine.Render.Renderers
     {
         public static void Draw(CollisionInfo collision, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var collisionStartInCamera = collision.Start.ConvertFromWorldToCamera(cameraPosition);
-            var collisionEndInCamera = collision.End.ConvertFromWorldToCamera(cameraPosition);
+            var collisionStartInCamera = Vector.ConvertFromWorldToCamera(collision.Start, cameraPosition);
+            var collisionEndInCamera = Vector.ConvertFromWorldToCamera(collision.End, cameraPosition);
             g.DrawEllipse(strokePen, 
                 collisionEndInCamera.X - strokePen.Width, collisionEndInCamera.Y - strokePen.Width, 
                 2 * strokePen.Width, 2 * strokePen.Width);

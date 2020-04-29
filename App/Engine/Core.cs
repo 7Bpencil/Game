@@ -377,7 +377,7 @@ namespace App.Engine
                 "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
                 "(WAxis) Scroll Position: " + camera.Position,
                 "(WAxis) Player Position: " + player.Position,
-                "(CAxis) Player Position: " + player.Position.ConvertFromWorldToCamera(camera.Position),
+                "(CAxis) Player Position: " + Vector.ConvertFromWorldToCamera(player.Position, camera.Position),
                 "(CAxis) Cursor Position: " + cursor.Position
             };
         }

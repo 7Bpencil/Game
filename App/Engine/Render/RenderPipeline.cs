@@ -62,8 +62,8 @@ namespace App.Engine.Render
             renderMachine.RenderDebugCross(cameraSize);
             renderMachine.RenderShapeOnCamera(cameraChaser, cameraPosition);
             renderMachine.RenderEdgeOnCamera(
-                new Edge(cursorPosition.ConvertFromWorldToCamera(cameraPosition),
-                    playerPosition.ConvertFromWorldToCamera(cameraPosition)));
+                new Edge(Vector.ConvertFromWorldToCamera(cursorPosition, cameraPosition),
+                    Vector.ConvertFromWorldToCamera(playerPosition, cameraPosition)));
             renderMachine.PrintMessages(debugInfo);
             RenderEnemyInfo(targets, cameraPosition);
         }
@@ -179,7 +179,7 @@ namespace App.Engine.Render
                 var position = new Vector(
                     t.collisionShape.Center.X - t.collisionShape.Radius / 2,
                     t.collisionShape.Center.Y - t.collisionShape.Radius / 2);
-                var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
+                var positionInCamera = Vector.ConvertFromWorldToCamera(position, cameraPosition);
                 renderMachine.PrintString(t.Health + "\n" + t.Armour, positionInCamera);    
             }
         }
