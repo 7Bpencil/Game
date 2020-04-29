@@ -1,6 +1,5 @@
 using App.Engine;
 using App.Engine.Physics.RigidShapes;
-using App.Engine.Sprites;
 
 namespace App.Model.Entities
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using App.Engine;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -27,6 +28,7 @@ namespace App.Model.Entities.Weapons
 
         public override Bitmap HUDicon { get; }
         public override Bitmap CollectableIcon { get; }
+        public override Sprite TopDownView { get; }
 
         public Shotgun(int ammo)
         {
@@ -40,7 +42,10 @@ namespace App.Model.Entities.Weapons
             
             HUDicon = new Bitmap(@"Assets\TileMaps\Weapons\Shotgun_hud.png");
             CollectableIcon = new Bitmap(@"Assets\TileMaps\Weapons\Shotgun_icon.png");
-            
+            TopDownView = new Sprite(
+                Vector.ZeroVector, new Bitmap( @"Assets\TileMaps\Weapons\top_down_view.png"),
+                0, 1, 1, new Size(85, 64), 1);
+
             //fireSound = new SoundPlayer {SoundLocation = @"Assets\Sounds\GunSounds\fire_Shotgun.wav"};
             //fireSound.Load();
         }

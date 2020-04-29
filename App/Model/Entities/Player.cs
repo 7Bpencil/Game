@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
-using App.Engine.Sprites;
 
 namespace App.Model.Entities
 {
@@ -12,20 +12,23 @@ namespace App.Model.Entities
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
         
-        public PlayerBodySprite Torso;
-        public PlayerBodySprite Legs;
+        public Sprite Torso;
+        public Sprite Legs;
 
         private List<Weapon> weapons;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
         
-        public Player(RigidCircle shape, PlayerBodySprite torso, PlayerBodySprite legs, List<Weapon> startWeapons)
+        public Player(RigidCircle shape, Sprite torso, Sprite legs, List<Weapon> startWeapons)
         {
             Shape = shape;
             Torso = torso;
             Legs = legs;
             weapons = startWeapons;
             currentWeaponIndex = 0;
+            
+            Torso = CurrentWeapon.TopDownView;
+            Torso.MoveTo(Position);
         }
 
         public void MoveBy(Vector delta)
@@ -52,11 +55,13 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
+            Torso.CopyAnotherSprite(CurrentWeapon.TopDownView);
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
+            Torso.CopyAnotherSprite(CurrentWeapon.TopDownView);
         }
 
         public void IncrementWeaponsTick()

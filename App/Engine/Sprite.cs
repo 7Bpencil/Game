@@ -11,17 +11,17 @@ namespace App.Engine
         protected Vector topLeft;
         public Vector TopLeft => topLeft;
 
-        protected readonly int startFrame;
+        protected int startFrame;
         protected int currentFrame;
-        protected readonly int endFrame;
+        protected int endFrame;
 
-        private readonly Rectangle destRectInCamera;
+        private Rectangle destRectInCamera;
 
-        private readonly Size size;
-        private readonly Bitmap bitmap;
-        private readonly int columns;
+        private Size size;
+        private Bitmap bitmap;
+        private int columns;
         
-        protected readonly int framePeriod;
+        protected int framePeriod;
         protected int ticksFromLastFrame;
         
         private double angle;
@@ -112,6 +112,20 @@ namespace App.Engine
                 currentFrame++;
                 if (currentFrame > endFrame) currentFrame = startFrame;
             }
+        }
+
+        public void CopyAnotherSprite(Sprite anotherSprite)
+        {
+            bitmap = anotherSprite.bitmap;
+            size = anotherSprite.size;
+            columns = anotherSprite.columns;
+            destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
+           
+            framePeriod = anotherSprite.framePeriod;
+            startFrame = anotherSprite.startFrame;
+            currentFrame = anotherSprite.currentFrame;
+            endFrame = anotherSprite.endFrame;
+            ticksFromLastFrame = 0;
         }
     }
 }

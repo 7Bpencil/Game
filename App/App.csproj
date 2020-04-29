@@ -142,6 +142,9 @@
       <Content Include="Assets\TileMaps\Weapons\Shotgun_icon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="Assets\TileMaps\Weapons\top_down_view.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\TileSets\rooms.tsx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

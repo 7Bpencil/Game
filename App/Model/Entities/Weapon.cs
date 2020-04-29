@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using App.Engine;
 using App.Engine.Physics;
 
 namespace App.Model.Entities
@@ -15,5 +16,6 @@ namespace App.Model.Entities
         public abstract void AddAmmo(int amount);
         public abstract Bitmap HUDicon { get;}
         public abstract Bitmap CollectableIcon { get;}
+        public abstract Sprite TopDownView { get;}
     }
 }
