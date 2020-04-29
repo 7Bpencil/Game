@@ -11,7 +11,7 @@ namespace App.Engine.Render
         
         public static List<RaytracingPoint> CalculateVisibilityPolygon(List<Edge> edges, Vector lightSourcePosition, float visibilityRadius)
         {
-            var points = new List<RaytracingPoint>();
+            var points = new List<RaytracingPoint> {Capacity = 200};
             foreach (var edge in edges)
             {
                 for (var i = 0; i < 2; i++)
