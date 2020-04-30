@@ -60,6 +60,11 @@ namespace App.Engine
             this.viewForm = viewForm;
             this.renderPipeline = renderPipeline;
             
+            AKfactory = AbstractWeaponFactory.CreateAK303factory();
+            ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
+            SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
+            MP6factory = AbstractWeaponFactory.CreateMP6factory();
+            
             sprites = new List<Sprite>();
             bullets = new List<Bullet>();
             
@@ -72,11 +77,6 @@ namespace App.Engine
             keyState = new KeyStates();
             mouseState = new MouseState();
             clock = new Stopwatch();
-
-            AKfactory = AbstractWeaponFactory.CreateAK303factory();
-            ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
-            SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
-            MP6factory = AbstractWeaponFactory.CreateMP6factory();
         }
 
         private void SetLevels()
