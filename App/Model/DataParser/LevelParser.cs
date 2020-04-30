@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Xml;
 using App.Engine.Physics;
@@ -35,6 +36,8 @@ namespace App.Model.DataParser
             var raytracingEdges = new List<Edge>();
             string source = null;
             Vector playerStartPosition = null;
+            Bitmap playerClothesTileMap = null;
+            Bitmap playerWeaponsTileMap = null;
 
             foreach (XmlNode node in root)
             {
@@ -42,24 +45,33 @@ namespace App.Model.DataParser
                 {
                     foreach (XmlNode property in node.ChildNodes)
                     {
-                        if (property.Attributes.GetNamedItem("name").Value == "player position")
+                        foreach (XmlAttribute attribute in property.Attributes)
                         {
-                            var vector = property.Attributes.GetNamedItem("value").Value.Split(',');
-                            playerStartPosition = new Vector(int.Parse(vector[0]), int.Parse(vector[1]));                            
+                            switch (attribute.Name)
+                            {
+                                case "PlayerClothesTileMap":
+                                    playerClothesTileMap = new Bitmap(attribute.Value);
+                                    break;
+                                case "PlayerWeaponsTileMap":
+                                    playerWeaponsTileMap = new Bitmap(attribute.Value);
+                                    break;
+                                case "PlayerPosition":
+                                {
+                                    var vector = attribute.Value.Split(',');
+                                    playerStartPosition = new Vector(int.Parse(vector[0]), int.Parse(vector[1]));
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
                 
                 if (node.Name == "tileset")
-                {
                     source = node.Attributes.GetNamedItem("source").Value;
-                }
 
                 if (node.Name == "layer")
-                {
                     layers.Add(ParseLayer(node, separators));
-                }
-
+                
                 if (node.Name == "objectgroup")
                 {
                     var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
@@ -70,7 +82,9 @@ namespace App.Model.DataParser
                 }
             }
 
-            return new Level(layers, staticShapes, raytracingEdges, tileSets[source], playerStartPosition);
+            return new Level(
+                layers, staticShapes, raytracingEdges, tileSets[source],
+                playerStartPosition, playerClothesTileMap, playerWeaponsTileMap);
         }
 
         private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)

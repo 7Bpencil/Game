@@ -8,15 +8,15 @@ namespace App.Engine.Sprites
         private Vector previousCenterPosition;
         
         public PlayerBodySprite(
-            Vector center, Bitmap bitmap, int framePeriod, int startFrame,
+            Vector center, Bitmap bitmap, float angle, int framePeriod, int startFrame,
             int endFrame, Size size, int columns)
-            : base(center, bitmap, framePeriod, startFrame, endFrame, size, columns)
+            : base(center, bitmap, angle, framePeriod, startFrame, endFrame, size, columns)
         {
             previousCenterPosition = center.Copy();
         }
 
         /// <summary>
-        /// This method will reset animation if player doesn't move
+        /// This method that will reset animation if player doesn't move
         /// </summary>
         public override void UpdateFrame()
         {

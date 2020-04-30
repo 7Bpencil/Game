@@ -40,6 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Engine\BloodSystem.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
@@ -59,7 +60,10 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
+        <Compile Include="Engine\SpriteFactory.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
+        <Compile Include="Engine\Sprites\StaticSprite.cs" />
+        <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
@@ -70,6 +74,7 @@
         <Compile Include="Model\Entities\Weapons\MP6.cs" />
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
+        <Compile Include="Model\Entities\Weapons\WeaponFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
@@ -105,8 +110,50 @@
       <Content Include="Assets\Sounds\GunSounds\fire_Shotgun.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="Assets\Sprites\BLOOD\blood_splash1.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\BLOOD\blood_splash2.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\BLOOD\blood_splash3.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\AK303_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\AK303_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\MP6_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\MP6_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\SaigaFA_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\SaigaFA_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\Shotgun_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\Shotgun_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\top_down_view_boroda.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\top_down_view_pinkHair.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\pink_Hair.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\rooms.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -117,33 +164,6 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include="Assets\TileMaps\shooting_range_target.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\AK303_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\AK303_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\MP6_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\MP6_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\SaigaFA_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\SaigaFA_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\Shotgun_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\Shotgun_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\Weapons\top_down_view.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileSets\rooms.tsx">

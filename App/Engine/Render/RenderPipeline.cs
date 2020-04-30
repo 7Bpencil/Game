@@ -17,22 +17,14 @@ namespace App.Engine.Render
             this.renderMachine = renderMachine;
         }
 
-        public void Start(Vector cameraPosition, Size cameraSize, List<Sprite> sprites)
-        {
-            RerenderCamera(cameraPosition, cameraSize);
-            RenderSprites(sprites, cameraPosition);
-
-            renderMachine.Invalidate();
-        }
-        
         public void Start(
             Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
             List<Sprite> sprites, List<Bullet> bullets, List<Edge> raytracingEdges, List<Collectable> items)
         {
-            var visibilityPolygons = 
-                Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
+            //var visibilityPolygons = 
+            //    Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
-            renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
+            //renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
             RenderCollectablesSprites(items, cameraPosition);
             RenderBullets(bullets, cameraPosition);
@@ -101,7 +93,7 @@ namespace App.Engine.Render
         private void RenderSprites(List<Sprite> sprites, Vector cameraPosition)
         {
             foreach (var sprite in sprites)
-                renderMachine.RenderSpriteOnCamera(sprite, cameraPosition);
+                if (sprite != null) renderMachine.RenderSpriteOnCamera(sprite, cameraPosition);
         }
         
         private void RenderCollectablesSprites(List<Collectable> items, Vector cameraPosition)

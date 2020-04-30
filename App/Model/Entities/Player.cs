@@ -26,9 +26,6 @@ namespace App.Model.Entities
             Legs = legs;
             weapons = startWeapons;
             currentWeaponIndex = 0;
-            
-            Torso = CurrentWeapon.TopDownView;
-            Torso.MoveTo(Position);
         }
 
         public void MoveBy(Vector delta)
@@ -55,13 +52,13 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            Torso.CopyAnotherSprite(CurrentWeapon.TopDownView);
+            Torso.ShouldBeDeleted = true;
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
-            Torso.CopyAnotherSprite(CurrentWeapon.TopDownView);
+            Torso.ShouldBeDeleted = true;
         }
 
         public void IncrementWeaponsTick()

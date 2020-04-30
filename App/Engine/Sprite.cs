@@ -27,6 +27,8 @@ namespace App.Engine
         private double angle;
         public double Angle { get => angle; set => angle = value; }
 
+        public bool ShouldBeDeleted;
+
         private RectangleF GetBounds()
         {
             return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
@@ -43,11 +45,11 @@ namespace App.Engine
             };
         }
 
-        public Sprite(Vector center, Bitmap bitmap, int framePeriod, int startFrame, int endFrame, Size size, int columns)
+        public Sprite(Vector center, Bitmap bitmap, float angle, int framePeriod, int startFrame, int endFrame, Size size, int columns)
         {
             this.center = center;
             topLeft = new Vector(center.X - size.Width / 2, center.Y - size.Height / 2);
-            angle = 0;
+            this.angle = angle;
             
             this.size = size;
             this.bitmap = bitmap;
@@ -60,6 +62,7 @@ namespace App.Engine
             
             this.framePeriod = framePeriod;
             ticksFromLastFrame = 0;
+            ShouldBeDeleted = false;
         }
         
         /// <summary>
@@ -101,7 +104,7 @@ namespace App.Engine
         }
 
         /// <summary>
-        /// Default method loops through frames
+        /// Default method that loops through frames
         /// </summary>
         public virtual void UpdateFrame()
         {
@@ -112,20 +115,6 @@ namespace App.Engine
                 currentFrame++;
                 if (currentFrame > endFrame) currentFrame = startFrame;
             }
-        }
-
-        public void CopyAnotherSprite(Sprite anotherSprite)
-        {
-            bitmap = anotherSprite.bitmap;
-            size = anotherSprite.size;
-            columns = anotherSprite.columns;
-            destRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
-           
-            framePeriod = anotherSprite.framePeriod;
-            startFrame = anotherSprite.startFrame;
-            currentFrame = anotherSprite.currentFrame;
-            endFrame = anotherSprite.endFrame;
-            ticksFromLastFrame = 0;
         }
     }
 }

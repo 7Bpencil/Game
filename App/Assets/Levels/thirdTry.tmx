@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="45" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="410">
  <properties>
-  <property name="player position" value="608, 175"/>
+  <property PlayerClothesTileMap="Assets\TileMaps\pink_Hair.png"/>
+  <property PlayerWeaponsTileMap="Assets\Sprites\Weapons\top_down_view_pinkHair.png"/>
+  <property PlayerPosition="608, 175"/>
  </properties>
  <tileset firstgid="1" source="rooms.tsx"/>
  <layer id="1" name="floor" width="45" height="40" locked="1">

@@ -7,14 +7,17 @@ namespace App.Model.LevelData
 {
     public class Level
     {
-        public Size LevelSizeInTiles;
-        public Vector PlayerStartPosition;
-        public TileSet TileSet;
-        public List<Layer> Layers;
-        public List<RigidShape> Shapes;
-        public List<Edge> RaytracingEdges;
+        public readonly Size LevelSizeInTiles;
+        public readonly Vector PlayerStartPosition;
+        public readonly TileSet TileSet;
+        public readonly List<Layer> Layers;
+        public readonly List<RigidShape> Shapes;
+        public readonly List<Edge> RaytracingEdges;
+        public readonly Bitmap PlayerClothesTileMap;
+        public readonly Bitmap PlayerWeaponsTileMap;
 
-        public Level(List<Layer> layers, List<RigidShape> shapes, List<Edge> raytracingEdges, TileSet tileSet, Vector playerStartPosition)
+        public Level(List<Layer> layers, List<RigidShape> shapes, List<Edge> raytracingEdges,
+            TileSet tileSet, Vector playerStartPosition, Bitmap playerClothesTileMap, Bitmap playerWeaponsTileMap)
         {
             Layers = layers;
             TileSet = tileSet;
@@ -22,6 +25,8 @@ namespace App.Model.LevelData
             RaytracingEdges = raytracingEdges;
             PlayerStartPosition = playerStartPosition;
             LevelSizeInTiles = new Size(layers[0].WidthInTiles, layers[0].HeightInTiles);
+            PlayerClothesTileMap = playerClothesTileMap;
+            PlayerWeaponsTileMap = playerWeaponsTileMap;
         }
     }
 }

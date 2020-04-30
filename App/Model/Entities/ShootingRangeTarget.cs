@@ -2,6 +2,7 @@ using System.Drawing;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
+using App.Engine.Sprites;
 
 namespace App.Model.Entities
 {
@@ -28,7 +29,10 @@ namespace App.Model.Entities
             this.velocity = velocity;
             this.isDead = isDead;
             this.ticksForMovement = ticksForMovement;
-            sprite = new Sprite(collisionShape.Center, new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, 0, 0, new Size(64, 64), 1);
+            sprite = new StaticSprite(
+                collisionShape.Center,
+                new Bitmap(@"Assets\TileMaps\shooting_range_target.png"),
+                0, 0, new Size(64, 64), 1);
         }
         
         public void TakeHit(int damage)

@@ -37,6 +37,11 @@ namespace App.Engine
         private List<ShootingRangeTarget> targets;
         private List<Collectable> collectables;
 
+        private readonly WeaponFactory<AK303> AKfactory;
+        private readonly WeaponFactory<Shotgun> ShotgunFactory;
+        private readonly WeaponFactory<SaigaFA> SaigaFAfactory;
+        private readonly WeaponFactory<MP6> MP6factory;
+
         private string updateTime;
 
         private class KeyStates
@@ -67,10 +72,11 @@ namespace App.Engine
             keyState = new KeyStates();
             mouseState = new MouseState();
             clock = new Stopwatch();
-            
-            //var musicPlayer = new MusicPlayer();
-            //var soundEngineThread = new Thread(() => musicPlayer.PlayPlaylist());
-            //soundEngineThread.Start();
+
+            AKfactory = AbstractWeaponFactory.CreateAK303factory();
+            ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
+            SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
+            MP6factory = AbstractWeaponFactory.CreateMP6factory();
         }
 
         private void SetLevels()
@@ -80,27 +86,21 @@ namespace App.Engine
             
             collectables = new List<Collectable>
             {
-                new Collectable(
-                    new RigidCircle(new Vector(600, 300), 40, true, true),
-                    new AK303(30)),
-                new Collectable(
-                    new RigidCircle(new Vector(600, 400), 40, true, true),
-                    new SaigaFA(20)),
-                new Collectable(
-                new RigidCircle(new Vector(600, 500), 40, true, true),
-                new MP6(40))
+                AKfactory.GetCollectable(new Vector(600, 400), 45, 20),
+                SaigaFAfactory.GetCollectable(new Vector(600, 500), 0, 8)
             };
         }
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = levelManager.GetTileMap("boroda.png");
+            var bmpPlayer = currentLevel.PlayerClothesTileMap;
             var playerShape = new RigidCircle(position, bmpPlayer.Height / 4, false, true);
             
             var playerLegs = new PlayerBodySprite
             (
                 playerShape.Center,
                 bmpPlayer,
+                0,
                 2,
                 14,
                 27,
@@ -111,6 +111,7 @@ namespace App.Engine
             (
                 playerShape.Center,
                 bmpPlayer,
+                0,
                 7,
                 0,
                 3,
@@ -119,7 +120,8 @@ namespace App.Engine
 
             var weapons = new List<Weapon>
             {
-                new Shotgun(8),
+                ShotgunFactory.GetNewGun(8),
+                MP6factory.GetNewGun(40)
             };
             player = new Player(playerShape, playerTorso, playerLegs, weapons);
             
@@ -138,6 +140,7 @@ namespace App.Engine
             (
                 cursorPosition,
                 bmpCursor,
+                0,
                 3,
                 0,
                 9,
@@ -247,9 +250,13 @@ namespace App.Engine
             
             camera.UpdateCamera(player.Position, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
-            
-            foreach (var sprite in sprites)
-                sprite.UpdateFrame();
+
+            for (var i = 0; i < sprites.Count; i++)
+            {
+                if (sprites[i] == null) continue;
+                sprites[i].UpdateFrame();
+                if (sprites[i].ShouldBeDeleted) sprites[i] = null;
+            }
         }
         
         private Vector UpdatePlayerPosition(int step)
