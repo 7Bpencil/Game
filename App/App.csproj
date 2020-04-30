@@ -60,13 +60,13 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
-        <Compile Include="Engine\SpriteFactory.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
+        <Compile Include="Model\Entities\EntityCreator.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />

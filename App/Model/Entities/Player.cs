@@ -12,20 +12,25 @@ namespace App.Model.Entities
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
         
-        public SpriteContainer TorsoContainer;
-        public SpriteContainer LegsContainer;
+        public readonly SpriteContainer TorsoContainer;
+        public readonly SpriteContainer LegsContainer;
+        private readonly Dictionary<string, Sprite> weaponSprites;
 
         private List<Weapon> weapons;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
         
-        public Player(RigidCircle shape, Sprite torso, Sprite legs, List<Weapon> startWeapons)
+        
+        public Player(RigidCircle shape, Sprite legs, List<Weapon> startWeapons,
+            Dictionary<string, Sprite> weaponSprites)
         {
-            Shape = shape;
-            TorsoContainer = new SpriteContainer(torso);
-            LegsContainer = new SpriteContainer(legs);
+            this.weaponSprites = weaponSprites;
             weapons = startWeapons;
             currentWeaponIndex = 0;
+            
+            Shape = shape;
+            LegsContainer = new SpriteContainer(legs);
+            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.Name]);
         }
 
         public void MoveBy(Vector delta)
@@ -52,19 +57,27 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            
+            CorrectTorso();
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
-            
+            CorrectTorso();
         }
 
         public void IncrementWeaponsTick()
         {
             foreach (var weapon in weapons)
                 weapon.IncrementTick();
+        }
+
+        private void CorrectTorso()
+        {
+            var currentAngle = TorsoContainer.Content.Angle;
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
+            TorsoContainer.Content.Angle = currentAngle;
+            TorsoContainer.Content.MoveTo(Shape.Center);
         }
     }
 }

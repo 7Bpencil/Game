@@ -96,41 +96,16 @@ namespace App.Engine
         
         private void SetPlayer(Vector position)
         {
-            var bmpPlayer = currentLevel.PlayerClothesTileMap;
-            var playerShape = new RigidCircle(position, bmpPlayer.Height / 4, false, true);
-            
-            var playerLegs = new PlayerBodySprite
-            (
-                playerShape.Center,
-                bmpPlayer,
-                0,
-                2,
-                14,
-                27,
-                new Size(64, 64),
-                14);
-
-            var playerTorso = new PlayerBodySprite
-            (
-                playerShape.Center,
-                bmpPlayer,
-                0,
-                7,
-                0,
-                3,
-                new Size(64, 64),
-                14);
-
             var weapons = new List<Weapon>
             {
                 ShotgunFactory.GetNewGun(8),
                 MP6factory.GetNewGun(40)
             };
-            player = new Player(playerShape, playerTorso, playerLegs, weapons);
-            
+            player = EntityCreator.CreatePlayer(position, 0, weapons, currentLevel);
+
             sprites.Add(player.LegsContainer);
             sprites.Add(player.TorsoContainer);
-            currentLevel.Shapes.Add(playerShape);
+            currentLevel.Shapes.Add(player.Shape);
         }
 
         private void SetCursor(Vector position)
@@ -385,6 +360,7 @@ namespace App.Engine
                 if (collision == null) continue;
                 player.AddWeapon(collectables[i].Item);
                 collectables[i].SpriteContainer.ClearContent();
+                collectables[i] = null;
             }
         }
         
