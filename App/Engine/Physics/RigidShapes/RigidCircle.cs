@@ -4,7 +4,6 @@
     {
         private readonly float radius;
         public float Radius => radius;
-        
         public float Diameter => 2 * radius;
 
         private readonly Vector center;

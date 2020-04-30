@@ -155,25 +155,39 @@ namespace App.Engine
                 new ShootingRangeTarget(
                     100,
                     50,
-                    new RigidCircle(new Vector(50, 260), 30, false, true),
+                    new RigidCircle(new Vector(840, 420), 32, false, true),
                     new Vector(5, 0),
-                    80,
+                    60,
                     false),
                 new ShootingRangeTarget(
                     200,
                     100,
-                    new RigidCircle(new Vector(450, 580), 30, false, true),
-                    new Vector(-5, 0),
-                    80,
+                    new RigidCircle(new Vector(350, 580), 32, false, true),
+                    new Vector(0, 5),
+                    60,
                     false),
                 new ShootingRangeTarget(
                     50,
                     300,
-                    new RigidCircle(new Vector(40, 200), 30, false, true),
-                    new Vector(1, 5),
+                    new RigidCircle(new Vector(720, 920), 32, false, true),
+                    new Vector(5, 0),
+                    60,
+                    false),
+                new ShootingRangeTarget(
+                    50,
+                    300,
+                    new RigidCircle(new Vector(340, 280), 32, false, true),
+                    new Vector(0, 0),
                     80,
                     false)
             };
+
+            foreach (var t in targets)
+            {
+                sprites.Add(t.sprite);
+                currentLevel.Shapes.Add(t.collisionShape);
+            }
+            
         }
 
         public void GameLoop(object sender, EventArgs args)

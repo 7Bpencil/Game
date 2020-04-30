@@ -34,7 +34,7 @@ namespace App.Engine.Physics.Collision
         {
             if (second.IsStatic) first.MoveBy(info.Normal * info.Depth);
             else if (first.IsStatic) second.MoveBy(info.Normal * info.Depth);
-            else second.MoveBy(info.Normal * info.Depth);
+            else first.MoveBy(info.Normal * info.Depth);
         }
 
         public static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
@@ -50,7 +50,7 @@ namespace App.Engine.Physics.Collision
             return null;
         }
 
-        private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second) // TODO сделать красиво
+        private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second)
         {
             var vectorFromFirstToSecond = second.Center - first.Center;
             var distance = vectorFromFirstToSecond.Length;
