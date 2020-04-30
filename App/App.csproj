@@ -48,7 +48,6 @@
         <Compile Include="Engine\Physics\Edge.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
-        <Compile Include="Engine\Physics\RigidShapes\RigidOBB.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidShape.cs" />
         <Compile Include="Engine\Physics\Vector.cs" />
         <Compile Include="Engine\Render\Raytracing.cs" />
