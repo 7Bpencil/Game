@@ -12,8 +12,8 @@ namespace App.Model.Entities
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
         
-        public Sprite Torso;
-        public Sprite Legs;
+        public SpriteContainer TorsoContainer;
+        public SpriteContainer LegsContainer;
 
         private List<Weapon> weapons;
         private int currentWeaponIndex;
@@ -22,8 +22,8 @@ namespace App.Model.Entities
         public Player(RigidCircle shape, Sprite torso, Sprite legs, List<Weapon> startWeapons)
         {
             Shape = shape;
-            Torso = torso;
-            Legs = legs;
+            TorsoContainer = new SpriteContainer(torso);
+            LegsContainer = new SpriteContainer(legs);
             weapons = startWeapons;
             currentWeaponIndex = 0;
         }
@@ -52,13 +52,13 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            Torso.ShouldBeDeleted = true;
+            
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
-            Torso.ShouldBeDeleted = true;
+            
         }
 
         public void IncrementWeaponsTick()

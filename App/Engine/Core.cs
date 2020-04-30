@@ -31,7 +31,7 @@ namespace App.Engine
         private const int tileSize = 32;
         private bool isLevelLoaded;
 
-        private List<Sprite> sprites;
+        private List<SpriteContainer> sprites;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
@@ -64,8 +64,8 @@ namespace App.Engine
             ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
             SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
-            
-            sprites = new List<Sprite>();
+
+            sprites = new List<SpriteContainer> {Capacity = 200};
             bullets = new List<Bullet>();
             
             SetLevels();
@@ -89,6 +89,9 @@ namespace App.Engine
                 AKfactory.GetCollectable(new Vector(600, 400), 45, 20),
                 SaigaFAfactory.GetCollectable(new Vector(600, 500), 0, 8)
             };
+
+            foreach (var collectable in collectables)
+                sprites.Add(collectable.SpriteContainer);
         }
         
         private void SetPlayer(Vector position)
@@ -125,8 +128,8 @@ namespace App.Engine
             };
             player = new Player(playerShape, playerTorso, playerLegs, weapons);
             
-            sprites.Add(player.Legs);
-            sprites.Add(player.Torso);
+            sprites.Add(player.LegsContainer);
+            sprites.Add(player.TorsoContainer);
             currentLevel.Shapes.Add(playerShape);
         }
 
@@ -148,7 +151,7 @@ namespace App.Engine
                 10);
             
             cursor = new CustomCursor(shape, cursorSprite);
-            sprites.Add(cursorSprite);
+            sprites.Add(cursor.SpriteContainer);
         }
 
         private void SetTargets()
@@ -187,7 +190,7 @@ namespace App.Engine
 
             foreach (var t in targets)
             {
-                sprites.Add(t.sprite);
+                sprites.Add(t.SpriteContainer);
                 currentLevel.Shapes.Add(t.collisionShape);
             }
             
@@ -212,7 +215,7 @@ namespace App.Engine
             
             renderPipeline.Start(
                 player.Position, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, bullets, currentLevel.RaytracingEdges, collectables);
+                sprites, bullets, currentLevel.RaytracingEdges);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
@@ -251,12 +254,8 @@ namespace App.Engine
             camera.UpdateCamera(player.Position, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
 
-            for (var i = 0; i < sprites.Count; i++)
-            {
-                if (sprites[i] == null) continue;
-                sprites[i].UpdateFrame();
-                if (sprites[i].ShouldBeDeleted) sprites[i] = null;
-            }
+            foreach (var spriteContainer in sprites)
+                spriteContainer.Content?.UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -280,14 +279,14 @@ namespace App.Engine
             var direction = cursor.Position - player.Position;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
-            player.Torso.Angle = angle;
+            player.TorsoContainer.Content.Angle = angle;
         }
         
         private void RotatePlayerLegs(Vector delta)
         {
             var dirAngle = Math.Atan2(-delta.Y, delta.X);
             var angle = 180 / Math.PI * dirAngle;
-            if (!delta.Equals(Vector.ZeroVector)) player.Legs.Angle = angle;
+            if (!delta.Equals(Vector.ZeroVector)) player.LegsContainer.Content.Angle = angle;
         }
         
         private void CorrectPlayer()
@@ -385,7 +384,7 @@ namespace App.Engine
                 var collision = CollisionSolver.GetCollisionInfo(player.Shape, collectables[i].CollisionShape);
                 if (collision == null) continue;
                 player.AddWeapon(collectables[i].Item);
-                collectables[i] = null;
+                collectables[i].SpriteContainer.ClearContent();
             }
         }
         

@@ -27,8 +27,6 @@ namespace App.Engine
         private double angle;
         public double Angle { get => angle; set => angle = value; }
 
-        public bool ShouldBeDeleted;
-
         private RectangleF GetBounds()
         {
             return new RectangleF(TopLeft.X, TopLeft.Y, size.Width, size.Height);
@@ -62,7 +60,6 @@ namespace App.Engine
             
             this.framePeriod = framePeriod;
             ticksFromLastFrame = 0;
-            ShouldBeDeleted = false;
         }
         
         /// <summary>

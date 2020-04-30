@@ -6,17 +6,17 @@ namespace App.Model.Entities
 {
     public class CustomCursor
     {
-        private RigidCircle shape;
-        private Sprite sprite;
+        private readonly RigidCircle shape;
+        public readonly SpriteContainer SpriteContainer;
 
         public Vector Position => shape.Center;
 
         public CustomCursor(RigidCircle shape, Sprite sprite)
         {
             this.shape = shape;
-            this.sprite = sprite;
+            SpriteContainer = new SpriteContainer(sprite);
         }
-
+        
         public void MoveBy(Vector delta) => shape.MoveBy(delta);
     }
 }

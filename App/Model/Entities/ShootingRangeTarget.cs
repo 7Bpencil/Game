@@ -12,7 +12,7 @@ namespace App.Model.Entities
         public int Armour;
         public bool isDead;
         public RigidCircle collisionShape;
-        public Sprite sprite;
+        public SpriteContainer SpriteContainer;
         private int tick;
         private int ticksForMovement;
         
@@ -29,10 +29,10 @@ namespace App.Model.Entities
             this.velocity = velocity;
             this.isDead = isDead;
             this.ticksForMovement = ticksForMovement;
-            sprite = new StaticSprite(
+            SpriteContainer = new SpriteContainer(new StaticSprite(
                 collisionShape.Center,
                 new Bitmap(@"Assets\TileMaps\shooting_range_target.png"),
-                0, 0, new Size(64, 64), 1);
+                0, 0, new Size(64, 64), 1));
         }
         
         public void TakeHit(int damage)

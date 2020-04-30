@@ -69,6 +69,7 @@
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
+        <Compile Include="Model\Entities\SpriteContainer.cs" />
         <Compile Include="Model\Entities\Weapon.cs" />
         <Compile Include="Model\Entities\Weapons\AK303.cs" />
         <Compile Include="Model\Entities\Weapons\MP6.cs" />

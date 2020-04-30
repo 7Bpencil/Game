@@ -7,13 +7,13 @@ namespace App.Model.Entities
     {
         public readonly RigidShape CollisionShape;
         public readonly Weapon Item;
-        public readonly Sprite Icon;
+        public readonly SpriteContainer SpriteContainer;
 
         public Collectable(Weapon item, RigidShape collisionShape, Sprite icon)
         {
             CollisionShape = collisionShape;
             Item = item;
-            Icon = icon;
+            SpriteContainer = new SpriteContainer(icon);
         }
     }
 }

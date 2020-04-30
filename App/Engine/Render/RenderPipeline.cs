@@ -19,14 +19,13 @@ namespace App.Engine.Render
 
         public void Start(
             Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
-            List<Sprite> sprites, List<Bullet> bullets, List<Edge> raytracingEdges, List<Collectable> items)
+            List<SpriteContainer> sprites, List<Bullet> bullets, List<Edge> raytracingEdges)
         {
             //var visibilityPolygons = 
             //    Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
             //renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
-            RenderCollectablesSprites(items, cameraPosition);
             RenderBullets(bullets, cameraPosition);
             RenderDynamicPenetrations(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
@@ -90,21 +89,12 @@ namespace App.Engine.Render
             renderMachine.RenderCamera(sourceRectangle);
         }
         
-        private void RenderSprites(List<Sprite> sprites, Vector cameraPosition)
+        private void RenderSprites(List<SpriteContainer> sprites, Vector cameraPosition)
         {
-            foreach (var sprite in sprites)
-                if (sprite != null) renderMachine.RenderSpriteOnCamera(sprite, cameraPosition);
+            foreach (var container in sprites)
+                if (container.Content != null) renderMachine.RenderSpriteOnCamera(container.Content, cameraPosition);
         }
-        
-        private void RenderCollectablesSprites(List<Collectable> items, Vector cameraPosition)
-        {
-            foreach (var item in items)
-            {
-                if (item == null) continue;
-                renderMachine.RenderSpriteOnCamera(item.Icon, cameraPosition);
-            }
-        }
-        
+
         private void RenderCollectablesShapes(List<Collectable> items, Vector cameraPosition)
         {
             foreach (var item in items)
