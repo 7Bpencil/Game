@@ -10,8 +10,8 @@ namespace App.Engine.Sprites
         
         public PlayerBodySprite(
             Vector centerPosition, Bitmap bitmap, int framePeriodInTicks, int startFrame,
-            int endFrame, Size size, int columns)
-            : base(bitmap, framePeriodInTicks, startFrame, endFrame, size, columns)
+            int endFrame, Size size)
+            : base(bitmap, framePeriodInTicks, startFrame, endFrame, size)
         {
             this.centerPosition = centerPosition;
             previousCenterPosition = centerPosition.Copy();

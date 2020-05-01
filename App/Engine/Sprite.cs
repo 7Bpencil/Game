@@ -12,27 +12,27 @@ namespace App.Engine
 
         public readonly Size Size;
         public readonly Bitmap Bitmap;
-        private readonly int columns;
+        protected readonly int Columns;
         
         protected readonly int FramePeriodInTicks;
         protected int TicksFromLastFrame;
 
-        public virtual Rectangle GetCurrentFrameTile()
+        public virtual Rectangle GetCurrentFrame()
         {
             return new Rectangle
             {
-                X = CurrentFrame % columns * Size.Width,
-                Y = CurrentFrame / columns * Size.Height,
+                X = CurrentFrame % Columns * Size.Width,
+                Y = CurrentFrame / Columns * Size.Height,
                 Width = Size.Width,
                 Height = Size.Height
             };
         }
 
-        public Sprite(Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size, int columns)
+        public Sprite(Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size)
         {
             Size = size;
             Bitmap = bitmap;
-            this.columns = columns;
+            Columns = bitmap.Width / size.Width;
             DestRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
             
             StartFrame = startFrame;

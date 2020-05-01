@@ -30,7 +30,7 @@ namespace App.Model.Entities.Weapons
                 GetNewGun(ammoAmount),
                 new RigidCircle(position, 40, true, true),
                 new SpriteContainer(
-                    new StaticSprite(CollectableIcon,0, CollectableIcon.Size, 1), position, angle));
+                    new StaticSprite(CollectableIcon,0, CollectableIcon.Size), position, angle));
         }
 
         public Bitmap GetHUDicon()

@@ -27,8 +27,7 @@ namespace App.Model.Entities
                     new StaticSprite(
                         currentLevel.PlayerWeaponsTileMap,
                         weaponFramesID[weaponName], 
-                        new Size(85, 64),
-                        4)); 
+                        new Size(85, 64))); 
             }
 
             return new Player(
@@ -36,7 +35,7 @@ namespace App.Model.Entities
                 angle,
                 new PlayerBodySprite(
                     startPosition, currentLevel.PlayerClothesTileMap,1, 14, 27,
-                    new Size(64, 64), 14),
+                    new Size(64, 64)),
                 startWeapons,
                 weaponSprites);
         }

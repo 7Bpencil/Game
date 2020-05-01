@@ -32,7 +32,7 @@ namespace App.Engine
         private bool isLevelLoaded;
 
         private List<SpriteContainer> sprites;
-        private List<ParticleContainer> particles;
+        private List<ParticleUnit> particles;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
@@ -67,7 +67,7 @@ namespace App.Engine
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
 
             sprites = new List<SpriteContainer> {Capacity = 50};
-            particles = new List<ParticleContainer> {Capacity = 100};
+            particles = new List<ParticleUnit> {Capacity = 100};
             
             bullets = new List<Bullet>();
             
@@ -120,8 +120,7 @@ namespace App.Engine
                 3,
                 0,
                 9,
-                new Size(64, 64),
-                10);
+                new Size(64, 64));
             
             cursor = new CustomCursor(position.Copy(), cursorSprite);
             sprites.Add(cursor.SpriteContainer);

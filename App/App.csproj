@@ -40,7 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Engine\ParticleSystem.cs" />
+        <Compile Include="Engine\ParticleCreator.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
@@ -61,7 +61,7 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
-        <Compile Include="Engine\Sprites\ExpiringParticleSprite.cs" />
+        <Compile Include="Engine\Sprites\Particle.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />
@@ -69,6 +69,7 @@
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\EntityCreator.cs" />
+        <Compile Include="Model\Entities\ParticleUnit.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
@@ -113,13 +114,13 @@
       <Content Include="Assets\Sounds\GunSounds\fire_Shotgun.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash1.png">
+      <Content Include="Assets\Sprites\BLOOD\blood_splash_small.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash2.png">
+      <Content Include="Assets\Sprites\BLOOD\blood_splash_big.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash3.png">
+      <Content Include="Assets\Sprites\BLOOD\blood_splash_medium.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\Weapons\AK303_hud.png">

@@ -30,7 +30,7 @@ namespace App.Model.Entities
             this.ticksForMovement = ticksForMovement;
             SpriteContainer = new SpriteContainer(
                 new StaticSprite(
-                    new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, new Size(64, 64), 1),
+                    new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, new Size(64, 64)),
                 centerPosition, 0);
         }
         

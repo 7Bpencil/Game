@@ -5,15 +5,15 @@ namespace App.Engine.Sprites
     public class StaticSprite : Sprite
     {
         private readonly Rectangle frameTile;
-        public override Rectangle GetCurrentFrameTile() => frameTile;
+        public override Rectangle GetCurrentFrame() => frameTile;
         
-        public StaticSprite(Bitmap bitmap, int frameID, Size size, int columns)
-            : base(bitmap, 0, frameID, frameID, size, columns)
+        public StaticSprite(Bitmap bitmap, int frameID, Size size)
+            : base(bitmap, 0, frameID, frameID, size)
         {
             frameTile = new Rectangle
             {
-                X = CurrentFrame % columns * size.Width,
-                Y = CurrentFrame / columns * size.Height,
+                X = CurrentFrame % Columns * size.Width,
+                Y = CurrentFrame / Columns * size.Height,
                 Width = size.Width,
                 Height = size.Height
             };
