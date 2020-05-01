@@ -77,7 +77,6 @@ namespace App.Model.Entities
             var currentAngle = TorsoContainer.Content.Angle;
             TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
             TorsoContainer.Content.Angle = currentAngle;
-            TorsoContainer.Content.MoveTo(Shape.Center);
         }
     }
 }

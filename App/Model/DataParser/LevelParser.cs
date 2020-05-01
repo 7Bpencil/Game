@@ -45,6 +45,7 @@ namespace App.Model.DataParser
                 {
                     foreach (XmlNode property in node.ChildNodes)
                     {
+                        if (property.Name != "playerInfo") continue;
                         foreach (XmlAttribute attribute in property.Attributes)
                         {
                             switch (attribute.Name)

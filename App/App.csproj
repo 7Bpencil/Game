@@ -40,7 +40,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Engine\BloodSystem.cs" />
+        <Compile Include="Engine\ParticleSystem.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
