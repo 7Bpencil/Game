@@ -5,6 +5,7 @@ using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Render.Renderers;
+using App.Engine.Sprites;
 using App.Model.Entities;
 using App.View;
 
@@ -94,6 +95,11 @@ namespace App.Engine.Render
         public void RenderParticleOnCamera(ParticleUnit unit, Vector cameraPosition)
         {
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, cameraPosition, gfxCamera);
+        }
+
+        public void BurnParticleOnRenderedTiles(ParticleUnit unit)
+        {
+            SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, gfxRenderedTiles);
         }
 
         public void RenderEdgeOnCamera(Edge edge)
