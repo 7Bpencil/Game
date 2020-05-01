@@ -9,9 +9,9 @@ namespace App.Engine.Sprites
         private readonly Vector centerPosition;
         
         public PlayerBodySprite(
-            Vector centerPosition, Bitmap bitmap, int framePeriod, int startFrame,
+            Vector centerPosition, Bitmap bitmap, int framePeriodInTicks, int startFrame,
             int endFrame, Size size, int columns)
-            : base(bitmap, framePeriod, startFrame, endFrame, size, columns)
+            : base(bitmap, framePeriodInTicks, startFrame, endFrame, size, columns)
         {
             this.centerPosition = centerPosition;
             previousCenterPosition = centerPosition.Copy();
@@ -22,13 +22,13 @@ namespace App.Engine.Sprites
         /// </summary>
         public override void UpdateFrame()
         {
-            ticksFromLastFrame++;
-            if (ticksFromLastFrame > framePeriod)
+            TicksFromLastFrame++;
+            if (TicksFromLastFrame > FramePeriodInTicks)
             {
-                ticksFromLastFrame = 0;
-                currentFrame++;
-                if (currentFrame > endFrame || centerPosition.Equals(previousCenterPosition))
-                    currentFrame = startFrame;
+                TicksFromLastFrame = 0;
+                CurrentFrame++;
+                if (CurrentFrame > EndFrame || centerPosition.Equals(previousCenterPosition))
+                    CurrentFrame = StartFrame;
             }
             previousCenterPosition = centerPosition.Copy();
         }

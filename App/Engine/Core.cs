@@ -32,6 +32,7 @@ namespace App.Engine
         private bool isLevelLoaded;
 
         private List<SpriteContainer> sprites;
+        private List<ParticleContainer> particles;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
@@ -65,7 +66,9 @@ namespace App.Engine
             SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
 
-            sprites = new List<SpriteContainer> {Capacity = 200};
+            sprites = new List<SpriteContainer> {Capacity = 50};
+            particles = new List<ParticleContainer> {Capacity = 100};
+            
             bullets = new List<Bullet>();
             
             SetLevels();
@@ -131,31 +134,27 @@ namespace App.Engine
                 new ShootingRangeTarget(
                     100,
                     50,
-                    new RigidCircle(new Vector(840, 420), 32, false, true),
+                    new Vector(840, 420),
                     new Vector(5, 0),
-                    60,
-                    false),
+                    60),
                 new ShootingRangeTarget(
                     200,
                     100,
-                    new RigidCircle(new Vector(350, 580), 32, false, true),
+                    new Vector(350, 580),
                     new Vector(0, 5),
-                    60,
-                    false),
+                    60),
                 new ShootingRangeTarget(
                     50,
                     300,
-                    new RigidCircle(new Vector(720, 920), 32, false, true),
+                    new Vector(720, 920),
                     new Vector(5, 0),
-                    60,
-                    false),
+                    60),
                 new ShootingRangeTarget(
                     50,
                     300,
-                    new RigidCircle(new Vector(340, 280), 32, false, true),
+                    new Vector(340, 280),
                     new Vector(0, 0),
-                    80,
-                    false)
+                    80)
             };
 
             foreach (var t in targets)
@@ -185,7 +184,7 @@ namespace App.Engine
             
             renderPipeline.Start(
                 player.Position, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, bullets, currentLevel.RaytracingEdges);
+                sprites, particles, bullets, currentLevel.RaytracingEdges);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
@@ -225,7 +224,7 @@ namespace App.Engine
             viewForm.CursorReset();
 
             foreach (var spriteContainer in sprites)
-                if (!spriteContainer.IsEmpty()) spriteContainer.GetContent().UpdateFrame();
+                if (!spriteContainer.IsEmpty()) spriteContainer.Content.UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -312,7 +311,7 @@ namespace App.Engine
 
                     bullets[i].collisionWithDynamicInfo.AddRange(a);
                     target.TakeHit(bullets[i].damage);
-                    if (target.isDead)
+                    if (target.IsDead)
                     {
                         target.MoveTo(target.collisionShape.Center + target.Velocity * c[0]);
                         target.ChangeVelocity(Vector.ZeroVector);

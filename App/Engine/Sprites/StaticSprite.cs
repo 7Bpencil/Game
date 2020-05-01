@@ -12,8 +12,8 @@ namespace App.Engine.Sprites
         {
             frameTile = new Rectangle
             {
-                X = currentFrame % columns * size.Width,
-                Y = currentFrame / columns * size.Height,
+                X = CurrentFrame % columns * size.Width,
+                Y = CurrentFrame / columns * size.Height,
                 Width = size.Width,
                 Height = size.Height
             };

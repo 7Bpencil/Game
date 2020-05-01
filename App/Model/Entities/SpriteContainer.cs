@@ -5,20 +5,18 @@ namespace App.Model.Entities
 {
     public class SpriteContainer
     {
-        private Sprite content;
+        public Sprite Content;
         public Vector CenterPosition;
         public float Angle;
 
         public SpriteContainer(Sprite startContent, Vector startCenterPosition, float startAngle)
         {
-            content = startContent;
+            Content = startContent;
             CenterPosition = startCenterPosition;
             Angle = startAngle;
         }
         
-        public void ClearContent() => content = null;
-        public bool IsEmpty() => content == null;
-        public void ChangeContent(Sprite newContent) => content = newContent;
-        public Sprite GetContent() => content;
+        public void ClearContent() => Content = null;
+        public bool IsEmpty() => Content == null;
     }
 }

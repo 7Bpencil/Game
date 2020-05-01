@@ -88,7 +88,12 @@ namespace App.Engine.Render
 
         public void RenderSpriteOnCamera(SpriteContainer container, Vector cameraPosition)
         {
-            SpriteRenderer.DrawNextFrame(container.GetContent(), container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
+            SpriteRenderer.DrawNextFrame(container.Content, container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
+        }
+
+        public void RenderParticleOnCamera(ParticleContainer container, Vector cameraPosition)
+        {
+            SpriteRenderer.DrawNextFrame(container.Content, container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
         }
 
         public void RenderEdgeOnCamera(Edge edge)

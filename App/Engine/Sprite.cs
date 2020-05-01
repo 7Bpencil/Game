@@ -4,9 +4,9 @@ namespace App.Engine
 {
     public class Sprite
     {
-        protected int startFrame;
-        protected int currentFrame;
-        protected int endFrame;
+        protected readonly int StartFrame;
+        protected int CurrentFrame;
+        protected readonly int EndFrame;
 
         public readonly Rectangle DestRectInCamera;
 
@@ -14,33 +14,33 @@ namespace App.Engine
         public readonly Bitmap Bitmap;
         private readonly int columns;
         
-        protected int framePeriod;
-        protected int ticksFromLastFrame;
+        protected readonly int FramePeriodInTicks;
+        protected int TicksFromLastFrame;
 
         public virtual Rectangle GetCurrentFrameTile()
         {
             return new Rectangle
             {
-                X = currentFrame % columns * Size.Width,
-                Y = currentFrame / columns * Size.Height,
+                X = CurrentFrame % columns * Size.Width,
+                Y = CurrentFrame / columns * Size.Height,
                 Width = Size.Width,
                 Height = Size.Height
             };
         }
 
-        public Sprite(Bitmap bitmap, int framePeriod, int startFrame, int endFrame, Size size, int columns)
+        public Sprite(Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size, int columns)
         {
             Size = size;
             Bitmap = bitmap;
             this.columns = columns;
             DestRectInCamera = new Rectangle(-size.Width / 2, -size.Height / 2, size.Width, size.Height);
             
-            this.startFrame = startFrame;
-            currentFrame = startFrame;
-            this.endFrame = endFrame;
+            StartFrame = startFrame;
+            CurrentFrame = startFrame;
+            EndFrame = endFrame;
             
-            this.framePeriod = framePeriod;
-            ticksFromLastFrame = 0;
+            FramePeriodInTicks = framePeriodInTicks;
+            TicksFromLastFrame = 0;
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace App.Engine
         /// </summary>
         public virtual void UpdateFrame()
         {
-            ticksFromLastFrame++;
-            if (ticksFromLastFrame > framePeriod)
+            TicksFromLastFrame++;
+            if (TicksFromLastFrame > FramePeriodInTicks)
             {
-                ticksFromLastFrame = 0;
-                currentFrame++;
-                if (currentFrame > endFrame) currentFrame = startFrame;
+                TicksFromLastFrame = 0;
+                CurrentFrame++;
+                if (CurrentFrame > EndFrame) CurrentFrame = StartFrame;
             }
         }
     }

@@ -57,24 +57,19 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            CorrectTorso();
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
-            CorrectTorso();
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
         }
 
         public void IncrementWeaponsTick()
         {
             foreach (var weapon in weapons)
                 weapon.IncrementTick();
-        }
-
-        private void CorrectTorso()
-        {
-            TorsoContainer.ChangeContent(weaponSprites[CurrentWeapon.Name]);
         }
     }
 }

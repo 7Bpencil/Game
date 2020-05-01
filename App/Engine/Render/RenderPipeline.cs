@@ -19,13 +19,14 @@ namespace App.Engine.Render
 
         public void Start(
             Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
-            List<SpriteContainer> sprites, List<Bullet> bullets, List<Edge> raytracingEdges)
+            List<SpriteContainer> sprites, List<ParticleContainer> particles, List<Bullet> bullets, List<Edge> raytracingEdges)
         {
             //var visibilityPolygons = 
             //    Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
             //renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
+            RenderParticles(particles, cameraPosition);
             RenderBullets(bullets, cameraPosition);
             RenderDynamicPenetrations(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
@@ -93,6 +94,12 @@ namespace App.Engine.Render
         {
             foreach (var container in spriteContainers)
                 if (!container.IsEmpty()) renderMachine.RenderSpriteOnCamera(container, cameraPosition);
+        }
+
+        private void RenderParticles(List<ParticleContainer> particleContainers, Vector cameraPosition)
+        {
+            foreach (var container in particleContainers)
+                if (!container.Content.IsExpired) renderMachine.RenderParticleOnCamera(container, cameraPosition);
         }
 
         private void RenderCollectablesShapes(List<Collectable> items, Vector cameraPosition)

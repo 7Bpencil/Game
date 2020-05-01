@@ -1,5 +1,4 @@
 using System.Drawing;
-using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
@@ -10,34 +9,34 @@ namespace App.Model.Entities
     {
         public int Health;
         public int Armour;
-        public bool isDead;
+        public bool IsDead;
         public RigidCircle collisionShape;
         public SpriteContainer SpriteContainer;
+        private readonly int ticksForMovement;
         private int tick;
-        private int ticksForMovement;
         
         private Vector velocity;
         public Vector Velocity => velocity;
         public Vector Center => collisionShape.Center;
         
         public ShootingRangeTarget(
-            int health, int armour, RigidCircle collisionShape, Vector velocity, int ticksForMovement, bool isDead)
+            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement)
         {
             Health = health;
             Armour = armour;
-            this.collisionShape = collisionShape;
+            collisionShape = new RigidCircle(centerPosition, 32, false, true);
             this.velocity = velocity;
-            this.isDead = isDead;
+            IsDead = false;
             this.ticksForMovement = ticksForMovement;
             SpriteContainer = new SpriteContainer(
                 new StaticSprite(
                     new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, new Size(64, 64), 1),
-                collisionShape.Center, 0);
+                centerPosition, 0);
         }
         
         public void TakeHit(int damage)
         {
-            if (isDead) return;
+            if (IsDead) return;
             Armour -= damage;
             if (Armour < 0)
             {
@@ -45,7 +44,7 @@ namespace App.Model.Entities
                 Armour = 0;
             }
 
-            if (Health <= 0) isDead = true;
+            if (Health <= 0) IsDead = true;
         }
         
         public void MoveBy(Vector delta) => collisionShape.MoveBy(delta);

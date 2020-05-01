@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using App.Engine.Physics;
+using App.Engine.Sprites;
 
 namespace App.Engine
 {
@@ -9,29 +9,22 @@ namespace App.Engine
 
     public class ParticleContainer
     {
-        private Sprite particleSprite;
-        private readonly List<ParticleUnit> particleUnits;
+        public ExpiringParticleSprite Content;
+        public Vector CenterPosition;
+        public float Angle;
 
-        public ParticleContainer(Sprite particleSprite, int startCapacity)
+        public ParticleContainer(ExpiringParticleSprite content, Vector centerPosition, float angle)
         {
-            this.particleSprite = particleSprite;
-            particleUnits = new List<ParticleUnit> {Capacity = startCapacity};
+            Content = content;
+            CenterPosition = centerPosition;
+            Angle = angle;
         }
 
-        public void AddUnit(ParticleUnit newUnit) => particleUnits.Add(newUnit);
-    }
-
-    public struct ParticleUnit
-    {
-        public readonly Vector particlePosition;
-        public readonly float particleAngle;
-        public bool IsExpired;
-
-        public ParticleUnit(Vector particlePosition, float particleAngle)
+        public void Reuse(Vector newCenterPosition, float newAngle)
         {
-            this.particlePosition = particlePosition;
-            this.particleAngle = particleAngle;
-            IsExpired = false;
+            Content.Reset();
+            CenterPosition = newCenterPosition;
+            Angle = newAngle;
         }
     }
 }
