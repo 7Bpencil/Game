@@ -27,9 +27,10 @@ namespace App.Model.Entities.Weapons
         public Collectable GetCollectable(Vector position, float angle, int ammoAmount)
         {
             return new Collectable(
-                GetNewGun(ammoAmount), 
+                GetNewGun(ammoAmount),
                 new RigidCircle(position, 40, true, true),
-                new StaticSprite(position, CollectableIcon, angle, 0, CollectableIcon.Size, 1));
+                new SpriteContainer(
+                    new StaticSprite(CollectableIcon,0, CollectableIcon.Size, 1), position, angle));
         }
 
         public Bitmap GetHUDicon()

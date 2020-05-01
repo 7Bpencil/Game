@@ -11,10 +11,10 @@ namespace App.Model.Entities
 
         public Vector Position => shape.Center;
 
-        public CustomCursor(RigidCircle shape, Sprite sprite)
+        public CustomCursor(Vector position, Sprite sprite)
         {
-            this.shape = shape;
-            SpriteContainer = new SpriteContainer(sprite);
+            shape = new RigidCircle(position, 3, false, true);
+            SpriteContainer = new SpriteContainer(sprite, position, 0);
         }
         
         public void MoveBy(Vector delta) => shape.MoveBy(delta);

@@ -5,6 +5,7 @@ using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Render.Renderers;
+using App.Model.Entities;
 using App.View;
 
 namespace App.Engine.Render
@@ -85,16 +86,11 @@ namespace App.Engine.Render
             gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
 
-        public void RenderSpriteOnCamera(Sprite sprite, Vector cameraPosition)
+        public void RenderSpriteOnCamera(SpriteContainer container, Vector cameraPosition)
         {
-            sprite.DrawNextFrame(gfxCamera, cameraPosition);
+            SpriteRenderer.DrawNextFrame(container.GetContent(), container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
         }
-        
-        public void RenderSpriteOnCamera(Sprite sprite)
-        {
-            sprite.DrawNextFrame(gfxCamera);
-        }
-        
+
         public void RenderEdgeOnCamera(Edge edge)
         {
             EdgeRenderer.Draw(edge, raytracingEdgePen, gfxCamera);

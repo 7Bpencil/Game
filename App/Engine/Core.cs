@@ -111,21 +111,16 @@ namespace App.Engine
         private void SetCursor(Vector position)
         {
             var bmpCursor = levelManager.GetTileMap("crosshair.png");
-
-            var cursorPosition = position.Copy();
-            var shape = new RigidCircle(cursorPosition, 3, false, true);
             var cursorSprite = new Sprite
             (
-                cursorPosition,
                 bmpCursor,
-                0,
                 3,
                 0,
                 9,
                 new Size(64, 64),
                 10);
             
-            cursor = new CustomCursor(shape, cursorSprite);
+            cursor = new CustomCursor(position.Copy(), cursorSprite);
             sprites.Add(cursor.SpriteContainer);
         }
 
@@ -230,7 +225,7 @@ namespace App.Engine
             viewForm.CursorReset();
 
             foreach (var spriteContainer in sprites)
-                spriteContainer.Content?.UpdateFrame();
+                if (!spriteContainer.IsEmpty()) spriteContainer.GetContent().UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -254,14 +249,14 @@ namespace App.Engine
             var direction = cursor.Position - player.Position;
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle;
-            player.TorsoContainer.Content.Angle = angle;
+            player.TorsoContainer.Angle = (float) angle;
         }
         
         private void RotatePlayerLegs(Vector delta)
         {
             var dirAngle = Math.Atan2(-delta.Y, delta.X);
             var angle = 180 / Math.PI * dirAngle;
-            if (!delta.Equals(Vector.ZeroVector)) player.LegsContainer.Content.Angle = angle;
+            if (!delta.Equals(Vector.ZeroVector)) player.LegsContainer.Angle = (float) angle;
         }
         
         private void CorrectPlayer()

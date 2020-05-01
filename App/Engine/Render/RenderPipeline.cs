@@ -89,10 +89,10 @@ namespace App.Engine.Render
             renderMachine.RenderCamera(sourceRectangle);
         }
         
-        private void RenderSprites(List<SpriteContainer> sprites, Vector cameraPosition)
+        private void RenderSprites(List<SpriteContainer> spriteContainers, Vector cameraPosition)
         {
-            foreach (var container in sprites)
-                if (container.Content != null) renderMachine.RenderSpriteOnCamera(container.Content, cameraPosition);
+            foreach (var container in spriteContainers)
+                if (!container.IsEmpty()) renderMachine.RenderSpriteOnCamera(container, cameraPosition);
         }
 
         private void RenderCollectablesShapes(List<Collectable> items, Vector cameraPosition)

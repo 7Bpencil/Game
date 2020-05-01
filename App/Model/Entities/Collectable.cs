@@ -9,11 +9,11 @@ namespace App.Model.Entities
         public readonly Weapon Item;
         public readonly SpriteContainer SpriteContainer;
 
-        public Collectable(Weapon item, RigidShape collisionShape, Sprite icon)
+        public Collectable(Weapon item, RigidShape collisionShape, SpriteContainer icon)
         {
             CollisionShape = collisionShape;
             Item = item;
-            SpriteContainer = new SpriteContainer(icon);
+            SpriteContainer = icon;
         }
     }
 }

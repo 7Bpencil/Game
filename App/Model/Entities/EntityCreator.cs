@@ -25,18 +25,18 @@ namespace App.Model.Entities
             {
                 weaponSprites.Add(weaponName, 
                     new StaticSprite(
-                        startPosition, 
-                        currentLevel.PlayerWeaponsTileMap, 
-                        angle, 
+                        currentLevel.PlayerWeaponsTileMap,
                         weaponFramesID[weaponName], 
                         new Size(85, 64),
                         4)); 
             }
 
             return new Player(
-                new RigidCircle(startPosition, 32, false, true),
-                new PlayerBodySprite(startPosition, currentLevel.PlayerClothesTileMap, 
-                    angle, 1, 14, 27, new Size(64, 64), 14),
+                startPosition,
+                angle,
+                new PlayerBodySprite(
+                    startPosition, currentLevel.PlayerClothesTileMap,1, 14, 27,
+                    new Size(64, 64), 14),
                 startWeapons,
                 weaponSprites);
         }

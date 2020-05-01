@@ -6,17 +6,19 @@ namespace App.Engine.Sprites
     public class PlayerBodySprite : Sprite
     {
         private Vector previousCenterPosition;
+        private readonly Vector centerPosition;
         
         public PlayerBodySprite(
-            Vector center, Bitmap bitmap, float angle, int framePeriod, int startFrame,
+            Vector centerPosition, Bitmap bitmap, int framePeriod, int startFrame,
             int endFrame, Size size, int columns)
-            : base(center, bitmap, angle, framePeriod, startFrame, endFrame, size, columns)
+            : base(bitmap, framePeriod, startFrame, endFrame, size, columns)
         {
-            previousCenterPosition = center.Copy();
+            this.centerPosition = centerPosition;
+            previousCenterPosition = centerPosition.Copy();
         }
 
         /// <summary>
-        /// This method that will reset animation if player doesn't move
+        /// Method will reset animation if player doesn't move
         /// </summary>
         public override void UpdateFrame()
         {
@@ -25,10 +27,10 @@ namespace App.Engine.Sprites
             {
                 ticksFromLastFrame = 0;
                 currentFrame++;
-                if (currentFrame > endFrame || center.Equals(previousCenterPosition))
+                if (currentFrame > endFrame || centerPosition.Equals(previousCenterPosition))
                     currentFrame = startFrame;
             }
-            previousCenterPosition = center.Copy();
+            previousCenterPosition = centerPosition.Copy();
         }
     }
 }

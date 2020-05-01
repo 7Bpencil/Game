@@ -21,16 +21,16 @@ namespace App.Model.Entities
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
         
         
-        public Player(RigidCircle shape, Sprite legs, List<Weapon> startWeapons,
-            Dictionary<string, Sprite> weaponSprites)
+        public Player(Vector startPosition, float startAngle, Sprite legs,
+            List<Weapon> startWeapons, Dictionary<string, Sprite> weaponSprites)
         {
             this.weaponSprites = weaponSprites;
             weapons = startWeapons;
             currentWeaponIndex = 0;
             
-            Shape = shape;
-            LegsContainer = new SpriteContainer(legs);
-            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.Name]);
+            Shape = new RigidCircle(startPosition, 32, false, true);
+            LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
+            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.Name], startPosition, startAngle);
         }
 
         public void MoveBy(Vector delta)
@@ -74,9 +74,7 @@ namespace App.Model.Entities
 
         private void CorrectTorso()
         {
-            var currentAngle = TorsoContainer.Content.Angle;
-            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
-            TorsoContainer.Content.Angle = currentAngle;
+            TorsoContainer.ChangeContent(weaponSprites[CurrentWeapon.Name]);
         }
     }
 }
