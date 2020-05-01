@@ -42,6 +42,7 @@ namespace App.Engine
         private readonly WeaponFactory<Shotgun> ShotgunFactory;
         private readonly WeaponFactory<SaigaFA> SaigaFAfactory;
         private readonly WeaponFactory<MP6> MP6factory;
+        private readonly ParticleFactory particleFactory;
 
         private string updateTime;
 
@@ -65,6 +66,7 @@ namespace App.Engine
             ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
             SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
+            particleFactory = new ParticleFactory();
 
             sprites = new List<SpriteContainer> {Capacity = 50};
             particles = new List<ParticleUnit> {Capacity = 100};
@@ -224,6 +226,8 @@ namespace App.Engine
 
             foreach (var spriteContainer in sprites)
                 if (!spriteContainer.IsEmpty()) spriteContainer.Content.UpdateFrame();
+            foreach (var unit in particles)
+                unit.UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -310,6 +314,7 @@ namespace App.Engine
 
                     bullets[i].collisionWithDynamicInfo.AddRange(a);
                     target.TakeHit(bullets[i].damage);
+                    particles.Add(particleFactory.CreateMediumBloodSplash(a[0]));
                     if (target.IsDead)
                     {
                         target.MoveTo(target.collisionShape.Center + target.Velocity * c[0]);

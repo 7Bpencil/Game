@@ -6,7 +6,7 @@ using App.Model.Entities;
 
 namespace App.Engine
 {
-    public class ParticleCreator
+    public class ParticleFactory
     {
         private readonly Random r;
         
@@ -14,7 +14,7 @@ namespace App.Engine
         private readonly Particle bloodSplashMedium;
         private readonly Particle bloodSplashBig;
 
-        public ParticleCreator()
+        public ParticleFactory()
         {
             r = new Random();
             
