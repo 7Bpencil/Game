@@ -42,7 +42,7 @@ namespace App.Engine.Render
         }
         
         public void RenderDebugInfo(
-            Vector cameraPosition, Size cameraSize, List<RigidShape> shapes, List<ShootingRangeTarget> targets,
+            Vector cameraPosition, Size cameraSize, ShapesIterator shapes, List<ShootingRangeTarget> targets,
             List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Collectable> items, List<Bullet> bullets,
             Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser, string[] debugInfo)
         {
@@ -50,7 +50,6 @@ namespace App.Engine.Render
             RenderCollectablesShapes(items, cameraPosition);
             RenderRaytracingEdges(raytracingEdges, cameraPosition);
             RenderCollisionInfo(collisionInfo, cameraPosition);
-            RenderStaticPenetrations(bullets, cameraPosition);
             renderMachine.RenderDebugCross(cameraSize);
             renderMachine.RenderShapeOnCamera(cameraChaser, cameraPosition);
             renderMachine.RenderEdgeOnCamera(
@@ -120,10 +119,10 @@ namespace App.Engine.Render
             }
         }
 
-        private void RenderShapes(List<RigidShape> shapes, Vector cameraPosition)
+        private void RenderShapes(ShapesIterator shapes, Vector cameraPosition)
         {
-            foreach (var shape in shapes)
-                renderMachine.RenderShapeOnCamera(shape, cameraPosition);
+            for (var i = 0; i < shapes.Length; i++)
+                renderMachine.RenderShapeOnCamera(shapes[i], cameraPosition);
         }
 
         private void RenderCollisionInfo(List<CollisionInfo> collisionInfo, Vector cameraPosition)
@@ -142,21 +141,8 @@ namespace App.Engine.Render
         {
             foreach (var bullet in bullets)
             {
-                if (bullet == null) continue;
+                if (bullet.isStuck) continue;
                 renderMachine.RenderEdgeOnCamera(bullet.shape, cameraPosition);
-            }
-        }
-
-        private void RenderStaticPenetrations(List<Bullet> bullets, Vector cameraPositions)
-        {
-            foreach (var bullet in bullets)
-            {
-                if (bullet == null) continue;
-                foreach (var points in bullet.collisionWithStaticInfo)
-                {
-                    renderMachine.RenderPoint(points[0], cameraPositions);
-                    renderMachine.RenderPoint(points[1], cameraPositions);
-                }
             }
         }
 

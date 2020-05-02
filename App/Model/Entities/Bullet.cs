@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using App.Engine.Physics;
 
 namespace App.Model.Entities
@@ -7,20 +8,21 @@ namespace App.Model.Entities
     {
         public Vector position;
         public Vector velocity;
-        public readonly List<Vector[]> collisionWithStaticInfo;
-        public readonly List<Vector> collisionWithDynamicInfo;
+        public float speed;
+        public List<float[]> staticPenetrations;
         public Edge shape;
-        public float bulletPenetration;
+        private float bulletPenetration;
         public int damage;
+        public bool isStuck;
 
         public Bullet(Vector position, Vector velocity, float weight, Edge shape, int damage)
         {
             this.position = position;
             this.velocity = velocity;
-            collisionWithStaticInfo = new List<Vector[]>();
-            collisionWithDynamicInfo = new List<Vector>();
+            speed = velocity.Length;
+            bulletPenetration = speed * weight;
+            staticPenetrations = new List<float[]> {Capacity = 4};
             this.shape = shape;
-            bulletPenetration = CalculateBulletPenetration(velocity, weight);
             this.damage = damage;
         }
 
@@ -30,14 +32,28 @@ namespace App.Model.Entities
             shape.MoveBy(velocity);
         }
 
-        private static float CalculateBulletPenetration(Vector bulletVelocity, float bulletWeight)
+        public void CalculateTrajectory()
         {
-            return bulletVelocity.Length * bulletWeight;
+            staticPenetrations = staticPenetrations.OrderBy(n => n[0]).ToList();
         }
 
-        public bool CanPenetrate(Vector[] penetrationPlaces)
+        public void Update()
         {
-            return (penetrationPlaces[1] - penetrationPlaces[0]).Length < bulletPenetration;
+            foreach (var distanceBeforeCollision in staticPenetrations)
+            {
+                distanceBeforeCollision[0] -= speed; distanceBeforeCollision[1] -= speed;
+                if (distanceBeforeCollision[0] < 0 || distanceBeforeCollision[0] >= speed ) continue;
+                if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0]) isStuck = true;
+                SlowDown();
+            }
+            Move();
+        }
+
+        private void SlowDown()
+        {
+            velocity *= 0.8f;
+            speed *= 0.8f;
+            bulletPenetration *= 0.8f;
         }
     }
 }

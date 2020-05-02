@@ -128,6 +128,13 @@ namespace App.Engine.Physics
             return (float) Math.Sqrt(x * x + y * y);
         }
 
+        /// <summary>
+        /// (a-b).Length > expectedDistance
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="expectedDistance"></param>
+        /// <returns></returns>
         public static bool CompareDistance(Vector a, Vector b, float expectedDistance)
         {
             var x = a.X - b.X;

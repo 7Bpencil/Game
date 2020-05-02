@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using App.Engine.Physics.RigidShapes;
+using App.Model.LevelData;
 
 namespace App.Engine.Physics.Collision
 {
     public static class CollisionSolver
     {
-        public static List<CollisionInfo> ResolveCollisions(List<RigidShape> sceneObjects)
+        public static List<CollisionInfo> ResolveCollisions(ShapesIterator sceneObjects)
         {
             ClearColliding(sceneObjects);
             var collisions = new List<CollisionInfo>();
 
-            for (var i = 0; i < sceneObjects.Count; i++)
+            for (var i = 0; i < sceneObjects.Length; i++)
             {
-                for (var k = i + 1; k < sceneObjects.Count; k++)
+                for (var k = i + 1; k < sceneObjects.Length; k++)
                 {
                     if (sceneObjects[i].IsStatic && sceneObjects[k].IsStatic
                         || !(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
@@ -95,10 +96,10 @@ namespace App.Engine.Physics.Collision
             return result;
         }
         
-        private static void ClearColliding(List<RigidShape> sceneObjects)
+        private static void ClearColliding(ShapesIterator sceneObjects)
         {
-            foreach (var sceneObject in sceneObjects)
-                sceneObject.IsCollided = false;
+            for (var i = 0; i < sceneObjects.Length; i++)
+                sceneObjects[i].IsCollided = false;
         }
     }
 }

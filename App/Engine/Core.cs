@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using App.Engine.Particles;
 using App.Engine.Physics;
@@ -71,8 +72,7 @@ namespace App.Engine
 
             sprites = new List<SpriteContainer> {Capacity = 50};
             particles = new List<AbstractParticleUnit> {Capacity = 500};
-            
-            bullets = new List<Bullet>();
+            bullets = new List<Bullet> {Capacity = 500};
             
             SetLevels();
             SetTargets();
@@ -111,7 +111,7 @@ namespace App.Engine
 
             sprites.Add(player.LegsContainer);
             sprites.Add(player.TorsoContainer);
-            currentLevel.Shapes.Add(player.Shape);
+            currentLevel.DynmaicShapes.Add(player.Shape);
         }
 
         private void SetCursor(Vector position)
@@ -162,7 +162,7 @@ namespace App.Engine
             foreach (var t in targets)
             {
                 sprites.Add(t.SpriteContainer);
-                currentLevel.Shapes.Add(t.collisionShape);
+                currentLevel.DynmaicShapes.Add(t.collisionShape);
             }
             
         }
@@ -289,60 +289,13 @@ namespace App.Engine
 
         private void UpdateEntities()
         {
-            for (var i = 0; i < bullets.Count; i++)
+            foreach (var bullet in bullets)
             {
-                if (bullets[i] == null) continue;
-                if (bullets[i].collisionWithStaticInfo.Count == 0)
-                    foreach (var obstacle in currentLevel.Shapes)
-                    {
-                        if (obstacle.Center.Equals(player.Position)) continue;
-                        var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullets[i], obstacle);
-                        if (penetrationTime == null) continue;
-
-                        var penetrationPlace = new []
-                        {
-                            bullets[i].position + bullets[i].velocity * penetrationTime[0],
-                            bullets[i].position + bullets[i].velocity * penetrationTime[1]
-                        };
-
-                        bullets[i].collisionWithStaticInfo.Add(penetrationPlace);
-                    }
-
-                foreach (var target in targets)
-                {
-                    var c = BulletCollisionDetector.AreCollideWithDynamic(bullets[i], target.collisionShape, target.Velocity);
-                    if (c == null) continue;
-
-                    var a = new List<Vector>();
-                    foreach (var time in c)
-                        a.Add(bullets[i].position + bullets[i].velocity * time);
-
-                    bullets[i].collisionWithDynamicInfo.AddRange(a);
-                    target.TakeHit(bullets[i].damage);
-                    particles.Add(particleFactory.CreateBloodSplash(a[0]));
-                    if (target.IsDead)
-                    {
-                        target.MoveTo(target.collisionShape.Center + target.Velocity * c[0]);
-                        target.ChangeVelocity(Vector.ZeroVector);
-                    }
-                }
-
-                var e = bullets[i].shape.End - bullets[i].shape.Start;
-                var shouldBeDestroyed = false;
-                
-                foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
-                {
-                    if (!Vector.CompareDistance(player.Position, bullets[i].position, 1000)) continue; 
-                    shouldBeDestroyed = true;
-                    break;
-                }
-
-                if (shouldBeDestroyed) bullets[i] = null;
-            }
-
-            foreach (var b in bullets)
-            {
-                b?.Move();
+                if (bullet.isStuck) continue;
+                if (bullet.staticPenetrations.Count == 0)
+                    CalculateStaticPenetrations(bullet);
+                CalculateDynamicPenetrations(bullet);
+                bullet.Update();
             }
 
             foreach (var t in targets)
@@ -351,6 +304,42 @@ namespace App.Engine
             }
             
             player.IncrementWeaponsTick();
+        }
+
+        private void CalculateStaticPenetrations(Bullet bullet)
+        {
+            foreach (var obstacle in currentLevel.StaticShapes)
+            {
+                var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullet, obstacle);
+                if (penetrationTime == null) continue;
+                var distanceToPenetrations = new float[2];
+                for (var i = 0; i < 2; i++)
+                    distanceToPenetrations[i] = bullet.speed * penetrationTime[i];
+                bullet.staticPenetrations.Add(distanceToPenetrations);
+            }
+            bullet.CalculateTrajectory();
+        }
+
+        private void CalculateDynamicPenetrations(Bullet bullet)
+        {
+            foreach (var target in targets)
+            {
+                var penetrationTimes = 
+                    BulletCollisionDetector.AreCollideWithDynamic(bullet, target.collisionShape, target.Velocity);
+                if (penetrationTimes == null) continue;
+                target.TakeHit(bullet.damage);
+                if (target.Armour > 50) bullet.isStuck = true;
+                
+                var penetrationPlace = bullet.position + bullet.velocity * penetrationTimes[0];
+                particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
+                particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
+                
+                if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
+                {
+                    target.MoveTo(target.collisionShape.Center + target.Velocity * penetrationTimes[0]);
+                    target.ChangeVelocity(Vector.ZeroVector);
+                }
+            }
         }
 
         private void UpdateCollectables()
