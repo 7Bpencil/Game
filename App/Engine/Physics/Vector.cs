@@ -105,15 +105,21 @@ namespace App.Engine.Physics
             return a * d;
         }
 
-        public Vector Rotate(float angleInDegrees)
+        public Vector Rotate(float angleInDegrees, Vector rotationCenter)
         {
             var angle = angleInDegrees / 180 * Math.PI;
+            var x = X - rotationCenter.X;
+            var y = Y - rotationCenter.Y;
+            var cos = Math.Cos(angle);
+            var sin = Math.Sin(angle);
             return new Vector
             (
-                X = (float) (X * Math.Cos(angle) - Y * Math.Sin(angle)),
-                Y = (float) (X * Math.Sin(angle) + Y * Math.Cos(angle))
+                (float) (rotationCenter.X + x * cos - y * sin),
+                (float) (rotationCenter.Y + x * sin + y * cos)
             );
         }
+        
+        public float Angle => (float) Math.Atan2(-Y, X);
 
         public Vector Normalize()
         {
@@ -127,21 +133,7 @@ namespace App.Engine.Physics
             var y = a.Y - b.Y;
             return (float) Math.Sqrt(x * x + y * y);
         }
-
-        /// <summary>
-        /// (a-b).Length > expectedDistance
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <param name="expectedDistance"></param>
-        /// <returns></returns>
-        public static bool CompareDistance(Vector a, Vector b, float expectedDistance)
-        {
-            var x = a.X - b.X;
-            var y = a.Y - b.Y;
-            return x * x + y * y > expectedDistance * expectedDistance;
-        }
-
+        
         public static float ScalarProduct(Vector first, Vector second)
         {
             return first.X * second.X + first.Y * second.Y;

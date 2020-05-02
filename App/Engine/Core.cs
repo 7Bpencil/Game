@@ -109,6 +109,7 @@ namespace App.Engine
             sprites.Add(player.LegsContainer);
             sprites.Add(player.TorsoContainer);
             currentLevel.DynmaicShapes.Add(player.Shape);
+            currentLevel.DynmaicShapes.AddRange(player.MeleeWeapon.range);
         }
 
         private void SetCursor(Vector position)
@@ -207,6 +208,7 @@ namespace App.Engine
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
             var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
+            player.MeleeWeapon.MoveRangeShapeBy(positionDelta);
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
@@ -253,16 +255,18 @@ namespace App.Engine
         private void UpdatePlayerByMouse()
         {
             var direction = cursor.Position - player.Position;
-            var dirAngle = Math.Atan2(-direction.Y, direction.X);
-            var angle = 180 / Math.PI * dirAngle;
-            player.TorsoContainer.Angle = (float) angle;
+            var dirAngle = direction.Angle;
+            var angle = (float) (180 / Math.PI * dirAngle);
+            player.TorsoContainer.Angle = angle;
+            player.MeleeWeapon.RotateRangeShape(angle, player.Position);
         }
         
         private void RotatePlayerLegs(Vector delta)
         {
+            if (delta.Equals(Vector.ZeroVector)) return;
             var dirAngle = Math.Atan2(-delta.Y, delta.X);
             var angle = 180 / Math.PI * dirAngle;
-            if (!delta.Equals(Vector.ZeroVector)) player.LegsContainer.Angle = (float) angle;
+            player.LegsContainer.Angle = (float) angle;
         }
         
         private void CorrectPlayer()

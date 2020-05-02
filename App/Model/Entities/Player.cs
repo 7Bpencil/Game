@@ -19,11 +19,13 @@ namespace App.Model.Entities
         private List<Weapon> weapons;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
+        public MeleeWeapon MeleeWeapon;
         
         
         public Player(Vector startPosition, float startAngle, Sprite legs,
             List<Weapon> startWeapons, Dictionary<string, Sprite> weaponSprites)
         {
+            MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
             this.weaponSprites = weaponSprites;
             weapons = startWeapons;
             currentWeaponIndex = 0;

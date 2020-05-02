@@ -75,6 +75,7 @@
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\EntityCreator.cs" />
+        <Compile Include="Model\Entities\MeleeWeapon.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
