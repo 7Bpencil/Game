@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
@@ -32,7 +33,7 @@ namespace App.Engine
         private bool isLevelLoaded;
 
         private List<SpriteContainer> sprites;
-        private List<ParticleUnit> particles;
+        private List<AbstractParticleUnit> particles;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
@@ -69,7 +70,7 @@ namespace App.Engine
             particleFactory = new ParticleFactory();
 
             sprites = new List<SpriteContainer> {Capacity = 50};
-            particles = new List<ParticleUnit> {Capacity = 100};
+            particles = new List<AbstractParticleUnit> {Capacity = 100};
             
             bullets = new List<Bullet>();
             
@@ -215,7 +216,11 @@ namespace App.Engine
             if (mouseState.LMB)
             {
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
-                if (firedBullets != null) bullets.AddRange(firedBullets);
+                if (firedBullets != null)
+                {
+                    bullets.AddRange(firedBullets);
+                    particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                }
             }
 
             UpdateCollectables();
@@ -314,7 +319,7 @@ namespace App.Engine
 
                     bullets[i].collisionWithDynamicInfo.AddRange(a);
                     target.TakeHit(bullets[i].damage);
-                    particles.Add(particleFactory.CreateMediumBloodSplash(a[0]));
+                    particles.Add(particleFactory.CreateBloodSplash(a[0]));
                     if (target.IsDead)
                     {
                         target.MoveTo(target.collisionShape.Center + target.Velocity * c[0]);
@@ -325,13 +330,12 @@ namespace App.Engine
                 var e = bullets[i].shape.End - bullets[i].shape.Start;
                 var shouldBeDestroyed = false;
                 
-                //foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
-                //{
-                //    if (!(Vector.ScalarProduct(e, vectorPair[0] - bullets[i].shape.Start) < -2)
-                //        || bullets[i].CanPenetrate(vectorPair)) continue;
-                //    shouldBeDestroyed = true;
-                //    break;
-                //}
+                foreach (var vectorPair in bullets[i].collisionWithStaticInfo)
+                {
+                    if (!Vector.CompareDistance(player.Position, bullets[i].position, 1000)) continue; 
+                    shouldBeDestroyed = true;
+                    break;
+                }
 
                 if (shouldBeDestroyed) bullets[i] = null;
             }

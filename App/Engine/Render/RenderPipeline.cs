@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
@@ -19,7 +20,7 @@ namespace App.Engine.Render
 
         public void Start(
             Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
-            List<SpriteContainer> sprites, List<ParticleUnit> particles, List<Bullet> bullets, List<Edge> raytracingEdges)
+            List<SpriteContainer> sprites, List<AbstractParticleUnit> particles, List<Bullet> bullets, List<Edge> raytracingEdges)
         {
             //var visibilityPolygons = 
             //    Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
@@ -28,7 +29,6 @@ namespace App.Engine.Render
             RenderSprites(sprites, cameraPosition);
             RenderParticles(particles, cameraPosition);
             RenderBullets(bullets, cameraPosition);
-            RenderDynamicPenetrations(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
 
             renderMachine.Invalidate();
@@ -96,10 +96,19 @@ namespace App.Engine.Render
                 if (!container.IsEmpty()) renderMachine.RenderSpriteOnCamera(container, cameraPosition);
         }
 
-        private void RenderParticles(List<ParticleUnit> particleUnits, Vector cameraPosition)
+        private void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition)
         {
             foreach (var container in particleUnits)
-                if (!container.IsExpired) renderMachine.RenderParticleOnCamera(container, cameraPosition);
+            {
+                if (container.ShouldBeBurned)
+                {
+                    renderMachine.BurnParticleOnRenderedTiles(container);
+                    container.ShouldBeBurned = false;
+                    container.IsExpired = true;
+                }
+                if (!container.IsExpired)
+                    renderMachine.RenderParticleOnCamera(container, cameraPosition);
+            }
         }
 
         private void RenderCollectablesShapes(List<Collectable> items, Vector cameraPosition)
@@ -138,16 +147,6 @@ namespace App.Engine.Render
             }
         }
 
-        private void RenderDynamicPenetrations(List<Bullet> bullets, Vector cameraPositions)
-        {
-            foreach (var bullet in bullets)
-            {
-                if (bullet == null) continue;
-                foreach (var point in bullet.collisionWithDynamicInfo)
-                    renderMachine.RenderPoint(point, cameraPositions);
-            }
-        }
-        
         private void RenderStaticPenetrations(List<Bullet> bullets, Vector cameraPositions)
         {
             foreach (var bullet in bullets)

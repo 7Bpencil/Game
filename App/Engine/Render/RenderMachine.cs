@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
@@ -92,12 +93,12 @@ namespace App.Engine.Render
             SpriteRenderer.DrawNextFrame(container.Content, container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
         }
 
-        public void RenderParticleOnCamera(ParticleUnit unit, Vector cameraPosition)
+        public void RenderParticleOnCamera(AbstractParticleUnit unit, Vector cameraPosition)
         {
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, cameraPosition, gfxCamera);
         }
 
-        public void BurnParticleOnRenderedTiles(ParticleUnit unit)
+        public void BurnParticleOnRenderedTiles(AbstractParticleUnit unit)
         {
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, gfxRenderedTiles);
         }

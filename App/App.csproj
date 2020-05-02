@@ -43,6 +43,12 @@
         <Compile Include="Engine\ParticleFactory.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
+        <Compile Include="Engine\Particles\AbstractParticle.cs" />
+        <Compile Include="Engine\Particles\AbstractParticleUnit.cs" />
+        <Compile Include="Engine\Particles\AnimatedParticle.cs" />
+        <Compile Include="Engine\Particles\BloodSplashParticleUnit.cs" />
+        <Compile Include="Engine\Particles\StaticParticle.cs" />
+        <Compile Include="Engine\Particles\GunShellParticleUnit.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
@@ -61,7 +67,6 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
-        <Compile Include="Engine\Sprites\Particle.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />
@@ -69,7 +74,6 @@
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\EntityCreator.cs" />
-        <Compile Include="Model\Entities\ParticleUnit.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\ShootingRangeTarget.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
@@ -127,6 +131,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\Weapons\AK303_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\gun_shells.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\Weapons\MP6_hud.png">

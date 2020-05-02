@@ -1,4 +1,5 @@
 using System.Drawing;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Sprites;
 
@@ -32,7 +33,7 @@ namespace App.Engine.Render.Renderers
         }
         
         public static void DrawNextFrame(
-            Particle particle, Rectangle currentFrame, Vector centerPosition, float angle, Vector cameraPosition, Graphics graphics)
+            AbstractParticle particle, Rectangle currentFrame, Vector centerPosition, float angle, Vector cameraPosition, Graphics graphics)
         {
             var stateBefore = graphics.Save();
             
@@ -45,7 +46,7 @@ namespace App.Engine.Render.Renderers
         }
 
         public static void DrawNextFrame(
-            Particle particle, Rectangle currentFrame, Vector centerPosition, float angle, Graphics graphics)
+            AbstractParticle particle, Rectangle currentFrame, Vector centerPosition, float angle, Graphics graphics)
         {
             var stateBefore = graphics.Save();
             
