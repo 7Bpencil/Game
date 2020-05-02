@@ -140,10 +140,7 @@ namespace App.Engine.Render
         private void RenderBullets(List<Bullet> bullets, Vector cameraPosition)
         {
             foreach (var bullet in bullets)
-            {
-                if (bullet.isStuck) continue;
-                renderMachine.RenderEdgeOnCamera(bullet.shape, cameraPosition);
-            }
+                if (!bullet.isStuck) renderMachine.RenderEdgeOnCamera(bullet.shape, cameraPosition);
         }
 
         private void RenderEnemyInfo(List<ShootingRangeTarget> targets, Vector cameraPosition)

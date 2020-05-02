@@ -6,7 +6,6 @@ using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Render.Renderers;
-using App.Engine.Sprites;
 using App.Model.Entities;
 using App.View;
 

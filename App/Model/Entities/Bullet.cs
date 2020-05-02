@@ -26,12 +26,6 @@ namespace App.Model.Entities
             this.damage = damage;
         }
 
-        public void Move()
-        {
-            position += velocity;
-            shape.MoveBy(velocity);
-        }
-
         public void CalculateTrajectory()
         {
             staticPenetrations = staticPenetrations.OrderBy(n => n[0]).ToList();
@@ -46,14 +40,22 @@ namespace App.Model.Entities
                 if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0]) isStuck = true;
                 SlowDown();
             }
+            
+            if (staticPenetrations[staticPenetrations.Count - 1][1] < -500) isStuck = true;
             Move();
         }
-
+        
         private void SlowDown()
         {
             velocity *= 0.8f;
             speed *= 0.8f;
             bulletPenetration *= 0.8f;
+        }
+
+        public void Move()
+        {
+            position += velocity;
+            shape.MoveBy(velocity);
         }
     }
 }

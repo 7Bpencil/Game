@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
-using App.Engine.Physics.RigidShapes;
 using App.Engine.Render;
-using App.Engine.Sprites;
 using App.Model;
 using App.Model.Entities;
 using App.Model.Entities.Weapons;
@@ -219,7 +216,9 @@ namespace App.Engine
                 if (firedBullets != null)
                 {
                     bullets.AddRange(firedBullets);
-                    particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                    particles.Add(
+                        particleFactory.CreateShell(
+                            player.Position, cursor.Position - player.Position, player.CurrentWeapon));
                 }
             }
 

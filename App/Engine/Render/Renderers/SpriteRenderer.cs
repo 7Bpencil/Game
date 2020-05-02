@@ -1,7 +1,6 @@
 using System.Drawing;
 using App.Engine.Particles;
 using App.Engine.Physics;
-using App.Engine.Sprites;
 
 namespace App.Engine.Render.Renderers
 {
