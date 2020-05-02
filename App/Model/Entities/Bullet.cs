@@ -15,6 +15,7 @@ namespace App.Model.Entities
         public int Damage;
         public bool IsStuck;
         private bool isDeformed;
+        public Vector ClosestPenetrationPoint;
 
         public Bullet(Vector position, Vector velocity, float weight, Edge shape, int damage)
         {
@@ -39,10 +40,11 @@ namespace App.Model.Entities
             {
                 distanceBeforeCollision[0] -= Speed; distanceBeforeCollision[1] -= Speed;
                 if (distanceBeforeCollision[0] < 0 || distanceBeforeCollision[0] >= Speed ) continue;
+                ClosestPenetrationPoint = Position + Velocity.Normalize() * distanceBeforeCollision[1];
                 if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0])
                 {
                     isDeformed = true;
-                    var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];
+                    var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];    
                     Shape.End = stuckPoint;
                     Shape.Start = Position.Copy();
                     Position = stuckPoint;

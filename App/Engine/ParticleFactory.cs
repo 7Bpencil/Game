@@ -15,6 +15,8 @@ namespace App.Engine
         private readonly AnimatedParticle bloodSplashMedium;
         private readonly AnimatedParticle bloodSplashBig;
         
+        private readonly AnimatedParticle wallDust;
+        
         private readonly StaticParticle shellGauge12;
         private readonly StaticParticle shell762;
         private readonly StaticParticle shell919;
@@ -42,6 +44,10 @@ namespace App.Engine
             shell919 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
                 2, new Size(4, 20));
+            
+            wallDust = new AnimatedParticle(
+                new Bitmap(@"Assets\Sprites\SMOKE\bullet_smoke.png"),
+                1, 0, 5, new Size(13, 25));
         }
         
         public AbstractParticleUnit CreateBloodSplash(Vector centerPosition)
@@ -60,6 +66,13 @@ namespace App.Engine
             if (weaponType == typeof(SaigaFA)) return CreateGauge12Shell(startPosition, direction);
             if (weaponType == typeof(MP6)) return Create919Shell(startPosition, direction);
             return null;
+        }
+
+        public AbstractParticleUnit CreateWallDust(Vector penetrationPosition, Vector direction)
+        {
+            var dirAngle = Math.Atan2(-direction.Y, direction.X);
+            var angle = 180 / Math.PI * dirAngle + 90;
+            return new ExpiringAnimatedParticleUnit(wallDust, penetrationPosition, (float) angle);
         }
 
         private AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)

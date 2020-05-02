@@ -295,6 +295,8 @@ namespace App.Engine
                     CalculateStaticPenetrations(bullet);
                 CalculateDynamicPenetrations(bullet);
                 bullet.Update();
+                if (bullet.ClosestPenetrationPoint != null)
+                    particles.Add(particleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
             }
 
             foreach (var t in targets)
