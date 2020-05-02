@@ -35,13 +35,13 @@ namespace App.Engine
             
             shellGauge12 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
-                0, new Size(2, 10));
+                0, new Size(4, 20));
             shell762 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
-                1, new Size(2, 10));
+                1, new Size(4, 20));
             shell919 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
-                2, new Size(2, 10));
+                2, new Size(4, 20));
         }
         
         public AbstractParticleUnit CreateBloodSplash(Vector centerPosition)

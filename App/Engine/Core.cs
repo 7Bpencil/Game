@@ -70,7 +70,7 @@ namespace App.Engine
             particleFactory = new ParticleFactory();
 
             sprites = new List<SpriteContainer> {Capacity = 50};
-            particles = new List<AbstractParticleUnit> {Capacity = 100};
+            particles = new List<AbstractParticleUnit> {Capacity = 500};
             
             bullets = new List<Bullet>();
             
