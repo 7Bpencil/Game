@@ -6,65 +6,66 @@ namespace App.Model.Entities
 {
     public class Bullet
     {
-        public Vector position;
-        public Vector velocity;
-        public float speed;
-        public List<float[]> staticPenetrations;
-        public Edge shape;
+        public Vector Position;
+        public Vector Velocity;
+        public float Speed;
+        public List<float[]> StaticPenetrations;
+        public readonly Edge Shape;
         private float bulletPenetration;
-        public int damage;
-        public bool isStuck;
+        public int Damage;
+        public bool IsStuck;
         private bool isDeformed;
 
         public Bullet(Vector position, Vector velocity, float weight, Edge shape, int damage)
         {
-            this.position = position;
-            this.velocity = velocity;
-            speed = velocity.Length;
-            bulletPenetration = speed * weight;
-            staticPenetrations = new List<float[]> {Capacity = 4};
-            this.shape = shape;
-            this.damage = damage;
+            Position = position;
+            Velocity = velocity;
+            Speed = velocity.Length;
+            bulletPenetration = Speed * weight;
+            StaticPenetrations = new List<float[]> {Capacity = 4};
+            Shape = shape;
+            Damage = damage;
         }
 
         public void CalculateTrajectory()
         {
-            staticPenetrations = staticPenetrations.OrderBy(n => n[0]).ToList();
+            StaticPenetrations = StaticPenetrations.OrderBy(n => n[0]).ToList();
         }
 
         public void Update()
         {
-            if (isDeformed) isStuck = true;
-            foreach (var distanceBeforeCollision in staticPenetrations)
+            if (isDeformed) IsStuck = true;
+            foreach (var distanceBeforeCollision in StaticPenetrations)
             {
-                distanceBeforeCollision[0] -= speed; distanceBeforeCollision[1] -= speed;
-                if (distanceBeforeCollision[0] < 0 || distanceBeforeCollision[0] >= speed ) continue;
+                distanceBeforeCollision[0] -= Speed; distanceBeforeCollision[1] -= Speed;
+                if (distanceBeforeCollision[0] < 0 || distanceBeforeCollision[0] >= Speed ) continue;
                 if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0])
                 {
                     isDeformed = true;
-                    var stuckPoint = position + velocity.Normalize() * distanceBeforeCollision[0];
-                    shape.End = stuckPoint;
-                    shape.Start = position.Copy();
-                    position = stuckPoint;
+                    var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];
+                    Shape.End = stuckPoint;
+                    Shape.Start = Position.Copy();
+                    Position = stuckPoint;
                 }
                 else SlowDown();
             }
             
-            if (staticPenetrations[staticPenetrations.Count - 1][1] < -500) isStuck = true;
+            if (StaticPenetrations[StaticPenetrations.Count - 1][1] < -500) IsStuck = true;
             Move();
         }
         
         private void SlowDown()
         {
-            velocity *= 0.8f;
-            speed *= 0.8f;
+            Velocity *= 0.8f;
+            Speed *= 0.8f;
             bulletPenetration *= 0.8f;
+            Damage = (int) (0.8 * Damage);
         }
 
-        public void Move()
+        private void Move()
         {
-            position += velocity;
-            shape.MoveBy(velocity);
+            Position += Velocity;
+            Shape.MoveBy(Velocity);
         }
     }
 }

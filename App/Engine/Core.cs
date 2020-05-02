@@ -290,8 +290,8 @@ namespace App.Engine
         {
             foreach (var bullet in bullets)
             {
-                if (bullet.isStuck) continue;
-                if (bullet.staticPenetrations.Count == 0)
+                if (bullet.IsStuck) continue;
+                if (bullet.StaticPenetrations.Count == 0)
                     CalculateStaticPenetrations(bullet);
                 CalculateDynamicPenetrations(bullet);
                 bullet.Update();
@@ -313,8 +313,8 @@ namespace App.Engine
                 if (penetrationTime == null) continue;
                 var distanceToPenetrations = new float[2];
                 for (var i = 0; i < 2; i++)
-                    distanceToPenetrations[i] = bullet.speed * penetrationTime[i];
-                bullet.staticPenetrations.Add(distanceToPenetrations);
+                    distanceToPenetrations[i] = bullet.Speed * penetrationTime[i];
+                bullet.StaticPenetrations.Add(distanceToPenetrations);
             }
             bullet.CalculateTrajectory();
         }
@@ -326,13 +326,13 @@ namespace App.Engine
                 var penetrationTimes = 
                     BulletCollisionDetector.AreCollideWithDynamic(bullet, target.collisionShape, target.Velocity);
                 if (penetrationTimes == null) continue;
-                target.TakeHit(bullet.damage);
-                if (target.Armour > 50) bullet.isStuck = true;
+                target.TakeHit(bullet.Damage);
+                if (target.Armour > 50) bullet.IsStuck = true;
                 
-                var penetrationPlace = bullet.position + bullet.velocity * penetrationTimes[0];
+                var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
-                
+
                 if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
                 {
                     target.MoveTo(target.collisionShape.Center + target.Velocity * penetrationTimes[0]);

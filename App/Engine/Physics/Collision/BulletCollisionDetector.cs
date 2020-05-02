@@ -20,14 +20,14 @@ namespace App.Engine.Physics.Collision
             var tMax = float.PositiveInfinity;
             for (var i = 0; i < 2; i++)
             {
-                if (Math.Abs(bullet.velocity[i]) < 0.01
-                    && (bullet.position[i] < rectangle.MinPoint[i]
-                        || bullet.position[i] > rectangle.MaxPoint[i]))
+                if (Math.Abs(bullet.Velocity[i]) < 0.01
+                    && (bullet.Position[i] < rectangle.MinPoint[i]
+                        || bullet.Position[i] > rectangle.MaxPoint[i]))
                     return null;
                 
-                var ood = 1.0f / bullet.velocity[i];
-                var t1 = (rectangle.MinPoint[i] - bullet.position[i]) * ood;
-                var t2 = (rectangle.MaxPoint[i] - bullet.position[i]) * ood;
+                var ood = 1.0f / bullet.Velocity[i];
+                var t1 = (rectangle.MinPoint[i] - bullet.Position[i]) * ood;
+                var t2 = (rectangle.MaxPoint[i] - bullet.Position[i]) * ood;
                 if (t1 > t2)
                 {
                     var buf = t1;
@@ -69,10 +69,10 @@ namespace App.Engine.Physics.Collision
 
         private static float[] GetPenetrationTimeWithMovingCircle(Bullet bullet, RigidCircle circle, Vector circleVelocity)
         {
-            var dX = bullet.position.X - circle.Center.X;
-            var dY = bullet.position.Y - circle.Center.Y;
-            var dVx = bullet.velocity.X - circleVelocity.X;
-            var dVy = bullet.velocity.Y - circleVelocity.Y;
+            var dX = bullet.Position.X - circle.Center.X;
+            var dY = bullet.Position.Y - circle.Center.Y;
+            var dVx = bullet.Velocity.X - circleVelocity.X;
+            var dVy = bullet.Velocity.Y - circleVelocity.Y;
             // t^2 * (dVx^2 + dVy^2) + 2t(dX * dVx + dY * dVy) + (dX^2 + dY^2 - R^2) = 0
 
             var a = dVx * dVx + dVy * dVy;
