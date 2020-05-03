@@ -38,9 +38,6 @@ namespace App.Model.Entities.Weapons
 
         public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
         {
-            if (ticksFromLastFire < firePeriod 
-                || ammo == 0) return null;
-            
             var spray = new List<Bullet>();
             
             var direction = (cursor.Position - playerPosition).Normalize();
@@ -71,5 +68,7 @@ namespace App.Model.Entities.Weapons
             ammo += amount;
             if (ammo > capacity) ammo = capacity;
         }
+        
+        public override bool IsReady() => ticksFromLastFire >= firePeriod && ammo > 0;
     }
 }

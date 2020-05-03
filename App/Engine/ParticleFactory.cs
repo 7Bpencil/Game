@@ -14,7 +14,7 @@ namespace App.Engine
         private readonly AnimatedParticle bloodSplashSmall;
         private readonly AnimatedParticle bloodSplashMedium;
         private readonly AnimatedParticle bloodSplashBig;
-        
+
         private readonly AnimatedParticle wallDust;
         
         private readonly StaticParticle shellGauge12;
@@ -34,6 +34,7 @@ namespace App.Engine
             bloodSplashBig = new AnimatedParticle(
                 new Bitmap(@"Assets\Sprites\BLOOD\blood_splash_big.png"),
                 1, 0, 9, new Size(128, 128));
+
             
             shellGauge12 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
@@ -44,6 +45,7 @@ namespace App.Engine
             shell919 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
                 2, new Size(4, 20));
+            
             
             wallDust = new AnimatedParticle(
                 new Bitmap(@"Assets\Sprites\SMOKE\bullet_smoke.png"),
@@ -57,7 +59,7 @@ namespace App.Engine
             if (chance > 5) return CreateMediumBloodSplash(centerPosition);
             return CreateSmallBloodSplash(centerPosition);
         }
-        
+
         public AbstractParticleUnit CreateShell(Vector startPosition, Vector direction, Weapon weapon)
         {
             var weaponType = weapon.GetType();
@@ -77,7 +79,7 @@ namespace App.Engine
 
         private AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)
         {
-            return new BloodSplashParticleUnit(bloodSplashSmall, centerPosition, r.Next(-45, 45), r.Next(0, 10));
+            return new BloodSplashParticleUnit(bloodSplashSmall, centerPosition, r.Next(-45, 45), r.Next(0, 6));
         }
         
         private AbstractParticleUnit CreateMediumBloodSplash(Vector centerPosition)
@@ -85,9 +87,9 @@ namespace App.Engine
             return new BloodSplashParticleUnit(bloodSplashMedium, centerPosition, r.Next(-45, 45), r.Next(0, 10));
         }
         
-        private AbstractParticleUnit CreateBigBloodSplash(Vector centerPosition)
+        public AbstractParticleUnit CreateBigBloodSplash(Vector centerPosition)
         {
-            return new BloodSplashParticleUnit(bloodSplashBig, centerPosition, r.Next(-45, 45), r.Next(0, 9));
+            return new BloodSplashParticleUnit(bloodSplashBig, centerPosition, r.Next(-45, 45), r.Next(0, 10));
         }
 
         private AbstractParticleUnit CreateGauge12Shell(Vector startPosition, Vector direction)

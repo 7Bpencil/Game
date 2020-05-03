@@ -212,20 +212,16 @@ namespace App.Engine
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
-            if (keyState.V && !mouseState.LMB)
+            if (keyState.V && player.MeleeWeapon.IsReady)
             {
-                player.MeleeWeapon.Attack(targets);
+                var wasHit = player.MeleeWeapon.Attack(targets);
+                if (wasHit) particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
             }
-            else if (mouseState.LMB)
+            else if (mouseState.LMB && player.CurrentWeapon.IsReady() && player.MeleeWeapon.IsReady)
             {
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
-                if (firedBullets != null)
-                {
-                    bullets.AddRange(firedBullets);
-                    particles.Add(
-                        particleFactory.CreateShell(
-                            player.Position, cursor.Position - player.Position, player.CurrentWeapon));
-                }
+                bullets.AddRange(firedBullets);
+                particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
 
             UpdateCollectables();

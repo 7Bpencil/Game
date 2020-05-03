@@ -12,5 +12,6 @@ namespace App.Model.Entities
         public abstract void IncrementTick();
         public abstract float BulletWeight { get; }
         public abstract void AddAmmo(int amount);
+        public abstract bool IsReady();
     }
 }

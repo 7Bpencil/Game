@@ -29,22 +29,28 @@ namespace App.Model.Entities
             ticksFromLastAttack = attackPeriod + 1;
         }
         
-        public void Attack(List<ShootingRangeTarget> targets)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targets"></param>
+        /// <returns>true if there was at least one hit</returns>
+        public bool Attack(List<ShootingRangeTarget> targets)
         {
-            if (ticksFromLastAttack < attackPeriod) return;
+            var createBlood = false;
             foreach (var target in targets)
             {
                 var wasHit = false;
                 foreach (var circle in range)
                 {
                     if (CollisionSolver.GetCollisionInfo(circle, target.collisionShape) == null) continue;
-                    wasHit = true;
+                    wasHit = createBlood = true;
                     break;
                 }
                 if (wasHit) target.TakeHit(damage);
             }
 
             ticksFromLastAttack = 0;
+            return createBlood;
         }
         
         public void IncrementTick() => ticksFromLastAttack++;
@@ -62,5 +68,7 @@ namespace App.Model.Entities
             foreach (var circle in range)
                 circle.MoveBy(delta);
         }
+
+        public bool IsReady => ticksFromLastAttack >= attackPeriod;
     }
 }
