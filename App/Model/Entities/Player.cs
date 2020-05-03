@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
+using App.Engine.Sprites;
 
 namespace App.Model.Entities
 {
@@ -15,18 +17,21 @@ namespace App.Model.Entities
         public readonly SpriteContainer TorsoContainer;
         public readonly SpriteContainer LegsContainer;
         private readonly Dictionary<string, Sprite> weaponSprites;
+        private readonly MeleeWeaponSprite meleeWeaponSprite;
 
         private List<Weapon> weapons;
+        public MeleeWeapon MeleeWeapon;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
-        public MeleeWeapon MeleeWeapon;
-        
-        
+
         public Player(Vector startPosition, float startAngle, Sprite legs,
             List<Weapon> startWeapons, Dictionary<string, Sprite> weaponSprites)
         {
             MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
             this.weaponSprites = weaponSprites;
+            meleeWeaponSprite = 
+                new MeleeWeaponSprite(new Bitmap(@"Assets\Sprites\Weapons\pinkHair_katana.png"),
+                    1, 0, 5, new Size(170, 170));
             weapons = startWeapons;
             currentWeaponIndex = 0;
             
@@ -65,6 +70,17 @@ namespace App.Model.Entities
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
+        }
+
+        public void TakeMeleeWeapon()
+        {
+            TorsoContainer.Content = meleeWeaponSprite;
+            meleeWeaponSprite.inAction = true;
+        }
+
+        public void HideMeleeWeapon()
+        {
             TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
         }
 

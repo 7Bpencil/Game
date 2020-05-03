@@ -68,6 +68,7 @@
         <Compile Include="Engine\Render\RenderMachine.cs" />
         <Compile Include="Engine\Render\RenderPipeline.cs" />
         <Compile Include="Engine\Sprite.cs" />
+        <Compile Include="Engine\Sprites\MeleeWeaponSprite.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />

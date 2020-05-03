@@ -26,7 +26,7 @@ namespace App.Model.Entities
                     new StaticSprite(
                         currentLevel.PlayerWeaponsTileMap,
                         weaponFramesID[weaponName], 
-                        new Size(85, 64))); 
+                        new Size(79, 57))); 
             }
 
             return new Player(

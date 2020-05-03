@@ -47,13 +47,13 @@ namespace App.Engine
 
         private class KeyStates
         {
-            public bool W, S, A, D, V, I;
+            public bool W, S, A, D, I;
             public int pressesOnIAmount;
         }
 
         private class MouseState
         {
-            public bool LMB;
+            public bool LMB, RMB;
         }
 
         public Core(ViewForm viewForm, Size screenSize, RenderPipeline renderPipeline)
@@ -212,13 +212,15 @@ namespace App.Engine
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
-            if (keyState.V && player.MeleeWeapon.IsReady)
+            if (mouseState.RMB && player.MeleeWeapon.IsReady)
             {
+                player.TakeMeleeWeapon();
                 var wasHit = player.MeleeWeapon.Attack(targets);
                 if (wasHit) particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
             }
             else if (mouseState.LMB && player.CurrentWeapon.IsReady() && player.MeleeWeapon.IsReady)
             {
+                player.HideMeleeWeapon();
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
                 bullets.AddRange(firedBullets);
                 particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
@@ -408,10 +410,6 @@ namespace App.Engine
                     keyState.I = true;
                     keyState.pressesOnIAmount++;
                     break;
-                
-                case Keys.V:
-                    keyState.V = true;
-                    break;
             }
         }
 
@@ -442,10 +440,6 @@ namespace App.Engine
                 case Keys.I:
                     keyState.I = false;
                     break;
-                
-                case Keys.V:
-                    keyState.V = false;
-                    break;
             }
         }
         
@@ -457,12 +451,30 @@ namespace App.Engine
 
         public void OnMouseDown(MouseButtons buttons)
         {
-            if (buttons == MouseButtons.Left) mouseState.LMB = true;
+            switch (buttons)
+            {
+                case MouseButtons.Left:
+                    mouseState.LMB = true;
+                    break;
+                
+                case MouseButtons.Right:
+                    mouseState.RMB = true;
+                    break;
+            }
         }
 
         public void OnMouseUp(MouseButtons buttons)
         {
-            if (buttons == MouseButtons.Left) mouseState.LMB = false;
+            switch (buttons)
+            {
+                case MouseButtons.Left:
+                    mouseState.LMB = false;
+                    break;
+                
+                case MouseButtons.Right:
+                    mouseState.RMB = false;
+                    break;
+            }
         }
     }
 }
