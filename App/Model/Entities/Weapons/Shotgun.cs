@@ -28,7 +28,7 @@ namespace App.Model.Entities.Weapons
             name = "Shotgun";
             capacity = 8;
             firePeriod = 33;
-            ticksFromLastFire = 0;
+            ticksFromLastFire = firePeriod + 1;
             bulletWeight = 0.3f;
             this.ammo = ammo;
             r = new Random();

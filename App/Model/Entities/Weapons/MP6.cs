@@ -28,7 +28,7 @@ namespace App.Model.Entities.Weapons
             name = "MP6";
             capacity = 40;
             firePeriod = 3;
-            ticksFromLastFire = 0;
+            ticksFromLastFire = firePeriod + 1;
             bulletWeight = 0.7f;
             this.ammo = ammo;
             r = new Random();

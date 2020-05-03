@@ -28,7 +28,7 @@ namespace App.Model.Entities.Weapons
             name = "AK-303";
             capacity = 30;
             firePeriod = 5;
-            ticksFromLastFire = 0;
+            ticksFromLastFire = firePeriod + 1;
             bulletWeight = 1f;
             this.ammo = ammo;
             r = new Random();

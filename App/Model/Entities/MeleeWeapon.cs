@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 
 namespace App.Model.Entities
@@ -22,7 +23,31 @@ namespace App.Model.Entities
             };
             currentAngle = 90;
             RotateRangeShape(startAngle, playerCenter);
+
+            damage = 500;
+            attackPeriod = 33;
+            ticksFromLastAttack = attackPeriod + 1;
         }
+        
+        public void Attack(List<ShootingRangeTarget> targets)
+        {
+            if (ticksFromLastAttack < attackPeriod) return;
+            foreach (var target in targets)
+            {
+                var wasHit = false;
+                foreach (var circle in range)
+                {
+                    if (CollisionSolver.GetCollisionInfo(circle, target.collisionShape) == null) continue;
+                    wasHit = true;
+                    break;
+                }
+                if (wasHit) target.TakeHit(damage);
+            }
+
+            ticksFromLastAttack = 0;
+        }
+        
+        public void IncrementTick() => ticksFromLastAttack++;
 
         public void RotateRangeShape(float newAngle, Vector playerCenterPosition)
         {

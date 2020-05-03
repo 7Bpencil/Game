@@ -28,7 +28,7 @@ namespace App.Model.Entities.Weapons
             name = "Saiga Full-Auto";
             capacity = 20;
             firePeriod = 8;
-            ticksFromLastFire = 0;
+            ticksFromLastFire = firePeriod + 1;
             bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();

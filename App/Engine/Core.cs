@@ -47,7 +47,7 @@ namespace App.Engine
 
         private class KeyStates
         {
-            public bool W, S, A, D, I;
+            public bool W, S, A, D, V, I;
             public int pressesOnIAmount;
         }
 
@@ -212,7 +212,11 @@ namespace App.Engine
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
-            if (mouseState.LMB)
+            if (keyState.V && !mouseState.LMB)
+            {
+                player.MeleeWeapon.Attack(targets);
+            }
+            else if (mouseState.LMB)
             {
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
                 if (firedBullets != null)
@@ -305,6 +309,7 @@ namespace App.Engine
 
             foreach (var t in targets)
             {
+                if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
                 t.IncrementTick();
             }
             
@@ -340,10 +345,7 @@ namespace App.Engine
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
 
                 if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
-                {
                     target.MoveTo(target.collisionShape.Center + target.Velocity * penetrationTimes[0]);
-                    target.ChangeVelocity(Vector.ZeroVector);
-                }
             }
         }
 
@@ -398,6 +400,10 @@ namespace App.Engine
                     keyState.I = true;
                     keyState.pressesOnIAmount++;
                     break;
+                
+                case Keys.V:
+                    keyState.V = true;
+                    break;
             }
         }
 
@@ -427,6 +433,10 @@ namespace App.Engine
                 
                 case Keys.I:
                     keyState.I = false;
+                    break;
+                
+                case Keys.V:
+                    keyState.V = false;
                     break;
             }
         }

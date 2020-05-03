@@ -147,6 +147,9 @@
       <Content Include="Assets\Sprites\Weapons\MP6_icon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="Assets\Sprites\Weapons\pinkHair_katana.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\Sprites\Weapons\SaigaFA_hud.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

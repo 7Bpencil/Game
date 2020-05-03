@@ -23,6 +23,7 @@ namespace App.Engine.Render
 
         private readonly Font debugFont;
         private readonly Brush debugBrush;
+        private readonly Brush anotherDebugBrush;
         private readonly Pen shapePen;
         private readonly Pen collisionPen;
         private readonly Pen raytracingEdgePen;
@@ -40,6 +41,7 @@ namespace App.Engine.Render
             
             debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
             debugBrush = new SolidBrush(Color.White);
+            anotherDebugBrush = new SolidBrush(Color.Gold);
             shapePen = new Pen(Color.White, 4);
             collisionPen = new Pen(Color.Crimson, 4);
             raytracingEdgePen = new Pen(Color.Salmon, 4);
@@ -149,7 +151,7 @@ namespace App.Engine.Render
 
         public void PrintString(string message, Vector position)
         {
-            gfxCamera.DrawString(message, debugFont, debugBrush, position.X, position.Y);
+            gfxCamera.DrawString(message, debugFont, anotherDebugBrush, position.X, position.Y);
         }
 
         public void RenderHUD(string weaponInfo, Size cameraSize)
