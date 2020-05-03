@@ -10,22 +10,22 @@ namespace App.Model.Entities
 {
     public class Player
     {
-        public RigidCircle Shape;
+        public readonly RigidCircle Shape;
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
         
         public readonly SpriteContainer TorsoContainer;
         public readonly SpriteContainer LegsContainer;
-        private readonly Dictionary<string, Sprite> weaponSprites;
+        private readonly Dictionary<Type, Sprite> weaponSprites;
         private readonly MeleeWeaponSprite meleeWeaponSprite;
 
-        private List<Weapon> weapons;
-        public MeleeWeapon MeleeWeapon;
+        private readonly List<Weapon> weapons;
+        public readonly MeleeWeapon MeleeWeapon;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
 
         public Player(Vector startPosition, float startAngle, Sprite legs,
-            List<Weapon> startWeapons, Dictionary<string, Sprite> weaponSprites)
+            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites)
         {
             MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
             this.weaponSprites = weaponSprites;
@@ -37,7 +37,7 @@ namespace App.Model.Entities
             
             Shape = new RigidCircle(startPosition, 32, false, true);
             LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
-            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.Name], startPosition, startAngle);
+            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.GetType()], startPosition, startAngle);
         }
 
         public void MoveBy(Vector delta)
@@ -64,13 +64,13 @@ namespace App.Model.Entities
         public void MoveNextWeapon()
         {
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.GetType()];
         }
         
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
-            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.GetType()];
         }
 
         public void TakeMeleeWeapon()
@@ -81,7 +81,7 @@ namespace App.Model.Entities
 
         public void HideMeleeWeapon()
         {
-            TorsoContainer.Content = weaponSprites[CurrentWeapon.Name];
+            TorsoContainer.Content = weaponSprites[CurrentWeapon.GetType()];
         }
 
         public void IncrementWeaponsTick()

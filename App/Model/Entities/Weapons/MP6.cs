@@ -39,9 +39,9 @@ namespace App.Model.Entities.Weapons
         public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
-            
             var direction = (cursor.Position - playerPosition).Normalize();
             var position = playerPosition + direction * 30;
+            
             spray.Add(new Bullet(
                 position,
                 direction * 30,

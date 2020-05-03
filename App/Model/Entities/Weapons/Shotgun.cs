@@ -29,7 +29,7 @@ namespace App.Model.Entities.Weapons
             capacity = 8;
             firePeriod = 20;
             ticksFromLastFire = firePeriod + 1;
-            bulletWeight = 0.6f;
+            bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();
         }
@@ -39,7 +39,6 @@ namespace App.Model.Entities.Weapons
         public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
-            
             var direction = (cursor.Position - playerPosition).Normalize();
             
             const int shotsAmount = 6;

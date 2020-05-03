@@ -1,31 +1,33 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Sprites;
+using App.Model.Entities.Weapons;
 using App.Model.LevelData;
 
 namespace App.Model.Entities
 {
     public static class EntityCreator
     {
-        private static Dictionary<string, int> weaponFramesID = new Dictionary<string, int>
+        private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>
         {
-            {"AK-303", 0},
-            {"Shotgun", 1},
-            {"MP6", 2},
-            {"Saiga Full-Auto", 3},
+            {typeof(AK303), 0},
+            {typeof(Shotgun), 1},
+            {typeof(MP6), 2},
+            {typeof(SaigaFA), 3},
         };
         
         public static Player CreatePlayer(Vector startPosition, float angle, List<Weapon> startWeapons, Level currentLevel)
         {
-            var weaponSprites = new Dictionary<string, Sprite>();
-            foreach (var weaponName in weaponFramesID.Keys)
+            var weaponSprites = new Dictionary<Type, Sprite>();
+            foreach (var weaponName in WeaponFramesId.Keys)
             {
                 weaponSprites.Add(weaponName, 
                     new StaticSprite(
                         currentLevel.PlayerWeaponsTileMap,
-                        weaponFramesID[weaponName], 
+                        WeaponFramesId[weaponName], 
                         new Size(79, 57))); 
             }
 
