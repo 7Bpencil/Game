@@ -296,6 +296,14 @@ namespace App.Engine
 
         private void UpdateEntities()
         {
+            UpdateBullets();
+            UpdateTargets();
+
+            player.IncrementWeaponsTick();
+        }
+
+        private void UpdateBullets()
+        {
             foreach (var bullet in bullets)
             {
                 if (bullet.IsStuck) continue;
@@ -304,16 +312,11 @@ namespace App.Engine
                 CalculateDynamicPenetrations(bullet);
                 bullet.Update();
                 if (bullet.ClosestPenetrationPoint != null)
+                {
                     particles.Add(particleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
+                    bullet.ClosestPenetrationPoint = null;
+                }
             }
-
-            foreach (var t in targets)
-            {
-                if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
-                t.IncrementTick();
-            }
-            
-            player.IncrementWeaponsTick();
         }
 
         private void CalculateStaticPenetrations(Bullet bullet)
@@ -346,6 +349,15 @@ namespace App.Engine
 
                 if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
                     target.MoveTo(target.collisionShape.Center + target.Velocity * penetrationTimes[0]);
+            }
+        }
+
+        private void UpdateTargets()
+        {
+            foreach (var t in targets)
+            {
+                if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
+                t.IncrementTick();
             }
         }
 

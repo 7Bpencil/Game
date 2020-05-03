@@ -70,6 +70,7 @@ namespace App.Model.Entities
 
         public void IncrementWeaponsTick()
         {
+            MeleeWeapon.IncrementTick();
             foreach (var weapon in weapons)
                 weapon.IncrementTick();
         }
