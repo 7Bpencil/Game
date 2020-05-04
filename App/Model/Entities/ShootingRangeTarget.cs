@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
@@ -10,6 +11,8 @@ namespace App.Model.Entities
         public int Health;
         public int Armour;
         public bool IsDead;
+        private Weapon weapon;
+        private List<Bullet> sceneBullets;
         public RigidCircle collisionShape;
         public SpriteContainer SpriteContainer;
         private readonly int ticksForMovement;
@@ -20,8 +23,10 @@ namespace App.Model.Entities
         public Vector Center => collisionShape.Center;
         
         public ShootingRangeTarget(
-            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement)
+            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
         {
+            this.weapon = weapon;
+            this.sceneBullets = sceneBullets;
             Health = health;
             Armour = armour;
             collisionShape = new RigidCircle(centerPosition, 32, false, true);
@@ -53,6 +58,7 @@ namespace App.Model.Entities
         public void Update()
         {
             tick++;
+            sceneBullets.AddRange(weapon.Fire(collisionShape.Center, new Vector(1, 0), collisionShape.Center));
             if (tick > ticksForMovement)
             {
                 tick = 0;

@@ -61,6 +61,26 @@ namespace App.Model.Entities.Weapons
             return spray;
         }
         
+        public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection, Vector listenerPosition)
+        {
+            var spray = new List<Bullet>();
+            var direction = sightDirection.Normalize();
+            var position = gunPosition + direction * 30;
+            
+            spray.Add(new Bullet(
+                position,
+                direction * 30,
+                bulletWeight,
+                new Edge(gunPosition.Copy(), position),
+                20));
+            
+            ammo--;
+            ticksFromLastFire = 0;
+            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
+
+            return spray;
+        }
+        
         public override void AddAmmo(int amount)
         {
             if (amount > ammo) ammo = amount;

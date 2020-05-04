@@ -76,8 +76,9 @@ namespace App.Engine.Audio
         
         public static FMOD.Studio.EventDescription GetEventDescription(string path)
         {
-            if (cachedEventDescriptions.ContainsKey(path)) return cachedEventDescriptions[path];
-            FMOD.RESULT result = system.getEvent(path, out var description);
+            if (cachedEventDescriptions.ContainsKey(path))
+                return cachedEventDescriptions[path];
+            var result = system.getEvent(path, out var description);
             if (result == RESULT.OK) description.loadSampleData();
             else throw new Exception("FMOD getEvent failed: " + result);
             
@@ -87,8 +88,8 @@ namespace App.Engine.Audio
 
         public static void Initialize()
         {
-            CheckFMOD(FMOD.Studio.System.create(out system));
-            CheckFMOD(system.initialize(512, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
+            CheckResult(FMOD.Studio.System.create(out system));
+            CheckResult(system.initialize(512, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
 
             cachedEventDescriptions = new Dictionary<string, EventDescription>();
             system.loadBankFile(@"Assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out masterBank);
@@ -108,7 +109,7 @@ namespace App.Engine.Audio
             Ready = true;
         }
 
-        private static void CheckFMOD(RESULT result)
+        private static void CheckResult(RESULT result)
         {
             if (result != RESULT.OK)
             {

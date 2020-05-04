@@ -66,6 +66,32 @@ namespace App.Model.Entities.Weapons
 
             return spray;
         }
+        
+        public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection, Vector listenerPosition)
+        {
+            var spray = new List<Bullet>();
+            var direction = sightDirection.Normalize();
+                
+            const int shotsAmount = 6;
+            for (var i = 0; i < shotsAmount; i++)
+            {
+                var offset = new Vector(r.Next(-3, 3), r.Next(-3, 3)) / 30;
+                var e = direction + offset;
+                var position = gunPosition + e * 40;
+                spray.Add(new Bullet(
+                    position,
+                    e * 35,
+                    bulletWeight,
+                    new Edge(gunPosition.Copy(), position),
+                    10));
+            }
+            
+            ammo--;
+            ticksFromLastFire = 0;
+            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
+
+            return spray;
+        }
 
         public override void AddAmmo(int amount)
         {

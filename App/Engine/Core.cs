@@ -137,6 +137,7 @@ namespace App.Engine
 
         private void SetTargets()
         {
+            var targetAmmo = 1000;
             targets = new List<ShootingRangeTarget>
             {
                 new ShootingRangeTarget(
@@ -144,25 +145,26 @@ namespace App.Engine
                     50,
                     new Vector(840, 420),
                     new Vector(5, 0),
-                    60),
+                    60,
+                    AKfactory.GetNewGun(targetAmmo), bullets),
                 new ShootingRangeTarget(
                     200,
                     100,
                     new Vector(350, 580),
                     new Vector(0, 5),
-                    60),
+                    60, AKfactory.GetNewGun(targetAmmo), bullets),
                 new ShootingRangeTarget(
                     50,
                     300,
                     new Vector(720, 920),
                     new Vector(5, 0),
-                    60),
+                    60, AKfactory.GetNewGun(targetAmmo), bullets),
                 new ShootingRangeTarget(
                     50,
                     300,
                     new Vector(340, 280),
                     new Vector(0, 0),
-                    80)
+                    80, AKfactory.GetNewGun(targetAmmo), bullets)
             };
 
             foreach (var t in targets)
