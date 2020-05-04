@@ -58,7 +58,11 @@ namespace App.Model.Entities
         public void Update()
         {
             tick++;
-            sceneBullets.AddRange(weapon.Fire(collisionShape.Center, new Vector(1, 0), collisionShape.Center));
+            weapon.IncrementTick();
+            if (!IsDead && weapon.IsReady())
+            {
+                sceneBullets.AddRange(weapon.Fire(collisionShape.Center, new Vector(1, 0), collisionShape.Center));
+            }
             if (tick > ticksForMovement)
             {
                 tick = 0;

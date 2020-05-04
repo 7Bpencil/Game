@@ -137,7 +137,7 @@ namespace App.Engine
 
         private void SetTargets()
         {
-            var targetAmmo = 1000;
+            var targetAmmo = 10;
             targets = new List<ShootingRangeTarget>
             {
                 new ShootingRangeTarget(
