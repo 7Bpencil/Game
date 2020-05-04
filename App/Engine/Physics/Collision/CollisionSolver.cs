@@ -98,8 +98,7 @@ namespace App.Engine.Physics.Collision
         {
             var q = GetClosestPoint(circle.Center, a, b, c);
             var v = q - circle.Center;
-            var distance = v.Length;
-            if (distance <= circle.Radius)
+            if (Vector.ScalarProduct(v,v) <= circle.Radius * circle.Radius)
                 return new CollisionInfo(v.Length, v, q);
 
             return null;
