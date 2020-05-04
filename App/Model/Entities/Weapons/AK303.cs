@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using App.Engine.Audio;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -7,6 +8,7 @@ namespace App.Model.Entities.Weapons
     public class AK303 : Weapon
     {
         private readonly Random r;
+        private readonly string fireSoundPath;
 
         private readonly string name;
         public override string Name => name;
@@ -32,25 +34,28 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 1f;
             this.ammo = ammo;
             r = new Random();
+            
+            fireSoundPath = @"event:/gunfire/AK303_FIRE";
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
         
-        public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
+        public override List<Bullet> Fire(Vector gunPosition, Vector listenerPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
-            var direction = (cursor.Position - playerPosition).Normalize();
-            var position = playerPosition + direction * 40;
+            var direction = (cursor.Position - gunPosition).Normalize();
+            var position = gunPosition + direction * 40;
             
             spray.Add(new Bullet(
                 position,
                 direction * 40,
                 bulletWeight,
-                new Edge(playerPosition.Copy(), position),
+                new Edge(gunPosition.Copy(), position),
                 40));
             
             ammo--;
             ticksFromLastFire = 0;
+            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
             cursor.MoveBy(direction.GetNormal() * r.Next(-30, 30) + new Vector(r.Next(2, 2), r.Next(2, 2)));
 
             return spray;

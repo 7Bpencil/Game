@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Thread = System.Threading.Thread;
+using App.Engine.Audio;
 using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
@@ -80,6 +82,12 @@ namespace App.Engine
             keyState = new KeyStates();
             mouseState = new MouseState();
             clock = new Stopwatch();
+            
+            AudioEngine.Initialize();
+            while (!AudioEngine.Ready)
+                Thread.Sleep(1);
+
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
 
         private void SetLevels()
@@ -192,6 +200,8 @@ namespace App.Engine
                     currentLevel.RaytracingEdges, collectables, bullets, cursor.Position, player.Position,
                     camera.GetChaser(), GetDebugInfo());
             
+            AudioEngine.Update();
+            
             clock.Stop();
             var rTime = clock.ElapsedMilliseconds;
             clock.Reset();
@@ -221,7 +231,8 @@ namespace App.Engine
             else if (mouseState.LMB && player.CurrentWeapon.IsReady() && player.MeleeWeapon.IsReady)
             {
                 player.HideMeleeWeapon();
-                var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
+                var firedBullets = player.CurrentWeapon.Fire(player.Position, player.Position, cursor);
+                AudioEngine.PlayNewInstance("event:/gunfire/misc/dropped_shell", player.Position, player.Position);
                 bullets.AddRange(firedBullets);
                 particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
@@ -338,10 +349,14 @@ namespace App.Engine
                 var penetrationTimes = 
                     BulletCollisionDetector.AreCollideWithDynamic(bullet, target.collisionShape, target.Velocity);
                 if (penetrationTimes == null) continue;
-                target.TakeHit(bullet.Damage);
-                if (target.Armour > 50) bullet.IsStuck = true;
-                
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
+                target.TakeHit(bullet.Damage);
+                if (target.Armour > 50)
+                {
+                    bullet.IsStuck = true;
+                    AudioEngine.PlayNewInstance("event:/gunfire/hit_sounds/hit_armor", penetrationPlace, player.Position);
+                }
+                
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
 
@@ -418,6 +433,7 @@ namespace App.Engine
             switch (keyPressed)
             {
                 case Keys.Escape:
+                    AudioEngine.Release();
                     Application.Exit();
                     break;
                 

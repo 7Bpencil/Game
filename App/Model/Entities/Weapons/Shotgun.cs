@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using App.Engine.Audio;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
@@ -7,6 +8,7 @@ namespace App.Model.Entities.Weapons
     public class Shotgun : Weapon
     {
         private readonly Random r;
+        private readonly string fireSoundPath;
 
         private readonly string name;
         public override string Name => name;
@@ -32,31 +34,34 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();
+            
+            fireSoundPath = @"event:/gunfire/SHOTGUN_FIRE";
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
 
-        public override List<Bullet> Fire(Vector playerPosition, CustomCursor cursor)
+        public override List<Bullet> Fire(Vector gunPosition, Vector listenerPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
-            var direction = (cursor.Position - playerPosition).Normalize();
+            var direction = (cursor.Position - gunPosition).Normalize();
             
             const int shotsAmount = 6;
             for (var i = 0; i < shotsAmount; i++)
             {
                 var offset = new Vector(r.Next(-3, 3), r.Next(-3, 3)) / 30;
                 var e = direction + offset;
-                var position = playerPosition + e * 40;
+                var position = gunPosition + e * 40;
                 spray.Add(new Bullet(
                     position,
                     e * 30,
                     bulletWeight,
-                    new Edge(playerPosition.Copy(), position),
+                    new Edge(gunPosition.Copy(), position),
                     12));
             }
 
             ammo--;
             ticksFromLastFire = 0;
+            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
             cursor.MoveBy(new Vector(r.Next(-40, 40), r.Next(-40, 40)));
 
             return spray;

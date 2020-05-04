@@ -13,7 +13,7 @@
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
+        <PlatformTarget>x64</PlatformTarget>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
@@ -21,15 +21,19 @@
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
+        <PlatformTarget>x64</PlatformTarget>
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
         <OutputPath>bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System" />
@@ -40,6 +44,11 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Engine\Audio\AudioEngine.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_dsp.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_errors.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_studio.cs" />
         <Compile Include="Engine\ParticleFactory.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
@@ -97,28 +106,13 @@
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Assets\Audio\Desktop\Master.bank">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Audio\Desktop\Master.strings.bank">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\Levels\thirdTry.tmx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Music\LifeDaTrash.wav">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Music\MagnaDivide.wav">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Music\PlayList.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sounds\GunSounds\fire_AK303.wav">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sounds\GunSounds\fire_MP6.wav">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sounds\GunSounds\fire_SaigaFA.wav">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sounds\GunSounds\fire_Shotgun.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\BLOOD\blood_splash_small.png">
@@ -179,6 +173,12 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\crosshair.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="libs\fmodstudio.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="libs\fmod.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
