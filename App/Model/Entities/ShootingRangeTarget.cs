@@ -50,7 +50,7 @@ namespace App.Model.Entities
         public void MoveBy(Vector delta) => collisionShape.MoveBy(delta);
         public void MoveTo(Vector newPosition) => collisionShape.MoveTo(newPosition);
         public void ChangeVelocity(Vector newVelocity) => velocity = newVelocity;
-        public void IncrementTick()
+        public void Update()
         {
             tick++;
             if (tick > ticksForMovement)

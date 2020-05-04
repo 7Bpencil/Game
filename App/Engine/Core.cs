@@ -354,7 +354,7 @@ namespace App.Engine
                 if (target.Armour > 50)
                 {
                     bullet.IsStuck = true;
-                    AudioEngine.PlayNewInstance("event:/gunfire/hit_sounds/hit_armor", penetrationPlace, player.Position);
+                    //AudioEngine.PlayNewInstance("event:/gunfire/hit_sounds/hit_armor", penetrationPlace, player.Position);
                 }
                 
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
@@ -365,12 +365,15 @@ namespace App.Engine
             }
         }
 
+        /// <summary>
+        /// Updates AI - it should be called every tick
+        /// </summary>
         private void UpdateTargets()
         {
             foreach (var t in targets)
             {
                 if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
-                t.IncrementTick();
+                t.Update();
             }
         }
 
