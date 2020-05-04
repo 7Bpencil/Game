@@ -10,6 +10,8 @@ namespace App.Model.Entities
 {
     public class Player
     {
+        public Vector viewVector;
+        private float viewAngle = 180;
         public readonly RigidCircle Shape;
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
@@ -18,6 +20,7 @@ namespace App.Model.Entities
         public readonly SpriteContainer LegsContainer;
         private readonly Dictionary<Type, Sprite> weaponSprites;
         private readonly MeleeWeaponSprite meleeWeaponSprite;
+        
 
         private readonly List<Weapon> weapons;
         public readonly MeleeWeapon MeleeWeapon;

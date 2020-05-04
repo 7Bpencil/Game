@@ -9,6 +9,7 @@ using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Render;
+using App.Engine.Sprites;
 using App.Model;
 using App.Model.Entities;
 using App.Model.Entities.Weapons;
@@ -87,7 +88,7 @@ namespace App.Engine
             while (!AudioEngine.Ready)
                 Thread.Sleep(1);
 
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
 
         private void SetLevels()
@@ -137,39 +138,24 @@ namespace App.Engine
 
         private void SetTargets()
         {
-            var targetAmmo = 10;
+            var targetAmmo = 1000;
+            var position = new Vector(720, 920);
+            var legs = new PlayerBodySprite(position, new Bitmap(@"Assets\TileMaps\boroda.png"), 1, 14, 27, new Size(64, 64));
+            var torso = new StaticSprite(new Bitmap(@"Assets\Sprites\Weapons\top_down_view_boroda.png"), 0, new Size(79, 57));
             targets = new List<ShootingRangeTarget>
             {
-                new ShootingRangeTarget(
-                    100,
-                    50,
-                    new Vector(840, 420),
-                    new Vector(5, 0),
-                    60,
-                    AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
-                    200,
-                    100,
-                    new Vector(350, 580),
-                    new Vector(0, 5),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
+                new ShootingRangeTarget(player, legs, torso, 90f,
                     50,
                     300,
-                    new Vector(720, 920),
+                    position,
                     new Vector(5, 0),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
-                    50,
-                    300,
-                    new Vector(340, 280),
-                    new Vector(0, 0),
-                    80, AKfactory.GetNewGun(targetAmmo), bullets)
+                    60, AKfactory.GetNewGun(targetAmmo), bullets)
             };
 
             foreach (var t in targets)
             {
-                sprites.Add(t.SpriteContainer);
+                sprites.Add(t.LegsContainer);
+                sprites.Add(t.TorsoContainer);
                 currentLevel.DynmaicShapes.Add(t.collisionShape);
             }
             
@@ -274,6 +260,7 @@ namespace App.Engine
             var angle = (float) (180 / Math.PI * dirAngle);
             player.TorsoContainer.Angle = angle;
             player.MeleeWeapon.RotateRangeShape(angle, player.Position);
+            player.viewVector = direction.Normalize();
         }
         
         private void RotatePlayerLegs(Vector delta)
@@ -375,6 +362,7 @@ namespace App.Engine
             foreach (var t in targets)
             {
                 if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
+                else t.aim = Raytracing.IsInView(player.Shape, t.Center, currentLevel.RaytracingEdges, 1000);
                 t.Update();
             }
         }

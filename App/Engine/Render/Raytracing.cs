@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
+using App.Engine.Physics.RigidShapes;
 
 namespace App.Engine.Render
 {
@@ -94,6 +96,28 @@ namespace App.Engine.Render
             {
                 return (int) point.Angle + point.Position.GetHashCode();
             }
+        }
+
+        public static Vector IsInView(RigidCircle circle, Vector lightSourcePosition, List<Edge> edges, float visibilityRadius)
+        {
+            var visibilityPolygonPoints = CalculateVisibilityPolygon(edges, lightSourcePosition, visibilityRadius);
+            CollisionInfo info;
+            for (var i = 0; i < visibilityPolygonPoints.Count - 1; i++)
+            {
+                info = CollisionSolver.GetCollisionInfo(
+                    circle,
+                    lightSourcePosition,
+                    visibilityPolygonPoints[i].Position,
+                    visibilityPolygonPoints[i + 1].Position);
+                if (info != null) return info.Start;
+            }
+            info = CollisionSolver.GetCollisionInfo(
+                circle,
+                lightSourcePosition,
+                visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].Position,
+                visibilityPolygonPoints[0].Position);
+            
+            return info?.Start;
         }
     }
 }
