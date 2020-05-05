@@ -36,7 +36,7 @@ namespace App.Engine
         private List<AbstractParticleUnit> particles;
         private List<CollisionInfo> collisionInfo;
         private List<Bullet> bullets;
-        private List<ShootingRangeTarget> targets;
+        private List<Bot> targets;
         private List<Collectable> collectables;
 
         private readonly WeaponFactory<AK303> AKfactory;
@@ -138,28 +138,28 @@ namespace App.Engine
         private void SetTargets()
         {
             var targetAmmo = 1000;
-            targets = new List<ShootingRangeTarget>
+            targets = new List<Bot>
             {
-                new ShootingRangeTarget(
+                new Bot(
                     100,
                     50,
                     new Vector(840, 420),
                     new Vector(5, 0),
                     60,
                     AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
+                new Bot(
                     200,
                     100,
                     new Vector(350, 580),
                     new Vector(0, 5),
                     60, AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
+                new Bot(
                     50,
                     300,
                     new Vector(720, 920),
                     new Vector(5, 0),
                     60, AKfactory.GetNewGun(targetAmmo), bullets),
-                new ShootingRangeTarget(
+                new Bot(
                     50,
                     300,
                     new Vector(340, 280),
@@ -177,6 +177,10 @@ namespace App.Engine
 
         public void GameLoop(object sender, EventArgs args)
         {
+            if (CollisionSolver.GetCollisionInfo(player.Shape, currentLevel.Exit) != null)
+            {
+                Console.WriteLine("URA");
+            }
             if (!isLevelLoaded)
             {
                 renderPipeline.Load(currentLevel);
@@ -231,7 +235,7 @@ namespace App.Engine
                 var wasHit = player.MeleeWeapon.Attack(targets);
                 if (wasHit) particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
             }
-            else if (mouseState.LMB && player.CurrentWeapon.IsReady() && player.MeleeWeapon.IsReady)
+            else if (mouseState.LMB && player.CurrentWeapon.IsReady && player.MeleeWeapon.IsReady)
             {
                 player.HideMeleeWeapon();
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);

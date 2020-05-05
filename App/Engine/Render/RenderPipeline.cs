@@ -42,7 +42,7 @@ namespace App.Engine.Render
         }
         
         public void RenderDebugInfo(
-            Vector cameraPosition, Size cameraSize, ShapesIterator shapes, List<ShootingRangeTarget> targets,
+            Vector cameraPosition, Size cameraSize, ShapesIterator shapes, List<Bot> targets,
             List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Collectable> items, List<Bullet> bullets,
             Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser, string[] debugInfo)
         {
@@ -143,7 +143,7 @@ namespace App.Engine.Render
                 if (!bullet.IsStuck) renderMachine.RenderEdgeOnCamera(bullet.Shape, cameraPosition);
         }
 
-        private void RenderEnemyInfo(List<ShootingRangeTarget> targets, Vector cameraPosition)
+        private void RenderEnemyInfo(List<Bot> targets, Vector cameraPosition)
         {
             foreach (var t in targets)
             {

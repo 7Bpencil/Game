@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
+using App.Model.Entities;
 using App.Model.LevelData;
 
 namespace App.Model.DataParser
@@ -86,6 +87,16 @@ namespace App.Model.DataParser
             return new Level(
                 layers, staticShapes, raytracingEdges, tileSets[source],
                 playerStartPosition, playerClothesTileMap, playerWeaponsTileMap);
+        }
+
+        private static EntityCreator.PlayerInitializationInfo ParsePlayerInfo()
+        {
+            
+        }
+        
+        private static EntityCreator.BotInitializationInfo ParseBotInfo()
+        {
+            
         }
 
         private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)

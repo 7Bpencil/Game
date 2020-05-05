@@ -6,7 +6,7 @@ using App.Engine.Sprites;
 
 namespace App.Model.Entities
 {
-    public class ShootingRangeTarget
+    public class Bot
     {
         public int Health;
         public int Armour;
@@ -22,7 +22,7 @@ namespace App.Model.Entities
         public Vector Velocity => velocity;
         public Vector Center => collisionShape.Center;
         
-        public ShootingRangeTarget(
+        public Bot(
             int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
         {
             this.weapon = weapon;
@@ -59,7 +59,7 @@ namespace App.Model.Entities
         {
             tick++;
             weapon.IncrementTick();
-            if (!IsDead && weapon.IsReady())
+            if (!IsDead && weapon.IsReady)
             {
                 //sceneBullets.AddRange(weapon.Fire(collisionShape.Center, new Vector(1, 0), collisionShape.Center));
             }

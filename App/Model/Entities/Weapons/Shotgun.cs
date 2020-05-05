@@ -101,6 +101,6 @@ namespace App.Model.Entities.Weapons
             if (ammo > capacity) ammo = capacity;
         }
         
-        public override bool IsReady() => ticksFromLastFire >= firePeriod && ammo > 0;
+        public override bool IsReady => ticksFromLastFire >= firePeriod && ammo > 0;
     }
 }

@@ -34,7 +34,7 @@ namespace App.Model.Entities
         /// </summary>
         /// <param name="targets"></param>
         /// <returns>true if there was at least one hit</returns>
-        public bool Attack(List<ShootingRangeTarget> targets)
+        public bool Attack(List<Bot> targets)
         {
             var createBlood = false;
             foreach (var target in targets)

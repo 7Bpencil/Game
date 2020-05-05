@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
@@ -18,24 +17,20 @@ namespace App.Model.Entities
         public readonly SpriteContainer LegsContainer;
         private readonly Dictionary<Type, Sprite> weaponSprites;
         private readonly MeleeWeaponSprite meleeWeaponSprite;
-
         private readonly List<Weapon> weapons;
         public readonly MeleeWeapon MeleeWeapon;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
 
-        public Player(Vector startPosition, float startAngle, Sprite legs,
-            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites)
+        public Player(Vector startPosition, float startAngle, Sprite legs, RigidCircle collisionShape,
+            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, MeleeWeaponSprite meleeWeapon)
         {
             MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
             this.weaponSprites = weaponSprites;
-            meleeWeaponSprite = 
-                new MeleeWeaponSprite(new Bitmap(@"Assets\Sprites\Weapons\pinkHair_katana.png"),
-                    1, 0, 5, new Size(170, 170));
+            meleeWeaponSprite = meleeWeapon;
             weapons = startWeapons;
             currentWeaponIndex = 0;
-            
-            Shape = new RigidCircle(startPosition, 32, false, true);
+            Shape = collisionShape;
             LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
             TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.GetType()], startPosition, startAngle);
         }
@@ -54,11 +49,6 @@ namespace App.Model.Entities
                 return;
             }
             weapons.Add(newWeapon);
-        }
-        
-        public void RemoveWeapon(string weaponName)
-        {
-            throw new NotImplementedException();
         }
 
         public void MoveNextWeapon()
