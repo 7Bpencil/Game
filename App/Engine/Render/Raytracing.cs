@@ -83,6 +83,18 @@ namespace App.Engine.Render
                 Position = position;
             }
         }
+
+        public class VisibilityRegion
+        {
+            public readonly Vector LightSourcePosition;
+            public readonly List<RaytracingPoint> VisibilityRegionPoints;
+
+            public VisibilityRegion(Vector lightSourcePosition, List<Edge> sceneEdges, float visibilityRadius)
+            {
+                LightSourcePosition = lightSourcePosition;
+                VisibilityRegionPoints = CalculateVisibilityPolygon(sceneEdges, lightSourcePosition, visibilityRadius);
+            }
+        }
         
         private class RaytracingPointsEqualityComparer : IEqualityComparer<RaytracingPoint>
         {
@@ -98,11 +110,13 @@ namespace App.Engine.Render
             }
         }
 
-        public static Vector IsInView(RigidCircle circle, Vector lightSourcePosition, List<Edge> edges, float visibilityRadius)
+        public static Vector IsInView(RigidCircle circle, VisibilityRegion region)
         {
-            var visibilityPolygonPoints = CalculateVisibilityPolygon(edges, lightSourcePosition, visibilityRadius);
             CollisionInfo info;
-            for (var i = 0; i < visibilityPolygonPoints.Count - 1; i++)
+            var size = region.VisibilityRegionPoints.Count;
+            var visibilityPolygonPoints = region.VisibilityRegionPoints;
+            var lightSourcePosition = region.LightSourcePosition;
+            for (var i = 0; i < size - 1; i++)
             {
                 info = CollisionSolver.GetCollisionInfo(
                     circle,

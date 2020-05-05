@@ -30,6 +30,7 @@ namespace App.Engine.Render
         private readonly Brush penetrationBrush;
 
         private readonly Brush transparentBrush;
+        private readonly Brush redBrush;
         private Color shadowColor;
 
         public RenderMachine(ViewForm view, Size cameraSize)
@@ -48,6 +49,7 @@ namespace App.Engine.Render
             penetrationBrush = new SolidBrush(Color.Maroon);
             
             transparentBrush = new SolidBrush(Color.FromArgb(0, Color.Empty));
+            redBrush = new SolidBrush(Color.FromArgb(64, Color.Red));
             shadowColor = Color.FromArgb(128, Color.Black);
         }
         
@@ -119,18 +121,20 @@ namespace App.Engine.Render
             RigidBodyRenderer.Draw(shape, cameraPosition, shapePen, gfxCamera);
         }
 
-        public void RenderVisibilityPolygon(
-            Vector lightSourcePosition, 
-            List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Vector cameraPosition)
+        public void RenderVisibilityRegion(Raytracing.VisibilityRegion region, Vector cameraPosition, bool IsEnemy)
+        {
+            var brush = IsEnemy ? redBrush : transparentBrush;
+            VisibilityPolygonRenderer.Draw(
+                region.LightSourcePosition,
+                region.VisibilityRegionPoints,
+                cameraPosition,
+                brush,
+                gfxShadowMask);
+        }
+
+        public void PrepareShadowMask()
         {
             gfxShadowMask.Clear(shadowColor);
-            
-            VisibilityPolygonRenderer.Draw(
-                lightSourcePosition,
-                visibilityPolygonPoints,
-                cameraPosition,
-                transparentBrush,
-                gfxShadowMask);
         }
 
         public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)

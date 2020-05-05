@@ -19,15 +19,13 @@ namespace App.Engine.Render
         }
 
         public void Start(
-            Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon,
-            List<SpriteContainer> sprites, List<AbstractParticleUnit> particles, List<Bullet> bullets, List<Edge> raytracingEdges)
+            Vector playerPosition, Vector cameraPosition, Size cameraSize, Weapon currentWeapon, List<SpriteContainer> sprites, 
+            List<AbstractParticleUnit> particles, List<Bullet> bullets, List<Raytracing.VisibilityRegion> visibilityRegions)
         {
-            //var visibilityPolygons = 
-            //    Raytracing.CalculateVisibilityPolygon(raytracingEdges, playerPosition, 1000);
             RerenderCamera(cameraPosition, cameraSize);
-            //renderMachine.RenderVisibilityPolygon(playerPosition, visibilityPolygons, cameraPosition);
             RenderSprites(sprites, cameraPosition);
             RenderParticles(particles, cameraPosition);
+            RenderVisibilityRegions(visibilityRegions, cameraPosition);
             RenderBullets(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
 
@@ -134,13 +132,26 @@ namespace App.Engine.Render
         private void RenderRaytracingEdges(List<Edge> raytracingEdges, Vector cameraPosition)
         {
             foreach (var edge in raytracingEdges)
+            {
                 renderMachine.RenderEdgeOnCamera(edge, cameraPosition);
+            }
         }
 
         private void RenderBullets(List<Bullet> bullets, Vector cameraPosition)
         {
             foreach (var bullet in bullets)
                 if (!bullet.IsStuck) renderMachine.RenderEdgeOnCamera(bullet.Shape, cameraPosition);
+        }
+
+        private void RenderVisibilityRegions(List<Raytracing.VisibilityRegion> visibilityRegions, Vector cameraPosition)
+        {
+            renderMachine.PrepareShadowMask();
+            var isEnemy = false;
+            foreach (var region in visibilityRegions)
+            {
+                renderMachine.RenderVisibilityRegion(region, cameraPosition, isEnemy);
+                isEnemy = true;
+            }
         }
 
         private void RenderEnemyInfo(List<ShootingRangeTarget> targets, Vector cameraPosition)

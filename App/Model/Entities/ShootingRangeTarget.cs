@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
+using App.Model.LevelData;
 
 namespace App.Model.Entities
 {
@@ -12,6 +15,9 @@ namespace App.Model.Entities
         //imported
         public readonly SpriteContainer TorsoContainer;
         public readonly SpriteContainer LegsContainer;
+        private bool statePassive;
+        private bool stateAggressive;
+        private bool stateDefensive;
         //previous
         public Vector viewVector;
         public float viewAngle = 180;
@@ -29,14 +35,30 @@ namespace App.Model.Entities
         private Vector velocity;
         public Vector Velocity => velocity;
         public Vector Center => collisionShape.Center;
-        
+
         public ShootingRangeTarget(Player _player, Sprite legs, Sprite torso, float angle,
-            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
+            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon,
+            List<Bullet> sceneBullets)
         {
+            //included
             aim = null;
             player = _player;
             this.weapon = weapon;
-            this.sceneBullets = sceneBullets;
+            statePassive = true;
+            List<Vector> patrolPathTiles = new List<Vector>
+            {
+                new Vector(8, 10), 
+                new Vector(10, 16), 
+                new Vector(27, 12),
+                new Vector(32, 20),
+                new Vector(26, 27),
+                new Vector(11, 30),
+                
+            } ;
+            List<Vector> patrolPathCoords = patrolPathTiles.Select(x => x * 32).ToList();
+                
+        //previous
+        this.sceneBullets = sceneBullets;
             Health = health;
             Armour = armour;
             collisionShape = new RigidCircle(centerPosition, 32, false, true);
@@ -45,10 +67,6 @@ namespace App.Model.Entities
             this.ticksForMovement = ticksForMovement;
             TorsoContainer = new SpriteContainer(torso, centerPosition, angle);
             LegsContainer = new SpriteContainer(legs, centerPosition, angle);
-            /*SpriteContainer = new SpriteContainer(
-                new StaticSprite(
-                    new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, new Size(64, 64)),
-                centerPosition, 0);*/
         }
         
         public void TakeHit(int damage)
@@ -67,17 +85,75 @@ namespace App.Model.Entities
         public void MoveBy(Vector delta) => collisionShape.MoveBy(delta);
         public void MoveTo(Vector newPosition) => collisionShape.MoveTo(newPosition);
         public void ChangeVelocity(Vector newVelocity) => velocity = newVelocity;
+
+        public void Fire()
+        {
+            var direction = aim - collisionShape.Center;
+            sceneBullets.AddRange(weapon.Fire(
+                collisionShape.Center, 
+                direction.Normalize(), 
+                collisionShape.Center));
+        }
+
+        public void FindEnemy()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FindCover()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveTo(Player player)
+        {
+               
+        }
+        
         public void Update()
         {
             tick++;
             weapon.IncrementTick();
             if (!IsDead)
             {
+                //
+                /*if (Health == 100 && aim == null)
+                {
+                    statePassive = true;
+                    stateAggressive = false;
+                    stateDefensive = false;
+                }
+
+                if (Health <= 100 || Health <= 20)
+                {
+                    statePassive = false;
+                    stateAggressive = false;
+                    stateDefensive = true;
+                }
+            
+                if (Health > 20)
+                {
+                    statePassive = false;
+                    stateAggressive = true;
+                    stateDefensive = false;
+                }
+
+                if (!statePassive)
+                {
+                    if (stateAggressive) FindEnemy();
+                    else if (stateDefensive) FindCover();
+                }*/
+                
                 if (weapon.IsReady() && !(aim == null))
                 {
                     var direction = aim - collisionShape.Center;
-                    sceneBullets.AddRange(weapon.Fire(collisionShape.Center, direction.Normalize(), collisionShape.Center));
+                    sceneBullets.AddRange(weapon.Fire(
+                        collisionShape.Center, 
+                        direction.Normalize(), 
+                        collisionShape.Center));
                 }
+                
+                //
                 if (tick > ticksForMovement)
                 {
                     tick = 0;

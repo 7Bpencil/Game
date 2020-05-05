@@ -39,6 +39,7 @@ namespace App.Engine
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
         private List<Collectable> collectables;
+        private List<Raytracing.VisibilityRegion> visibilityRegions;
 
         private readonly WeaponFactory<AK303> AKfactory;
         private readonly WeaponFactory<Shotgun> ShotgunFactory;
@@ -73,7 +74,7 @@ namespace App.Engine
             sprites = new List<SpriteContainer> {Capacity = 50};
             particles = new List<AbstractParticleUnit> {Capacity = 500};
             bullets = new List<Bullet> {Capacity = 500};
-            
+
             SetLevels();
             SetTargets();
             var playerStartPosition = currentLevel.PlayerStartPosition;
@@ -145,7 +146,7 @@ namespace App.Engine
             targets = new List<ShootingRangeTarget>
             {
                 new ShootingRangeTarget(player, legs, torso, 90f,
-                    50,
+                    100,
                     300,
                     position,
                     new Vector(5, 0),
@@ -180,7 +181,7 @@ namespace App.Engine
             
             renderPipeline.Start(
                 player.Position, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, particles, bullets, currentLevel.RaytracingEdges);
+                sprites, particles, bullets, visibilityRegions);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
@@ -359,10 +360,17 @@ namespace App.Engine
         /// </summary>
         private void UpdateTargets()
         {
+            visibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 8};
+            visibilityRegions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             foreach (var t in targets)
             {
                 if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
-                else t.aim = Raytracing.IsInView(player.Shape, t.Center, currentLevel.RaytracingEdges, 1000);
+                else
+                {
+                    var view = new Raytracing.VisibilityRegion(t.Center, currentLevel.RaytracingEdges, 1000);
+                    visibilityRegions.Add(view);
+                    t.aim = Raytracing.IsInView(player.Shape, view);
+                }
                 t.Update();
             }
         }
