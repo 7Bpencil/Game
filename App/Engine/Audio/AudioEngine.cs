@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using App.Engine.Physics;
 using FMOD;
 using FMOD.Studio;
+using INITFLAGS = FMOD.INITFLAGS;
 
 namespace App.Engine.Audio
 {
     public static class AudioEngine
     {
         private static FMOD.Studio.System system;
+        private static FMOD.System fmodSystem;
         public static bool Ready;
-        private static ATTRIBUTES_3D attributes3d = new ATTRIBUTES_3D();
+        private static ATTRIBUTES_3D attributes3d;
         private static FMOD.Studio.Bank masterBank;
         private static Dictionary<string, EventDescription> cachedEventDescriptions;
 
@@ -20,10 +22,10 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
-        /// <param name="cameraPosition"></param>
-        public static void PlayNewInstance(string path, Vector instancePosition, Vector cameraPosition)
+        /// <param name="listenerPosition"></param>
+        public static void PlayNewInstance(string path, Vector instancePosition, Vector listenerPosition)
         {
-            PlayInstance(CreateEventInstance(path, instancePosition, cameraPosition));
+            PlayInstance(CreateEventInstance(path, instancePosition, listenerPosition));
         }
         
         /// <summary>
@@ -40,15 +42,15 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
-        /// <param name="cameraPosition"></param>
+        /// <param name="listenerPosition"></param>
         /// <returns></returns>
-        public static FMOD.Studio.EventInstance CreateEventInstance(string path, Vector instancePosition, Vector cameraPosition)
+        public static FMOD.Studio.EventInstance CreateEventInstance(string path, Vector instancePosition, Vector listenerPosition)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
             eventDescription.is3D(out var is3D);
-            if (is3D && instancePosition != null && cameraPosition != null)
-                PositionEvent(instance, instancePosition, cameraPosition);
+            if (is3D && instancePosition != null && listenerPosition != null)
+                PositionEvent(instance, instancePosition, listenerPosition);
             else
             {
                 Console.WriteLine(path + " is not 3D");
@@ -81,9 +83,29 @@ namespace App.Engine.Audio
             instance.release();
         }
         
-        public static void PositionEvent(EventInstance instance, Vector position, Vector cameraPosition)
+        public static void PositionEvent(EventInstance instance, Vector position, Vector listenerPosition)
         {
+            var vector = new VECTOR
+            {
+                x = position.X,
+                y = position.Y,
+                z = 0,
+            };
+            attributes3d.position = vector;
+            instance.set3DAttributes(attributes3d);
+        }
+
+        public static void UpdateListenerPosition(Vector newPosition)
+        {
+            var vector = new VECTOR
+            {
+                x = newPosition.X,
+                y = newPosition.Y,
+                z = 0,
+            };
             
+            attributes3d.position = vector;
+            system.setListenerAttributes(0, attributes3d);
         }
 
         private static FMOD.Studio.EventDescription GetEventDescription(string path)
@@ -100,8 +122,13 @@ namespace App.Engine.Audio
 
         public static void Initialize()
         {
+            CheckResult(FMOD.Factory.System_Create(out fmodSystem));
+            fmodSystem.init(512, INITFLAGS.NORMAL, IntPtr.Zero);
+            fmodSystem.set3DSettings(1, 64, 1);
             CheckResult(FMOD.Studio.System.create(out system));
             CheckResult(system.initialize(512, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
+            SetAttributes3D();
+
 
             cachedEventDescriptions = new Dictionary<string, EventDescription>();
             system.loadBankFile(@"Assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out masterBank);
@@ -137,6 +164,27 @@ namespace App.Engine.Audio
         public static void Release()
         {
             system.release();
+        }
+
+        private static void SetAttributes3D()
+        {
+            attributes3d = new ATTRIBUTES_3D();
+            
+            var vector = new VECTOR 
+            {
+                x = 0f,
+                y = 0f,
+                z = 1f
+            };
+            attributes3d.forward = vector;
+            
+            vector = new VECTOR 
+            {
+                x = 0f,
+                y = 1f,
+                z = 0f
+            };
+            attributes3d.up = vector;
         }
     }
 }

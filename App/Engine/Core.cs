@@ -87,7 +87,7 @@ namespace App.Engine
             while (!AudioEngine.Ready)
                 Thread.Sleep(1);
 
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
 
         private void SetLevels()
@@ -218,6 +218,7 @@ namespace App.Engine
             CorrectPlayer();
             
             collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
+            AudioEngine.UpdateListenerPosition(player.Position);
             var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
             player.MeleeWeapon.MoveRangeShapeBy(positionDelta);
@@ -356,7 +357,7 @@ namespace App.Engine
                 if (target.Armour > 50)
                 {
                     bullet.IsStuck = true;
-                    //AudioEngine.PlayNewInstance("event:/gunfire/hit_sounds/hit_armor", penetrationPlace, player.Position);
+                    AudioEngine.PlayNewInstance("event:/gunfire/3D/hit_sounds/HIT_ARMOR_3D", penetrationPlace, player.Position);
                 }
                 
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
