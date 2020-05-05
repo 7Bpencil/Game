@@ -47,7 +47,13 @@ namespace App.Engine.Audio
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
             eventDescription.is3D(out var is3D);
-            if (instancePosition != null && is3D) PositionEvent(instance, instancePosition, cameraPosition);
+            if (is3D && instancePosition != null && cameraPosition != null)
+                PositionEvent(instance, instancePosition, cameraPosition);
+            else
+            {
+                Console.WriteLine(path + " is not 3D");
+                throw new ArgumentException();
+            }
             return instance;
         }
         
@@ -60,6 +66,12 @@ namespace App.Engine.Audio
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
+            eventDescription.is3D(out var is3D);
+            if (is3D)
+            {
+                Console.WriteLine(path + " is not 2D");
+                throw new ArgumentException();
+            }
             return instance;
         }
 
@@ -73,8 +85,8 @@ namespace App.Engine.Audio
         {
             
         }
-        
-        public static FMOD.Studio.EventDescription GetEventDescription(string path)
+
+        private static FMOD.Studio.EventDescription GetEventDescription(string path)
         {
             if (cachedEventDescriptions.ContainsKey(path))
                 return cachedEventDescriptions[path];

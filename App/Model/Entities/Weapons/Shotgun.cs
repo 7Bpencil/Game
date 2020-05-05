@@ -9,6 +9,7 @@ namespace App.Model.Entities.Weapons
     {
         private readonly Random r;
         private readonly string fireSoundPath;
+        private readonly string fireSoundPath3D;
 
         private readonly string name;
         public override string Name => name;
@@ -35,12 +36,13 @@ namespace App.Model.Entities.Weapons
             this.ammo = ammo;
             r = new Random();
             
-            fireSoundPath = @"event:/gunfire/SHOTGUN_FIRE";
+            fireSoundPath = @"event:/gunfire/2D/SHOTGUN_FIRE";
+            fireSoundPath3D = @"event:/gunfire/3D/SHOTGUN_FIRE_3D";
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
 
-        public override List<Bullet> Fire(Vector gunPosition, Vector listenerPosition, CustomCursor cursor)
+        public override List<Bullet> Fire(Vector gunPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
             var direction = (cursor.Position - gunPosition).Normalize();
@@ -61,7 +63,7 @@ namespace App.Model.Entities.Weapons
 
             ammo--;
             ticksFromLastFire = 0;
-            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
+            AudioEngine.PlayNewInstance(fireSoundPath);
             cursor.MoveBy(new Vector(r.Next(-40, 40), r.Next(-40, 40)));
 
             return spray;
@@ -88,7 +90,7 @@ namespace App.Model.Entities.Weapons
 
             ammo--;
             ticksFromLastFire = 0;
-            AudioEngine.PlayNewInstance(fireSoundPath, gunPosition, listenerPosition);
+            AudioEngine.PlayNewInstance(fireSoundPath3D, gunPosition, listenerPosition);
 
             return spray;
         }

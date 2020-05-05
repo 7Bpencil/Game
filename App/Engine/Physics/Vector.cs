@@ -163,5 +163,7 @@ namespace App.Engine.Physics
         public Vector Copy() => new Vector(X, Y);
 
         public PointF GetPoint() => new PointF(X, Y);
+
+        public float[] GetVector3() => new[] {X, Y, 0};
     }
 }

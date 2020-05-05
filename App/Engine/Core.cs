@@ -233,8 +233,8 @@ namespace App.Engine
             else if (mouseState.LMB && player.CurrentWeapon.IsReady() && player.MeleeWeapon.IsReady)
             {
                 player.HideMeleeWeapon();
-                var firedBullets = player.CurrentWeapon.Fire(player.Position, player.Position, cursor);
-                AudioEngine.PlayNewInstance("event:/gunfire/misc/dropped_shell", player.Position, player.Position);
+                var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
+                AudioEngine.PlayNewInstance("event:/gunfire/2D/misc/DROPPED_SHELL");
                 bullets.AddRange(firedBullets);
                 particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
