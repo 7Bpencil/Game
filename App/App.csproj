@@ -157,16 +157,16 @@
       <Content Include="Assets\Sprites\Weapons\Shotgun_icon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Sprites\Weapons\top_down_view_boroda.png">
+      <Content Include="Assets\Sprites\Weapons\boroda.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\Sprites\Weapons\top_down_view_pinkHair.png">
+      <Content Include="Assets\Sprites\Weapons\pinkHair.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-      <Content Include="Assets\TileMaps\pink_Hair.png">
+      <Content Include="Assets\TileMaps\pinkHair.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\rooms.png">

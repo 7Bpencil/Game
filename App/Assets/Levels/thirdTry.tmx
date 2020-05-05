@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="45" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="410">
  <properties>
-  <playerInfo PlayerPosition="608, 175" PlayerClothesTileMap="Assets\TileMaps\pink_Hair.png" PlayerWeaponsTileMap="Assets\Sprites\Weapons\top_down_view_pinkHair.png"/>
+ 
+  <playerInfo position="608, 192" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+    <weapon type="Shotgun" ammo="8"/>
+  </playerInfo>
+  
+  <bots>
+    <bot position="840, 420" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+      <weapon type="MP6" ammo="120"/>
+    </bot>
+    <bot position="350, 580" angle="0" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+      <weapon type="SaigaFA" ammo="100"/>
+    </bot>
+    <bot position="720, 920" angle="45" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+      <weapon type="Shotgun" ammo="96"/>
+    </bot>
+    <bot position="340, 280" angle="-45" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+      <weapon type="AK303" ammo="120"/>
+    </bot>
+  </bots>
+  
+  <collectables>
+    <collectableWeapon position="1130, 700" angle="0" type="AK303" ammo="30"/>
+    <collectableWeapon position="440, 750" angle="90" type="SaigaFA" ammo="20"/>
+    <collectableWeapon position="300, 330" angle="45" type="MP6" ammo="40"/>
+  </collectables>
+  
+  <exit x="704" y="112" width="96" height="112"/>
+  
  </properties>
  <tileset firstgid="1" source="rooms.tsx"/>
  <layer id="1" name="floor" width="45" height="40" locked="1">

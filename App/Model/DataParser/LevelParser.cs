@@ -50,13 +50,13 @@ namespace App.Model.DataParser
                         {
                             switch (attribute.Name)
                             {
-                                case "PlayerClothesTileMap":
+                                case "clothesTileMap":
                                     playerClothesTileMap = new Bitmap(attribute.Value);
                                     break;
-                                case "PlayerWeaponsTileMap":
+                                case "weaponsTileMap":
                                     playerWeaponsTileMap = new Bitmap(attribute.Value);
                                     break;
-                                case "PlayerPosition":
+                                case "position":
                                 {
                                     var vector = attribute.Value.Split(',');
                                     playerStartPosition = new Vector(int.Parse(vector[0]), int.Parse(vector[1]));
