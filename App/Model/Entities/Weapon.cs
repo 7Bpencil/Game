@@ -22,9 +22,8 @@ namespace App.Model.Entities
         /// </summary>
         /// <param name="gunPosition"></param>
         /// <param name="sightDirection"></param>
-        /// <param name="listenerPosition"></param>
         /// <returns></returns>
-        public abstract List<Bullet> Fire(Vector gunPosition, Vector sightDirection, Vector listenerPosition);
+        public abstract List<Bullet> Fire(Vector gunPosition, Vector sightDirection);
         public abstract void IncrementTick();
         public abstract float BulletWeight { get; }
         public abstract void AddAmmo(int amount);

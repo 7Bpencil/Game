@@ -87,7 +87,7 @@ namespace App.Engine
             while (!AudioEngine.Ready)
                 Thread.Sleep(1);
 
-            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
 
         private void SetLevels()
@@ -354,12 +354,8 @@ namespace App.Engine
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
                 target.TakeHit(bullet.Damage);
-                if (target.Armour > 50)
-                {
-                    bullet.IsStuck = true;
-                    AudioEngine.PlayNewInstance("event:/gunfire/3D/hit_sounds/HIT_ARMOR_3D", penetrationPlace, player.Position);
-                }
-                
+                if (target.Armour > 50) bullet.IsStuck = true;
+
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
                 particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
 

@@ -69,7 +69,7 @@ namespace App.Model.Entities.Weapons
             return spray;
         }
         
-        public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection, Vector listenerPosition)
+        public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection)
         {
             var spray = new List<Bullet>();
             var direction = sightDirection.Normalize();
@@ -90,7 +90,7 @@ namespace App.Model.Entities.Weapons
             
             ammo--;
             ticksFromLastFire = 0;
-            AudioEngine.PlayNewInstance(fireSoundPath3D, gunPosition, listenerPosition);
+            AudioEngine.PlayNewInstance(fireSoundPath3D, gunPosition);
 
             return spray;
         }

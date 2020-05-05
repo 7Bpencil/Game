@@ -22,10 +22,9 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
-        /// <param name="listenerPosition"></param>
-        public static void PlayNewInstance(string path, Vector instancePosition, Vector listenerPosition)
+        public static void PlayNewInstance(string path, Vector instancePosition)
         {
-            PlayInstance(CreateEventInstance(path, instancePosition, listenerPosition));
+            PlayInstance(CreateEventInstance(path, instancePosition));
         }
         
         /// <summary>
@@ -42,15 +41,14 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
-        /// <param name="listenerPosition"></param>
         /// <returns></returns>
-        public static FMOD.Studio.EventInstance CreateEventInstance(string path, Vector instancePosition, Vector listenerPosition)
+        public static FMOD.Studio.EventInstance CreateEventInstance(string path, Vector instancePosition)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
             eventDescription.is3D(out var is3D);
-            if (is3D && instancePosition != null && listenerPosition != null)
-                PositionEvent(instance, instancePosition, listenerPosition);
+            if (is3D && instancePosition != null)
+                PositionEvent(instance, instancePosition);
             else
             {
                 Console.WriteLine(path + " is not 3D");
@@ -83,7 +81,7 @@ namespace App.Engine.Audio
             instance.release();
         }
         
-        public static void PositionEvent(EventInstance instance, Vector position, Vector listenerPosition)
+        public static void PositionEvent(EventInstance instance, Vector position)
         {
             var vector = new VECTOR
             {
