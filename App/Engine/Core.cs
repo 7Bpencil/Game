@@ -11,6 +11,8 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
+using App.Model.Entities.Collectables;
+using App.Model.Entities.Factories;
 using App.Model.Entities.Weapons;
 using App.Model.LevelData;
 using App.View;
@@ -68,6 +70,9 @@ namespace App.Engine
             SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
             particleFactory = new ParticleFactory();
+            
+            var cW = new CollectableWeaponInitializationInfo(typeof(AK303), Vector.ZeroVector, 0, 40);
+            
 
             sprites = new List<SpriteContainer> {Capacity = 50};
             particles = new List<AbstractParticleUnit> {Capacity = 500};
@@ -97,8 +102,8 @@ namespace App.Engine
             
             collectables = new List<Collectable>
             {
-                AKfactory.GetCollectable(new Vector(600, 400), 45, 20),
-                SaigaFAfactory.GetCollectable(new Vector(600, 500), 0, 8)
+                AKfactory.CreateCollectable(new Vector(600, 400), 45, 20),
+                SaigaFAfactory.CreateCollectable(new Vector(600, 500), 0, 8)
             };
 
             foreach (var collectable in collectables)
@@ -109,15 +114,15 @@ namespace App.Engine
         {
             var weapons = new List<Weapon>
             {
-                ShotgunFactory.GetNewGun(8),
-                MP6factory.GetNewGun(40)
+                ShotgunFactory.CreateGun(8),
+                MP6factory.CreateGun(40)
             };
             player = EntityCreator.CreatePlayer(position, 0, weapons, currentLevel);
 
             sprites.Add(player.LegsContainer);
             sprites.Add(player.TorsoContainer);
-            currentLevel.DynmaicShapes.Add(player.Shape);
-            currentLevel.DynmaicShapes.AddRange(player.MeleeWeapon.range);
+            currentLevel.DynamicShapes.Add(player.Shape);
+            currentLevel.DynamicShapes.AddRange(player.MeleeWeapon.range);
         }
 
         private void SetCursor(Vector position)
@@ -146,31 +151,31 @@ namespace App.Engine
                     new Vector(840, 420),
                     new Vector(5, 0),
                     60,
-                    AKfactory.GetNewGun(targetAmmo), bullets),
+                    AKfactory.CreateGun(targetAmmo), bullets),
                 new Bot(
                     200,
                     100,
                     new Vector(350, 580),
                     new Vector(0, 5),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
+                    60, AKfactory.CreateGun(targetAmmo), bullets),
                 new Bot(
                     50,
                     300,
                     new Vector(720, 920),
                     new Vector(5, 0),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
+                    60, AKfactory.CreateGun(targetAmmo), bullets),
                 new Bot(
                     50,
                     300,
                     new Vector(340, 280),
                     new Vector(0, 0),
-                    80, AKfactory.GetNewGun(targetAmmo), bullets)
+                    80, AKfactory.CreateGun(targetAmmo), bullets)
             };
 
             foreach (var t in targets)
             {
                 sprites.Add(t.SpriteContainer);
-                currentLevel.DynmaicShapes.Add(t.collisionShape);
+                currentLevel.DynamicShapes.Add(t.collisionShape);
             }
             
         }
@@ -202,7 +207,7 @@ namespace App.Engine
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
-                    camera.Position, camera.Size, currentLevel.Shapes, targets, collisionInfo,
+                    camera.Position, camera.Size, currentLevel.SceneShapes, targets, collisionInfo,
                     currentLevel.RaytracingEdges, collectables, bullets, cursor.Position, player.Position,
                     camera.GetChaser(), GetDebugInfo());
             
@@ -221,7 +226,7 @@ namespace App.Engine
             var playerVelocity = UpdatePlayerPosition(step);
             CorrectPlayer();
             
-            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.Shapes);
+            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
             AudioEngine.UpdateListenerPosition(player.Position);
             var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);

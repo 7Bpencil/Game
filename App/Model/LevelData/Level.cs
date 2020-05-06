@@ -11,11 +11,11 @@ namespace App.Model.LevelData
     {
         public readonly Size LevelSizeInTiles;
         public readonly TileSet TileSet;
-        public readonly List<Layer> Layers;
-        public readonly ShapesIterator Shapes;
         public readonly RigidShape Exit;
+        public readonly ShapesIterator SceneShapes;
         public readonly List<RigidShape> StaticShapes;
-        public readonly List<RigidShape> DynmaicShapes;
+        public readonly List<RigidShape> DynamicShapes;
+        public readonly List<Layer> Layers;
         public readonly List<Edge> RaytracingEdges;
         public readonly EntityCreator.PlayerInitializationInfo PlayerInfo;
         public readonly List<EntityCreator.BotInitializationInfo> BotsInfo;
@@ -32,8 +32,8 @@ namespace App.Model.LevelData
             
             
             StaticShapes = staticShapes;
-            DynmaicShapes = new List<RigidShape>();
-            Shapes = new ShapesIterator(StaticShapes, DynmaicShapes);
+            DynamicShapes = new List<RigidShape>();
+            SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
             Exit = exit;
         }
     }

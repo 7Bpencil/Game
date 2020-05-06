@@ -80,11 +80,14 @@
         <Compile Include="Engine\Sprites\MeleeWeaponSprite.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
-        <Compile Include="Model\Entities\AbstractWeaponFactory.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
+        <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
-        <Compile Include="Model\Entities\EntityCreator.cs" />
+        <Compile Include="Model\Entities\Factories\AbstractWeaponFactory.cs" />
+        <Compile Include="Model\Entities\Factories\AWF.cs" />
+        <Compile Include="Model\Entities\Factories\EntityCreator.cs" />
+        <Compile Include="Model\Entities\Factories\WeaponFactory.cs" />
         <Compile Include="Model\Entities\MeleeWeapon.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\Bot.cs" />
@@ -94,9 +97,9 @@
         <Compile Include="Model\Entities\Weapons\MP6.cs" />
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
-        <Compile Include="Model\Entities\Weapons\WeaponFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\LevelRuntimeState.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\DataParser\LevelParser.cs" />

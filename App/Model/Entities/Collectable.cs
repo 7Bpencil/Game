@@ -2,25 +2,11 @@ using App.Engine.Physics.RigidShapes;
 
 namespace App.Model.Entities
 {
-    public class Collectable<T>
+    public abstract class Collectable
     {
-        public readonly RigidShape CollisionShape;
-        private readonly T item;
-        public readonly SpriteContainer SpriteContainer;
-        public bool IsPicked;
-
-        public Collectable(T item, RigidShape collisionShape, SpriteContainer iconContainer)
-        {
-            CollisionShape = collisionShape;
-            this.item = item;
-            SpriteContainer = iconContainer;
-            IsPicked = false;
-        }
-
-        public T GetItem()
-        {
-            IsPicked = true;
-            return item;
-        }
+        public abstract RigidShape CollisionShape { get; }
+        public abstract SpriteContainer SpriteContainer { get; }
+        public abstract bool IsPicked { get; set; }
+        public abstract void Pick(Player player);
     }
 }
