@@ -10,6 +10,125 @@ using App.Model.LevelData;
 
 namespace App.Model.Entities
 {
+    
+    
+    
+    public class Graph<Location>
+    {
+        // Если вы всегда используете для точек типы string,
+        // то здесь разумной альтернативой будет NameValueCollection
+        public Dictionary<Location, Location[]> edges
+            = new Dictionary<Location, Location[]>();
+
+        public Location[] Neighbors(Location id)
+        {
+            return edges[id];
+        }
+    };
+
+    class BreadthFirstSearch
+    {
+        static void Search(Graph<string> graph, string start)
+        {
+            var frontier = new Queue<string>();
+            frontier.Enqueue(start);
+
+            var visited = new HashSet<string>();
+            visited.Add(start);
+
+            while (frontier.Count > 0)
+            {
+                var current = frontier.Dequeue();
+
+                Console.WriteLine("Visiting {0}", current);
+                foreach (var next in graph.Neighbors(current))
+                {
+                    if (!visited.Contains(next))
+                    {
+                        frontier.Enqueue(next);
+                        visited.Add(next);
+                    }
+                }
+            }
+        }
+    }
+
+    public struct Location
+    {
+        // Примечания по реализации: я использую Equals по умолчанию,
+        // но это может быть медленно. Возможно, в реальном проекте стоит
+        // заменить Equals и GetHashCode.
+
+        public readonly int x, y;
+
+        public Location(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public interface WeightedGraph<L>
+    {
+        double Cost(Location a, Location b);
+        IEnumerable<Location> Neighbors(Location id);
+    }
+
+
+    public class SquareGrid : WeightedGraph<Location>
+    {
+
+        public static readonly Location[] DIRS = new[]
+        {
+            new Location(1, 0),
+            new Location(0, -1),
+            new Location(-1, 0),
+            new Location(0, 1)
+        };
+
+        public int width, height;
+        public HashSet<Location> walls = new HashSet<Location>();
+        public HashSet<Location> forests = new HashSet<Location>();
+
+        public SquareGrid(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+
+        public bool InBounds(Location id)
+        {
+            return 0 <= id.x && id.x < width
+                             && 0 <= id.y && id.y < height;
+        }
+
+        public bool Passable(Location id)
+        {
+            return !walls.Contains(id);
+        }
+
+        public double Cost(Location a, Location b)
+        {
+            return forests.Contains(b) ? 5 : 1;
+        }
+
+        public IEnumerable<Location> Neighbors(Location id)
+        {
+            foreach (var dir in DIRS)
+            {
+                Location next = new Location(id.x + dir.x, id.y + dir.y);
+                if (InBounds(next) && Passable(next))
+                {
+                    yield return next;
+                }
+            }
+        }
+    }
+
+    public class PriorityQueue<T>
+{
+}
+
     public class ShootingRangeTarget
     {
         //imported
@@ -109,7 +228,6 @@ namespace App.Model.Entities
             return result;
         }
         
-        public void 
 
         public List<Vector> FindPath()
         {
