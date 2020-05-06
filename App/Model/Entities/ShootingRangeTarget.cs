@@ -8,6 +8,7 @@ namespace App.Model.Entities
 {
     public class ShootingRangeTarget
     {
+        public readonly bool IsMainTarget;
         public int Health;
         public int Armour;
         public bool IsDead;
@@ -23,8 +24,9 @@ namespace App.Model.Entities
         public Vector Center => collisionShape.Center;
         
         public ShootingRangeTarget(
-            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
+            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets, bool isMainTarget)
         {
+            IsMainTarget = isMainTarget;
             this.weapon = weapon;
             this.sceneBullets = sceneBullets;
             Health = health;

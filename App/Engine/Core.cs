@@ -38,6 +38,7 @@ namespace App.Engine
         private List<Bullet> bullets;
         private List<ShootingRangeTarget> targets;
         private List<Collectable> collectables;
+        private List<Raytracing.VisibilityRegion> visibilityRegions;
 
         private readonly WeaponFactory<AK303> AKfactory;
         private readonly WeaponFactory<Shotgun> ShotgunFactory;
@@ -146,25 +147,25 @@ namespace App.Engine
                     new Vector(840, 420),
                     new Vector(5, 0),
                     60,
-                    AKfactory.GetNewGun(targetAmmo), bullets),
+                    AKfactory.GetNewGun(targetAmmo), bullets, false),
                 new ShootingRangeTarget(
                     200,
                     100,
                     new Vector(350, 580),
                     new Vector(0, 5),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
+                    60, AKfactory.GetNewGun(targetAmmo), bullets, false),
                 new ShootingRangeTarget(
                     50,
                     300,
                     new Vector(720, 920),
                     new Vector(5, 0),
-                    60, AKfactory.GetNewGun(targetAmmo), bullets),
+                    60, AKfactory.GetNewGun(targetAmmo), bullets, true),
                 new ShootingRangeTarget(
                     50,
                     300,
                     new Vector(340, 280),
                     new Vector(0, 0),
-                    80, AKfactory.GetNewGun(targetAmmo), bullets)
+                    80, AKfactory.GetNewGun(targetAmmo), bullets, false)
             };
 
             foreach (var t in targets)
@@ -172,7 +173,6 @@ namespace App.Engine
                 sprites.Add(t.SpriteContainer);
                 currentLevel.DynmaicShapes.Add(t.collisionShape);
             }
-            
         }
 
         public void GameLoop(object sender, EventArgs args)
@@ -194,7 +194,7 @@ namespace App.Engine
             
             renderPipeline.Start(
                 player.Position, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, particles, bullets, currentLevel.RaytracingEdges);
+                sprites, particles, bullets, visibilityRegions);
             
             if (keyState.pressesOnIAmount % 2 == 1)
                 renderPipeline.RenderDebugInfo(
@@ -369,9 +369,16 @@ namespace App.Engine
         /// </summary>
         private void UpdateTargets()
         {
+            visibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 2};
+            visibilityRegions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             foreach (var t in targets)
             {
                 if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
+                else if (t.IsMainTarget)
+                {
+                    var view = new Raytracing.VisibilityRegion(t.Center, currentLevel.RaytracingEdges, 1000);
+                    visibilityRegions.Add(view);
+                }
                 t.Update();
             }
         }

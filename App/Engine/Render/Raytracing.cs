@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
+using App.Engine.Physics.RigidShapes;
 
 namespace App.Engine.Render
 {
     public static class Raytracing
     {
         private static readonly RaytracingPointsEqualityComparer Comparer = new RaytracingPointsEqualityComparer();
-        
-        public static List<RaytracingPoint> CalculateVisibilityPolygon(List<Edge> edges, Vector lightSourcePosition, float visibilityRadius)
+
+        public static List<RaytracingPoint> CalculateVisibilityPolygon(List<Edge> edges, Vector lightSourcePosition,
+            float visibilityRadius)
         {
             var points = new List<RaytracingPoint> {Capacity = 200};
             foreach (var edge in edges)
@@ -46,7 +49,7 @@ namespace App.Engine.Render
                                           + rdy * (lightSourcePosition.X - otherEdge.Start.X))
                                          / (sdx * rdy - sdy * rdx);
                                 var t1 = (otherEdge.Start.X + sdx * t2 - lightSourcePosition.X) / rdx;
-                                
+
                                 if (t1 > 0 && t2 >= 0 && t2 <= 1.0f)
                                 {
                                     if (t1 < minT)
@@ -54,14 +57,15 @@ namespace App.Engine.Render
                                         minT = t1;
                                         minPX = lightSourcePosition.X + rdx * t1;
                                         minPY = lightSourcePosition.Y + rdy * t1;
-                                        minAngle = (float) Math.Atan2(minPY - lightSourcePosition.Y, minPX - lightSourcePosition.X);
+                                        minAngle = (float) Math.Atan2(minPY - lightSourcePosition.Y,
+                                            minPX - lightSourcePosition.X);
                                         bValid = true;
                                     }
                                 }
                             }
                         }
-                        
-                        if(bValid) points.Add(new RaytracingPoint(minAngle, new Vector(minPX, minPY)));
+
+                        if (bValid) points.Add(new RaytracingPoint(minAngle, new Vector(minPX, minPY)));
                     }
                 }
             }
@@ -81,7 +85,19 @@ namespace App.Engine.Render
                 Position = position;
             }
         }
-        
+
+        public class VisibilityRegion
+        {
+            public readonly Vector LightSourcePosition;
+            public readonly List<RaytracingPoint> VisibilityRegionPoints;
+
+            public VisibilityRegion(Vector lightSourcePosition, List<Edge> sceneEdges, float visibilityRadius)
+            {
+                LightSourcePosition = lightSourcePosition;
+                VisibilityRegionPoints = CalculateVisibilityPolygon(sceneEdges, lightSourcePosition, visibilityRadius);
+            }
+        }
+
         private class RaytracingPointsEqualityComparer : IEqualityComparer<RaytracingPoint>
         {
             public bool Equals(RaytracingPoint first, RaytracingPoint second)
@@ -94,6 +110,31 @@ namespace App.Engine.Render
             {
                 return (int) point.Angle + point.Position.GetHashCode();
             }
+        }
+
+        public static Vector IsInView(RigidCircle circle, VisibilityRegion region)
+        {
+            CollisionInfo info;
+            var size = region.VisibilityRegionPoints.Count;
+            var visibilityPolygonPoints = region.VisibilityRegionPoints;
+            var lightSourcePosition = region.LightSourcePosition;
+            for (var i = 0; i < size - 1; i++)
+            {
+                info = CollisionSolver.GetCollisionInfo(
+                    circle,
+                    lightSourcePosition,
+                    visibilityPolygonPoints[i].Position,
+                    visibilityPolygonPoints[i + 1].Position);
+                if (info != null) return info.Start;
+            }
+
+            info = CollisionSolver.GetCollisionInfo(
+                circle,
+                lightSourcePosition,
+                visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].Position,
+                visibilityPolygonPoints[0].Position);
+
+            return info?.Start;
         }
     }
 }
