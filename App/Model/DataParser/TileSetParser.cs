@@ -15,7 +15,7 @@ namespace App.Model.DataParser
             foreach (var fileName in tileSetFileNames)
             {
                 var tileSet = ParseTileSet(fileName, tileMaps);
-                tileSets.Add(tileSet.tileSetName, tileSet);
+                tileSets.Add(tileSet.Name, tileSet);
             }
 
             return tileSets;
@@ -34,13 +34,13 @@ namespace App.Model.DataParser
             }
 
             return new TileSet
-            {
-                tileSetName = Path.GetFileName(tileSetFilename),
-                tileSize = int.Parse(root.GetAttribute("tileSize")),
-                tileCount = int.Parse(root.GetAttribute("tilecount")),
-                columns = int.Parse(root.GetAttribute("columns")),
-                image = tileMaps[source],
-            };
+            (
+                Path.GetFileName(tileSetFilename),
+                int.Parse(root.GetAttribute("tilesize")),
+                int.Parse(root.GetAttribute("tilecount")),
+                int.Parse(root.GetAttribute("columns")),
+                tileMaps[source]
+            );
         }
     }
 }

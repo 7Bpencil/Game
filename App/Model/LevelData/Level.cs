@@ -3,39 +3,37 @@ using System.Collections.Generic;
 using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
-using App.Engine.Render;
-using App.Model.Entities;
 using App.Model.Entities.Collectables;
 using App.Model.Entities.Factories;
 
 namespace App.Model.LevelData
 {
-    public class Level
+    public class Level //TODO LevelInfo - real name
     {
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
-        public readonly TileSet TileSet;
         public readonly RigidShape Exit;
-        public readonly ShapesIterator SceneShapes;
         public readonly List<RigidShape> StaticShapes;
-        public readonly List<RigidShape> DynamicShapes;
         public readonly Bitmap LevelMap;
         public readonly List<Edge> RaytracingEdges;
         public readonly EntityCreator.PlayerInfo PlayerInfo;
         public readonly List<EntityCreator.BotInfo> BotsInfo;
         public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
-        
-        public Level(List<Layer> layers, List<RigidShape> staticShapes, List<Edge> raytracingEdges, RigidShape exit,
-            TileSet tileSet, Vector playerStartPosition, Bitmap playerClothesTileMap, Bitmap playerWeaponsTileMap)
-        {
-            LevelMap = RenderPipeline.RenderLevelMap(layers, TileSet, tileSet.tileSize, new Size());
-            TileSet = tileSet;
-            RaytracingEdges = raytracingEdges;
 
-            StaticShapes = staticShapes;
-            DynamicShapes = new List<RigidShape>();
-            SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
+        public Level(
+            Size levelSizeInTiles, string name, RigidShape exit, List<RigidShape> staticShapes, 
+            Bitmap levelMap, List<Edge> raytracingEdges, EntityCreator.PlayerInfo playerInfo, 
+            List<EntityCreator.BotInfo> botsInfo, List<CollectableWeaponInfo> collectableWeaponsInfo)
+        {
+            LevelSizeInTiles = levelSizeInTiles;
+            Name = name;
             Exit = exit;
+            StaticShapes = staticShapes;
+            LevelMap = levelMap;
+            RaytracingEdges = raytracingEdges;
+            PlayerInfo = playerInfo;
+            BotsInfo = botsInfo;
+            CollectableWeaponsInfo = collectableWeaponsInfo;
         }
     }
 

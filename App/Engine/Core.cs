@@ -121,7 +121,7 @@ namespace App.Engine
 
             sprites.Add(player.LegsContainer);
             sprites.Add(player.TorsoContainer);
-            currentLevel.DynamicShapes.Add(player.Shape);
+            currentLevel.DynamicShapes.Add(player.CollisionShape);
             currentLevel.DynamicShapes.AddRange(player.MeleeWeapon.range);
         }
 
@@ -182,7 +182,7 @@ namespace App.Engine
 
         public void GameLoop(object sender, EventArgs args)
         {
-            if (CollisionSolver.GetCollisionInfo(player.Shape, currentLevel.Exit) != null)
+            if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 Console.WriteLine("URA");
             }
@@ -390,7 +390,7 @@ namespace App.Engine
             for (var i = 0; i < collectables.Count; i++)
             {
                 if (collectables[i] == null) continue;
-                var collision = CollisionSolver.GetCollisionInfo(player.Shape, collectables[i].CollisionShape);
+                var collision = CollisionSolver.GetCollisionInfo(player.CollisionShape, collectables[i].CollisionShape);
                 if (collision == null) continue;
                 player.AddWeapon(collectables[i].Item);
                 collectables[i].SpriteContainer.ClearContent();

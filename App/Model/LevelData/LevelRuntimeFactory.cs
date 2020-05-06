@@ -12,7 +12,7 @@ namespace App.Model.LevelData
             return EntityCreator.CreatePlayer(playerInfo);
         }
 
-        public static List<Bot> CreateBots(List<EntityCreator.BotInitializationInfo> botsInfo)
+        public static List<Bot> CreateBots(List<EntityCreator.BotInfo> botsInfo)
         {
             var bots = new List<Bot>();
             foreach (var info in botsInfo)

@@ -12,9 +12,9 @@ namespace App.Model.Entities
         public readonly int Health;
         public readonly int Armor;
         public readonly bool IsDead;
-        public readonly RigidCircle Shape;
-        public Vector Position => Shape.Center;
-        public float Radius => Shape.Radius;
+        public readonly RigidCircle CollisionShape;
+        public Vector Position => CollisionShape.Center;
+        public float Radius => CollisionShape.Radius;
         
         public readonly SpriteContainer TorsoContainer;
         public readonly SpriteContainer LegsContainer;
@@ -35,14 +35,14 @@ namespace App.Model.Entities
             meleeWeaponSprite = meleeWeapon;
             weapons = startWeapons;
             currentWeaponIndex = 0;
-            Shape = collisionShape;
+            CollisionShape = collisionShape;
             LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
             TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.GetType()], startPosition, startAngle);
         }
 
         public void MoveBy(Vector delta)
         {
-            Shape.MoveBy(delta);
+            CollisionShape.MoveBy(delta);
         }
 
         public void AddWeapon(Weapon newWeapon)

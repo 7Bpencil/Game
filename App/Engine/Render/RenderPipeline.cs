@@ -38,7 +38,7 @@ namespace App.Engine.Render
         {
             RenderMachine.PrepareLevelMap(levelSize);
             foreach (var layer in layers)
-                RenderLayer(layer.Tiles, layer.WidthInTiles, layer.HeightInTiles, tileSize, levelTileSet.image);
+                RenderLayer(layer.Tiles, layer.WidthInTiles, layer.HeightInTiles, tileSize, levelTileSet.Image);
             return RenderMachine.GetLevelMap();
         }
         

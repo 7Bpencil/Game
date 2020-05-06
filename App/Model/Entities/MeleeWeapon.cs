@@ -42,7 +42,7 @@ namespace App.Model.Entities
                 var wasHit = false;
                 foreach (var circle in range)
                 {
-                    if (CollisionSolver.GetCollisionInfo(circle, target.collisionShape) == null) continue;
+                    if (CollisionSolver.GetCollisionInfo(circle, target.CollisionShape) == null) continue;
                     wasHit = createBlood = true;
                     break;
                 }
