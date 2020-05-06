@@ -34,11 +34,12 @@ namespace App.Engine.Render
             renderMachine.Invalidate();
         }
 
-        public void Load(Level currentLevel)
+        public static Bitmap RenderLevelMap(List<Layer> layers, TileSet levelTileSet, int tileSize, Size levelSize)
         {
-            var tileSize = currentLevel.TileSet.tileWidth;
-            foreach (var layer in currentLevel.Layers)
-                RenderLayer(layer, currentLevel.TileSet.image, tileSize);
+            RenderMachine.PrepareLevelMap(levelSize);
+            foreach (var layer in layers)
+                RenderLayer(layer.Tiles, layer.WidthInTiles, layer.HeightInTiles, tileSize, levelTileSet.image);
+            return RenderMachine.GetLevelMap();
         }
         
         public void RenderDebugInfo(
@@ -59,25 +60,26 @@ namespace App.Engine.Render
             RenderEnemyInfo(targets, cameraPosition);
         }
         
-        private void RenderLayer(Layer layer, Bitmap levelTileMap, int tileSize)
+        private static void RenderLayer(
+            int[] tiles, int layerWidthInTiles, int layerHeightInTiles, int tileSize, Bitmap levelTileMap)
         {
-            for (var x = 0; x <= layer.WidthInTiles; ++x)
-            for (var y = 0; y <= layer.HeightInTiles; ++y)
+            for (var x = 0; x <= layerWidthInTiles; ++x)
+            for (var y = 0; y <= layerHeightInTiles; ++y)
             {
-                var tileIndex = y * layer.WidthInTiles + x;
-                if (tileIndex > layer.Tiles.Length - 1) break;
+                var tileIndex = y * layerWidthInTiles + x;
+                if (tileIndex > tiles.Length - 1) break;
                 
-                var tileID = layer.Tiles[tileIndex];
+                var tileID = tiles[tileIndex];
                 if (tileID == 0) continue;
                 
                 RenderTile(x, y, tileID - 1, levelTileMap, tileSize);
             }
         }
 
-        private void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap, int tileSize)
+        private static void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap, int tileSize)
         {
             var src = GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
-            renderMachine.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
+            RenderMachine.RenderNewTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
         private void RerenderCamera(Vector cameraPosition, Size cameraSize)
@@ -148,14 +150,14 @@ namespace App.Engine.Render
             foreach (var t in targets)
             {
                 var position = new Vector(
-                    t.collisionShape.Center.X - t.collisionShape.Radius / 2,
-                    t.collisionShape.Center.Y - t.collisionShape.Radius / 2);
+                    t.CollisionShape.Center.X - t.CollisionShape.Radius / 2,
+                    t.CollisionShape.Center.Y - t.CollisionShape.Radius / 2);
                 var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
                 renderMachine.PrintString(t.Health + "\n" + t.Armour, positionInCamera);    
             }
         }
 
-        private Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
+        private static Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
         {
             var sourceX = tileID % columnsInTileMap * tileSize;
             var sourceY = tileID / columnsInTileMap * tileSize;

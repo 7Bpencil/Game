@@ -32,6 +32,9 @@ namespace App.Engine.Render
         private readonly Brush transparentBrush;
         private Color shadowColor;
 
+        private static Graphics gfxLevelMap;
+        private static Bitmap bmpLevelMap;
+
         public RenderMachine(ViewForm view, Size cameraSize)
         {
             this.view = view;
@@ -78,10 +81,21 @@ namespace App.Engine.Render
             gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
             view.Invalidate();
         }
-
-        public void RenderTile(Bitmap tileMap, int x, int y, Rectangle src)
+        
+        public static void PrepareLevelMap(Size levelSize)
         {
-            gfxRenderedTiles.DrawImage(tileMap, x, y, src, GraphicsUnit.Pixel);
+            bmpLevelMap = new Bitmap(levelSize.Width, levelSize.Height);
+            gfxLevelMap = Graphics.FromImage(bmpLevelMap);
+        }
+        
+        public static void RenderNewTile(Bitmap tileMap, int x, int y, Rectangle src)
+        {
+            gfxLevelMap.DrawImage(tileMap, x, y, src, GraphicsUnit.Pixel);
+        }
+
+        public static Bitmap GetLevelMap()
+        {
+            return bmpLevelMap;
         }
 
         public void RenderCamera(Rectangle sourceRectangle)

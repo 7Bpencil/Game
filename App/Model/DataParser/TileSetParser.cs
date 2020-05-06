@@ -36,8 +36,7 @@ namespace App.Model.DataParser
             return new TileSet
             {
                 tileSetName = Path.GetFileName(tileSetFilename),
-                tileWidth = int.Parse(root.GetAttribute("tilewidth")),
-                tileHeight = int.Parse(root.GetAttribute("tileheight")),
+                tileSize = int.Parse(root.GetAttribute("tileSize")),
                 tileCount = int.Parse(root.GetAttribute("tilecount")),
                 columns = int.Parse(root.GetAttribute("columns")),
                 image = tileMaps[source],
