@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
@@ -11,32 +12,33 @@ namespace App.Model.Entities
         public int Health;
         public int Armour;
         public bool IsDead;
+        public readonly SpriteContainer TorsoContainer;
+        public readonly SpriteContainer LegsContainer;
         private Weapon weapon;
         private List<Bullet> sceneBullets;
-        public RigidCircle collisionShape;
-        public SpriteContainer SpriteContainer;
+        public readonly RigidCircle CollisionShape;
         private readonly int ticksForMovement;
         private int tick;
         
         private Vector velocity;
         public Vector Velocity => velocity;
-        public Vector Center => collisionShape.Center;
+        public Vector Center => CollisionShape.Center;
         
         public Bot(
-            int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
+            int health, int armour, Vector startPosition, float startAngle, 
+            Sprite legs, Sprite torso, Vector velocity, RigidCircle collisionShape,
+            int ticksForMovement, Weapon weapon, List<Bullet> sceneBullets)
         {
             this.weapon = weapon;
             this.sceneBullets = sceneBullets;
             Health = health;
             Armour = armour;
-            collisionShape = new RigidCircle(centerPosition, 32, false, true);
+            CollisionShape = collisionShape; 
             this.velocity = velocity;
             IsDead = false;
             this.ticksForMovement = ticksForMovement;
-            SpriteContainer = new SpriteContainer(
-                new StaticSprite(
-                    new Bitmap(@"Assets\TileMaps\shooting_range_target.png"), 0, new Size(64, 64)),
-                centerPosition, 0);
+            LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
+            TorsoContainer = new SpriteContainer(torso, startPosition, startAngle);
         }
         
         public void TakeHit(int damage)

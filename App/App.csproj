@@ -85,9 +85,9 @@
         <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Factories\AbstractWeaponFactory.cs" />
-        <Compile Include="Model\Entities\Factories\AWF.cs" />
-        <Compile Include="Model\Entities\Factories\EntityCreator.cs" />
         <Compile Include="Model\Entities\Factories\WeaponFactory.cs" />
+        <Compile Include="Model\Entities\Factories\EntityCreator.cs" />
+        <Compile Include="Model\Entities\Factories\GenericWeaponFactory.cs" />
         <Compile Include="Model\Entities\MeleeWeapon.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\Bot.cs" />
@@ -99,6 +99,7 @@
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\LevelRuntimeFactory.cs" />
         <Compile Include="Model\LevelData\LevelRuntimeState.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />

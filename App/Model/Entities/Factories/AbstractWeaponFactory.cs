@@ -8,11 +8,11 @@ namespace App.Model.Entities.Factories
 {
     public static class AbstractWeaponFactory
     {
-        private static Dictionary<Type, AWF> factories;
+        private static Dictionary<Type, WeaponFactory> factories;
 
         public static void Init()
         {
-            factories = new Dictionary<Type, AWF>
+            factories = new Dictionary<Type, WeaponFactory>
             {
                 {typeof(AK303), CreateAK303factory()},
                 {typeof(Shotgun), CreateShotgunFactory()},
@@ -39,30 +39,30 @@ namespace App.Model.Entities.Factories
             return factories[weaponType].GetHUDicon();
         }
         
-        private static WeaponFactory<AK303> CreateAK303factory()
+        private static GenericWeaponFactory<AK303> CreateAK303factory()
         {
-            return new WeaponFactory<AK303>
+            return new GenericWeaponFactory<AK303>
             (new Bitmap(@"Assets\Sprites\Weapons\AK303_hud.png"),
                 new Bitmap(@"Assets\Sprites\Weapons\AK303_icon.png"));
         }
         
-        private static WeaponFactory<MP6> CreateMP6factory()
+        private static GenericWeaponFactory<MP6> CreateMP6factory()
         {
-            return new WeaponFactory<MP6>
+            return new GenericWeaponFactory<MP6>
             (new Bitmap(@"Assets\Sprites\Weapons\MP6_hud.png"),
                 new Bitmap(@"Assets\Sprites\Weapons\MP6_icon.png"));
         }
         
-        private static WeaponFactory<SaigaFA> CreateSaigaFAfactory()
+        private static GenericWeaponFactory<SaigaFA> CreateSaigaFAfactory()
         {
-            return new WeaponFactory<SaigaFA>
+            return new GenericWeaponFactory<SaigaFA>
             (new Bitmap(@"Assets\Sprites\Weapons\SaigaFA_hud.png"),
                 new Bitmap(@"Assets\Sprites\Weapons\SaigaFA_icon.png"));
         }
         
-        private static WeaponFactory<Shotgun> CreateShotgunFactory()
+        private static GenericWeaponFactory<Shotgun> CreateShotgunFactory()
         {
-            return new WeaponFactory<Shotgun>
+            return new GenericWeaponFactory<Shotgun>
             (new Bitmap(@"Assets\Sprites\Weapons\Shotgun_hud.png"),
                 new Bitmap(@"Assets\Sprites\Weapons\Shotgun_icon.png"));
         }

@@ -41,10 +41,10 @@ namespace App.Engine
         private List<Bot> targets;
         private List<Collectable> collectables;
 
-        private readonly WeaponFactory<AK303> AKfactory;
-        private readonly WeaponFactory<Shotgun> ShotgunFactory;
-        private readonly WeaponFactory<SaigaFA> SaigaFAfactory;
-        private readonly WeaponFactory<MP6> MP6factory;
+        private readonly GenericWeaponFactory<AK303> AKfactory;
+        private readonly GenericWeaponFactory<Shotgun> ShotgunFactory;
+        private readonly GenericWeaponFactory<SaigaFA> SaigaFAfactory;
+        private readonly GenericWeaponFactory<MP6> MP6factory;
         private readonly ParticleFactory particleFactory;
 
         private string updateTime;

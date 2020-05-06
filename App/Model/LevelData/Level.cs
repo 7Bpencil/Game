@@ -4,6 +4,8 @@ using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
+using App.Model.Entities.Collectables;
+using App.Model.Entities.Factories;
 
 namespace App.Model.LevelData
 {
@@ -19,7 +21,7 @@ namespace App.Model.LevelData
         public readonly List<Edge> RaytracingEdges;
         public readonly EntityCreator.PlayerInitializationInfo PlayerInfo;
         public readonly List<EntityCreator.BotInitializationInfo> BotsInfo;
-        public readonly List<Collectable> Collectables;
+        public readonly List<CollectableWeaponInitializationInfo> CollectableWeaponsInfo;
         
         public Level(List<Layer> layers, List<RigidShape> staticShapes, List<Edge> raytracingEdges, RigidShape exit,
             TileSet tileSet, Vector playerStartPosition, Bitmap playerClothesTileMap, Bitmap playerWeaponsTileMap)

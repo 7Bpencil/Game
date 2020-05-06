@@ -7,7 +7,7 @@ using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
 using App.Model.Entities.Weapons;
 
-namespace App.Model.Entities
+namespace App.Model.Entities.Factories
 {
     public static class EntityCreator
     {
