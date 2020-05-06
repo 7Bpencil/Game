@@ -142,6 +142,11 @@ namespace App.Engine.Render
             CollisionInfoRenderer.Draw(info, cameraPosition, collisionPen, gfxCamera);
         }
 
+        public void RenderPath(List<Vector> path, Vector cameraPosition)
+        {
+            PathRenderer.Draw(path, cameraPosition, collisionPen, gfxCamera);
+        }
+
         public void RenderPoint(Vector point, Vector cameraPosition)
         {
             VectorRenderer.Fill(point, cameraPosition, penetrationBrush, gfxCamera);

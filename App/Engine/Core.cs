@@ -40,6 +40,7 @@ namespace App.Engine
         private List<ShootingRangeTarget> targets;
         private List<Collectable> collectables;
         private List<Raytracing.VisibilityRegion> visibilityRegions;
+        private List<List<Vector>> paths;
 
         private readonly WeaponFactory<AK303> AKfactory;
         private readonly WeaponFactory<Shotgun> ShotgunFactory;
@@ -187,7 +188,7 @@ namespace App.Engine
                 renderPipeline.RenderDebugInfo(
                     camera.Position, camera.Size, currentLevel.Shapes, targets, collisionInfo,
                     currentLevel.RaytracingEdges, collectables, bullets, cursor.Position, player.Position,
-                    camera.GetChaser(), GetDebugInfo());
+                    camera.GetChaser(), GetDebugInfo(), paths);
             
             AudioEngine.Update();
             
@@ -360,6 +361,7 @@ namespace App.Engine
         /// </summary>
         private void UpdateTargets()
         {
+            paths = new List<List<Vector>>();
             visibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 8};
             visibilityRegions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             foreach (var t in targets)
@@ -370,6 +372,7 @@ namespace App.Engine
                     var view = new Raytracing.VisibilityRegion(t.Center, currentLevel.RaytracingEdges, 1000);
                     visibilityRegions.Add(view);
                     t.aim = Raytracing.IsInView(player.Shape, view);
+                    //TODO: paths.Add(t.GetCurrentPath())
                 }
                 t.Update();
             }

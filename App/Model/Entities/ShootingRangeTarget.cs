@@ -18,6 +18,10 @@ namespace App.Model.Entities
         private bool statePassive;
         private bool stateAggressive;
         private bool stateDefensive;
+
+        private HashSet<Vector> visitedPath;
+
+        private int appointmentIndex;
         //previous
         public Vector viewVector;
         public float viewAngle = 180;
@@ -56,9 +60,9 @@ namespace App.Model.Entities
                 
             } ;
             List<Vector> patrolPathCoords = patrolPathTiles.Select(x => x * 32).ToList();
-                
-        //previous
-        this.sceneBullets = sceneBullets;
+            appointmentIndex = 0;
+            //previous
+            this.sceneBullets = sceneBullets;
             Health = health;
             Armour = armour;
             collisionShape = new RigidCircle(centerPosition, 32, false, true);
@@ -95,6 +99,30 @@ namespace App.Model.Entities
                 collisionShape.Center));
         }
 
+        public List<Vector> GetDifference(Vector targetCoords)
+        {
+            List<Vector> result = new List<Vector>();
+            if (collisionShape.Center.X > targetCoords.X) result.Add(new Vector(-1, 0));
+            if (collisionShape.Center.X < targetCoords.X) result.Add(new Vector(1, 0));
+            if (collisionShape.Center.Y > targetCoords.Y) result.Add(new Vector(0, -1));
+            if (collisionShape.Center.Y < targetCoords.Y) result.Add(new Vector(0, 1));
+            return result;
+        }
+        
+        public void 
+
+        public List<Vector> FindPath()
+        {
+            return new List<Vector>();
+        }
+        
+        public List<Vector> GetPathToAppointment(Vector targetCoords)//define where is target and give dx/dy list to FindPath function.
+        {
+            var difference = GetDifference(targetCoords);
+            
+            return new List<Vector>();
+        } 
+        
         public void FindEnemy()
         {
             throw new NotImplementedException();

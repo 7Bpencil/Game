@@ -42,7 +42,7 @@ namespace App.Engine.Render
         public void RenderDebugInfo(
             Vector cameraPosition, Size cameraSize, ShapesIterator shapes, List<ShootingRangeTarget> targets,
             List<CollisionInfo> collisionInfo, List<Edge> raytracingEdges, List<Collectable> items, List<Bullet> bullets,
-            Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser, string[] debugInfo)
+            Vector cursorPosition, Vector playerPosition, RigidShape cameraChaser, string[] debugInfo, List<List<Vector>> paths)
         {
             RenderShapes(shapes, cameraPosition);
             RenderCollectablesShapes(items, cameraPosition);
@@ -53,6 +53,7 @@ namespace App.Engine.Render
             renderMachine.RenderEdgeOnCamera(
                 new Edge(cursorPosition.ConvertFromWorldToCamera(cameraPosition),
                     playerPosition.ConvertFromWorldToCamera(cameraPosition)));
+            RenderPaths(paths, cameraPosition);
             renderMachine.PrintMessages(debugInfo);
             RenderEnemyInfo(targets, cameraPosition);
         }
@@ -127,6 +128,12 @@ namespace App.Engine.Render
         {
             foreach (var info in collisionInfo)
                 renderMachine.RenderCollisionInfoOnCamera(info, cameraPosition);
+        }
+
+        private void RenderPaths(List<List<Vector>> paths, Vector cameraPosition)
+        {
+            foreach (var path in paths)
+                renderMachine.RenderPath(path, cameraPosition);
         }
         
         private void RenderRaytracingEdges(List<Edge> raytracingEdges, Vector cameraPosition)
