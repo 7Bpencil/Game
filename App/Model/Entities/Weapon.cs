@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using App.Engine.Physics;
 
 namespace App.Model.Entities
@@ -28,5 +29,17 @@ namespace App.Model.Entities
         public abstract float BulletWeight { get; }
         public abstract void AddAmmo(int amount);
         public abstract bool IsReady { get; }
+    }
+
+    public class WeaponInfo
+    {
+        public readonly Type WeaponType;
+        public readonly int AmmoAmount;
+
+        public WeaponInfo(Type weaponType, int ammoAmount)
+        {
+            WeaponType = weaponType;
+            AmmoAmount = ammoAmount;
+        }
     }
 }

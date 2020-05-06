@@ -7,7 +7,7 @@ namespace App.Model.LevelData
 {
     public static class LevelRuntimeFactory
     {
-        public static Player CreatePlayer(EntityCreator.PlayerInitializationInfo playerInfo)
+        public static Player CreatePlayer(EntityCreator.PlayerInfo playerInfo)
         {
             return EntityCreator.CreatePlayer(playerInfo);
         }
@@ -20,7 +20,7 @@ namespace App.Model.LevelData
             return bots;
         }
 
-        public static List<Collectable> CreateCollectables(List<CollectableWeaponInitializationInfo> collectablesInfo)
+        public static List<Collectable> CreateCollectables(List<CollectableWeaponInfo> collectablesInfo)
         {
             var collectables = new List<Collectable>();
             foreach (var info in collectablesInfo)

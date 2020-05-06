@@ -9,6 +9,9 @@ namespace App.Model.Entities
 {
     public class Player
     {
+        public readonly int Health;
+        public readonly int Armor;
+        public readonly bool IsDead;
         public readonly RigidCircle Shape;
         public Vector Position => Shape.Center;
         public float Radius => Shape.Radius;
@@ -22,9 +25,11 @@ namespace App.Model.Entities
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
 
-        public Player(Vector startPosition, float startAngle, Sprite legs, RigidCircle collisionShape,
+        public Player(int health, int armor, Vector startPosition, float startAngle, Sprite legs, RigidCircle collisionShape,
             List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, MeleeWeaponSprite meleeWeapon)
         {
+            Health = health;
+            Armor = armor;
             MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
             this.weaponSprites = weaponSprites;
             meleeWeaponSprite = meleeWeapon;

@@ -24,10 +24,10 @@ namespace App.Model.Entities.Factories
             return (TW) ctor.Invoke(new object[] {ammoAmount});
         }
 
-        public override CollectableWeapon CreateCollectable(CollectableWeaponInitializationInfo info)
+        public override CollectableWeapon CreateCollectable(CollectableWeaponInfo info)
         {
             return new CollectableWeapon(
-                CreateGun(info.AmmoAmount),
+                CreateGun(info.WeaponInfo.AmmoAmount),
                 new RigidCircle(info.Position, 40, true, true),
                 new SpriteContainer(
                     new StaticSprite(collectableIcon,0, collectableIcon.Size), info.Position, info.Angle));

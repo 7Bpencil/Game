@@ -12,24 +12,30 @@ namespace App.Model.DataParser
 {
     public static class LevelParser
     {
-        public static List<Level> LoadLevels(Dictionary<string, TileSet> tileSets)
+        public static Dictionary<int, string> LoadLevelList()
         {
-            var levelsFileNames = Directory.GetFiles("Assets/Levels");
-            var levels = new List<Level>();
-            foreach (var fileName in levelsFileNames)
+            var levels = new Dictionary<int, string>();
+            
+            var doc = new XmlDocument();
+            doc.Load(@"Assets\Levels\LevelList.xml");
+            var root = doc.DocumentElement;
+
+            foreach (XmlNode node in root)
             {
-                var level = ParseLevel(fileName, tileSets);
-                levels.Add(level);
+                if (node.Name != "level") continue;
+                levels.Add(
+                    int.Parse(node.Attributes.GetNamedItem("id").Value), 
+                    node.Attributes.GetNamedItem("source").Value);
             }
 
             return levels;
         }
 
-        private static Level ParseLevel(string levelFileName, Dictionary<string, TileSet> tileSets)
+        private static Level LoadLevel(string sourcePath, Dictionary<string, TileSet> tileSets)
         {
             var separators = new[] {"\r\n", ",", "\n"};
             var doc = new XmlDocument();
-            doc.Load(levelFileName);
+            doc.Load(sourcePath);
             var root = doc.DocumentElement;
             
             var layers = new List<Layer>();
@@ -72,15 +78,15 @@ namespace App.Model.DataParser
                     source = node.Attributes.GetNamedItem("source").Value;
 
                 if (node.Name == "layer")
-                    layers.Add(ParseLayer(node, separators));
+                    layers.Add(LoadLayer(node, separators));
                 
                 if (node.Name == "objectgroup")
                 {
                     var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
                     if (nodeContentName == "StaticShapes")
-                        staticShapes = ParseStaticShapes(node);
+                        staticShapes = LoadStaticShapes(node);
                     if (nodeContentName == "RaytracingPolygons")
-                        raytracingEdges = ParseRaytracingEdges(node);
+                        raytracingEdges = LoadRaytracingEdges(node);
                 }
             }
 
@@ -99,7 +105,7 @@ namespace App.Model.DataParser
             
         }
 
-        private static List<RigidShape> ParseStaticShapes(XmlNode staticShapeNode)
+        private static List<RigidShape> LoadStaticShapes(XmlNode staticShapeNode)
         {
             var staticShapes = new List<RigidShape>();
             foreach (XmlNode shape in staticShapeNode.ChildNodes)
@@ -119,7 +125,7 @@ namespace App.Model.DataParser
             return staticShapes;
         }
 
-        private static List<Edge> ParseRaytracingEdges(XmlNode raytracingPolygonsNode)
+        private static List<Edge> LoadRaytracingEdges(XmlNode raytracingPolygonsNode)
         {
             var edges = new List<Edge>();
             var separators = new[] {" ", ","};
@@ -129,13 +135,13 @@ namespace App.Model.DataParser
                 var x = int.Parse(polygonRaw.Attributes.GetNamedItem("x").Value);
                 var y = int.Parse(polygonRaw.Attributes.GetNamedItem("y").Value);
                 var points = polygonRaw.ChildNodes[0].Attributes.GetNamedItem("points").Value; 
-                edges.AddRange(ParsePolygon(points, x, y, separators));
+                edges.AddRange(LoadPolygon(points, x, y, separators));
             }
             
             return edges;
         }
 
-        private static List<Edge> ParsePolygon(string points, int offsetX, int offsetY, string[] separators)
+        private static List<Edge> LoadPolygon(string points, int offsetX, int offsetY, string[] separators)
         {
             var p = points.Split(separators, StringSplitOptions.None);
             var edges = new List<Edge>();
@@ -154,7 +160,7 @@ namespace App.Model.DataParser
             return edges;
         }
 
-        private static Layer ParseLayer(XmlNode node, string[] separators)
+        private static Layer LoadLayer(XmlNode node, string[] separators)
         {
             var newLayer = new Layer
             (
@@ -168,13 +174,13 @@ namespace App.Model.DataParser
             {
                 if (childNode.Name != "data") continue;
                 var layerData = childNode.InnerText.Split(separators, StringSplitOptions.None);
-                newLayer.Tiles = ParseTiles(layerData, newLayer.WidthInTiles * newLayer.HeightInTiles);
+                newLayer.Tiles = LoadTiles(layerData, newLayer.WidthInTiles * newLayer.HeightInTiles);
             }
 
             return newLayer;
         }
 
-        private static int[] ParseTiles(string[] layerData, int tilesAmount)
+        private static int[] LoadTiles(string[] layerData, int tilesAmount)
         {
             var newTiles = new int[tilesAmount];
             var k = 0;

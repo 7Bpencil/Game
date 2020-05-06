@@ -25,19 +25,17 @@ namespace App.Model.Entities.Collectables
         }
     }
 
-    public class CollectableWeaponInitializationInfo
+    public class CollectableWeaponInfo
     {
-        public readonly Type WeaponType;
+        public readonly WeaponInfo WeaponInfo;
         public readonly Vector Position;
         public readonly float Angle;
-        public readonly int AmmoAmount;
 
-        public CollectableWeaponInitializationInfo(Type weaponType, Vector position, float angle, int ammoAmount)
+        public CollectableWeaponInfo(WeaponInfo weaponInfo, Vector position, float angle)
         {
-            WeaponType = weaponType;
+            WeaponInfo = weaponInfo;
             Position = position;
             Angle = angle;
-            AmmoAmount = ammoAmount;
         }
     }
 }

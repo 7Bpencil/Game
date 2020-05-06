@@ -17,11 +17,11 @@ namespace App.Model.LevelData
         public readonly ShapesIterator SceneShapes;
         public readonly List<RigidShape> StaticShapes;
         public readonly List<RigidShape> DynamicShapes;
-        public readonly List<Layer> Layers;
+        public readonly Bitmap LevelMap;
         public readonly List<Edge> RaytracingEdges;
-        public readonly EntityCreator.PlayerInitializationInfo PlayerInfo;
+        public readonly EntityCreator.PlayerInfo PlayerInfo;
         public readonly List<EntityCreator.BotInitializationInfo> BotsInfo;
-        public readonly List<CollectableWeaponInitializationInfo> CollectableWeaponsInfo;
+        public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
         
         public Level(List<Layer> layers, List<RigidShape> staticShapes, List<Edge> raytracingEdges, RigidShape exit,
             TileSet tileSet, Vector playerStartPosition, Bitmap playerClothesTileMap, Bitmap playerWeaponsTileMap)

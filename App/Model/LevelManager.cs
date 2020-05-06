@@ -10,9 +10,9 @@ namespace App.Model
     {
         private Dictionary<string, Bitmap> tileMaps;
         private Dictionary<string, TileSet> tileSets;
-        private List<Level> levels;
+        private Dictionary<int, string> levelList;
         private int currentLevelIndex;
-        public Level CurrentLevel => levels[currentLevelIndex];
+        public Level CurrentLevel => levelList[currentLevelIndex];
 
         public void MoveNextLevel()
         {
@@ -23,7 +23,7 @@ namespace App.Model
         {
             tileMaps = LoadTileMaps();
             tileSets = TileSetParser.LoadTileSets(tileMaps);
-            levels = LevelParser.LoadLevels(tileSets);
+            levelList = LevelParser.LoadLevelList();
             currentLevelIndex = 0;
         }
 

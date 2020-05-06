@@ -11,7 +11,7 @@ namespace App.Model.Entities.Factories
 {
     public static class EntityCreator
     {
-        private static Dictionary<string, Bitmap> cachedBitmaps;
+        private static Dictionary<string, Bitmap> cachedBitmaps = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>
         {
             {typeof(AK303), 0},
@@ -20,39 +20,41 @@ namespace App.Model.Entities.Factories
             {typeof(SaigaFA), 3},
         };
         
-        public static Player CreatePlayer(PlayerInitializationInfo info)
+        public static Player CreatePlayer(PlayerInfo info)
         {
             var meleeWeapon = new MeleeWeaponSprite(
                 GetBitmap(info.MeleeWeaponTileMapPath),
                 1, 0, 5, new Size(170, 170));
             
             var weaponSprites = new Dictionary<Type, Sprite>();
-            foreach (var weaponName in WeaponFramesId.Keys)
+            foreach (var weaponType in WeaponFramesId.Keys)
             {
                 weaponSprites.Add(
-                    weaponName, 
-                    new StaticSprite(
+                    weaponType, new StaticSprite(
                         GetBitmap(info.WeaponsTileMapPath),
-                        WeaponFramesId[weaponName], 
+                        WeaponFramesId[weaponType], 
                         new Size(79, 57))); 
             }
-            
-            var collisionShape = new RigidCircle(info.Position, 32, false, true);
+
+            var weapons = new List<Weapon>();
+            foreach (var weaponInfo in info.Weapons)
+                weapons.Add(AbstractWeaponFactory.CreateGun(weaponInfo));
 
             return new Player(
-                info.Position, info.Angle, 
+                info.Health, info.Armor, info.Position, info.Angle, 
                 new PlayerBodySprite(info.Position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
-                collisionShape, info.Weapons, weaponSprites, meleeWeapon);
+                new RigidCircle(info.Position, 32, false, true), 
+                weapons, weaponSprites, meleeWeapon);
         }
 
-        public static Bot CreateBot(BotInitializationInfo info)
+        public static Bot CreateBot(BotInfo info)
         {
-            return null; //TODO
-        }
-
-        public static void Init()
-        {
-            cachedBitmaps = new Dictionary<string, Bitmap>();
+            return new Bot(
+                info.Health, info.Armor, info.Position, info.Angle,
+                new PlayerBodySprite(info.Position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
+                new StaticSprite(GetBitmap(info.WeaponsTileMapPath), WeaponFramesId[info.weapon.WeaponType], new Size(79, 57)),
+                new RigidCircle(info.Position, 32, false, true),
+                AbstractWeaponFactory.CreateGun(info.weapon));
         }
 
         private static Bitmap GetBitmap(string path)
@@ -63,37 +65,27 @@ namespace App.Model.Entities.Factories
             return newBitmap;
         }
 
-        public class PlayerInitializationInfo : BotInitializationInfo
+        public class PlayerInfo
         {
-            public readonly string MeleeWeaponTileMapPath;
-
-            public PlayerInitializationInfo(
-                Vector position, float angle, List<Weapon> weapons, 
-                string clothesTileMapPath, string weaponsTileMapPath, string meleeWeaponTileMapPath)
-                : base(position, angle, weapons, clothesTileMapPath, weaponsTileMapPath)
-            {
-                MeleeWeaponTileMapPath = meleeWeaponTileMapPath;
-            }
-        }
-
-        public class BotInitializationInfo
-        {
+            public readonly int Health;
+            public readonly int Armor;
             public readonly Vector Position;
             public readonly float Angle;
-            public readonly List<Weapon> Weapons;
+            public readonly List<WeaponInfo> Weapons;
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
-            
-            public BotInitializationInfo(
-                Vector position, float angle, List<Weapon> weapons, 
-                string clothesTileMapPath, string weaponsTileMapPath)
-            {
-                Position = position;
-                Angle = angle;
-                Weapons = weapons;
-                ClothesTileMapPath = clothesTileMapPath;
-                WeaponsTileMapPath = weaponsTileMapPath;
-            }
+            public readonly string MeleeWeaponTileMapPath;
+        }
+
+        public class BotInfo
+        {
+            public readonly int Health;
+            public readonly int Armor;
+            public readonly Vector Position;
+            public readonly float Angle;
+            public readonly WeaponInfo weapon;
+            public readonly string ClothesTileMapPath;
+            public readonly string WeaponsTileMapPath;
         }
     }
 }

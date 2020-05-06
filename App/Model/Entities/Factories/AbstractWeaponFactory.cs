@@ -21,16 +21,16 @@ namespace App.Model.Entities.Factories
             };
         }
 
-        public static Weapon CreateGun(Type weaponType, int ammoAmount)
-        {
-            if (factories == null || !factories.ContainsKey(weaponType)) throw new ArgumentException();
-            return factories[weaponType].CreateGun(ammoAmount);
-        }
-
-        public static Collectable CreateCollectable(CollectableWeaponInitializationInfo info)
+        public static Weapon CreateGun(WeaponInfo info)
         {
             if (factories == null || !factories.ContainsKey(info.WeaponType)) throw new ArgumentException();
-            return factories[info.WeaponType].CreateCollectable(info);
+            return factories[info.WeaponType].CreateGun(info.AmmoAmount);
+        }
+
+        public static Collectable CreateCollectable(CollectableWeaponInfo info)
+        {
+            if (factories == null || !factories.ContainsKey(info.WeaponInfo.WeaponType)) throw new ArgumentException();
+            return factories[info.WeaponInfo.WeaponType].CreateCollectable(info);
         }
         
         public static Bitmap GetHUDicon(Type weaponType)

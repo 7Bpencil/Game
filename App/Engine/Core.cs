@@ -71,7 +71,7 @@ namespace App.Engine
             MP6factory = AbstractWeaponFactory.CreateMP6factory();
             particleFactory = new ParticleFactory();
             
-            var cW = new CollectableWeaponInitializationInfo(typeof(AK303), Vector.ZeroVector, 0, 40);
+            var cW = new CollectableWeaponInfo(typeof(AK303), Vector.ZeroVector, 0, 40);
             
 
             sprites = new List<SpriteContainer> {Capacity = 50};
