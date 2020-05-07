@@ -10,11 +10,11 @@ namespace App.Engine.Render
 {
     public static class RenderPipeline
     {
-        public static void Start(Level level, Size cameraSize, Vector cameraPosition)
+        public static void Render(Level level, Size cameraSize, Vector cameraPosition)
         {
-            RerenderCamera(cameraPosition, cameraSize);
+            RerenderCamera(cameraPosition, cameraSize, level.bmpLevelMap);
             RenderSprites(level.Sprites, cameraPosition);
-            RenderParticles(level.Particles, cameraPosition);
+            RenderParticles(level.Particles, cameraPosition, level.gfxLevelMap);
             RenderBullets(level.Bullets, cameraPosition);
             var playerWeapon = level.Player.CurrentWeapon;
             RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
@@ -24,6 +24,7 @@ namespace App.Engine.Render
 
         public static void RenderDebugInfo(Level level, Camera camera, Vector cursorPosition)
         {
+            var playerPosition = level.Player.Position;
             var cameraPosition = camera.Position;
             var cameraSize = camera.Size;
             
@@ -35,7 +36,17 @@ namespace App.Engine.Render
             RenderMachine.RenderShapeOnCamera(camera.GetChaser(), cameraPosition);
             RenderMachine.RenderEdgeOnCamera(
                 new Edge(cursorPosition.ConvertFromWorldToCamera(cameraPosition),
-                    level.Player.Position.ConvertFromWorldToCamera(cameraPosition)));
+                    playerPosition.ConvertFromWorldToCamera(cameraPosition)));
+            
+            var debugInfo = new []
+            {
+                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
+                "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width + " x " + level.LevelSizeInTiles.Height,
+                "(WAxis) Scroll Position: " + camera.Position,
+                "(WAxis) Player Position: " + playerPosition,
+                "(CAxis) Player Position: " + playerPosition.ConvertFromWorldToCamera(camera.Position),
+                "(CAxis) Cursor Position: " + cursorPosition
+            };
             RenderMachine.PrintMessages(debugInfo);
             RenderEnemyInfo(level.Bots, cameraPosition);
         }
@@ -71,13 +82,13 @@ namespace App.Engine.Render
             RenderMachine.RenderNewTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
-        private static void RerenderCamera(Vector cameraPosition, Size cameraSize)
+        private static void RerenderCamera(Vector cameraPosition, Size cameraSize, Bitmap bmpLevelMap)
         {
             var sourceRectangle = new Rectangle(
                 (int) cameraPosition.X, (int) cameraPosition.Y,
                 cameraSize.Width, cameraSize.Height);
             
-            RenderMachine.RenderCamera(sourceRectangle);
+            RenderMachine.RenderCamera(sourceRectangle, bmpLevelMap);
         }
         
         private static void RenderSprites(List<SpriteContainer> spriteContainers, Vector cameraPosition)
@@ -86,13 +97,13 @@ namespace App.Engine.Render
                 if (!container.IsEmpty()) RenderMachine.RenderSpriteOnCamera(container, cameraPosition);
         }
 
-        private static void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition)
+        private static void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition, Graphics gfxLevelMap)
         {
             foreach (var container in particleUnits)
             {
                 if (container.ShouldBeBurned)
                 {
-                    RenderMachine.BurnParticleOnRenderedTiles(container);
+                    RenderMachine.BurnParticleOnRenderedTiles(container, gfxLevelMap);
                     container.ShouldBeBurned = false;
                     container.IsExpired = true;
                 }

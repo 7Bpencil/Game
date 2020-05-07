@@ -209,7 +209,7 @@ namespace App.Engine
             clock.Reset();
             clock.Start();
             
-            renderPipeline.Start(
+            renderPipeline.Render(
                 player.Position, camera.Position, camera.Size, player.CurrentWeapon,
                 sprites, particles, bullets, currentLevel.RaytracingEdges);
             
@@ -404,20 +404,6 @@ namespace App.Engine
                 collectables[i].SpriteContainer.ClearContent();
                 collectables[i] = null;
             }
-        }
-        
-        private string[] GetDebugInfo()
-        {
-            return new []
-            {
-                updateTime,
-                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
-                "Scene Size (in Tiles): " + currentLevel.LevelSizeInTiles.Width + " x " + currentLevel.LevelSizeInTiles.Height,
-                "(WAxis) Scroll Position: " + camera.Position,
-                "(WAxis) Player Position: " + player.Position,
-                "(CAxis) Player Position: " + player.Position.ConvertFromWorldToCamera(camera.Position),
-                "(CAxis) Cursor Position: " + cursor.Position
-            };
         }
 
         public void OnKeyDown(Keys keyPressed)

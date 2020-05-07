@@ -19,7 +19,8 @@ namespace App.Model.LevelData
         public List<RigidShape> DynamicShapes { get; private set; }
         public ShapesIterator SceneShapes { get; private set; }
         public readonly List<Edge> RaytracingEdges;
-        public Bitmap LevelMap { get; private set; }
+        public Bitmap bmpLevelMap { get; private set; }
+        public Graphics gfxLevelMap { get; private set; }
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
         public List<Collectable> Collectables { get; private set; }
@@ -49,7 +50,8 @@ namespace App.Model.LevelData
             DynamicShapes = new List<RigidShape> {Capacity = 50};
             SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
             
-            LevelMap = (Bitmap) levelInfo.LevelMap.Clone();
+            bmpLevelMap = (Bitmap) levelInfo.LevelMap.Clone();
+            gfxLevelMap = Graphics.FromImage(bmpLevelMap);
             
             Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
             Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo);
