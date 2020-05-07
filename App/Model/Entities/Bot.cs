@@ -16,6 +16,7 @@ namespace App.Model.Entities
         public readonly SpriteContainer LegsContainer;
         public readonly RigidCircle CollisionShape;
         private readonly Weapon weapon;
+        public Vector Velocity;
 
         public Vector Center => CollisionShape.Center;
         

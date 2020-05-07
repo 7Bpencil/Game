@@ -53,5 +53,11 @@ namespace App.Engine
         {
             return new RigidCircle(chaserPosition, 32, false, false);
         }
+
+        public void Reset(Vector playerPosition)
+        {
+            position = playerPosition - new Vector(Size.Width, Size.Height) / 2;
+            chaserPosition = playerPosition.Copy();
+        }
     }
 }

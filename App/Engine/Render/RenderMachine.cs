@@ -34,7 +34,7 @@ namespace App.Engine.Render
         private static readonly Brush TransparentBrush = new SolidBrush(Color.FromArgb(0, Color.Empty));
         private static readonly Color ShadowColor = Color.FromArgb(128, Color.Black);
 
-        public static void Init(ViewForm viewForm, Size cameraSize)
+        public static void Initialize(ViewForm viewForm, Size cameraSize)
         {
             view = viewForm;
             SetCameraBuffer(cameraSize);

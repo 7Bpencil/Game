@@ -12,7 +12,7 @@ namespace App.Model
         private static Dictionary<string, TileSet> tileSets;
         private static Dictionary<int, string> levelList;
 
-        public static void Init()
+        public static void Initialize()
         {
             tileMaps = LoadTileMaps();
             tileSets = TileSetParser.LoadTileSets(tileMaps);

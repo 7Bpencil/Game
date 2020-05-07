@@ -17,12 +17,16 @@ namespace App.Engine
     {
         private readonly ViewForm viewForm;
         private readonly Stopwatch clock;
+        
         private KeyStates keyState;
         private MouseState mouseState;
-        private LevelManager levelManager;
-        private Player player;
         private CustomCursor cursor;
         private Camera camera;
+        
+        private Player player;
+        
+        
+        private const int tileSize = 32;
 
         private readonly ParticleFactory particleFactory;
 
@@ -30,12 +34,12 @@ namespace App.Engine
 
         private string updateTime;
 
-        private void ResetControls()
+        private void ResetControls(Vector playerPosition)
         {
             keyState = new KeyStates();
             mouseState = new MouseState();
-            //TODO reset cursor
-            //TODO reset camera
+            cursor.MoveTo(playerPosition);
+            camera.Reset(playerPosition);
         }
 
         private class KeyStates
@@ -49,19 +53,26 @@ namespace App.Engine
             public bool LMB, RMB;
         }
 
+        private void InitializeSystems(Size screenSize)
+        {
+            RenderMachine.Initialize(viewForm, screenSize);
+            AudioEngine.Initialize();
+            LevelManager.Initialize();
+        }
+
         public Core(ViewForm viewForm, Size screenSize)
         {
             this.viewForm = viewForm;
+            InitializeSystems(screenSize);
             
-            RenderMachine.Init(viewForm, screenSize);
-            AudioEngine.Initialize();
 
             particleFactory = new ParticleFactory();
             
             SetLevels();
+            
             player = currentLevel.Player;
             camera = new Camera(currentLevel.Player.Position, player.Radius, screenSize);
-            SetCursor(currentLevel.Player.Position);
+            InitCursor(currentLevel.Player.Position);
             keyState = new KeyStates();
             mouseState = new MouseState();
             clock = new Stopwatch();
@@ -73,25 +84,15 @@ namespace App.Engine
 
         private void SetLevels()
         {
-            levelManager = new LevelManager();
             //currentLevel = levelManager.LoadLevel() ...;
         }
         
 
 
-        private void SetCursor(Vector position)
+        private void InitCursor(Vector position)
         {
-            var bmpCursor = levelManager.GetTileMap("crosshair.png");
-            var cursorSprite = new Sprite
-            (
-                bmpCursor,
-                3,
-                0,
-                9,
-                new Size(64, 64));
-            
-            cursor = new CustomCursor(position.Copy(), cursorSprite);
-            sprites.Add(cursor.SpriteContainer);
+            cursor = new CustomCursor(position.Copy());
+            currentLevel.Sprites.Add(cursor.SpriteContainer);
         }
         
 
