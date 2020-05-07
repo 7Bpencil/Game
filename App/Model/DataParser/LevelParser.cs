@@ -52,51 +52,60 @@ namespace App.Model.DataParser
             
             var levelSizeInTiles = new Size(
                 int.Parse(root.GetAttribute("width")), int.Parse(root.GetAttribute("height")));
-            TileSet tileSet = null;
+            var name = root.GetAttribute("name");
             var tilesInLayerAmount = 0;
-            var layers = new List<Layer>();
-            var staticShapes = new List<RigidShape>();
-            var raytracingEdges = new List<Edge>();
-            var collectableWeapons = new List<CollectableWeaponInfo>();
-            EntityCreator.PlayerInfo playerInfo; 
+            TileSet tileSet = null;
+            List<Layer> layers = null;
+            List<RigidShape> staticShapes = null;
+            List<Edge> raytracingEdges = null;
+            var collectableWeapons = new List<CollectableWeaponInfo> {Capacity = 8};
+            EntityCreator.PlayerInfo playerInfo = null;
+            List<EntityCreator.BotInfo> botsInfo = null; 
             RigidAABB exit = null;
 
             foreach (XmlNode node in root.ChildNodes)
             {
-                if (node.Name == "properties")
+                switch (node.Name)
                 {
-                    foreach (XmlNode property in node.ChildNodes)
+                    case "properties":
                     {
-                        if (property.Name == "exit") exit = LoadRigidAABB(property);
-                        if (property.Name == "collectables")
+                        foreach (XmlNode property in node.ChildNodes)
                         {
-                            foreach (XmlNode collectable in property.ChildNodes)
+                            if (property.Name == "exit") exit = LoadRigidAABB(property);
+                            if (property.Name == "collectables")
                             {
-                                if (collectable.Name == "collectableWeapon") collectableWeapons.Add(LoadCollectableWeapon(collectable));
+                                foreach (XmlNode collectable in property.ChildNodes)
+                                {
+                                    if (collectable.Name == "collectableWeapon") collectableWeapons.Add(LoadCollectableWeapon(collectable));
+                                }
                             }
-                        }
-                        if (property.Name == "player") playerInfo = 
-                    }
-                }
-                if (node.Name == "tileset")
-                {
-                    tileSet = tileSets[node.Attributes.GetNamedItem("source").Value];
-                    tilesInLayerAmount = levelSizeInTiles.Width * levelSizeInTiles.Height; 
-                }
 
-                if (node.Name == "layer")
-                    layers.Add(LoadLayer(node, separators, tilesInLayerAmount));
-                
-                if (node.Name == "objectgroup")
-                {
-                    var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
-                    if (nodeContentName == "StaticShapes") staticShapes = LoadStaticShapes(node);
-                    if (nodeContentName == "RaytracingPolygons") raytracingEdges = LoadRaytracingEdges(node);
+                            if (property.Name == "player") playerInfo = LoadPlayerInfo(property);
+                            if (property.Name == "bots") botsInfo = loadBots(property);
+                        }
+
+                        break;
+                    }
+                    case "tileset":
+                        tileSet = tileSets[node.Attributes.GetNamedItem("source").Value];
+                        tilesInLayerAmount = levelSizeInTiles.Width * levelSizeInTiles.Height;
+                        break;
+                    case "layer":
+                        layers.Add(LoadLayer(node, separators, tilesInLayerAmount));
+                        break;
+                    case "objectgroup":
+                    {
+                        var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
+                        if (nodeContentName == "StaticShapes") staticShapes = LoadStaticShapes(node);
+                        if (nodeContentName == "RaytracingPolygons") raytracingEdges = LoadRaytracingEdges(node);
+                        break;
+                    }
                 }
             }
 
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
-
+            return new Level(
+                levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, playerInfo, botsInfo, collectableWeapons);
         }
 
         private static EntityCreator.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
@@ -116,6 +125,14 @@ namespace App.Model.DataParser
 
             return new EntityCreator.PlayerInfo
                 (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath);
+        }
+
+        private static List<EntityCreator.BotInfo> loadBots(XmlNode botsNode)
+        {
+            var bots = new List<EntityCreator.BotInfo> {Capacity = 8};
+            foreach (XmlNode bot in botsNode.ChildNodes)
+                bots.Add(LoadBotInfo(bot));
+            return bots;
         }
         
         private static EntityCreator.BotInfo LoadBotInfo(XmlNode botNode)
