@@ -6,28 +6,20 @@ using App.Model.LevelData;
 
 namespace App.Model
 {
-    public class LevelManager
+    public static class LevelManager
     {
-        private Dictionary<string, Bitmap> tileMaps;
-        private Dictionary<string, TileSet> tileSets;
-        private Dictionary<int, string> levelList;
-        private int currentLevelIndex;
-        public Level CurrentLevel => levelList[currentLevelIndex];
+        private static Dictionary<string, Bitmap> tileMaps;
+        private static Dictionary<string, TileSet> tileSets;
+        private static Dictionary<int, string> levelList;
 
-        public void MoveNextLevel()
-        {
-            currentLevelIndex++;
-        }
-
-        public LevelManager()
+        public static void Init()
         {
             tileMaps = LoadTileMaps();
             tileSets = TileSetParser.LoadTileSets(tileMaps);
             levelList = LevelParser.LoadLevelList();
-            currentLevelIndex = 0;
         }
 
-        private Dictionary<string, Bitmap> LoadTileMaps()
+        private static Dictionary<string, Bitmap> LoadTileMaps()
         {
             var bitmapFileNames = Directory.GetFiles("Assets/TileMaps");
             var tileMaps = new Dictionary<string, Bitmap>();
@@ -37,7 +29,7 @@ namespace App.Model
             return tileMaps;
         }
 
-        public Bitmap GetTileMap(string tileMapName)
+        public static Bitmap GetTileMap(string tileMapName)
         {
             return tileMaps[tileMapName];
         }

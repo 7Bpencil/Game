@@ -4,7 +4,7 @@ namespace App.Model.DataParser
 {
     public static class LevelLoader
     {
-        public static Level Load(string path)
+        public static LevelInfo Load(string path)
         {
             
         }

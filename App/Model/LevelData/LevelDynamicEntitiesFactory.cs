@@ -5,7 +5,7 @@ using App.Model.Entities.Factories;
 
 namespace App.Model.LevelData
 {
-    public static class LevelRuntimeFactory
+    public static class LevelDynamicEntitiesFactory
     {
         public static Player CreatePlayer(EntityCreator.PlayerInfo playerInfo)
         {

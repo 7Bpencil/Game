@@ -24,6 +24,7 @@ namespace App.Model.DataParser
             {"MP6", typeof(MP6)},
             {"SaigaFA", typeof(SaigaFA)}
         };
+        
         public static Dictionary<int, string> LoadLevelList()
         {
             var levels = new Dictionary<int, string>();
@@ -43,7 +44,7 @@ namespace App.Model.DataParser
             return levels;
         }
 
-        private static Level LoadLevel(string sourcePath, Dictionary<string, TileSet> tileSets)
+        private static LevelInfo LoadLevel(string sourcePath, Dictionary<string, TileSet> tileSets)
         {
             var separators = new[] {"\r\n", ",", "\n"};
             var doc = new XmlDocument();
@@ -104,7 +105,7 @@ namespace App.Model.DataParser
             }
 
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
-            return new Level(
+            return new LevelInfo(
                 levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, playerInfo, botsInfo, collectableWeapons);
         }
 

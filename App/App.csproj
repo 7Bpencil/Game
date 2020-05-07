@@ -100,9 +100,9 @@
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
+        <Compile Include="Model\LevelData\LevelInfo.cs" />
+        <Compile Include="Model\LevelData\LevelDynamicEntitiesFactory.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
-        <Compile Include="Model\LevelData\LevelRuntimeFactory.cs" />
-        <Compile Include="Model\LevelData\LevelRuntime.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\DataParser\LevelParser.cs" />

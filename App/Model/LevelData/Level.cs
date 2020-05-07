@@ -1,62 +1,81 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using App.Engine.Particles;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
-using App.Model.Entities.Collectables;
-using App.Model.Entities.Factories;
+using App.Model.Entities;
 
 namespace App.Model.LevelData
 {
-    public class Level //TODO LevelInfo - real name
+    public class Level
     {
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
+
         public readonly RigidShape Exit;
         public readonly List<RigidShape> StaticShapes;
-        public readonly Bitmap LevelMap;
+        public readonly List<RigidShape> DynamicShapes;
+        public readonly ShapesIterator SceneShapes;
         public readonly List<Edge> RaytracingEdges;
-        public readonly EntityCreator.PlayerInfo PlayerInfo;
-        public readonly List<EntityCreator.BotInfo> BotsInfo;
-        public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
+        
+        public readonly Bitmap LevelMap;
+        
+        public readonly Player Player;
+        public readonly List<Bot> Bots;
+        public readonly List<Collectable> Collectables;
+        public readonly List<Bullet> Bullets;
+        public readonly List<AbstractParticleUnit> Particles;
+        public readonly List<SpriteContainer> Sprites;
+        public List<CollisionInfo> CollisionsInfo;
+        
+        private bool isLevelLoaded;
 
-        public Level(
-            Size levelSizeInTiles, string name, RigidShape exit, List<RigidShape> staticShapes, 
-            Bitmap levelMap, List<Edge> raytracingEdges, EntityCreator.PlayerInfo playerInfo, 
-            List<EntityCreator.BotInfo> botsInfo, List<CollectableWeaponInfo> collectableWeaponsInfo)
+        public Level(LevelInfo levelInfo)
         {
-            LevelSizeInTiles = levelSizeInTiles;
-            Name = name;
-            Exit = exit;
-            StaticShapes = staticShapes;
-            LevelMap = levelMap;
-            RaytracingEdges = raytracingEdges;
-            PlayerInfo = playerInfo;
-            BotsInfo = botsInfo;
-            CollectableWeaponsInfo = collectableWeaponsInfo;
+            LevelSizeInTiles = levelInfo.LevelSizeInTiles;
+            Name = levelInfo.Name;
+
+            Exit = levelInfo.Exit;
+            StaticShapes = levelInfo.StaticShapes;
+            DynamicShapes = new List<RigidShape> {Capacity = 50};
+            SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
+            RaytracingEdges = levelInfo.RaytracingEdges;
+            
+            LevelMap = (Bitmap) levelInfo.LevelMap.Clone();
+            
+            Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
+            Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo);
+            Collectables = LevelDynamicEntitiesFactory.CreateCollectables(levelInfo.CollectableWeaponsInfo);
+            Bullets = new List<Bullet> {Capacity = 1000};
+            Particles = new List<AbstractParticleUnit> {Capacity = 1000};
+            Sprites = new List<SpriteContainer> {Capacity = 100};
+
+            HookUpSprites();
+            HookUpCollisions();
+
+            isLevelLoaded = true;
         }
-    }
 
-    public class ShapesIterator
-    {
-        private readonly List<RigidShape> staticShapes;
-        private readonly List<RigidShape> dynamicShapes;
-        public int Length => staticShapes.Count + dynamicShapes.Count;
-
-        public RigidShape this[int index]
+        private void HookUpSprites()
         {
-            get
+            foreach (var item in Collectables)
+                Sprites.Add(item.SpriteContainer);
+            foreach (var bot in Bots)
             {
-                if (index < 0 || index > Length - 1) throw new IndexOutOfRangeException();
-                if (index < staticShapes.Count) return staticShapes[index];
-                return dynamicShapes[index - staticShapes.Count];
+                Sprites.Add(bot.LegsContainer);
+                Sprites.Add(bot.TorsoContainer);
             }
+            
+            Sprites.Add(Player.LegsContainer);
+            Sprites.Add(Player.TorsoContainer);
         }
 
-        public ShapesIterator(List<RigidShape> staticShapes, List<RigidShape> dynamicShapes)
+        private void HookUpCollisions()
         {
-            this.staticShapes = staticShapes;
-            this.dynamicShapes = dynamicShapes;
+            foreach (var bot in Bots)
+                DynamicShapes.Add(bot.CollisionShape);
+            DynamicShapes.Add(Player.CollisionShape);
         }
     }
 }

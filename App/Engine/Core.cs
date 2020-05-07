@@ -25,7 +25,7 @@ namespace App.Engine
         private RenderPipeline renderPipeline;
         private Stopwatch clock;
         private KeyStates keyState;
-        private Level currentLevel;
+        private LevelInfo currentLevel;
         private MouseState mouseState;
         private LevelManager levelManager;
         private Player player;

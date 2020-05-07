@@ -11,7 +11,7 @@ namespace App.Model.Entities.Factories
 {
     public static class EntityCreator
     {
-        private static Dictionary<string, Bitmap> cachedBitmaps = new Dictionary<string, Bitmap>();
+        private static readonly Dictionary<string, Bitmap> cachedBitmaps = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>
         {
             {typeof(AK303), 0},
