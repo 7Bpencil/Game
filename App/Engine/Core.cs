@@ -49,6 +49,14 @@ namespace App.Engine
 
         private string updateTime;
 
+        private void ResetControls()
+        {
+            keyState = new KeyStates();
+            mouseState = new MouseState();
+            //TODO reset cursor
+            //TODO reset camera
+        }
+
         private class KeyStates
         {
             public bool W, S, A, D, I;

@@ -14,15 +14,12 @@ namespace App.Model.LevelData
         
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
-
         public readonly RigidShape Exit;
         public readonly List<RigidShape> StaticShapes;
         public List<RigidShape> DynamicShapes { get; private set; }
         public ShapesIterator SceneShapes { get; private set; }
         public readonly List<Edge> RaytracingEdges;
-        
         public Bitmap LevelMap { get; private set; }
-        
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
         public List<Collectable> Collectables { get; private set; }
