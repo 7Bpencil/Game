@@ -230,7 +230,8 @@ namespace App.Engine
 
         private void UpdateBullets()
         {
-            foreach (var bullet in currentLevel.Bullets)
+            var bullets = currentLevel.Bullets;
+            foreach (var bullet in bullets)
             {
                 if (bullet.IsStuck) continue;
                 if (bullet.StaticPenetrations.Count == 0)
@@ -247,7 +248,8 @@ namespace App.Engine
 
         private void CalculateStaticPenetrations(Bullet bullet)
         {
-            foreach (var obstacle in currentLevel.StaticShapes)
+            var staticShapes = currentLevel.StaticShapes;
+            foreach (var obstacle in staticShapes)
             {
                 var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullet, obstacle);
                 if (penetrationTime == null) continue;
@@ -261,20 +263,21 @@ namespace App.Engine
 
         private void CalculateDynamicPenetrations(Bullet bullet)
         {
-            foreach (var target in currentLevel.Bots)
+            var bots = currentLevel.Bots;
+            foreach (var bot in bots)
             {
                 var penetrationTimes = 
-                    BulletCollisionDetector.AreCollideWithDynamic(bullet, target.CollisionShape, target.Velocity);
+                    BulletCollisionDetector.AreCollideWithDynamic(bullet, bot.CollisionShape, bot.Velocity);
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
-                target.TakeHit(bullet.Damage);
-                if (target.Armour > 50) bullet.IsStuck = true;
+                bot.TakeHit(bullet.Damage);
+                if (bot.Armour > 50) bullet.IsStuck = true;
 
                 currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
                 currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
 
-                if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
-                    target.MoveTo(target.CollisionShape.Center + target.Velocity * penetrationTimes[0]);
+                if (bot.IsDead && !bot.Velocity.Equals(Vector.ZeroVector))
+                    bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
             }
         }
 
@@ -283,7 +286,8 @@ namespace App.Engine
         /// </summary>
         private void UpdateTargets()
         {
-            foreach (var t in currentLevel.Bots)
+            var bots = currentLevel.Bots;
+            foreach (var t in bots)
             {
                 t.Update();
             }
