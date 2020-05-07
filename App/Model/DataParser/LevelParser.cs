@@ -44,7 +44,7 @@ namespace App.Model.DataParser
             return levels;
         }
 
-        private static LevelInfo LoadLevel(string sourcePath, Dictionary<string, TileSet> tileSets)
+        public static LevelInfo LoadLevel(string sourcePath, Dictionary<string, TileSet> tileSets)
         {
             var separators = new[] {"\r\n", ",", "\n"};
             var doc = new XmlDocument();

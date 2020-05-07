@@ -27,7 +27,7 @@ namespace App.Model.LevelData
         public List<Bullet> Bullets { get; private set; }
         public List<AbstractParticleUnit> Particles { get; private set; }
         public List<SpriteContainer> Sprites { get; private set; }
-        public List<CollisionInfo> CollisionsInfo { get; private set; }
+        public List<CollisionInfo> CollisionsInfo;
         
         private bool isLevelLoaded;
 

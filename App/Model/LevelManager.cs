@@ -11,12 +11,27 @@ namespace App.Model
         private static Dictionary<string, Bitmap> tileMaps;
         private static Dictionary<string, TileSet> tileSets;
         private static Dictionary<int, string> levelList;
+        private static Dictionary<int, LevelInfo> cachedLevelsInfo;
 
         public static void Initialize()
         {
             tileMaps = LoadTileMaps();
             tileSets = TileSetParser.LoadTileSets(tileMaps);
             levelList = LevelParser.LoadLevelList();
+            cachedLevelsInfo = new Dictionary<int, LevelInfo>();
+        }
+
+        public static Level LoadLevel(int id)
+        {
+            return new Level(GetLevelInfo(id));
+        }
+
+        private static LevelInfo GetLevelInfo(int id)
+        {
+            if (cachedLevelsInfo.ContainsKey(id)) return cachedLevelsInfo[id];
+            var levelInfo = LevelParser.LoadLevel(levelList[id], tileSets);
+            cachedLevelsInfo.Add(id, levelInfo);
+            return levelInfo;
         }
 
         private static Dictionary<string, Bitmap> LoadTileMaps()

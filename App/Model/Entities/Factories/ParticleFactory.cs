@@ -2,26 +2,25 @@ using System;
 using System.Drawing;
 using App.Engine.Particles;
 using App.Engine.Physics;
-using App.Model.Entities;
 using App.Model.Entities.Weapons;
 
-namespace App.Engine
+namespace App.Model.Entities.Factories
 {
-    public class ParticleFactory
+    public static class ParticleFactory
     {
-        private readonly Random r;
+        private static Random r;
         
-        private readonly AnimatedParticle bloodSplashSmall;
-        private readonly AnimatedParticle bloodSplashMedium;
-        private readonly AnimatedParticle bloodSplashBig;
+        private static AnimatedParticle bloodSplashSmall;
+        private static AnimatedParticle bloodSplashMedium;
+        private static AnimatedParticle bloodSplashBig;
 
-        private readonly AnimatedParticle wallDust;
+        private static AnimatedParticle wallDust;
         
-        private readonly StaticParticle shellGauge12;
-        private readonly StaticParticle shell762;
-        private readonly StaticParticle shell919;
+        private static StaticParticle shellGauge12;
+        private static StaticParticle shell762;
+        private static StaticParticle shell919;
 
-        public ParticleFactory()
+        public static void Initialize()
         {
             r = new Random();
             
@@ -52,7 +51,7 @@ namespace App.Engine
                 1, 0, 5, new Size(13, 25));
         }
         
-        public AbstractParticleUnit CreateBloodSplash(Vector centerPosition)
+        public static AbstractParticleUnit CreateBloodSplash(Vector centerPosition)
         {
             var chance = r.Next(0, 10);
             if (chance > 8) return CreateBigBloodSplash(centerPosition);
@@ -60,7 +59,7 @@ namespace App.Engine
             return CreateSmallBloodSplash(centerPosition);
         }
 
-        public AbstractParticleUnit CreateShell(Vector startPosition, Vector direction, Weapon weapon)
+        public static AbstractParticleUnit CreateShell(Vector startPosition, Vector direction, Weapon weapon)
         {
             var weaponType = weapon.GetType();
             if (weaponType == typeof(AK303)) return Create762Shell(startPosition, direction);
@@ -70,39 +69,39 @@ namespace App.Engine
             return null;
         }
 
-        public AbstractParticleUnit CreateWallDust(Vector penetrationPosition, Vector direction)
+        public static AbstractParticleUnit CreateWallDust(Vector penetrationPosition, Vector direction)
         {
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle + 90;
             return new ExpiringAnimatedParticleUnit(wallDust, penetrationPosition, (float) angle);
         }
 
-        private AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)
+        private static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)
         {
             return new BloodSplashParticleUnit(bloodSplashSmall, centerPosition, r.Next(-45, 45), r.Next(0, 6));
         }
         
-        private AbstractParticleUnit CreateMediumBloodSplash(Vector centerPosition)
+        private static AbstractParticleUnit CreateMediumBloodSplash(Vector centerPosition)
         {
             return new BloodSplashParticleUnit(bloodSplashMedium, centerPosition, r.Next(-45, 45), r.Next(0, 10));
         }
         
-        public AbstractParticleUnit CreateBigBloodSplash(Vector centerPosition)
+        public static AbstractParticleUnit CreateBigBloodSplash(Vector centerPosition)
         {
             return new BloodSplashParticleUnit(bloodSplashBig, centerPosition, r.Next(-45, 45), r.Next(0, 10));
         }
 
-        private AbstractParticleUnit CreateGauge12Shell(Vector startPosition, Vector direction)
+        private static AbstractParticleUnit CreateGauge12Shell(Vector startPosition, Vector direction)
         {
             return new GunShellParticleUnit(shellGauge12, startPosition, direction, r.Next(-45, 45));
         }
         
-        private  AbstractParticleUnit Create762Shell(Vector startPosition, Vector direction)
+        private static AbstractParticleUnit Create762Shell(Vector startPosition, Vector direction)
         {
             return new GunShellParticleUnit(shell762, startPosition, direction, r.Next(-45, 45));
         }
         
-        private  AbstractParticleUnit Create919Shell(Vector startPosition, Vector direction)
+        private static AbstractParticleUnit Create919Shell(Vector startPosition, Vector direction)
         {
             return new GunShellParticleUnit(shell919, startPosition, direction, r.Next(-45, 45));
         }

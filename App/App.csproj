@@ -49,7 +49,6 @@
         <Compile Include="Engine\Audio\FMOD\fmod_dsp.cs" />
         <Compile Include="Engine\Audio\FMOD\fmod_errors.cs" />
         <Compile Include="Engine\Audio\FMOD\fmod_studio.cs" />
-        <Compile Include="Engine\ParticleFactory.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\Particles\AbstractParticle.cs" />
@@ -86,6 +85,7 @@
         <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Factories\AbstractWeaponFactory.cs" />
+        <Compile Include="Model\Entities\Factories\ParticleFactory.cs" />
         <Compile Include="Model\Entities\Factories\WeaponFactory.cs" />
         <Compile Include="Model\Entities\Factories\EntityCreator.cs" />
         <Compile Include="Model\Entities\Factories\GenericWeaponFactory.cs" />

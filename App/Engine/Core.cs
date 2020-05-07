@@ -8,6 +8,7 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
+using App.Model.Entities.Factories;
 using App.Model.LevelData;
 using App.View;
 
@@ -16,30 +17,39 @@ namespace App.Engine
     public class Core
     {
         private readonly ViewForm viewForm;
-        private readonly Stopwatch clock;
+        private Stopwatch clock;
         
         private KeyStates keyState;
         private MouseState mouseState;
         private CustomCursor cursor;
         private Camera camera;
         
-        private Player player;
-        
-        
-        private const int tileSize = 32;
-
-        private readonly ParticleFactory particleFactory;
-
         private Level currentLevel;
+        private Player player;
 
         private string updateTime;
+        private const int tileSize = 32;
 
-        private void ResetControls(Vector playerPosition)
+        private void InitState(Size screenSize)
         {
+            currentLevel = LevelManager.LoadLevel(0);
+            player = currentLevel.Player;
+            camera = new Camera(player.Position, player.Radius, screenSize);
+            cursor = new CustomCursor(player.Position);
+            currentLevel.Sprites.Add(cursor.SpriteContainer);
             keyState = new KeyStates();
             mouseState = new MouseState();
-            cursor.MoveTo(playerPosition);
-            camera.Reset(playerPosition);
+            clock = new Stopwatch();
+        }
+
+        private void ResetState()
+        {
+            player = currentLevel.Player;
+            cursor.MoveTo(player.Position);
+            currentLevel.Sprites.Add(cursor.SpriteContainer);
+            camera.Reset(player.Position);
+            keyState = new KeyStates();
+            mouseState = new MouseState();
         }
 
         private class KeyStates
@@ -58,48 +68,24 @@ namespace App.Engine
             RenderMachine.Initialize(viewForm, screenSize);
             AudioEngine.Initialize();
             LevelManager.Initialize();
+            ParticleFactory.Initialize();
         }
 
         public Core(ViewForm viewForm, Size screenSize)
         {
             this.viewForm = viewForm;
             InitializeSystems(screenSize);
+            InitState(screenSize);
             
-
-            particleFactory = new ParticleFactory();
-            
-            SetLevels();
-            
-            player = currentLevel.Player;
-            camera = new Camera(currentLevel.Player.Position, player.Radius, screenSize);
-            InitCursor(currentLevel.Player.Position);
-            keyState = new KeyStates();
-            mouseState = new MouseState();
-            clock = new Stopwatch();
-            
-
-
             AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
-
-        private void SetLevels()
-        {
-            //currentLevel = levelManager.LoadLevel() ...;
-        }
         
-
-
-        private void InitCursor(Vector position)
-        {
-            cursor = new CustomCursor(position.Copy());
-            currentLevel.Sprites.Add(cursor.SpriteContainer);
-        }
-        
-
         public void GameLoop(object sender, EventArgs args)
         {
             if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
+                currentLevel.Reset();
+                ResetState();
                 Console.WriteLine("URA");
             }
             
@@ -108,7 +94,7 @@ namespace App.Engine
             UpdateState();
             
             clock.Stop();
-            var lTime = clock.ElapsedMilliseconds;
+            var logicTime = clock.ElapsedMilliseconds;
             clock.Reset();
             clock.Start();
             
@@ -120,9 +106,9 @@ namespace App.Engine
             AudioEngine.Update();
             
             clock.Stop();
-            var rTime = clock.ElapsedMilliseconds;
+            var renderTime = clock.ElapsedMilliseconds;
             clock.Reset();
-            updateTime = "logic=" + lTime + "ms render=" + rTime + "ms";
+            updateTime = "logic=" + logicTime + "ms render=" + renderTime + "ms";
         }
         
         private void UpdateState()
@@ -144,7 +130,7 @@ namespace App.Engine
             {
                 player.TakeMeleeWeapon();
                 var wasHit = player.MeleeWeapon.Attack(currentLevel.Bots);
-                if (wasHit) currentLevel.Particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
+                if (wasHit) currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
             }
             else if (mouseState.LMB && player.CurrentWeapon.IsReady && player.MeleeWeapon.IsReady)
             {
@@ -152,7 +138,7 @@ namespace App.Engine
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
                 AudioEngine.PlayNewInstance("event:/gunfire/2D/misc/DROPPED_SHELL");
                 currentLevel.Bullets.AddRange(firedBullets);
-                currentLevel.Particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                currentLevel.Particles.Add(ParticleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
 
             UpdateCollectables();
@@ -241,7 +227,7 @@ namespace App.Engine
                 bullet.Update();
                 if (bullet.ClosestPenetrationPoint != null)
                 {
-                    currentLevel.Particles.Add(particleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
+                    currentLevel.Particles.Add(ParticleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
                     bullet.ClosestPenetrationPoint = null;
                 }
             }
@@ -274,8 +260,8 @@ namespace App.Engine
                 bot.TakeHit(bullet.Damage);
                 if (bot.Armour > 50) bullet.IsStuck = true;
 
-                currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
-                currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
+                currentLevel.Particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
+                currentLevel.Particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
 
                 if (bot.IsDead && !bot.Velocity.Equals(Vector.ZeroVector))
                     bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
