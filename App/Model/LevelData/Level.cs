@@ -10,24 +10,26 @@ namespace App.Model.LevelData
 {
     public class Level
     {
+        private LevelInfo levelInfo;
+        
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
 
         public readonly RigidShape Exit;
         public readonly List<RigidShape> StaticShapes;
-        public readonly List<RigidShape> DynamicShapes;
-        public readonly ShapesIterator SceneShapes;
+        public List<RigidShape> DynamicShapes { get; private set; }
+        public ShapesIterator SceneShapes { get; private set; }
         public readonly List<Edge> RaytracingEdges;
         
-        public readonly Bitmap LevelMap;
+        public Bitmap LevelMap { get; private set; }
         
-        public readonly Player Player;
-        public readonly List<Bot> Bots;
-        public readonly List<Collectable> Collectables;
-        public readonly List<Bullet> Bullets;
-        public readonly List<AbstractParticleUnit> Particles;
-        public readonly List<SpriteContainer> Sprites;
-        public List<CollisionInfo> CollisionsInfo;
+        public Player Player { get; private set; }
+        public List<Bot> Bots { get; private set; }
+        public List<Collectable> Collectables { get; private set; }
+        public List<Bullet> Bullets { get; private set; }
+        public List<AbstractParticleUnit> Particles { get; private set; }
+        public List<SpriteContainer> Sprites { get; private set; }
+        public List<CollisionInfo> CollisionsInfo { get; private set; }
         
         private bool isLevelLoaded;
 
@@ -38,9 +40,17 @@ namespace App.Model.LevelData
 
             Exit = levelInfo.Exit;
             StaticShapes = levelInfo.StaticShapes;
+            RaytracingEdges = levelInfo.RaytracingEdges;
+
+            SetDynamicEntities();
+
+            isLevelLoaded = true;
+        }
+
+        private void SetDynamicEntities()
+        {
             DynamicShapes = new List<RigidShape> {Capacity = 50};
             SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
-            RaytracingEdges = levelInfo.RaytracingEdges;
             
             LevelMap = (Bitmap) levelInfo.LevelMap.Clone();
             
@@ -50,13 +60,11 @@ namespace App.Model.LevelData
             Bullets = new List<Bullet> {Capacity = 1000};
             Particles = new List<AbstractParticleUnit> {Capacity = 1000};
             Sprites = new List<SpriteContainer> {Capacity = 100};
-
+            
             HookUpSprites();
             HookUpCollisions();
-
-            isLevelLoaded = true;
         }
-
+        
         private void HookUpSprites()
         {
             foreach (var item in Collectables)
@@ -76,6 +84,11 @@ namespace App.Model.LevelData
             foreach (var bot in Bots)
                 DynamicShapes.Add(bot.CollisionShape);
             DynamicShapes.Add(Player.CollisionShape);
+        }
+        
+        public void Reset()
+        {
+            SetDynamicEntities();
         }
     }
 }

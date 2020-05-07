@@ -80,7 +80,6 @@
         <Compile Include="Engine\Sprites\MeleeWeaponSprite.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
-        <Compile Include="Model\DataParser\LevelLoader.cs" />
         <Compile Include="Model\DataParser\TileSetParser.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
