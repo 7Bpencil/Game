@@ -78,7 +78,7 @@ namespace App.Engine
 
             SetLevels();
             SetTargets();
-            var playerStartPosition = currentLevel.PlayerStartPosition;
+            var playerStartPosition = new Vector(720, 930);
             SetPlayer(playerStartPosition);
             camera = new Camera(playerStartPosition, player.Radius, screenSize);
             SetCursor(playerStartPosition);
@@ -146,7 +146,7 @@ namespace App.Engine
             var torso = new StaticSprite(new Bitmap(@"Assets\Sprites\Weapons\top_down_view_boroda.png"), 0, new Size(79, 57));
             targets = new List<ShootingRangeTarget>
             {
-                new ShootingRangeTarget(player, legs, torso, 90f,
+                new ShootingRangeTarget(currentLevel, player, legs, torso, 90f,
                     100,
                     300,
                     position,
@@ -372,7 +372,7 @@ namespace App.Engine
                     var view = new Raytracing.VisibilityRegion(t.Center, currentLevel.RaytracingEdges, 1000);
                     visibilityRegions.Add(view);
                     t.aim = Raytracing.IsInView(player.Shape, view);
-                    //TODO: paths.Add(t.GetCurrentPath())
+                    paths.Add(t.currentPath);
                 }
                 t.Update();
             }

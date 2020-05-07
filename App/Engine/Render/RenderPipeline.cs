@@ -25,7 +25,7 @@ namespace App.Engine.Render
             RerenderCamera(cameraPosition, cameraSize);
             RenderSprites(sprites, cameraPosition);
             RenderParticles(particles, cameraPosition);
-            RenderVisibilityRegions(visibilityRegions, cameraPosition);
+            //RenderVisibilityRegions(visibilityRegions, cameraPosition);
             RenderBullets(bullets, cameraPosition);
             renderMachine.RenderHUD(currentWeapon.Name + " " + currentWeapon.AmmoAmount, cameraSize);
 

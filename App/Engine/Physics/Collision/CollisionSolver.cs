@@ -83,17 +83,6 @@ namespace App.Engine.Physics.Collision
                 : null;
         }
 
-        private static CollisionInfo GetCollisionInfo(RigidCircle circle, RigidTriangle triangle)
-        {
-            var q = GetClosestPoint(circle.Center, triangle.Points[0], triangle.Points[1], triangle.Points[2]);
-            var v = q - circle.Center;
-            var distanceSquared = Vector.VectorProduct(v, v) - circle.Radius * circle.Radius;
-            if (distanceSquared <= 0)
-                return new CollisionInfo((float) Math.Sqrt(distanceSquared), v, q);
-
-            return null;
-        }
-
         public static CollisionInfo GetCollisionInfo(RigidCircle circle, Vector a, Vector b, Vector c)
         {
             var q = GetClosestPoint(circle.Center, a, b, c);

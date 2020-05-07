@@ -5,6 +5,7 @@
         private readonly float radius;
         public float Radius => radius;
         public float Diameter => 2 * radius;
+        private RigidAABB boundShape;
 
         private readonly Vector center;
         public override Vector Center => center;
@@ -31,23 +32,32 @@
             this.center = center;
             this.isStatic = isStatic;
             this.canCollide = canCollide;
+            
+            var v = new Vector(radius, radius);
+            boundShape = new RigidAABB(center - v, center + v, isStatic, canCollide);
         }
 
         public override void MoveBy(Vector delta)
         {
             center.X += delta.X;
             center.Y += delta.Y;
+            var v = new Vector(radius, radius);
+            boundShape = new RigidAABB(center - v, center + v, isStatic, canCollide);
         }
         
         public override void MoveTo(Vector newPosition)
         {
             center.X = newPosition.X;
             center.Y = newPosition.Y;
+            var v = new Vector(radius, radius);
+            boundShape = new RigidAABB(center - v, center + v, isStatic, canCollide);
         }
 
         public override RigidShape Copy()
         {
             return new RigidCircle(center.Copy(), radius, isStatic, canCollide);
         }
+
+        public override RigidAABB BoundShape => boundShape;
     }
 }

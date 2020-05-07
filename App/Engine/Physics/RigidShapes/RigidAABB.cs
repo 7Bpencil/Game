@@ -44,5 +44,7 @@ namespace App.Engine.Physics.RigidShapes
         {
             return new RigidAABB(MinPoint, MaxPoint, isStatic, canCollide);
         }
+
+        public override RigidAABB BoundShape => this;
     }
 }

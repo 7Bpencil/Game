@@ -9,5 +9,6 @@
         public abstract void MoveBy(Vector delta);
         public abstract void MoveTo(Vector newPosition);
         public abstract RigidShape Copy();
+        public abstract RigidAABB BoundShape { get; }
     }
 }
