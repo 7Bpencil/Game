@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using App.Engine;
@@ -258,48 +259,24 @@ namespace App.Model.Entities
             path.Reverse();
             return path;
         }
-
-        public List<Vector> GetVelocityPath(List<Point> path, Level level)
+        private List<Vector> GetCurrentPath(List<Point> path)
         {
-            Point prev = path[0];
-            List<Vector> result = new List<Vector>();
-            result.Add(new Vector(Center.X % level.TileSet.tileWidth, 0));
-            result.Add(new Vector(0, Center.Y % level.TileSet.tileHeight));
-            bool horizontalState = false;
-            bool verticalState = false;
-            for (var i = 1; i < path.Count; ++i)
+            var result = new List<Vector>();
+            foreach (var point in path)
             {
-                var dx = path[i].X - prev.X;
-                var dy = path[i].Y - prev.Y;
-                if (dx != 0)
-                    horizontalState = true;
-                if (dy != 0)
-                    verticalState = true;
-                if (horizontalState && verticalState)
-                {
-                    result.Add(new Vector(10 * dy, 10 * dx));
-                    if (dx == 0)
-                        horizontalState = false;
-                    if (dy == 0)
-                        verticalState = false;
-                }
-                //for (var count = level.TileSet.tileHeight / 6; count > 0; --count)
-                result.Add(new Vector(32 * dy, 32 * dx));
-                prev = path[i];
+                result.Add(new Vector(point.Y, point.X) * 32);
             }
             return result;
         }
 
-        private List<Vector> GetCurrentPath(List<Vector> pathVelocity)
+        private List<Vector> GetVelocityPath(List<Vector> currentPath)
         {
-            var current = Center;
             var result = new List<Vector>();
-            result.Add(current);
-            foreach (var velocity in pathVelocity)
+            for (var i = 0; i < currentPath.Count - 1; i++)
             {
-                current += velocity;
-                result.Add(current);
+                result.Add(currentPath[i + 1] - currentPath[i]);
             }
+
             return result;
         }
 
@@ -344,6 +321,22 @@ namespace App.Model.Entities
                 Console.WriteLine();
             }
         }
+        static void DrawPath(SquareGrid grid, AStarSearch astar, List<Point> path) {
+            // Печать массива cameFrom
+            var pathPoints = new HashSet<Point>(path);
+            var ptr = new Point(0, 0);
+            for (var y = 0; y < grid.height; y++)
+            {
+                for (var x = 0; x < grid.width; x++)
+                {
+                    var id = new Point(y, x);
+                    if (pathPoints.Contains(id)) Console.Write("$$");
+                    else if (grid.walls.Contains(id)) Console.Write("##");
+                    else Console.Write("* ");
+                }
+                Console.WriteLine();
+            }
+        }
 
         public ShootingRangeTarget(Level level, Player _player, Sprite legs, Sprite torso, float angle,
             int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon,
@@ -369,18 +362,23 @@ namespace App.Model.Entities
             
             AddWals(level);
             
-
-            var radius = collisionShape.Radius;
-            var start = new Point((int) centerPosition.X / level.TileSet.tileWidth,
-                (int) centerPosition.Y / level.TileSet.tileHeight);
+            var start = new Point(
+                (int) centerPosition.X / level.TileSet.tileWidth,
+                (int) centerPosition.Y / level.TileSet.tileHeight); 
+            
             var goal = new Point((int) patrolPathTiles[0].X, (int) patrolPathTiles[0].Y);
+            
             var astar = new AStarSearch(grid, start, goal);
+            
             var path = ReconstructPath(astar, start, goal);
-            pathVelocity = GetVelocityPath(path, level);
+           
+            
+            
+            currentPath = GetCurrentPath(path);
+            pathVelocity = GetVelocityPath(currentPath);
             pathVelocity.Add(new Vector(0, 0));
-            currentPath = GetCurrentPath(pathVelocity);
             appointmentIndex = 0;
-            DrawGrid(grid, astar);
+            //DrawPath(grid, astar, path);
             //previous
             this.sceneBullets = sceneBullets;
             Health = health;
@@ -507,7 +505,7 @@ namespace App.Model.Entities
                     velocity = -velocity;
                 }*/
                 viewVector = velocity.Normalize();
-                //MoveBy(pathVelocity[Math.Min(tick, pathVelocity.Count - 1)]);
+                MoveBy(pathVelocity[Math.Min(tick, pathVelocity.Count - 1)]);
             }
             
         }
