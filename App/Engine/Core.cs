@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using Thread = System.Threading.Thread;
 using App.Engine.Audio;
-using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
-using App.Model.Entities.Collectables;
-using App.Model.Entities.Factories;
-using App.Model.Entities.Weapons;
 using App.Model.LevelData;
 using App.View;
 
@@ -21,31 +15,18 @@ namespace App.Engine
 {
     public class Core
     {
-        private ViewForm viewForm;
-        private RenderPipeline renderPipeline;
-        private Stopwatch clock;
+        private readonly ViewForm viewForm;
+        private readonly Stopwatch clock;
         private KeyStates keyState;
-        private LevelInfo currentLevel;
         private MouseState mouseState;
         private LevelManager levelManager;
         private Player player;
         private CustomCursor cursor;
         private Camera camera;
-        private const int tileSize = 32;
-        private bool isLevelLoaded;
 
-        private List<SpriteContainer> sprites;
-        private List<AbstractParticleUnit> particles;
-        private List<CollisionInfo> collisionInfo;
-        private List<Bullet> bullets;
-        private List<Bot> targets;
-        private List<Collectable> collectables;
-
-        private readonly GenericWeaponFactory<AK303> AKfactory;
-        private readonly GenericWeaponFactory<Shotgun> ShotgunFactory;
-        private readonly GenericWeaponFactory<SaigaFA> SaigaFAfactory;
-        private readonly GenericWeaponFactory<MP6> MP6factory;
         private readonly ParticleFactory particleFactory;
+
+        private Level currentLevel;
 
         private string updateTime;
 
@@ -68,37 +49,24 @@ namespace App.Engine
             public bool LMB, RMB;
         }
 
-        public Core(ViewForm viewForm, Size screenSize, RenderPipeline renderPipeline)
+        public Core(ViewForm viewForm, Size screenSize)
         {
             this.viewForm = viewForm;
-            this.renderPipeline = renderPipeline;
             
-            AKfactory = AbstractWeaponFactory.CreateAK303factory();
-            ShotgunFactory = AbstractWeaponFactory.CreateShotgunFactory();
-            SaigaFAfactory = AbstractWeaponFactory.CreateSaigaFAfactory();
-            MP6factory = AbstractWeaponFactory.CreateMP6factory();
+            RenderMachine.Init(viewForm, screenSize);
+            AudioEngine.Initialize();
+
             particleFactory = new ParticleFactory();
             
-            var cW = new CollectableWeaponInfo(typeof(AK303), Vector.ZeroVector, 0, 40);
-            
-
-            sprites = new List<SpriteContainer> {Capacity = 50};
-            particles = new List<AbstractParticleUnit> {Capacity = 500};
-            bullets = new List<Bullet> {Capacity = 500};
-            
             SetLevels();
-            SetTargets();
-            var playerStartPosition = currentLevel.PlayerStartPosition;
-            SetPlayer(playerStartPosition);
-            camera = new Camera(playerStartPosition, player.Radius, screenSize);
-            SetCursor(playerStartPosition);
+            player = currentLevel.Player;
+            camera = new Camera(currentLevel.Player.Position, player.Radius, screenSize);
+            SetCursor(currentLevel.Player.Position);
             keyState = new KeyStates();
             mouseState = new MouseState();
             clock = new Stopwatch();
             
-            AudioEngine.Initialize();
-            while (!AudioEngine.Ready)
-                Thread.Sleep(1);
+
 
             AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
@@ -106,32 +74,10 @@ namespace App.Engine
         private void SetLevels()
         {
             levelManager = new LevelManager();
-            currentLevel = levelManager.CurrentLevel;
-            
-            collectables = new List<Collectable>
-            {
-                AKfactory.CreateCollectable(new Vector(600, 400), 45, 20),
-                SaigaFAfactory.CreateCollectable(new Vector(600, 500), 0, 8)
-            };
-
-            foreach (var collectable in collectables)
-                sprites.Add(collectable.SpriteContainer);
+            //currentLevel = levelManager.LoadLevel() ...;
         }
         
-        private void SetPlayer(Vector position)
-        {
-            var weapons = new List<Weapon>
-            {
-                ShotgunFactory.CreateGun(8),
-                MP6factory.CreateGun(40)
-            };
-            player = EntityCreator.CreatePlayer(position, 0, weapons, currentLevel);
 
-            sprites.Add(player.LegsContainer);
-            sprites.Add(player.TorsoContainer);
-            currentLevel.DynamicShapes.Add(player.CollisionShape);
-            currentLevel.DynamicShapes.AddRange(player.MeleeWeapon.range);
-        }
 
         private void SetCursor(Vector position)
         {
@@ -147,57 +93,13 @@ namespace App.Engine
             cursor = new CustomCursor(position.Copy(), cursorSprite);
             sprites.Add(cursor.SpriteContainer);
         }
-
-        private void SetTargets()
-        {
-            var targetAmmo = 1000;
-            targets = new List<Bot>
-            {
-                new Bot(
-                    100,
-                    50,
-                    new Vector(840, 420),
-                    new Vector(5, 0),
-                    60,
-                    AKfactory.CreateGun(targetAmmo), bullets),
-                new Bot(
-                    200,
-                    100,
-                    new Vector(350, 580),
-                    new Vector(0, 5),
-                    60, AKfactory.CreateGun(targetAmmo), bullets),
-                new Bot(
-                    50,
-                    300,
-                    new Vector(720, 920),
-                    new Vector(5, 0),
-                    60, AKfactory.CreateGun(targetAmmo), bullets),
-                new Bot(
-                    50,
-                    300,
-                    new Vector(340, 280),
-                    new Vector(0, 0),
-                    80, AKfactory.CreateGun(targetAmmo), bullets)
-            };
-
-            foreach (var t in targets)
-            {
-                sprites.Add(t.SpriteContainer);
-                currentLevel.DynamicShapes.Add(t.collisionShape);
-            }
-            
-        }
+        
 
         public void GameLoop(object sender, EventArgs args)
         {
             if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 Console.WriteLine("URA");
-            }
-            if (!isLevelLoaded)
-            {
-                renderPipeline.Load(currentLevel);
-                isLevelLoaded = true;
             }
             
             clock.Start();
@@ -209,15 +111,10 @@ namespace App.Engine
             clock.Reset();
             clock.Start();
             
-            renderPipeline.Render(
-                player.Position, camera.Position, camera.Size, player.CurrentWeapon,
-                sprites, particles, bullets, currentLevel.RaytracingEdges);
+            RenderPipeline.Render(currentLevel, camera.Size, camera.Position);
             
             if (keyState.pressesOnIAmount % 2 == 1)
-                renderPipeline.RenderDebugInfo(
-                    camera.Position, camera.Size, currentLevel.SceneShapes, targets, collisionInfo,
-                    currentLevel.RaytracingEdges, collectables, bullets, cursor.Position, player.Position,
-                    camera.GetChaser(), GetDebugInfo());
+                RenderPipeline.RenderDebugInfo(currentLevel, camera, cursor.Position, updateTime);
             
             AudioEngine.Update();
             
@@ -234,7 +131,7 @@ namespace App.Engine
             var playerVelocity = UpdatePlayerPosition(step);
             CorrectPlayer();
             
-            collisionInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
+            currentLevel.CollisionsInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
             AudioEngine.UpdateListenerPosition(player.Position);
             var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
@@ -245,16 +142,16 @@ namespace App.Engine
             if (mouseState.RMB && player.MeleeWeapon.IsReady)
             {
                 player.TakeMeleeWeapon();
-                var wasHit = player.MeleeWeapon.Attack(targets);
-                if (wasHit) particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
+                var wasHit = player.MeleeWeapon.Attack(currentLevel.Bots);
+                if (wasHit) currentLevel.Particles.Add(particleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
             }
             else if (mouseState.LMB && player.CurrentWeapon.IsReady && player.MeleeWeapon.IsReady)
             {
                 player.HideMeleeWeapon();
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
                 AudioEngine.PlayNewInstance("event:/gunfire/2D/misc/DROPPED_SHELL");
-                bullets.AddRange(firedBullets);
-                particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                currentLevel.Bullets.AddRange(firedBullets);
+                currentLevel.Particles.Add(particleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
 
             UpdateCollectables();
@@ -263,9 +160,9 @@ namespace App.Engine
             camera.UpdateCamera(player.Position, playerVelocity, cursor.Position, step);
             viewForm.CursorReset();
 
-            foreach (var spriteContainer in sprites)
+            foreach (var spriteContainer in currentLevel.Sprites)
                 if (!spriteContainer.IsEmpty()) spriteContainer.Content.UpdateFrame();
-            foreach (var unit in particles)
+            foreach (var unit in currentLevel.Particles)
                 unit.UpdateFrame();
         }
         
@@ -333,7 +230,7 @@ namespace App.Engine
 
         private void UpdateBullets()
         {
-            foreach (var bullet in bullets)
+            foreach (var bullet in currentLevel.Bullets)
             {
                 if (bullet.IsStuck) continue;
                 if (bullet.StaticPenetrations.Count == 0)
@@ -342,7 +239,7 @@ namespace App.Engine
                 bullet.Update();
                 if (bullet.ClosestPenetrationPoint != null)
                 {
-                    particles.Add(particleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
+                    currentLevel.Particles.Add(particleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
                     bullet.ClosestPenetrationPoint = null;
                 }
             }
@@ -364,20 +261,20 @@ namespace App.Engine
 
         private void CalculateDynamicPenetrations(Bullet bullet)
         {
-            foreach (var target in targets)
+            foreach (var target in currentLevel.Bots)
             {
                 var penetrationTimes = 
-                    BulletCollisionDetector.AreCollideWithDynamic(bullet, target.collisionShape, target.Velocity);
+                    BulletCollisionDetector.AreCollideWithDynamic(bullet, target.CollisionShape, target.Velocity);
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
                 target.TakeHit(bullet.Damage);
                 if (target.Armour > 50) bullet.IsStuck = true;
 
-                particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
-                particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
+                currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
+                currentLevel.Particles.Add(particleFactory.CreateBloodSplash(penetrationPlace));
 
                 if (target.IsDead && !target.Velocity.Equals(Vector.ZeroVector))
-                    target.MoveTo(target.collisionShape.Center + target.Velocity * penetrationTimes[0]);
+                    target.MoveTo(target.CollisionShape.Center + target.Velocity * penetrationTimes[0]);
             }
         }
 
@@ -386,23 +283,17 @@ namespace App.Engine
         /// </summary>
         private void UpdateTargets()
         {
-            foreach (var t in targets)
+            foreach (var t in currentLevel.Bots)
             {
-                if (t.IsDead) t.ChangeVelocity(Vector.ZeroVector);
                 t.Update();
             }
         }
 
-        private void UpdateCollectables()
+        private void UpdateCollectables() // TODO
         {
-            for (var i = 0; i < collectables.Count; i++)
+            for (var i = 0; i < currentLevel.Collectables.Count; i++)
             {
-                if (collectables[i] == null) continue;
-                var collision = CollisionSolver.GetCollisionInfo(player.CollisionShape, collectables[i].CollisionShape);
-                if (collision == null) continue;
-                player.AddWeapon(collectables[i].Item);
-                collectables[i].SpriteContainer.ClearContent();
-                collectables[i] = null;
+                
             }
         }
 

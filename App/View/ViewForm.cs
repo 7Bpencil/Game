@@ -19,11 +19,9 @@ namespace App.View
                 SystemInformation.PrimaryMonitorSize.Height);
             screenCenter = new Point(screenSize.Width / 2, screenSize.Height / 2);
             SetUpView(screenSize);
-
-            var renderMachine = new RenderMachine(this, screenSize);
-            var renderPipeline = new RenderPipeline(renderMachine);
-            engineCore = new Core(this, screenSize, renderPipeline);
-            cameraBuffer = renderMachine.GetCameraBuffer();
+            
+            engineCore = new Core(this, screenSize);
+            cameraBuffer = RenderMachine.GetCameraBuffer();
             
             var timer = new Timer();
             timer.Interval = 16;

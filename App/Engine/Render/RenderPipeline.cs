@@ -22,7 +22,7 @@ namespace App.Engine.Render
             RenderMachine.Invalidate();
         }
 
-        public static void RenderDebugInfo(Level level, Camera camera, Vector cursorPosition)
+        public static void RenderDebugInfo(Level level, Camera camera, Vector cursorPosition, string updateTime)
         {
             var playerPosition = level.Player.Position;
             var cameraPosition = camera.Position;
@@ -40,6 +40,7 @@ namespace App.Engine.Render
             
             var debugInfo = new []
             {
+                updateTime,
                 "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
                 "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width + " x " + level.LevelSizeInTiles.Height,
                 "(WAxis) Scroll Position: " + camera.Position,
