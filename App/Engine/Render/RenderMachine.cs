@@ -11,55 +11,34 @@ using App.View;
 
 namespace App.Engine.Render
 {
-    public class RenderMachine
+    public static class RenderMachine
     {
-        private ViewForm view;
-        private Graphics gfxRenderedTiles;
-        private Bitmap bmpRenderedTiles;
-        private BufferedGraphics cameraBuffer;
-        private Graphics gfxCamera;
-        private Bitmap bmpShadowMask;
-        private Graphics gfxShadowMask;
-
-        private readonly Font debugFont;
-        private readonly Brush debugBrush;
-        private readonly Brush anotherDebugBrush;
-        private readonly Pen shapePen;
-        private readonly Pen collisionPen;
-        private readonly Pen raytracingEdgePen;
-        private readonly Brush penetrationBrush;
-
-        private readonly Brush transparentBrush;
-        private Color shadowColor;
-
-        private static Graphics gfxLevelMap;
-        private static Bitmap bmpLevelMap;
-
-        public RenderMachine(ViewForm view, Size cameraSize)
-        {
-            this.view = view;
-            
-            var renderSize = new Size(45 * 32, 40 * 32); // TODO remove this const
-            SetUpRenderer(renderSize, cameraSize);
-            
-            debugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
-            debugBrush = new SolidBrush(Color.White);
-            anotherDebugBrush = new SolidBrush(Color.Gold);
-            shapePen = new Pen(Color.White, 4);
-            collisionPen = new Pen(Color.Crimson, 4);
-            raytracingEdgePen = new Pen(Color.Salmon, 4);
-            penetrationBrush = new SolidBrush(Color.Maroon);
-            
-            transparentBrush = new SolidBrush(Color.FromArgb(0, Color.Empty));
-            shadowColor = Color.FromArgb(128, Color.Black);
-        }
+        private static ViewForm view;
         
-        private void SetUpRenderer(Size renderSize, Size cameraSize)
+        private static BufferedGraphics cameraBuffer;
+        private static Graphics gfxCamera;
+        
+        private static Bitmap bmpLevelMap;
+        private static Graphics gfxLevelMap;
+        
+        private static Bitmap bmpShadowMask;
+        private static Graphics gfxShadowMask;
+
+        private static readonly Font DebugFont = new Font("Arial", 18, FontStyle.Regular, GraphicsUnit.Pixel);
+        private static readonly Brush DebugBrush = new SolidBrush(Color.White);
+        private static readonly Brush AnotherDebugBrush = new SolidBrush(Color.Gold);
+        private static readonly Pen ShapePen = new Pen(Color.White, 4);
+        private static readonly Pen CollisionPen = new Pen(Color.Crimson, 4);
+        private static readonly Pen RaytracingEdgePen = new Pen(Color.Salmon, 4);
+        private static readonly Brush PenetrationBrush = new SolidBrush(Color.Maroon);
+        private static readonly Brush TransparentBrush = new SolidBrush(Color.FromArgb(0, Color.Empty));
+        private static readonly Color ShadowColor = Color.FromArgb(128, Color.Black);
+
+        private static void Init(ViewForm viewForm, Size cameraSize)
         {
-            bmpRenderedTiles = new Bitmap(renderSize.Width, renderSize.Height);
-            gfxRenderedTiles = Graphics.FromImage(bmpRenderedTiles);
-         
+            view = viewForm;
             SetCameraBuffer(cameraSize);
+            
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
             
@@ -68,7 +47,7 @@ namespace App.Engine.Render
             gfxShadowMask.CompositingMode = CompositingMode.SourceCopy;
         }
 
-        private void SetCameraBuffer(Size cameraSize)
+        private static void SetCameraBuffer(Size cameraSize)
         {
             var context = BufferedGraphicsManager.Current;
             context.MaximumBuffer = new Size(cameraSize.Width + 1, cameraSize.Height + 1);
@@ -76,7 +55,7 @@ namespace App.Engine.Render
                 cameraBuffer = context.Allocate(g, new Rectangle(0, 0, cameraSize.Width, cameraSize.Height));
         }
 
-        public void Invalidate()
+        public static void Invalidate()
         {
             gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
             view.Invalidate();
@@ -98,92 +77,92 @@ namespace App.Engine.Render
             return bmpLevelMap;
         }
 
-        public void RenderCamera(Rectangle sourceRectangle)
+        public static void RenderCamera(Rectangle sourceRectangle, Bitmap bmpLevelMap)
         {
-            gfxCamera.DrawImage(bmpRenderedTiles, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
+            gfxCamera.DrawImage(bmpLevelMap, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
 
-        public void RenderSpriteOnCamera(SpriteContainer container, Vector cameraPosition)
+        public static void RenderSpriteOnCamera(SpriteContainer container, Vector cameraPosition)
         {
             SpriteRenderer.DrawNextFrame(container.Content, container.CenterPosition, container.Angle, cameraPosition, gfxCamera);
         }
 
-        public void RenderParticleOnCamera(AbstractParticleUnit unit, Vector cameraPosition)
+        public static void RenderParticleOnCamera(AbstractParticleUnit unit, Vector cameraPosition)
         {
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, cameraPosition, gfxCamera);
         }
 
-        public void BurnParticleOnRenderedTiles(AbstractParticleUnit unit)
+        public static void BurnParticleOnRenderedTiles(AbstractParticleUnit unit, Graphics gfxLevelMap)
         {
-            SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, gfxRenderedTiles);
+            SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, gfxLevelMap);
         }
 
-        public void RenderEdgeOnCamera(Edge edge)
+        public static void RenderEdgeOnCamera(Edge edge)
         {
-            EdgeRenderer.Draw(edge, raytracingEdgePen, gfxCamera);
+            EdgeRenderer.Draw(edge, RaytracingEdgePen, gfxCamera);
         }
 
-        public void RenderEdgeOnCamera(Edge edge, Vector cameraPosition)
+        public static void RenderEdgeOnCamera(Edge edge, Vector cameraPosition)
         {
-            EdgeRenderer.Draw(edge, cameraPosition, raytracingEdgePen, gfxCamera);
+            EdgeRenderer.Draw(edge, cameraPosition, RaytracingEdgePen, gfxCamera);
         }
 
-        public void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
+        public static void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
-            RigidBodyRenderer.Draw(shape, cameraPosition, shapePen, gfxCamera);
+            RigidBodyRenderer.Draw(shape, cameraPosition, ShapePen, gfxCamera);
         }
 
-        public void RenderVisibilityPolygon(
+        public static void RenderVisibilityPolygon(
             Vector lightSourcePosition, 
             List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Vector cameraPosition)
         {
-            gfxShadowMask.Clear(shadowColor);
+            gfxShadowMask.Clear(ShadowColor);
             
             VisibilityPolygonRenderer.Draw(
                 lightSourcePosition,
                 visibilityPolygonPoints,
                 cameraPosition,
-                transparentBrush,
+                TransparentBrush,
                 gfxShadowMask);
         }
 
-        public void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
+        public static void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)
         {
-            CollisionInfoRenderer.Draw(info, cameraPosition, collisionPen, gfxCamera);
+            CollisionInfoRenderer.Draw(info, cameraPosition, CollisionPen, gfxCamera);
         }
 
-        public void RenderPoint(Vector point, Vector cameraPosition)
+        public static void RenderPoint(Vector point, Vector cameraPosition)
         {
-            VectorRenderer.Fill(point, cameraPosition, penetrationBrush, gfxCamera);
+            VectorRenderer.Fill(point, cameraPosition, PenetrationBrush, gfxCamera);
         }
         
-        public void PrintMessages(string[] messages)
+        public static void PrintMessages(string[] messages)
         {
             for (var i = 0; i < messages.Length; i++)
-                gfxCamera.DrawString(messages[i], debugFont, debugBrush, 0, i * debugFont.Height);
+                gfxCamera.DrawString(messages[i], DebugFont, DebugBrush, 0, i * DebugFont.Height);
         }
 
-        public void PrintString(string message, Vector position)
+        public static void PrintString(string message, Vector position)
         {
-            gfxCamera.DrawString(message, debugFont, anotherDebugBrush, position.X, position.Y);
+            gfxCamera.DrawString(message, DebugFont, AnotherDebugBrush, position.X, position.Y);
         }
 
-        public void RenderHUD(string weaponInfo, Size cameraSize)
+        public static void RenderHUD(string weaponInfo, Size cameraSize)
         {
-            gfxCamera.DrawString(weaponInfo, debugFont, debugBrush, 0, cameraSize.Height - debugFont.Height);
+            gfxCamera.DrawString(weaponInfo, DebugFont, DebugBrush, 0, cameraSize.Height - DebugFont.Height);
         }
 
-        public void RenderDebugCross(Size cameraSize)
+        public static void RenderDebugCross(Size cameraSize)
         {
             var a = cameraSize.Width / 2;
             var b = cameraSize.Height / 2;
             var verticalEdge = new Edge(a, 0, a, cameraSize.Height);
             var horizontalEdge = new Edge(0, b, cameraSize.Width, b);
-            EdgeRenderer.Draw(verticalEdge, shapePen, gfxCamera);
-            EdgeRenderer.Draw(horizontalEdge, shapePen, gfxCamera);
+            EdgeRenderer.Draw(verticalEdge, ShapePen, gfxCamera);
+            EdgeRenderer.Draw(horizontalEdge, ShapePen, gfxCamera);
         }
 
-        public BufferedGraphics GetCameraBuffer()
+        public static BufferedGraphics GetCameraBuffer()
         {
             return cameraBuffer;
         }
