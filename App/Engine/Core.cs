@@ -29,7 +29,35 @@ namespace App.Engine
 
         private string updateTime;
         private const int tileSize = 32;
+        
+        private class KeyStates
+        {
+            public bool W, S, A, D, I;
+            public int pressesOnIAmount;
+        }
 
+        private class MouseState
+        {
+            public bool LMB, RMB;
+        }
+        
+        public Core(ViewForm viewForm, Size screenSize)
+        {
+            this.viewForm = viewForm;
+            InitializeSystems(screenSize);
+            InitState(screenSize);
+            
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+        }
+        
+        private void InitializeSystems(Size screenSize)
+        {
+            RenderMachine.Initialize(viewForm, screenSize);
+            AudioEngine.Initialize();
+            LevelManager.Initialize();
+            ParticleFactory.Initialize();
+        }
+        
         private void InitState(Size screenSize)
         {
             currentLevel = LevelManager.LoadLevel(0);
@@ -41,9 +69,10 @@ namespace App.Engine
             mouseState = new MouseState();
             clock = new Stopwatch();
         }
-
+        
         private void ResetState()
         {
+            currentLevel.Reset();
             player = currentLevel.Player;
             cursor.MoveTo(player.Position);
             currentLevel.Sprites.Add(cursor.SpriteContainer);
@@ -51,42 +80,13 @@ namespace App.Engine
             keyState = new KeyStates();
             mouseState = new MouseState();
         }
-
-        private class KeyStates
-        {
-            public bool W, S, A, D, I;
-            public int pressesOnIAmount;
-        }
-
-        private class MouseState
-        {
-            public bool LMB, RMB;
-        }
-
-        private void InitializeSystems(Size screenSize)
-        {
-            RenderMachine.Initialize(viewForm, screenSize);
-            AudioEngine.Initialize();
-            LevelManager.Initialize();
-            ParticleFactory.Initialize();
-        }
-
-        public Core(ViewForm viewForm, Size screenSize)
-        {
-            this.viewForm = viewForm;
-            InitializeSystems(screenSize);
-            InitState(screenSize);
-            
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
-        }
         
         public void GameLoop(object sender, EventArgs args)
         {
             if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
-                currentLevel.Reset();
                 ResetState();
-                Console.WriteLine("URA");
+                Console.WriteLine("URA URA URA URA URA URA URA URA URA URA ");
             }
             
             clock.Start();
