@@ -34,11 +34,12 @@ namespace App.Engine.Render
             renderMachine.Invalidate();
         }
 
-        public static Bitmap RenderLevelMap(List<Layer> layers, TileSet levelTileSet, int tileSize, Size levelSize)
+        public static Bitmap RenderLevelMap(List<Layer> layers, TileSet levelTileSet, int tileSize, Size levelSizeInTiles)
         {
-            RenderMachine.PrepareLevelMap(levelSize);
+            RenderMachine.PrepareLevelMap(
+                new Size(levelSizeInTiles.Width * tileSize, levelSizeInTiles.Height * tileSize));
             foreach (var layer in layers)
-                RenderLayer(layer.Tiles, layer.WidthInTiles, layer.HeightInTiles, tileSize, levelTileSet.Image);
+                RenderLayer(layer.Tiles, levelSizeInTiles.Width, levelSizeInTiles.Height, tileSize, levelTileSet.Image);
             return RenderMachine.GetLevelMap();
         }
         

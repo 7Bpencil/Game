@@ -29,7 +29,6 @@ namespace App.Model.LevelData
         public readonly List<SpriteContainer> Sprites;
         public List<CollisionInfo> CollisionsInfo;
         
-
         private bool isLevelLoaded;
 
         public LevelRuntime(Level levelInfo)

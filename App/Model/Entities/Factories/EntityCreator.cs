@@ -75,6 +75,20 @@ namespace App.Model.Entities.Factories
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
             public readonly string MeleeWeaponTileMapPath;
+
+            public PlayerInfo(
+                int health, int armor, Vector position, float angle, List<WeaponInfo> weapons, 
+                string clothesTileMapPath, string weaponsTileMapPath, string meleeWeaponTileMapPath)
+            {
+                Health = health;
+                Armor = armor;
+                Position = position;
+                Angle = angle;
+                Weapons = weapons;
+                ClothesTileMapPath = clothesTileMapPath;
+                WeaponsTileMapPath = weaponsTileMapPath;
+                MeleeWeaponTileMapPath = meleeWeaponTileMapPath;
+            }
         }
 
         public class BotInfo
@@ -86,6 +100,19 @@ namespace App.Model.Entities.Factories
             public readonly WeaponInfo weapon;
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
+
+            public BotInfo(
+                int health, int armor, Vector position, float angle, WeaponInfo weapon, 
+                string clothesTileMapPath, string weaponsTileMapPath)
+            {
+                Health = health;
+                Armor = armor;
+                Position = position;
+                Angle = angle;
+                this.weapon = weapon;
+                ClothesTileMapPath = clothesTileMapPath;
+                WeaponsTileMapPath = weaponsTileMapPath;
+            }
         }
     }
 }

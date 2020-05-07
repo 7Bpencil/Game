@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
+using App.Engine.Render;
 using App.Model.Entities;
+using App.Model.Entities.Collectables;
+using App.Model.Entities.Factories;
+using App.Model.Entities.Weapons;
 using App.Model.LevelData;
 
 namespace App.Model.DataParser
 {
     public static class LevelParser
     {
+        private static Dictionary<string, Type> weaponTypesTable = new Dictionary<string, Type>
+        {
+            {"AK303", typeof(AK303)},
+            {"Shotgun", typeof(Shotgun)},
+            {"MP6", typeof(MP6)},
+            {"SaigaFA", typeof(SaigaFA)}
+        };
         public static Dictionary<int, string> LoadLevelList()
         {
             var levels = new Dictionary<int, string>();
@@ -38,71 +50,90 @@ namespace App.Model.DataParser
             doc.Load(sourcePath);
             var root = doc.DocumentElement;
             
+            var levelSizeInTiles = new Size(
+                int.Parse(root.GetAttribute("width")), int.Parse(root.GetAttribute("height")));
+            TileSet tileSet = null;
+            var tilesInLayerAmount = 0;
             var layers = new List<Layer>();
             var staticShapes = new List<RigidShape>();
             var raytracingEdges = new List<Edge>();
-            string source = null;
-            Vector playerStartPosition = null;
-            Bitmap playerClothesTileMap = null;
-            Bitmap playerWeaponsTileMap = null;
+            var collectableWeapons = new List<CollectableWeaponInfo>();
+            EntityCreator.PlayerInfo playerInfo; 
+            RigidAABB exit = null;
 
-            foreach (XmlNode node in root)
+            foreach (XmlNode node in root.ChildNodes)
             {
                 if (node.Name == "properties")
                 {
                     foreach (XmlNode property in node.ChildNodes)
                     {
-                        if (property.Name != "playerInfo") continue;
-                        foreach (XmlAttribute attribute in property.Attributes)
+                        if (property.Name == "exit") exit = LoadRigidAABB(property);
+                        if (property.Name == "collectables")
                         {
-                            switch (attribute.Name)
+                            foreach (XmlNode collectable in property.ChildNodes)
                             {
-                                case "clothesTileMap":
-                                    playerClothesTileMap = new Bitmap(attribute.Value);
-                                    break;
-                                case "weaponsTileMap":
-                                    playerWeaponsTileMap = new Bitmap(attribute.Value);
-                                    break;
-                                case "position":
-                                {
-                                    var vector = attribute.Value.Split(',');
-                                    playerStartPosition = new Vector(int.Parse(vector[0]), int.Parse(vector[1]));
-                                    break;
-                                }
+                                if (collectable.Name == "collectableWeapon") collectableWeapons.Add(LoadCollectableWeapon(collectable));
                             }
                         }
+                        if (property.Name == "player") playerInfo = 
                     }
                 }
-                
                 if (node.Name == "tileset")
-                    source = node.Attributes.GetNamedItem("source").Value;
+                {
+                    tileSet = tileSets[node.Attributes.GetNamedItem("source").Value];
+                    tilesInLayerAmount = levelSizeInTiles.Width * levelSizeInTiles.Height; 
+                }
 
                 if (node.Name == "layer")
-                    layers.Add(LoadLayer(node, separators));
+                    layers.Add(LoadLayer(node, separators, tilesInLayerAmount));
                 
                 if (node.Name == "objectgroup")
                 {
                     var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
-                    if (nodeContentName == "StaticShapes")
-                        staticShapes = LoadStaticShapes(node);
-                    if (nodeContentName == "RaytracingPolygons")
-                        raytracingEdges = LoadRaytracingEdges(node);
+                    if (nodeContentName == "StaticShapes") staticShapes = LoadStaticShapes(node);
+                    if (nodeContentName == "RaytracingPolygons") raytracingEdges = LoadRaytracingEdges(node);
                 }
             }
 
-            return new Level(
-                layers, staticShapes, raytracingEdges, tileSets[source],
-                playerStartPosition, playerClothesTileMap, playerWeaponsTileMap);
+            var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
+
         }
 
-        private static EntityCreator.PlayerInitializationInfo ParsePlayerInfo()
+        private static EntityCreator.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
         {
-            
+            var health = int.Parse(playerNode.Attributes.GetNamedItem("health").Value);
+            var armor = int.Parse(playerNode.Attributes.GetNamedItem("armor").Value);
+            var position = LoadVector(playerNode.Attributes.GetNamedItem("position").Value);
+            var angle = int.Parse(playerNode.Attributes.GetNamedItem("angle").Value);
+            var clothesTileMapPath = playerNode.Attributes.GetNamedItem("clothesTileMap").Value;
+            var weaponsTileMapPath = playerNode.Attributes.GetNamedItem("weaponsTileMap").Value;
+            var meleeWeaponTileMapPath = playerNode.Attributes.GetNamedItem("meleeWeaponTileMap").Value;
+            var weapons = new List<WeaponInfo>();
+            foreach (XmlNode node in playerNode.ChildNodes)
+            {
+                if (node.Name == "weapon") weapons.Add(LoadWeapon(node));
+            }
+
+            return new EntityCreator.PlayerInfo
+                (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath);
         }
         
-        private static EntityCreator.BotInitializationInfo ParseBotInfo()
+        private static EntityCreator.BotInfo LoadBotInfo(XmlNode botNode)
         {
+            var health = int.Parse(botNode.Attributes.GetNamedItem("health").Value);
+            var armor = int.Parse(botNode.Attributes.GetNamedItem("armor").Value);
+            var position = LoadVector(botNode.Attributes.GetNamedItem("position").Value);
+            var angle = int.Parse(botNode.Attributes.GetNamedItem("angle").Value);
+            var clothesTileMapPath = botNode.Attributes.GetNamedItem("clothesTileMap").Value;
+            var weaponsTileMapPath = botNode.Attributes.GetNamedItem("weaponsTileMap").Value;
+            WeaponInfo weapon = null;
+            foreach (XmlNode node in botNode.ChildNodes)
+            {
+                if (node.Name == "weapon") weapon = LoadWeapon(node);
+            }
             
+            return new EntityCreator.BotInfo
+                (health, armor, position, angle, weapon, clothesTileMapPath, weaponsTileMapPath);
         }
 
         private static List<RigidShape> LoadStaticShapes(XmlNode staticShapeNode)
@@ -110,19 +141,41 @@ namespace App.Model.DataParser
             var staticShapes = new List<RigidShape>();
             foreach (XmlNode shape in staticShapeNode.ChildNodes)
             {
-                var x = int.Parse(shape.Attributes.GetNamedItem("x").Value);
-                var y = int.Parse(shape.Attributes.GetNamedItem("y").Value);
-                var width = int.Parse(shape.Attributes.GetNamedItem("width").Value);
-                var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
-                
-                staticShapes.Add(new RigidAABB(
-                        new Vector(x, y), 
-                        new Vector(x + width, y + height), 
-                        true, 
-                        true));
+                if (shape.Name != "aabb") continue;
+                staticShapes.Add(LoadRigidAABB(shape));
             }
 
             return staticShapes;
+        }
+
+        private static CollectableWeaponInfo LoadCollectableWeapon(XmlNode node)
+        {
+            var weaponInfo = LoadWeapon(node);
+            return new CollectableWeaponInfo(
+                weaponInfo,
+                LoadVector(node.Attributes.GetNamedItem("position").Value),
+                int.Parse(node.Attributes.GetNamedItem("angle").Value));
+        }
+
+        private static WeaponInfo LoadWeapon(XmlNode weaponNode)
+        {
+            return new WeaponInfo(
+                weaponTypesTable[weaponNode.Attributes.GetNamedItem("type").Value],
+                int.Parse(weaponNode.Attributes.GetNamedItem("ammo").Value));
+        }
+
+        private static RigidAABB LoadRigidAABB(XmlNode shape)
+        {
+            var x = int.Parse(shape.Attributes.GetNamedItem("x").Value);
+            var y = int.Parse(shape.Attributes.GetNamedItem("y").Value);
+            var width = int.Parse(shape.Attributes.GetNamedItem("width").Value);
+            var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
+                
+            return new RigidAABB(
+                new Vector(x, y), 
+                new Vector(x + width, y + height), 
+                true, 
+                true);
         }
 
         private static List<Edge> LoadRaytracingEdges(XmlNode raytracingPolygonsNode)
@@ -132,10 +185,10 @@ namespace App.Model.DataParser
             
             foreach (XmlNode polygonRaw in raytracingPolygonsNode.ChildNodes)
             {
-                var x = int.Parse(polygonRaw.Attributes.GetNamedItem("x").Value);
-                var y = int.Parse(polygonRaw.Attributes.GetNamedItem("y").Value);
+                var offsetX = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetX").Value);
+                var offsetY = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetY").Value);
                 var points = polygonRaw.ChildNodes[0].Attributes.GetNamedItem("points").Value; 
-                edges.AddRange(LoadPolygon(points, x, y, separators));
+                edges.AddRange(LoadPolygon(points, offsetX, offsetY, separators));
             }
             
             return edges;
@@ -160,33 +213,33 @@ namespace App.Model.DataParser
             return edges;
         }
 
-        private static Layer LoadLayer(XmlNode node, string[] separators)
+        private static Layer LoadLayer(XmlNode node, string[] separators, int tilesInLayerAmount)
         {
-            var newLayer = new Layer
-            (
-                int.Parse(node.Attributes[0].Value),
-                node.Attributes[1].Value,
-                int.Parse(node.Attributes[2].Value),
-                int.Parse(node.Attributes[3].Value)
-            );
-
+            var tiles = new int[tilesInLayerAmount];
             foreach (XmlNode childNode in node.ChildNodes)
             {
                 if (childNode.Name != "data") continue;
                 var layerData = childNode.InnerText.Split(separators, StringSplitOptions.None);
-                newLayer.Tiles = LoadTiles(layerData, newLayer.WidthInTiles * newLayer.HeightInTiles);
+                LoadTiles(tiles, layerData);
             }
 
-            return newLayer;
+            return new Layer(
+                int.Parse(node.Attributes.GetNamedItem("id").Value),
+                node.Attributes.GetNamedItem("name").Value,
+                tiles);
         }
 
-        private static int[] LoadTiles(string[] layerData, int tilesAmount)
+        private static void LoadTiles(int[] tiles, string[] layerData)
         {
-            var newTiles = new int[tilesAmount];
             var k = 0;
             foreach (var tileIndex in layerData)
-                if (tileIndex != "") newTiles[k++] = int.Parse(tileIndex);
-            return newTiles;
+                if (tileIndex != "") tiles[k++] = int.Parse(tileIndex);
+        }
+
+        private static Vector LoadVector(string vectorRaw)
+        {
+            var vector = vectorRaw.Split(',');
+            return new Vector(int.Parse(vector[0]), int.Parse(vector[1]));
         }
 
         private static void MoveBy(this List<Edge> edges, Vector delta)
