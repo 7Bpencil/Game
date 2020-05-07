@@ -14,14 +14,14 @@ namespace App.Model.Entities
     
     
     
-    public class Graph<Location>
+    public class Graph<Point>
     {
         // Если вы всегда используете для точек типы string,
         // то здесь разумной альтернативой будет NameValueCollection
-        public Dictionary<Location, Location[]> edges
-            = new Dictionary<Location, Location[]>();
+        public Dictionary<Point, Point[]> edges
+            = new Dictionary<Point, Point[]>();
 
-        public Location[] Neighbors(Location id)
+        public Point[] Neighbors(Point id)
         {
             return edges[id];
         }
@@ -54,45 +54,45 @@ namespace App.Model.Entities
         }
     }
 
-    public class Location
+    /*public class Point
     {
         // Примечания по реализации: я использую Equals по умолчанию,
         // но это может быть медленно. Возможно, в реальном проекте стоит
         // заменить Equals и GetHashCode.
         public override bool Equals(object obj) => 
-            obj is Location mys
+            obj is Point mys
             && mys.x == this.x
             && mys.y == this.y;
         
         public readonly int x, y;
-        public Location(int x, int y)
+        public Point(int x, int y)
         {
             this.x = x;
             this.y = y;
         }
-    }
+    }*/
 
     public interface WeightedGraph<L>
     {
-        double Cost(Location a, Location b);
-        IEnumerable<Location> Neighbors(Location id);
+        double Cost(Point a, Point b);
+        IEnumerable<Point> Neighbors(Point id);
     }
 
 
-    public class SquareGrid : WeightedGraph<Location>
+    public class SquareGrid : WeightedGraph<Point>
     {
 
-        public static readonly Location[] DIRS = new[]
+        public static readonly Point[] DIRS = new[]
         {
-            new Location(1, 0),
-            new Location(0, -1),
-            new Location(-1, 0),
-            new Location(0, 1)
+            new Point(1, 0),
+            new Point(0, -1),
+            new Point(-1, 0),
+            new Point(0, 1)
         };
 
         public int width, height;
-        public HashSet<Location> walls = new HashSet<Location>();
-        public HashSet<Location> forests = new HashSet<Location>();
+        public HashSet<Point> walls = new HashSet<Point>();
+        public HashSet<Point> forests = new HashSet<Point>();
 
         public SquareGrid(int width, int height)
         {
@@ -100,27 +100,26 @@ namespace App.Model.Entities
             this.height = height;
         }
 
-        public bool InBounds(Location id)
+        public bool InBounds(Point id)
         {
-            return 0 <= id.x && id.x < width
-                             && 0 <= id.y && id.y < height;
+            return 0 <= id.X && id.X < width && 0 <= id.Y && id.Y < height;
         }
 
-        public bool Passable(Location id)
+        public bool Passable(Point id)
         {
             return !walls.Contains(id);
         }
 
-        public double Cost(Location a, Location b)
+        public double Cost(Point a, Point b)
         {
             return 1;
         }
 
-        public IEnumerable<Location> Neighbors(Location id)
+        public IEnumerable<Point> Neighbors(Point id)
         {
             foreach (var dir in DIRS)
             {
-                Location next = new Location(id.x + dir.x, id.y + dir.y);
+                Point next = new Point(id.X + dir.X, id.Y + dir.Y);
                 if (InBounds(next) && Passable(next))
                 {
                     yield return next;
@@ -163,21 +162,21 @@ namespace App.Model.Entities
     
     public class AStarSearch
     {
-        public Dictionary<Location, Location> cameFrom
-            = new Dictionary<Location, Location>();
-        public Dictionary<Location, double> costSoFar
-            = new Dictionary<Location, double>();
+        public Dictionary<Point, Point> cameFrom
+            = new Dictionary<Point, Point>();
+        public Dictionary<Point, double> costSoFar
+            = new Dictionary<Point, double>();
 
-        // Примечание: обобщённая версия A* абстрагируется от Location
+        // Примечание: обобщённая версия A* абстрагируется от Point
         // и Heuristic
-        static public double Heuristic(Location a, Location b)
+        static public double Heuristic(Point a, Point b)
         {
-            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
 
-        public AStarSearch(WeightedGraph<Location> graph, Location start, Location goal)
+        public AStarSearch(WeightedGraph<Point> graph, Point start, Point goal)
         {
-            var frontier = new PriorityQueue<Location>();
+            var frontier = new PriorityQueue<Point>();
             frontier.Enqueue(start, 0);
 
             cameFrom[start] = start;
@@ -246,10 +245,10 @@ namespace App.Model.Entities
         public Vector Velocity => velocity;
         public Vector Center => collisionShape.Center;
 
-        public List<Location> ReconstructPath(AStarSearch astar, Location start, Location goal)
+        public List<Point> ReconstructPath(AStarSearch astar, Point start, Point goal)
         {
             var current = goal;
-            var path = new List<Location>();
+            var path = new List<Point>();
             while (!current.Equals(start))
             {
                 path.Add(current);
@@ -260,9 +259,9 @@ namespace App.Model.Entities
             return path;
         }
 
-        public List<Vector> GetVelocityPath(List<Location> path, Level level)
+        public List<Vector> GetVelocityPath(List<Point> path, Level level)
         {
-            Location prev = path[0];
+            Point prev = path[0];
             List<Vector> result = new List<Vector>();
             result.Add(new Vector(Center.X % level.TileSet.tileWidth, 0));
             result.Add(new Vector(0, Center.Y % level.TileSet.tileHeight));
@@ -270,8 +269,8 @@ namespace App.Model.Entities
             bool verticalState = false;
             for (var i = 1; i < path.Count; ++i)
             {
-                var dx = path[i].x - prev.x;
-                var dy = path[i].y - prev.y;
+                var dx = path[i].X - prev.X;
+                var dy = path[i].Y - prev.Y;
                 if (dx != 0)
                     horizontalState = true;
                 if (dy != 0)
@@ -306,7 +305,15 @@ namespace App.Model.Entities
 
         private void AddWals(Level level)
         {
-            var walls = new HashSet<int>(new List<int>(){316, 356, 320, 354, 323, 319, 469, 468, 392, 358, 318});
+            var wallTiles = new List<int>
+            {
+                316, 317, 318, 319, 320, 321, 322, 323, 
+                354, 355, 356, 357, 358, 359, 360, 361, 
+                392, 393, 394, 395, 396, 397, 
+                430, 431, 432, 433, 434, 435, 
+                468, 469, 470, 471
+            };
+            var walls = new HashSet<int>(wallTiles);
             foreach (var layer in level.Layers)
             {
                 for (var j = 0; j <= layer.WidthInTiles; ++j)
@@ -317,21 +324,20 @@ namespace App.Model.Entities
                 
                     var tileID = layer.Tiles[tileIndex];
                     if (tileID == 0) continue;
-                    if (walls.Contains(tileID))
-                        grid.walls.Add(new Location(i, j));
+                    if (walls.Contains(tileID - 1))
+                        grid.walls.Add(new Point(i, j));
                 }   
             }
         }
 
         static void DrawGrid(SquareGrid grid, AStarSearch astar) {
             // Печать массива cameFrom
-            var ptr = new Location(0, 0);
-            for (var x = 0; x < grid.width; x++)
+            var ptr = new Point(0, 0);
+            for (var y = 0; y < grid.height; y++)
             {
-                
-                for (var y = 0; y < grid.height; y++)
+                for (var x = 0; x < grid.width; x++)
                 {
-                    Location id = new Location(x, y);
+                    Point id = new Point(y, x);
                     if (grid.walls.Contains(id)) { Console.Write("##"); }
                     else { Console.Write("* "); }
                 }
@@ -365,9 +371,9 @@ namespace App.Model.Entities
             
 
             var radius = collisionShape.Radius;
-            var start = new Location((int) centerPosition.X / level.TileSet.tileWidth,
+            var start = new Point((int) centerPosition.X / level.TileSet.tileWidth,
                 (int) centerPosition.Y / level.TileSet.tileHeight);
-            var goal = new Location((int) patrolPathTiles[0].X, (int) patrolPathTiles[0].Y);
+            var goal = new Point((int) patrolPathTiles[0].X, (int) patrolPathTiles[0].Y);
             var astar = new AStarSearch(grid, start, goal);
             var path = ReconstructPath(astar, start, goal);
             pathVelocity = GetVelocityPath(path, level);
