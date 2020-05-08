@@ -17,6 +17,7 @@ namespace App.Engine
     public class Core
     {
         private readonly ViewForm viewForm;
+        private Size screenSize;
         private Stopwatch clock;
         
         private KeyStates keyState;
@@ -32,7 +33,7 @@ namespace App.Engine
         
         private class KeyStates
         {
-            public bool W, S, A, D, I;
+            public bool W, S, A, D, I, R;
             public int pressesOnIAmount;
         }
 
@@ -44,26 +45,28 @@ namespace App.Engine
         public Core(ViewForm viewForm, Size screenSize)
         {
             this.viewForm = viewForm;
-            InitializeSystems(screenSize);
-            InitState(screenSize);
+            this.screenSize = screenSize;
+            InitializeSystems();
+            currentLevel = LevelManager.LoadLevel(0);
+            InitState();
             
             AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
-        private void InitializeSystems(Size screenSize)
+        private void InitializeSystems()
         {
             RenderMachine.Initialize(viewForm, screenSize);
             AudioEngine.Initialize();
             LevelManager.Initialize();
             ParticleFactory.Initialize();
+            AbstractWeaponFactory.Initialize();
         }
         
-        private void InitState(Size screenSize)
+        private void InitState()
         {
-            currentLevel = LevelManager.LoadLevel(0);
             player = currentLevel.Player;
             camera = new Camera(player.Position, player.Radius, screenSize);
-            cursor = new CustomCursor(player.Position);
+            cursor = new CustomCursor(player.Position.Copy());
             currentLevel.Sprites.Add(cursor.SpriteContainer);
             keyState = new KeyStates();
             mouseState = new MouseState();
@@ -83,10 +86,14 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
+            if (keyState.R)
             {
                 ResetState();
-                Console.WriteLine("URA URA URA URA URA URA URA URA URA URA ");
+            }
+            if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
+            {
+                currentLevel = LevelManager.LoadLevel(1);
+                InitState();
             }
             
             clock.Start();
@@ -282,9 +289,13 @@ namespace App.Engine
 
         private void UpdateCollectables() // TODO
         {
-            for (var i = 0; i < currentLevel.Collectables.Count; i++)
+            var collectables = currentLevel.Collectables;
+            foreach (var collectable in collectables)
             {
-                
+                if (collectable.IsPicked) continue;
+                var collision = CollisionSolver.GetCollisionInfo(player.CollisionShape, collectable.CollisionShape);
+                if (collision == null) continue;
+                collectable.Pick(player);
             }
         }
 
@@ -311,6 +322,10 @@ namespace App.Engine
                 case Keys.I:
                     keyState.I = true;
                     keyState.pressesOnIAmount++;
+                    break;
+                
+                case Keys.R:
+                    keyState.R = true;
                     break;
             }
         }
@@ -342,6 +357,10 @@ namespace App.Engine
                 
                 case Keys.I:
                     keyState.I = false;
+                    break;
+                
+                case Keys.R:
+                    keyState.R = false;
                     break;
             }
         }

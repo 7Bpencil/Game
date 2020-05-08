@@ -40,20 +40,22 @@ namespace App.Model.Entities.Factories
             foreach (var weaponInfo in info.Weapons)
                 weapons.Add(AbstractWeaponFactory.CreateGun(weaponInfo));
 
+            var position = info.Position.Copy();
             return new Player(
-                info.Health, info.Armor, info.Position, info.Angle, 
-                new PlayerBodySprite(info.Position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
-                new RigidCircle(info.Position, 32, false, true), 
+                info.Health, info.Armor, position, info.Angle, 
+                new PlayerBodySprite(position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
+                new RigidCircle(position, 32, false, true), 
                 weapons, weaponSprites, meleeWeapon);
         }
 
         public static Bot CreateBot(BotInfo info)
         {
+            var position = info.Position.Copy();
             return new Bot(
-                info.Health, info.Armor, info.Position, info.Angle,
-                new PlayerBodySprite(info.Position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
+                info.Health, info.Armor, position, info.Angle,
+                new PlayerBodySprite(position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
                 new StaticSprite(GetBitmap(info.WeaponsTileMapPath), WeaponFramesId[info.weapon.WeaponType], new Size(79, 57)),
-                new RigidCircle(info.Position, 32, false, true),
+                new RigidCircle(position, 32, false, true),
                 AbstractWeaponFactory.CreateGun(info.weapon));
         }
 

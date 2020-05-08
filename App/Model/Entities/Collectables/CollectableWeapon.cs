@@ -21,6 +21,7 @@ namespace App.Model.Entities.Collectables
         public override void Pick(Player player)
         {
             IsPicked = true;
+            SpriteContainer.ClearContent();
             player.AddWeapon(item);
         }
     }

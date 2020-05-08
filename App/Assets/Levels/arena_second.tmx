@@ -2,7 +2,7 @@
 <map name="Arena Second" width="40" height="40" tilewidth="32" tileheight="32">
  <properties>
  
-  <playerInfo position="288, 320" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" meleeWeaponTileMap="Assets\Sprites\Weapons\pinkHair_katana.png">
+  <playerInfo health="100" armor="100" position="288, 320" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" meleeWeaponTileMap="Assets\Sprites\Weapons\pinkHair_katana.png">
     <weapon type="Shotgun" ammo="8"/>
   </playerInfo>
   

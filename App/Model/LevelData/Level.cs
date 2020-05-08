@@ -33,6 +33,7 @@ namespace App.Model.LevelData
 
         public Level(LevelInfo levelInfo)
         {
+            this.levelInfo = levelInfo;
             LevelSizeInTiles = levelInfo.LevelSizeInTiles;
             Name = levelInfo.Name;
 

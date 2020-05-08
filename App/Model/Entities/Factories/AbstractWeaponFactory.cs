@@ -10,7 +10,7 @@ namespace App.Model.Entities.Factories
     {
         private static Dictionary<Type, WeaponFactory> factories;
 
-        public static void Init()
+        public static void Initialize()
         {
             factories = new Dictionary<Type, WeaponFactory>
             {

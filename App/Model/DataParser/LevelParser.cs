@@ -56,7 +56,7 @@ namespace App.Model.DataParser
             var name = root.GetAttribute("name");
             var tilesInLayerAmount = 0;
             TileSet tileSet = null;
-            List<Layer> layers = null;
+            var layers = new List<Layer>();
             List<RigidShape> staticShapes = null;
             List<Edge> raytracingEdges = null;
             var collectableWeapons = new List<CollectableWeaponInfo> {Capacity = 8};
@@ -81,7 +81,7 @@ namespace App.Model.DataParser
                                 }
                             }
 
-                            if (property.Name == "player") playerInfo = LoadPlayerInfo(property);
+                            if (property.Name == "playerInfo") playerInfo = LoadPlayerInfo(property);
                             if (property.Name == "bots") botsInfo = loadBots(property);
                         }
 
@@ -205,7 +205,7 @@ namespace App.Model.DataParser
             {
                 var offsetX = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetX").Value);
                 var offsetY = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetY").Value);
-                var points = polygonRaw.ChildNodes[0].Attributes.GetNamedItem("points").Value; 
+                var points = polygonRaw.Attributes.GetNamedItem("points").Value; 
                 edges.AddRange(LoadPolygon(points, offsetX, offsetY, separators));
             }
             

@@ -26,11 +26,12 @@ namespace App.Model.Entities.Factories
 
         public override CollectableWeapon CreateCollectable(CollectableWeaponInfo info)
         {
+            var position = info.Position.Copy();
             return new CollectableWeapon(
                 CreateGun(info.WeaponInfo.AmmoAmount),
-                new RigidCircle(info.Position, 40, true, true),
+                new RigidCircle(position, 40, true, true),
                 new SpriteContainer(
-                    new StaticSprite(collectableIcon,0, collectableIcon.Size), info.Position, info.Angle));
+                    new StaticSprite(collectableIcon,0, collectableIcon.Size), position, info.Angle));
         }
 
         public override Bitmap GetHUDicon()
