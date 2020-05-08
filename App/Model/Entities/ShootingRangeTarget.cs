@@ -290,6 +290,7 @@ namespace App.Model.Entities
                 430, 431, 432, 433, 434, 435, 
                 468, 469, 470, 471
             };
+            
             var walls = new HashSet<int>(wallTiles);
             foreach (var layer in level.Layers)
             {
@@ -302,12 +303,51 @@ namespace App.Model.Entities
                     var tileID = layer.Tiles[tileIndex];
                     if (tileID == 0) continue;
                     if (walls.Contains(tileID - 1))
+                    {
                         grid.walls.Add(new Point(i, j));
+                    }
                 }   
             }
         }
 
-        static void DrawGrid(SquareGrid grid, AStarSearch astar) {
+        public SquareGrid AddAdditionalWalls(Level level)
+        {
+            var result = new SquareGrid(45, 40);
+            var di = new int[] {0, 0, 1, -1};
+            var dj = new int[] {1, -1, 0, 0};
+            //Updated part
+            for (var j = 0; j < level.LevelSizeInTiles.Width; ++j)
+            for (var i = 0; i < level.LevelSizeInTiles.Height; ++i)
+            {
+                var currentPoint = new Point(i, j);
+                if (grid.walls.Contains(currentPoint))
+                {
+                    result.walls.Add(currentPoint);
+                    for (var k = 0; k < 4; ++k)
+                    {
+                        var additionalWall = new Point(i + di[k], j + dj[k]);
+                        if (grid.InBounds(additionalWall))
+                        {
+                            var isFreeSurounded = true;
+                            for (var l = 1; l <= 3; ++l)
+                            {
+                                var pointForCheck = new Point(i + di[k] * l, j + dj[k] * l);
+                                if (grid.InBounds(pointForCheck) && grid.walls.Contains(pointForCheck))
+                                    isFreeSurounded = false; 
+                            }
+                            if (isFreeSurounded)
+                                result.walls.Add(additionalWall);   
+                        }
+                    }
+                    //Updated part
+                }
+                    
+            }
+
+            return result;
+        }
+
+        static void DrawGrid(SquareGrid grid) {
             // Печать массива cameFrom
             var ptr = new Point(0, 0);
             for (var y = 0; y < grid.height; y++)
@@ -351,7 +391,7 @@ namespace App.Model.Entities
             statePassive = true;
             List<Vector> patrolPathTiles = new List<Vector>
             {
-                new Vector(8, 10), 
+                new Vector(9, 10), 
                 new Vector(10, 16), 
                 new Vector(27, 12),
                 new Vector(32, 20),
@@ -361,6 +401,9 @@ namespace App.Model.Entities
             } ;
             
             AddWals(level);
+            grid = AddAdditionalWalls(level);
+            
+            DrawGrid(grid);
             
             var start = new Point(
                 (int) centerPosition.X / level.TileSet.tileWidth,
@@ -378,7 +421,7 @@ namespace App.Model.Entities
             pathVelocity = GetVelocityPath(currentPath);
             pathVelocity.Add(new Vector(0, 0));
             appointmentIndex = 0;
-            //DrawPath(grid, astar, path);
+            DrawPath(grid, astar, path);
             //previous
             this.sceneBullets = sceneBullets;
             Health = health;
