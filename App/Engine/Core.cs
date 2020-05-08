@@ -225,6 +225,7 @@ namespace App.Engine
         private void UpdateBullets()
         {
             var bullets = currentLevel.Bullets;
+            var particles = currentLevel.Particles;
             foreach (var bullet in bullets)
             {
                 if (bullet.IsStuck) continue;
@@ -234,7 +235,7 @@ namespace App.Engine
                 bullet.Update();
                 if (bullet.ClosestPenetrationPoint != null)
                 {
-                    currentLevel.Particles.Add(ParticleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
+                    particles.Add(ParticleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
                     bullet.ClosestPenetrationPoint = null;
                 }
             }
@@ -258,6 +259,7 @@ namespace App.Engine
         private void CalculateDynamicPenetrations(Bullet bullet)
         {
             var bots = currentLevel.Bots;
+            var particles = currentLevel.Particles;
             foreach (var bot in bots)
             {
                 var penetrationTimes = 
@@ -267,8 +269,8 @@ namespace App.Engine
                 bot.TakeHit(bullet.Damage);
                 if (bot.Armour > 50) bullet.IsStuck = true;
 
-                currentLevel.Particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
-                currentLevel.Particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
+                particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
+                particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
 
                 if (bot.IsDead && !bot.Velocity.Equals(Vector.ZeroVector))
                     bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
