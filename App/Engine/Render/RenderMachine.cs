@@ -57,7 +57,7 @@ namespace App.Engine.Render
 
         public static void Invalidate()
         {
-            //gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
+            gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
             view.Invalidate();
         }
         
@@ -112,18 +112,21 @@ namespace App.Engine.Render
             RigidBodyRenderer.Draw(shape, cameraPosition, ShapePen, gfxCamera);
         }
 
-        public static void RenderVisibilityPolygon(
-            Vector lightSourcePosition, 
-            List<Raytracing.RaytracingPoint> visibilityPolygonPoints, Vector cameraPosition)
+        public static void RenderVisibilityRegion(Raytracing.VisibilityRegion region, Vector cameraPosition)
         {
             gfxShadowMask.Clear(ShadowColor);
-            
+
             VisibilityPolygonRenderer.Draw(
-                lightSourcePosition,
-                visibilityPolygonPoints,
+                region.LightSourcePosition,
+                region.VisibilityRegionPoints,
                 cameraPosition,
                 TransparentBrush,
                 gfxShadowMask);
+        }
+        
+        public static void PrepareShadowMask()
+        {
+            gfxShadowMask.Clear(ShadowColor);
         }
 
         public static void RenderCollisionInfoOnCamera(CollisionInfo info, Vector cameraPosition)

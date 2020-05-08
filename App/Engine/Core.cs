@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -217,7 +218,7 @@ namespace App.Engine
         private void UpdateEntities()
         {
             UpdateBullets();
-            UpdateTargets();
+            UpdateBots();
 
             player.IncrementWeaponsTick();
         }
@@ -280,13 +281,17 @@ namespace App.Engine
         /// <summary>
         /// Updates AI - it should be called every tick
         /// </summary>
-        private void UpdateTargets()
+        private void UpdateBots()
         {
+            var regions = new List<Raytracing.VisibilityRegion>();
+            regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var bots = currentLevel.Bots;
             foreach (var t in bots)
             {
                 t.Update();
             }
+
+            currentLevel.VisibilityRegions = regions;
         }
 
         private void UpdateCollectables() // TODO

@@ -109,10 +109,8 @@ namespace App.Engine.Audio
         {
             if (cachedEventDescriptions.ContainsKey(path))
                 return cachedEventDescriptions[path];
-            var result = system.getEvent(path, out var description);
-            if (result == RESULT.OK) description.loadSampleData();
-            else throw new Exception("FMOD getEvent failed: " + result);
-            
+            CheckResult(system.getEvent(path, out var description));
+            description.loadSampleData();
             cachedEventDescriptions.Add(path, description);
             return description;
         }

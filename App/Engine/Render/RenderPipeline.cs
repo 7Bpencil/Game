@@ -16,6 +16,7 @@ namespace App.Engine.Render
             RenderSprites(level.Sprites, cameraPosition);
             RenderParticles(level.Particles, cameraPosition, level.gfxLevelMap);
             RenderBullets(level.Bullets, cameraPosition);
+            RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
             var playerWeapon = level.Player.CurrentWeapon;
             RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
 
@@ -119,6 +120,15 @@ namespace App.Engine.Render
             {
                 if (item == null) continue;
                 RenderMachine.RenderShapeOnCamera(item.CollisionShape, cameraPosition);
+            }
+        }
+        
+        private static void RenderVisibilityRegions(List<Raytracing.VisibilityRegion> visibilityRegions, Vector cameraPosition)
+        {
+            RenderMachine.PrepareShadowMask();
+            foreach (var region in visibilityRegions)
+            {
+                RenderMachine.RenderVisibilityRegion(region, cameraPosition);
             }
         }
 

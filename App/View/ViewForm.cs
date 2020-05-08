@@ -8,8 +8,8 @@ namespace App.View
 {
     public class ViewForm : Form
     {
-        private BufferedGraphics cameraBuffer;
-        private Core engineCore;
+        private readonly BufferedGraphics cameraBuffer;
+        private readonly Core engineCore;
         private readonly Point screenCenter;        
 
         public ViewForm()
