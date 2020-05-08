@@ -262,6 +262,7 @@ namespace App.Model.Entities
         private List<Vector> GetCurrentPath(List<Point> path)
         {
             var result = new List<Vector>();
+            result.Add(Center);
             foreach (var point in path)
             {
                 result.Add(new Vector(point.Y, point.X) * 32);
@@ -272,6 +273,8 @@ namespace App.Model.Entities
         private List<Vector> GetVelocityPath(List<Vector> currentPath)
         {
             var result = new List<Vector>();
+            result.Add(new Vector(-Center.X % 32, 0));
+            result.Add(new Vector(0, -Center.Y % 32));
             for (var i = 0; i < currentPath.Count - 1; i++)
             {
                 result.Add(currentPath[i + 1] - currentPath[i]);
@@ -315,6 +318,8 @@ namespace App.Model.Entities
             var result = new SquareGrid(45, 40);
             var di = new int[] {0, 0, 1, -1};
             var dj = new int[] {1, -1, 0, 0};
+            var cdi = new int[] {1, 1, -1, -1};
+            var cdj = new int[] {-1, 1, -1, 1};
             //Updated part
             for (var j = 0; j < level.LevelSizeInTiles.Width; ++j)
             for (var i = 0; i < level.LevelSizeInTiles.Height; ++i)
@@ -322,6 +327,7 @@ namespace App.Model.Entities
                 var currentPoint = new Point(i, j);
                 if (grid.walls.Contains(currentPoint))
                 {
+                    var counter = 0;
                     result.walls.Add(currentPoint);
                     for (var k = 0; k < 4; ++k)
                     {
@@ -335,11 +341,28 @@ namespace App.Model.Entities
                                 if (grid.InBounds(pointForCheck) && grid.walls.Contains(pointForCheck))
                                     isFreeSurounded = false; 
                             }
+
                             if (isFreeSurounded)
+                            {
+                                ++counter;
                                 result.walls.Add(additionalWall);   
+                            }
                         }
+
+                        
                     }
                     //Updated part
+                    if (counter == 3)
+                    {
+                        for (var k = 0; k < 4; ++k)
+                        {
+                            var newPoint = new Point(i + cdi[k], j + cdj[k]);
+                            if (grid.InBounds(newPoint) && !result.walls.Contains(newPoint))
+                            {
+                                result.walls.Add(newPoint);
+                            }
+                        }
+                    }
                 }
                     
             }
