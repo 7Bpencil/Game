@@ -57,7 +57,7 @@ namespace App.Engine.Render
 
         public static void Invalidate()
         {
-            gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
+            //gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
             view.Invalidate();
         }
         

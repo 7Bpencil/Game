@@ -7,13 +7,13 @@
   </playerInfo>
   
   <bots>
-    <bot health="100" armor="100" position="672, 320" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+    <bot health="100" armor="100" position="672, 320" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
       <weapon type="MP6" ammo="120"/>
     </bot>
     <bot health="50" armor="200" position="368, 496" angle="0" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
       <weapon type="SaigaFA" ammo="100"/>
     </bot>
-    <bot health="100" armor="0" position="256, 896" angle="45" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+    <bot health="100" armor="0" position="256, 896" angle="45" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
       <weapon type="Shotgun" ammo="96"/>
     </bot>
     <bot health="100" armor="300" position="449, 992" angle="-45" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">

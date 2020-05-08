@@ -11,7 +11,6 @@ namespace App.Engine.Audio
     {
         private static FMOD.Studio.System system;
         private static FMOD.System fmodSystem;
-        public static bool Ready;
         private static ATTRIBUTES_3D attributes3d;
         private static FMOD.Studio.Bank masterBank;
         private static Dictionary<string, EventDescription> cachedEventDescriptions;
@@ -142,8 +141,6 @@ namespace App.Engine.Audio
                     break;
                 }
             }
-
-            Ready = true;
         }
 
         private static void CheckResult(RESULT result)

@@ -28,8 +28,6 @@ namespace App.Model.LevelData
         public List<AbstractParticleUnit> Particles { get; private set; }
         public List<SpriteContainer> Sprites { get; private set; }
         public List<CollisionInfo> CollisionsInfo;
-        
-        private bool isLevelLoaded;
 
         public Level(LevelInfo levelInfo)
         {
@@ -42,8 +40,6 @@ namespace App.Model.LevelData
             RaytracingEdges = levelInfo.RaytracingEdges;
 
             SetDynamicEntities();
-
-            isLevelLoaded = true;
         }
 
         private void SetDynamicEntities()
