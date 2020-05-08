@@ -216,6 +216,7 @@ namespace App.Model.Entities
         public static SquareGrid grid;
 
         public List<Vector> currentPath;
+        public int currentPathIndex;
 
         public List<Vector> pathVelocity;
         //imported
@@ -241,7 +242,8 @@ namespace App.Model.Entities
         private readonly int ticksForMovement;
         private int tick;
         private Player player;
-        
+        private List<List<Vector>> paths;
+        private List<List<Vector>> pathsVelocity;
         private Vector velocity;
         public Vector Velocity => velocity;
         public Vector Center => collisionShape.Center;
@@ -410,6 +412,8 @@ namespace App.Model.Entities
             int health, int armour, Vector centerPosition, Vector velocity, int ticksForMovement, Weapon weapon,
             List<Bullet> sceneBullets)
         {
+            paths = new List<List<Vector>>();
+            pathsVelocity = new List<List<Vector>>();
             collisionShape = new RigidCircle(centerPosition, 32, false, true);
             //included
             grid = new SquareGrid(45, 40);
@@ -422,7 +426,7 @@ namespace App.Model.Entities
                 new Vector(9, 10), 
                 new Vector(10, 16), 
                 new Vector(27, 12),
-                new Vector(32, 20),
+                new Vector(31, 20),
                 new Vector(26, 27),
                 new Vector(11, 30),
 
@@ -432,22 +436,20 @@ namespace App.Model.Entities
             grid = AddAdditionalWalls(level);
             
             //DrawGrid(grid);
-            
-            var start = new Point(
-                (int) centerPosition.X / level.TileSet.tileWidth,
-                (int) centerPosition.Y / level.TileSet.tileHeight); 
-            
-            var goal = new Point((int) patrolPathTiles[0].X, (int) patrolPathTiles[0].Y);
-            
-            var astar = new AStarSearch(grid, start, goal);
-            
-            var path = ReconstructPath(astar, start, goal);
-           
-            
-            
-            currentPath = GetCurrentPath(path);
-            pathVelocity = GetVelocityPath(currentPath);
-            pathVelocity.Add(new Vector(0, 0));
+            for (var i = 0; i < patrolPathTiles.Count - 1; ++i)
+            {
+                var start = new Point(
+                    (int) centerPosition.X / level.TileSet.tileWidth,
+                    (int) centerPosition.Y / level.TileSet.tileHeight); 
+                var goal = new Point((int) patrolPathTiles[i].X, (int) patrolPathTiles[0].Y);
+                var astar = new AStarSearch(grid, start, goal);
+                var path = ReconstructPath(astar, start, goal);
+                currentPath = GetCurrentPath(path);
+                pathVelocity = GetVelocityPath(currentPath);
+                pathVelocity.Add(new Vector(0, 0));
+                paths.Add(currentPath);
+                pathsVelocity.Add(pathVelocity);
+            }
             appointmentIndex = 0;
             //DrawPath(grid, astar, path);
             //previous
@@ -528,6 +530,7 @@ namespace App.Model.Entities
         
         public void Update()
         {
+            
             tick++;
             weapon.IncrementTick();
             if (!IsDead)
@@ -576,7 +579,16 @@ namespace App.Model.Entities
                     velocity = -velocity;
                 }*/
                 viewVector = velocity.Normalize();
-                MoveBy(pathVelocity[Math.Min(tick, pathVelocity.Count - 1)]);
+                if (tick == pathVelocity.Count - 1)
+                {
+                    currentPathIndex++;
+                    tick = 0;
+                }
+                else
+                {
+                    MoveBy(pathsVelocity[currentPathIndex][tick]);
+                }
+                
             }
             
         }
