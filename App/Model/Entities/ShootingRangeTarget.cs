@@ -277,7 +277,12 @@ namespace App.Model.Entities
             result.Add(new Vector(0, -Center.Y % 32));
             for (var i = 0; i < currentPath.Count - 1; i++)
             {
-                result.Add(currentPath[i + 1] - currentPath[i]);
+                var diffx = (int)(currentPath[i + 1].X - currentPath[i].X);
+                var diffy = (int)(currentPath[i + 1].Y - currentPath[i].Y);
+                for (var j = 0; j < (Math.Abs(diffx) + 5) / 6; ++j)
+                    result.Add(new Vector(6 * Math.Sign(diffx), 0));
+                for (var j = 0; j < (Math.Abs(diffy) + 5) / 6; ++j)
+                    result.Add(new Vector(0, 6 * Math.Sign(diffy)));
             }
 
             return result;
@@ -426,7 +431,7 @@ namespace App.Model.Entities
             AddWals(level);
             grid = AddAdditionalWalls(level);
             
-            DrawGrid(grid);
+            //DrawGrid(grid);
             
             var start = new Point(
                 (int) centerPosition.X / level.TileSet.tileWidth,
@@ -444,7 +449,7 @@ namespace App.Model.Entities
             pathVelocity = GetVelocityPath(currentPath);
             pathVelocity.Add(new Vector(0, 0));
             appointmentIndex = 0;
-            DrawPath(grid, astar, path);
+            //DrawPath(grid, astar, path);
             //previous
             this.sceneBullets = sceneBullets;
             Health = health;
