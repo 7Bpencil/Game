@@ -1,13 +1,13 @@
 using System.Drawing;
+using App.Engine.Particles;
 using App.Engine.Physics;
 
-namespace App.Engine.Particles
+namespace App.Engine.ParticleUnits
 {
-    public class BloodSplashParticleUnit : AbstractParticleUnit
+    public class ExpiringAnimatedParticleUnit : AbstractParticleUnit
     {
         private readonly AnimatedParticle content;
         private int currentFrame;
-        private readonly int frameToBurn;
         private int ticksFromLastFrame;
         private readonly int framePeriodInTicks;
         private readonly int framesAmount;
@@ -20,7 +20,7 @@ namespace App.Engine.Particles
         public override bool IsExpired { get; set; }
         public override bool ShouldBeBurned { set; get; }
 
-        public BloodSplashParticleUnit(AnimatedParticle content, Vector position, float angle, int frameToBurn)
+        public ExpiringAnimatedParticleUnit(AnimatedParticle content, Vector position, float angle)
         {
             this.content = content;
             CenterPosition = position;
@@ -30,7 +30,6 @@ namespace App.Engine.Particles
             framePeriodInTicks = content.FramePeriodInTicks;
             currentFrame = 0;
             ticksFromLastFrame = 0;
-            this.frameToBurn = frameToBurn;
         }
 
         public override void UpdateFrame()
@@ -41,7 +40,6 @@ namespace App.Engine.Particles
             {
                 ticksFromLastFrame = 0;
                 currentFrame++;
-                if (currentFrame == frameToBurn) ShouldBeBurned = true;
                 if (currentFrame > framesAmount) IsExpired = true;
             }
         }

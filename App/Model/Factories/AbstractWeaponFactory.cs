@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using App.Model.Entities;
 using App.Model.Entities.Collectables;
 using App.Model.Entities.Weapons;
 
-namespace App.Model.Entities.Factories
+namespace App.Model.Factories
 {
     public static class AbstractWeaponFactory
     {

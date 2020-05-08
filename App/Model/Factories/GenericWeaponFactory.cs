@@ -2,9 +2,10 @@ using System.Drawing;
 using System.Reflection;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
+using App.Model.Entities;
 using App.Model.Entities.Collectables;
 
-namespace App.Model.Entities.Factories
+namespace App.Model.Factories
 {
     public class GenericWeaponFactory<TW> : WeaponFactory where TW : Weapon
     {

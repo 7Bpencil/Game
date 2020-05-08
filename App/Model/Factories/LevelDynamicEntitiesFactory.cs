@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using App.Model.Entities;
 using App.Model.Entities.Collectables;
-using App.Model.Entities.Factories;
 
-namespace App.Model.LevelData
+namespace App.Model.Factories
 {
     public static class LevelDynamicEntitiesFactory
     {

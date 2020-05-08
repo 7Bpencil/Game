@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;

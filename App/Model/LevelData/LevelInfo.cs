@@ -4,7 +4,7 @@ using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Entities.Collectables;
-using App.Model.Entities.Factories;
+using App.Model.Factories;
 
 namespace App.Model.LevelData
 {

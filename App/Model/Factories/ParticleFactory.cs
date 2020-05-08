@@ -1,10 +1,13 @@
 using System;
 using System.Drawing;
+using App.Engine;
 using App.Engine.Particles;
+using App.Engine.ParticleUnits;
 using App.Engine.Physics;
+using App.Model.Entities;
 using App.Model.Entities.Weapons;
 
-namespace App.Model.Entities.Factories
+namespace App.Model.Factories
 {
     public static class ParticleFactory
     {

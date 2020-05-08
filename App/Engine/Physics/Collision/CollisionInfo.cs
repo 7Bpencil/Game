@@ -7,7 +7,6 @@
         public readonly Vector Start;
         public readonly Vector End;
         
-
         /// <summary>
         /// 
         /// </summary>

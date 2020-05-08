@@ -1,5 +1,4 @@
 using System.Drawing;
-using App.Engine.Particles;
 using App.Engine.Physics;
 
 namespace App.Engine.Render.Renderers

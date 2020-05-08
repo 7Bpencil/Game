@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Xml;
-using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Render;
 using App.Model.Entities;
 using App.Model.Entities.Collectables;
-using App.Model.Entities.Factories;
+using App.Model.Factories;
 using App.Model.Entities.Weapons;
 using App.Model.LevelData;
 

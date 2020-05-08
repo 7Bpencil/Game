@@ -120,7 +120,7 @@ namespace App.Engine.Render
             var lightSourcePosition = region.LightSourcePosition;
             for (var i = 0; i < size - 1; i++)
             {
-                info = CollisionSolver.GetCollisionInfo(
+                info = CollisionDetector.GetCollisionInfo(
                     circle,
                     lightSourcePosition,
                     visibilityPolygonPoints[i].Position,
@@ -128,7 +128,7 @@ namespace App.Engine.Render
                 if (info != null) return info.Start;
             }
 
-            info = CollisionSolver.GetCollisionInfo(
+            info = CollisionDetector.GetCollisionInfo(
                 circle,
                 lightSourcePosition,
                 visibilityPolygonPoints[visibilityPolygonPoints.Count - 1].Position,

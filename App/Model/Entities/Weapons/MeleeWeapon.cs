@@ -3,7 +3,7 @@ using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 
-namespace App.Model.Entities
+namespace App.Model.Entities.Weapons
 {
     public class MeleeWeapon
     {
@@ -42,7 +42,7 @@ namespace App.Model.Entities
                 var wasHit = false;
                 foreach (var circle in range)
                 {
-                    if (CollisionSolver.GetCollisionInfo(circle, target.CollisionShape) == null) continue;
+                    if (CollisionDetector.GetCollisionInfo(circle, target.CollisionShape) == null) continue;
                     wasHit = createBlood = true;
                     break;
                 }

@@ -9,7 +9,7 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
-using App.Model.Entities.Factories;
+using App.Model.Factories;
 using App.Model.LevelData;
 using App.View;
 
@@ -91,7 +91,7 @@ namespace App.Engine
             {
                 ResetState();
             }
-            if (CollisionSolver.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
+            if (CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 currentLevel = LevelManager.LoadLevel(1);
                 InitState();
@@ -300,7 +300,7 @@ namespace App.Engine
             foreach (var collectable in collectables)
             {
                 if (collectable.IsPicked) continue;
-                var collision = CollisionSolver.GetCollisionInfo(player.CollisionShape, collectable.CollisionShape);
+                var collision = CollisionDetector.GetCollisionInfo(player.CollisionShape, collectable.CollisionShape);
                 if (collision == null) continue;
                 collectable.Pick(player);
             }

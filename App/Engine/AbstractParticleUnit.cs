@@ -1,7 +1,7 @@
 using System.Drawing;
 using App.Engine.Physics;
 
-namespace App.Engine.Particles
+namespace App.Engine
 {
     public abstract class AbstractParticleUnit
     {

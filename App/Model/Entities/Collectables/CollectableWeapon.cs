@@ -1,4 +1,3 @@
-using System;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 

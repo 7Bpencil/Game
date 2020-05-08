@@ -4,6 +4,7 @@ using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
+using App.Model.Entities.Weapons;
 
 namespace App.Model.Entities
 {

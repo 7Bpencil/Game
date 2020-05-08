@@ -1,7 +1,8 @@
 using System.Drawing;
+using App.Model.Entities;
 using App.Model.Entities.Collectables;
 
-namespace App.Model.Entities.Factories
+namespace App.Model.Factories
 {
     public abstract class WeaponFactory
     {

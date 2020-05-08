@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace App.Engine.Particles
+namespace App.Engine
 {
     public abstract class AbstractParticle
     {
