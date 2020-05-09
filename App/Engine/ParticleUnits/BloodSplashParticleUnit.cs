@@ -12,8 +12,7 @@ namespace App.Engine.ParticleUnits
         private int ticksFromLastFrame;
         private readonly int framePeriodInTicks;
         private readonly int framesAmount;
-
-
+        
         public override AbstractParticle Content => content;
         public override Rectangle CurrentFrame => content.GetFrame(currentFrame);
         public override Vector CenterPosition { get; }

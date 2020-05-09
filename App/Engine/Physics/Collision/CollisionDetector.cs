@@ -7,15 +7,29 @@ namespace App.Engine.Physics.Collision
     {
         public static CollisionInfo GetCollisionInfo(RigidShape first, RigidShape second)
         {
-            if (first is RigidAABB && second is RigidCircle)
-                return GetCollisionInfo((RigidAABB) first, (RigidCircle) second);
-            if (first is RigidCircle && second is RigidAABB)
-                return GetCollisionInfo((RigidAABB) second, (RigidCircle) first);
-            
-            if (first is RigidCircle && second is RigidCircle)
-                return GetCollisionInfo((RigidCircle) first, (RigidCircle) second);
-            
-            return null;
+            switch (first)
+            {
+                case RigidCircle firstCircle when second is RigidCircle secondCircle:
+                    return GetCollisionInfo(firstCircle, secondCircle);
+                
+                case RigidAABB aabb when second is RigidCircle circle:
+                    return GetCollisionInfo(aabb, circle);
+                case RigidCircle circle when second is RigidAABB aabb:
+                    return GetCollisionInfo(aabb, circle);
+
+                case RigidCircle circle when second is RigidCircleQuarter quarter:
+                    return GetCollisionInfo(circle, quarter);
+                case RigidCircleQuarter quarter when second is RigidCircle circle:
+                    return GetCollisionInfo(circle, quarter);
+                
+                case RigidCircle circle when second is RigidTriangle triangle:
+                    return GetCollisionInfo(circle, triangle);
+                case RigidTriangle triangle when second is RigidCircle circle:
+                    return GetCollisionInfo(circle, triangle);
+                
+                default:
+                    return null;
+            }
         }
 
         private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second)
@@ -60,6 +74,16 @@ namespace App.Engine.Physics.Collision
             }
 
             return result;
+        }
+
+        private static CollisionInfo GetCollisionInfo(RigidCircle circle, RigidTriangle triangle)
+        {
+            var a = triangle.Points[0]; var b = triangle.Points[1]; var c = triangle.Points[2];
+            var q = GetClosestPoint(circle.Center, a, b, c);
+            var v = q - circle.Center;
+            return Vector.ScalarProduct(v,v) <= circle.Radius * circle.Radius 
+                ? new CollisionInfo(v.Length, v, q) 
+                : null;
         }
         
         public static CollisionInfo GetCollisionInfo(RigidCircle circle, Vector a, Vector b, Vector c)
@@ -123,6 +147,28 @@ namespace App.Engine.Physics.Collision
             v = vb * denom;
             w = vc * denom;
             return a + ab * v + ac * w; // = u*a + v*b + w*c, u = va * denom = 1.0f-v-w
+        }
+
+        private static CollisionInfo GetCollisionInfo(RigidCircle circle, RigidCircleQuarter circleQuarter)
+        {
+            var info = GetCollisionInfo(circle, circleQuarter.WholeCircle);
+            if (info == null) return null;
+            var vector = info.Start - circleQuarter.Center;
+            var vertical = Vector.ScalarProduct(vector, circleQuarter.Direction);
+            var horizontal = Vector.ScalarProduct(vector, circleQuarter.DirectionNormal);
+            switch (circleQuarter.QuarterIndex)
+            {
+                case 1 when vertical > 0 && horizontal > 0:
+                    return info;
+                case 2 when vertical > 0 && horizontal < 0:
+                    return info;
+                case 3 when vertical < 0 && horizontal < 0:
+                    return info;
+                case 4 when vertical < 0 && horizontal > 0:
+                    return info;
+                default:
+                    return null;
+            }
         }
     }
 }

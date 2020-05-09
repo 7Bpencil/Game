@@ -50,7 +50,9 @@ namespace App.Model.DataParser
             var root = doc.DocumentElement;
             
             var levelSizeInTiles = new Size(
-                int.Parse(root.GetAttribute("width")), int.Parse(root.GetAttribute("height")));
+                int.Parse(root.GetAttribute("width")), 
+                int.Parse(root.GetAttribute("height")));
+            
             var name = root.GetAttribute("name");
             var tilesInLayerAmount = 0;
             TileSet tileSet = null;
@@ -58,8 +60,8 @@ namespace App.Model.DataParser
             List<RigidShape> staticShapes = null;
             List<Edge> raytracingEdges = null;
             var collectableWeapons = new List<CollectableWeaponInfo> {Capacity = 8};
-            EntityCreator.PlayerInfo playerInfo = null;
-            List<EntityCreator.BotInfo> botsInfo = null; 
+            EntityFactory.PlayerInfo playerInfo = null;
+            List<EntityFactory.BotInfo> botsInfo = null; 
             RigidAABB exit = null;
 
             foreach (XmlNode node in root.ChildNodes)
@@ -107,7 +109,7 @@ namespace App.Model.DataParser
                 levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, playerInfo, botsInfo, collectableWeapons);
         }
 
-        private static EntityCreator.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
+        private static EntityFactory.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
         {
             var health = int.Parse(playerNode.Attributes.GetNamedItem("health").Value);
             var armor = int.Parse(playerNode.Attributes.GetNamedItem("armor").Value);
@@ -122,19 +124,19 @@ namespace App.Model.DataParser
                 if (node.Name == "weapon") weapons.Add(LoadWeapon(node));
             }
 
-            return new EntityCreator.PlayerInfo
+            return new EntityFactory.PlayerInfo
                 (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath);
         }
 
-        private static List<EntityCreator.BotInfo> loadBots(XmlNode botsNode)
+        private static List<EntityFactory.BotInfo> loadBots(XmlNode botsNode)
         {
-            var bots = new List<EntityCreator.BotInfo> {Capacity = 8};
+            var bots = new List<EntityFactory.BotInfo> {Capacity = 8};
             foreach (XmlNode bot in botsNode.ChildNodes)
                 bots.Add(LoadBotInfo(bot));
             return bots;
         }
         
-        private static EntityCreator.BotInfo LoadBotInfo(XmlNode botNode)
+        private static EntityFactory.BotInfo LoadBotInfo(XmlNode botNode)
         {
             var health = int.Parse(botNode.Attributes.GetNamedItem("health").Value);
             var armor = int.Parse(botNode.Attributes.GetNamedItem("armor").Value);
@@ -148,7 +150,7 @@ namespace App.Model.DataParser
                 if (node.Name == "weapon") weapon = LoadWeapon(node);
             }
             
-            return new EntityCreator.BotInfo
+            return new EntityFactory.BotInfo
                 (health, armor, position, angle, weapon, clothesTileMapPath, weaponsTileMapPath);
         }
 

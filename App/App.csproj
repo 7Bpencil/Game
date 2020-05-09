@@ -65,7 +65,9 @@
         <Compile Include="Engine\Physics\Edge.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidCircleQuarter.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidShape.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidTriangle.cs" />
         <Compile Include="Engine\Physics\Vector.cs" />
         <Compile Include="Engine\Render\Raytracing.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
@@ -95,10 +97,11 @@
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
         <Compile Include="Model\Factories\AbstractWeaponFactory.cs" />
-        <Compile Include="Model\Factories\EntityCreator.cs" />
+        <Compile Include="Model\Factories\EntityFactory.cs" />
         <Compile Include="Model\Factories\GenericWeaponFactory.cs" />
         <Compile Include="Model\Factories\LevelDynamicEntitiesFactory.cs" />
         <Compile Include="Model\Factories\ParticleFactory.cs" />
+        <Compile Include="Model\Factories\SpriteFactory.cs" />
         <Compile Include="Model\Factories\WeaponFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\LevelInfo.cs" />
@@ -133,6 +136,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\BLOOD\blood_splash_medium.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\exit.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\SMOKE\bullet_smoke.png">

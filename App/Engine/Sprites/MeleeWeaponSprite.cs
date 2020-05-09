@@ -4,15 +4,23 @@ namespace App.Engine.Sprites
 {
     public class MeleeWeaponSprite : Sprite
     {
-        public bool inAction;
+        public bool InAction;
+        public bool WasRaised => CurrentFrame == StartFrame + 1 && TicksFromLastFrame == 0;
+        
         public MeleeWeaponSprite(Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size)
             : base(bitmap, framePeriodInTicks, startFrame, endFrame, size)
+        {
+        }
+        
+        public MeleeWeaponSprite(
+            Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size, float destWidth, float destHeight)
+            : base(bitmap, framePeriodInTicks, startFrame, endFrame, size, destWidth, destHeight)
         {
         }
 
         public override void UpdateFrame()
         {
-            if (!inAction) return;
+            if (!InAction) return;
             TicksFromLastFrame++;
             if (TicksFromLastFrame > FramePeriodInTicks)
             {
@@ -21,7 +29,7 @@ namespace App.Engine.Sprites
                 if (CurrentFrame > EndFrame)
                 {
                     CurrentFrame = StartFrame;
-                    inAction = false;
+                    InAction = false;
                 }
             }
         }

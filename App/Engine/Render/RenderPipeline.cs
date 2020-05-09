@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Drawing;
-using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Model.Entities;
@@ -16,7 +15,8 @@ namespace App.Engine.Render
             RenderSprites(level.Sprites, cameraPosition);
             RenderParticles(level.Particles, cameraPosition, level.gfxLevelMap);
             RenderBullets(level.Bullets, cameraPosition);
-            RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
+            //RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
+            //RenderMachine.RenderShadowMask();
             var playerWeapon = level.Player.CurrentWeapon;
             RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
 
@@ -38,12 +38,12 @@ namespace App.Engine.Render
             RenderMachine.RenderEdgeOnCamera(
                 new Edge(cursorPosition.ConvertFromWorldToCamera(cameraPosition),
                     playerPosition.ConvertFromWorldToCamera(cameraPosition)));
-            
+
             var debugInfo = new []
             {
                 updateTime,
-                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
-                "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width + " x " + level.LevelSizeInTiles.Height,
+                "Camera Size: " + camera.Size.Width.ToString() + " x " + camera.Size.Height.ToString(),
+                "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width.ToString() + " x " + level.LevelSizeInTiles.Height.ToString(),
                 "(WAxis) Scroll Position: " + camera.Position,
                 "(WAxis) Player Position: " + playerPosition,
                 "(CAxis) Player Position: " + playerPosition.ConvertFromWorldToCamera(camera.Position),
@@ -164,7 +164,7 @@ namespace App.Engine.Render
                     t.CollisionShape.Center.X - t.CollisionShape.Radius / 2,
                     t.CollisionShape.Center.Y - t.CollisionShape.Radius / 2);
                 var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
-                RenderMachine.PrintString(t.Health + "\n" + t.Armour, positionInCamera);    
+                RenderMachine.PrintString(t.Health.ToString() + "\n" + t.Armour.ToString(), positionInCamera);    
             }
         }
 

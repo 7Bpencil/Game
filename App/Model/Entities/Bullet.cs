@@ -56,7 +56,7 @@ namespace App.Model.Entities
             Move();
         }
         
-        private void SlowDown()
+        public void SlowDown()
         {
             Velocity *= 0.8f;
             Speed *= 0.8f;

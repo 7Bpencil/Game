@@ -12,11 +12,11 @@ namespace App.Model.LevelData
 {
     public class Level
     {
-        private LevelInfo levelInfo;
+        private readonly LevelInfo levelInfo;
         
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
-        public readonly RigidShape Exit;
+        public readonly RigidAABB Exit;
         public readonly List<RigidShape> StaticShapes;
         public List<RigidShape> DynamicShapes { get; private set; }
         public ShapesIterator SceneShapes { get; private set; }
@@ -31,6 +31,7 @@ namespace App.Model.LevelData
         public List<SpriteContainer> Sprites { get; private set; }
         public List<CollisionInfo> CollisionsInfo;
         public List<Raytracing.VisibilityRegion> VisibilityRegions;
+        public bool IsCompleted;
 
         public Level(LevelInfo levelInfo)
         {
@@ -84,6 +85,7 @@ namespace App.Model.LevelData
             foreach (var bot in Bots)
                 DynamicShapes.Add(bot.CollisionShape);
             DynamicShapes.Add(Player.CollisionShape);
+            DynamicShapes.AddRange(Player.MeleeWeapon.GetRangeShapes());
         }
         
         public void Reset()

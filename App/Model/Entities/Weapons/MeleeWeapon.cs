@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
@@ -7,68 +6,80 @@ namespace App.Model.Entities.Weapons
 {
     public class MeleeWeapon
     {
-        public List<RigidCircle> range;
-        private float currentAngle;
+        private readonly Range range;
         private readonly int attackPeriod;
         private int ticksFromLastAttack;
-        public readonly int damage;
+        public readonly int Damage;
 
         public MeleeWeapon(Vector playerCenter, float startAngle)
         {
-            range = new List<RigidCircle>
-            {
-                new RigidCircle(playerCenter + new Vector(18.5f, -32), 18.5f, false, false),
-                new RigidCircle(playerCenter + new Vector(-18.5f, -32), 18.5f, false, false),
-                new RigidCircle(playerCenter + new Vector(0, -32 - 15), 9, false, false),
-            };
-            currentAngle = 90;
-            RotateRangeShape(startAngle, playerCenter);
+            range = new Range(playerCenter);
+            range.Rotate(startAngle, playerCenter);
 
-            damage = 500;
+            Damage = 500;
             attackPeriod = 33;
             ticksFromLastAttack = attackPeriod + 1;
         }
         
+        public bool IsInRange(Bot target) => range.IsCollide(target.CollisionShape);
+
+        public void IncrementTick() => ticksFromLastAttack++;
+        
+        public bool IsReady => ticksFromLastAttack >= attackPeriod;
+
+        public void MoveRangeBy(Vector delta) => range.MoveBy(delta);
+
+        public void RotateRangeTo(float newAngle, Vector playerCenterPosition) =>
+            range.Rotate(newAngle, playerCenterPosition);
+        
         /// <summary>
-        /// 
+        /// Attention: creates new RigidShape[] every time
         /// </summary>
-        /// <param name="targets"></param>
-        /// <returns>true if there was at least one hit</returns>
-        public bool Attack(List<Bot> targets)
+        public RigidShape[] GetRangeShapes() => new RigidShape[] {range.Sector, range.Triangle}; 
+        
+        private class Range
         {
-            var createBlood = false;
-            foreach (var target in targets)
+            public readonly RigidCircleQuarter Sector;
+            public readonly RigidTriangle Triangle;
+            private float currentAngle;
+
+            public Range(Vector playerCenter)
             {
-                var wasHit = false;
-                foreach (var circle in range)
+                var trianglePoints = new[]
                 {
-                    if (CollisionDetector.GetCollisionInfo(circle, target.CollisionShape) == null) continue;
-                    wasHit = createBlood = true;
-                    break;
-                }
-                if (wasHit) target.TakeHit(damage);
+                    playerCenter.Copy(),
+                    playerCenter + new Vector(0, -74),
+                    playerCenter + new Vector(32, 0)
+                };
+                
+                Sector = new RigidCircleQuarter(
+                    new Vector(0, -1), 
+                    2, 
+                    new RigidCircle(playerCenter.Copy(), 74, false, false));
+                Triangle = new RigidTriangle(trianglePoints, false, false); 
+                currentAngle = 90;
+            }
+            
+            public void Rotate(float newAngle, Vector playerCenterPosition)
+            {
+                var delta = currentAngle - newAngle;
+                Sector.Rotate(delta, playerCenterPosition);
+                Triangle.Rotate(delta, playerCenterPosition);
+                currentAngle = newAngle;
             }
 
-            ticksFromLastAttack = 0;
-            return createBlood;
-        }
-        
-        public void IncrementTick() => ticksFromLastAttack++;
+            public void MoveBy(Vector delta)
+            {
+                Sector.MoveBy(delta);
+                Triangle.MoveBy(delta);
+            }
 
-        public void RotateRangeShape(float newAngle, Vector playerCenterPosition)
-        {
-            var delta = currentAngle - newAngle;
-            foreach (var circle in range)
-                circle.MoveTo(circle.Center.Rotate(delta, playerCenterPosition));
-            currentAngle = newAngle;
+            public bool IsCollide(RigidCircle circle)
+            {
+                var firstCollision = CollisionDetector.GetCollisionInfo(Sector, circle);
+                var secondCollision = CollisionDetector.GetCollisionInfo(Triangle, circle);
+                return firstCollision != null || secondCollision != null;
+            }
         }
-
-        public void MoveRangeShapeBy(Vector delta)
-        {
-            foreach (var circle in range)
-                circle.MoveBy(delta);
-        }
-
-        public bool IsReady => ticksFromLastAttack >= attackPeriod;
     }
 }

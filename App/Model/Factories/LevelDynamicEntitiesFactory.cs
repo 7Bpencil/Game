@@ -6,16 +6,16 @@ namespace App.Model.Factories
 {
     public static class LevelDynamicEntitiesFactory
     {
-        public static Player CreatePlayer(EntityCreator.PlayerInfo playerInfo)
+        public static Player CreatePlayer(EntityFactory.PlayerInfo playerInfo)
         {
-            return EntityCreator.CreatePlayer(playerInfo);
+            return EntityFactory.CreatePlayer(playerInfo);
         }
 
-        public static List<Bot> CreateBots(List<EntityCreator.BotInfo> botsInfo)
+        public static List<Bot> CreateBots(List<EntityFactory.BotInfo> botsInfo)
         {
             var bots = new List<Bot>();
             foreach (var info in botsInfo)
-                bots.Add(EntityCreator.CreateBot(info));
+                bots.Add(EntityFactory.CreateBot(info));
             return bots;
         }
 

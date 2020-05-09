@@ -69,10 +69,10 @@ namespace App.Model.Entities
             TorsoContainer.Content = weaponSprites[CurrentWeapon.GetType()];
         }
 
-        public void TakeMeleeWeapon()
+        public void RaiseMeleeWeapon()
         {
             TorsoContainer.Content = meleeWeaponSprite;
-            meleeWeaponSprite.inAction = true;
+            meleeWeaponSprite.InAction = true;
         }
 
         public void HideMeleeWeapon()
@@ -86,5 +86,7 @@ namespace App.Model.Entities
             foreach (var weapon in weapons)
                 weapon.IncrementTick();
         }
+
+        public bool WasMeleeWeaponRaised => meleeWeaponSprite.WasRaised;
     }
 }

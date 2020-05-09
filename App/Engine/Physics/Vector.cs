@@ -127,13 +127,6 @@ namespace App.Engine.Physics
             return thisLength > 0 ? this / thisLength : this;
         }
 
-        public static float Distance(Vector a, Vector b)
-        {
-            var x = a.X - b.X;
-            var y = a.Y - b.Y;
-            return (float) Math.Sqrt(x * x + y * y);
-        }
-        
         public static float ScalarProduct(Vector first, Vector second)
         {
             return first.X * second.X + first.Y * second.Y;
@@ -149,21 +142,17 @@ namespace App.Engine.Physics
             return this - cameraPosition;
         }
 
-        public Vector ConvertFromCameraToWorld(Vector cameraPosition)
-        {
-            return this + cameraPosition;
-        }
-
+        /// <summary>
+        /// returns clock-wise normal
+        /// </summary>
+        /// <returns></returns>
         public Vector GetNormal()
         {
-            if (Math.Abs(Y) < 0.01) return new Vector(0, 1);
-            return new Vector(1, -X / Y).Normalize();
+            return - new Vector(Y, -X);
         }
 
         public Vector Copy() => new Vector(X, Y);
 
         public PointF GetPoint() => new PointF(X, Y);
-
-        public float[] GetVector3() => new[] {X, Y, 0};
     }
 }

@@ -50,8 +50,12 @@ namespace App.Engine
             InitializeSystems();
             currentLevel = LevelManager.LoadLevel(0);
             InitState();
+
+            // These 2 lines defines level-completing logic 
+            currentLevel.IsCompleted = true;
+            currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
             
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -91,7 +95,8 @@ namespace App.Engine
             {
                 ResetState();
             }
-            if (CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
+            if (currentLevel.IsCompleted 
+                && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 currentLevel = LevelManager.LoadLevel(1);
                 InitState();
@@ -130,15 +135,13 @@ namespace App.Engine
             AudioEngine.UpdateListenerPosition(player.Position);
             var positionDelta = player.Position - previousPosition;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
-            player.MeleeWeapon.MoveRangeShapeBy(positionDelta);
+            player.MeleeWeapon.MoveRangeBy(positionDelta);
             UpdatePlayerByMouse();
             RotatePlayerLegs(playerVelocity);
 
             if (mouseState.RMB && player.MeleeWeapon.IsReady)
             {
-                player.TakeMeleeWeapon();
-                var wasHit = player.MeleeWeapon.Attack(currentLevel.Bots);
-                if (wasHit) currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(player.Position + (cursor.Position - player.Position).Normalize() * player.Radius * 3));
+                player.RaiseMeleeWeapon();
             }
             else if (mouseState.LMB && player.CurrentWeapon.IsReady && player.MeleeWeapon.IsReady)
             {
@@ -183,7 +186,7 @@ namespace App.Engine
             var dirAngle = direction.Angle;
             var angle = (float) (180 / Math.PI * dirAngle);
             player.TorsoContainer.Angle = angle;
-            player.MeleeWeapon.RotateRangeShape(angle, player.Position);
+            player.MeleeWeapon.RotateRangeTo(angle, player.Position);
         }
         
         private void RotatePlayerLegs(Vector delta)
@@ -269,6 +272,7 @@ namespace App.Engine
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
                 bot.TakeHit(bullet.Damage);
                 if (bot.Armour > 50) bullet.IsStuck = true;
+                else bullet.SlowDown();
 
                 particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
                 particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
@@ -277,18 +281,22 @@ namespace App.Engine
                     bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
             }
         }
-
-        /// <summary>
-        /// Updates AI - it should be called every tick
-        /// </summary>
+        
         private void UpdateBots()
         {
             var regions = new List<Raytracing.VisibilityRegion>();
             regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var bots = currentLevel.Bots;
-            foreach (var t in bots)
+            foreach (var bot in bots)
             {
-                t.Update();
+                if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
+                {
+                    bot.TakeHit(player.MeleeWeapon.Damage);
+                    var particlePosition = player.Position + (bot.Center - player.Position).Normalize() * player.Radius * 3;
+                    currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
+                    currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
+                }
+                bot.Update();
             }
 
             currentLevel.VisibilityRegions = regions;

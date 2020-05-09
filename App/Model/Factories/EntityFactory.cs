@@ -10,7 +10,7 @@ using App.Model.Entities.Weapons;
 
 namespace App.Model.Factories
 {
-    public static class EntityCreator
+    public static class EntityFactory
     {
         private static readonly Dictionary<string, Bitmap> cachedBitmaps = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>

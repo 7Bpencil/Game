@@ -16,15 +16,8 @@
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
 
         public override bool IsCollided { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="center"></param>
-        /// <param name="radius"></param>
-        /// <param name="isStatic"></param>
-        /// <param name="canCollide">should a collision be calculated</param>
+        
+        
         public RigidCircle(Vector center, float radius, bool isStatic, bool canCollide)
         {
             this.radius = radius;
@@ -43,6 +36,11 @@
         {
             center.X = newPosition.X;
             center.Y = newPosition.Y;
+        }
+
+        public void Rotate(float angleInDegrees, Vector rotationCenter)
+        {
+            MoveTo(Center.Rotate(angleInDegrees, rotationCenter));
         }
 
         public override RigidShape Copy()

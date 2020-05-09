@@ -12,18 +12,18 @@ namespace App.Model.LevelData
     {
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
-        public readonly RigidShape Exit;
+        public readonly RigidAABB Exit;
         public readonly List<RigidShape> StaticShapes;
         public readonly Bitmap LevelMap;
         public readonly List<Edge> RaytracingEdges;
-        public readonly EntityCreator.PlayerInfo PlayerInfo;
-        public readonly List<EntityCreator.BotInfo> BotsInfo;
+        public readonly EntityFactory.PlayerInfo PlayerInfo;
+        public readonly List<EntityFactory.BotInfo> BotsInfo;
         public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
 
         public LevelInfo(
-            Size levelSizeInTiles, string name, RigidShape exit, List<RigidShape> staticShapes, 
-            Bitmap levelMap, List<Edge> raytracingEdges, EntityCreator.PlayerInfo playerInfo, 
-            List<EntityCreator.BotInfo> botsInfo, List<CollectableWeaponInfo> collectableWeaponsInfo)
+            Size levelSizeInTiles, string name, RigidAABB exit, List<RigidShape> staticShapes, 
+            Bitmap levelMap, List<Edge> raytracingEdges, EntityFactory.PlayerInfo playerInfo, 
+            List<EntityFactory.BotInfo> botsInfo, List<CollectableWeaponInfo> collectableWeaponsInfo)
         {
             LevelSizeInTiles = levelSizeInTiles;
             Name = name;
