@@ -16,13 +16,14 @@ namespace App.Model.LevelData
         public readonly List<RigidShape> StaticShapes;
         public readonly Bitmap LevelMap;
         public readonly List<Edge> RaytracingEdges;
+        public readonly NavMesh NavMesh;
         public readonly EntityFactory.PlayerInfo PlayerInfo;
         public readonly List<EntityFactory.BotInfo> BotsInfo;
         public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
 
         public LevelInfo(
             Size levelSizeInTiles, string name, RigidAABB exit, List<RigidShape> staticShapes, 
-            Bitmap levelMap, List<Edge> raytracingEdges, EntityFactory.PlayerInfo playerInfo, 
+            Bitmap levelMap, List<Edge> raytracingEdges, NavMesh navMesh, EntityFactory.PlayerInfo playerInfo, 
             List<EntityFactory.BotInfo> botsInfo, List<CollectableWeaponInfo> collectableWeaponsInfo)
         {
             LevelSizeInTiles = levelSizeInTiles;
@@ -31,6 +32,7 @@ namespace App.Model.LevelData
             StaticShapes = staticShapes;
             LevelMap = levelMap;
             RaytracingEdges = raytracingEdges;
+            NavMesh = navMesh;
             PlayerInfo = playerInfo;
             BotsInfo = botsInfo;
             CollectableWeaponsInfo = collectableWeaponsInfo;

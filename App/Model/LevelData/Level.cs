@@ -21,6 +21,7 @@ namespace App.Model.LevelData
         public List<RigidShape> DynamicShapes { get; private set; }
         public ShapesIterator SceneShapes { get; private set; }
         public readonly List<Edge> RaytracingEdges;
+        public readonly NavMesh NavMesh;
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
         public List<Collectable> Collectables { get; private set; }
@@ -40,6 +41,7 @@ namespace App.Model.LevelData
             Exit = levelInfo.Exit;
             StaticShapes = levelInfo.StaticShapes;
             RaytracingEdges = levelInfo.RaytracingEdges;
+            NavMesh = levelInfo.NavMesh;
 
             SetDynamicEntities();
         }

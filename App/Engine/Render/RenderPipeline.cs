@@ -10,14 +10,14 @@ namespace App.Engine.Render
 {
     public static class RenderPipeline
     {
-        private static Stopwatch clock = new Stopwatch();
+        private static readonly Stopwatch Clock = new Stopwatch();
         
         public static void Render(Level level, Camera camera, Vector cursorPosition, bool renderRaytracing, bool renderDebug)
         {
             var cameraPosition = camera.Position;
             var cameraSize = camera.Size;
             
-            clock.Start();
+            Clock.Start();
             
             RerenderCamera(cameraPosition, cameraSize);
             var rC = Measure();
@@ -39,8 +39,8 @@ namespace App.Engine.Render
                 RenderMachine.RenderShadowMask();
                 rT += Measure();
             }
-            clock.Stop();
-            clock.Reset();
+            Clock.Stop();
+            Clock.Reset();
 
             var perfomanceInfo = 
                 "summary: " + (rC + rS + rP + rB + rT).ToString() +
@@ -62,7 +62,8 @@ namespace App.Engine.Render
             var playerPosition = level.Player.Position;
             var cameraPosition = camera.Position;
             var cameraSize = camera.Size;
-            
+
+            RenderNavMesh(level.NavMesh, cameraPosition);
             RenderShapes(level.SceneShapes, cameraPosition);
             RenderCollectablesShapes(level.Collectables, cameraPosition);
             RenderRaytracingEdges(level.RaytracingEdges, cameraPosition);
@@ -202,6 +203,16 @@ namespace App.Engine.Render
             }
         }
 
+        private static void RenderNavMesh(NavMesh navMesh, Vector cameraPosition)
+        {
+            var points = navMesh.RenderForm.Points;
+            var edges = navMesh.RenderForm.Edges;
+            foreach (var p in points)
+                RenderMachine.RenderPoint(p, cameraPosition);
+            foreach (var edge in edges)
+                RenderMachine.RenderEdgeOnCamera(edge, cameraPosition);
+        }
+
         private static Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)
         {
             var sourceX = tileID % columnsInTileMap * tileSize;
@@ -211,10 +222,10 @@ namespace App.Engine.Render
 
         private static long Measure()
         {
-            clock.Stop();
-            var result = clock.ElapsedMilliseconds;
-            clock.Reset();
-            clock.Start();
+            Clock.Stop();
+            var result = Clock.ElapsedMilliseconds;
+            Clock.Reset();
+            Clock.Start();
             return result;
         }
     }

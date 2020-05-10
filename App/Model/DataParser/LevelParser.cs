@@ -103,10 +103,11 @@ namespace App.Model.DataParser
                     }
                 }
             }
-
+            
+            var navMesh = new NavMesh(levelSizeInTiles, staticShapes);
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
             return new LevelInfo(
-                levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, playerInfo, botsInfo, collectableWeapons);
+                levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, navMesh, playerInfo, botsInfo, collectableWeapons);
         }
 
         private static EntityFactory.PlayerInfo LoadPlayerInfo(XmlNode playerNode)

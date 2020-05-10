@@ -63,6 +63,7 @@
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
+        <Compile Include="Engine\Physics\Graph.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircleQuarter.cs" />
@@ -90,6 +91,7 @@
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\Bot.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
+        <Compile Include="Model\Entities\SRT.cs" />
         <Compile Include="Model\Entities\Weapon.cs" />
         <Compile Include="Model\Entities\Weapons\AK303.cs" />
         <Compile Include="Model\Entities\Weapons\MeleeWeapon.cs" />

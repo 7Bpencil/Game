@@ -154,5 +154,7 @@ namespace App.Engine.Physics
         public Vector Copy() => new Vector(X, Y);
 
         public PointF GetPoint() => new PointF(X, Y);
+        
+        public static Vector GetVector(Point point) => new Vector(point.X, point.Y);
     }
 }
