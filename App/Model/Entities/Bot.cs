@@ -14,6 +14,9 @@ namespace App.Model.Entities
         public readonly RigidCircle CollisionShape;
         private readonly Weapon weapon;
         public Vector Velocity = Vector.ZeroVector;
+        private float speed = 6;
+        private float speedAngular = 6;
+        private Vector sight;
 
         public Vector Center => CollisionShape.Center;
         
@@ -27,6 +30,7 @@ namespace App.Model.Entities
             LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
             TorsoContainer = new SpriteContainer(torso, startPosition, startAngle);
             this.weapon = weapon;
+            sight = new Vector(1, 0).Rotate(-startAngle, Vector.ZeroVector).Normalize();
         }
         
         public void TakeHit(int damage)
@@ -43,8 +47,26 @@ namespace App.Model.Entities
         }
         
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);
-        public void Update() // Placeholder
+        public void Update(Vector playerPosition) // Placeholder
         {
+            RotateToPlayer(playerPosition);
+            MoveTo(Center + sight * speed);
+        }
+
+        private void RotateToPlayer(Vector playerPosition) // Placeholder
+        {
+            var vectorToPrey = (playerPosition - Center).Normalize();
+            var sightNormal = sight.GetNormal();
+            var v = Vector.ScalarProduct(vectorToPrey, sightNormal);
+            Rotate(v > 0);
+        }
+
+        private void Rotate(bool isRightTurn)
+        {
+            var k = isRightTurn ? 1 : -1;
+            sight = sight.Rotate(speedAngular * k, Vector.ZeroVector);
+            TorsoContainer.Angle -= speedAngular * k;
+            LegsContainer.Angle -= speedAngular * k;
         }
     }
 }

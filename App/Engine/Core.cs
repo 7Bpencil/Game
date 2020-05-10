@@ -277,7 +277,7 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update();
+                bot.Update(player.Position);
             }
 
             currentLevel.VisibilityRegions = regions;
