@@ -270,6 +270,7 @@ namespace App.Engine
             var bots = currentLevel.Bots;
             foreach (var bot in bots)
             {
+                if (bot.IsDead) continue;
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
                     bot.TakeHit(player.MeleeWeapon.Damage);
@@ -277,7 +278,7 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update(player.Position);
+                bot.Update(player.Position, currentLevel.SceneShapes);
             }
 
             currentLevel.VisibilityRegions = regions;
