@@ -69,17 +69,17 @@ namespace App.Engine.Render
             gfxLevelMap = Graphics.FromImage(bmpLevelMap);
         }
         
-        public static void RenderNewTile(Bitmap tileMap, int x, int y, Rectangle src)
+        public static void RenderTile(Bitmap tileMap, int x, int y, Rectangle src)
         {
             gfxLevelMap.DrawImage(tileMap, x, y, src, GraphicsUnit.Pixel);
         }
 
-        public static Bitmap GetLevelMap()
+        public static Bitmap GetLevelMapCopy()
         {
-            return bmpLevelMap;
+            return (Bitmap) bmpLevelMap.Clone();
         }
 
-        public static void RenderCamera(Rectangle sourceRectangle, Bitmap bmpLevelMap)
+        public static void RenderCamera(Rectangle sourceRectangle)
         {
             gfxCamera.DrawImage(bmpLevelMap, 0, 0, sourceRectangle, GraphicsUnit.Pixel);
         }
@@ -94,7 +94,7 @@ namespace App.Engine.Render
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, cameraPosition, gfxCamera);
         }
 
-        public static void BurnParticleOnRenderedTiles(AbstractParticleUnit unit, Graphics gfxLevelMap)
+        public static void BurnParticleOnRenderedTiles(AbstractParticleUnit unit)
         {
             SpriteRenderer.DrawNextFrame(unit.Content, unit.CurrentFrame, unit.CenterPosition, unit.Angle, gfxLevelMap);
         }
@@ -170,6 +170,12 @@ namespace App.Engine.Render
         public static BufferedGraphics GetCameraBuffer()
         {
             return cameraBuffer;
+        }
+
+        public static void ResetLevelMap(Bitmap levelMap)
+        {
+            bmpLevelMap = (Bitmap) levelMap.Clone();
+            gfxLevelMap = Graphics.FromImage(bmpLevelMap);
         }
     }
 }

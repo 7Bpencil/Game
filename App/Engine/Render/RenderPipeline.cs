@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using App.Engine.Physics;
 using App.Engine.Physics.Collision;
@@ -9,21 +10,54 @@ namespace App.Engine.Render
 {
     public static class RenderPipeline
     {
-        public static void Render(Level level, Size cameraSize, Vector cameraPosition)
+        private static Stopwatch clock = new Stopwatch();
+        
+        public static void Render(Level level, Camera camera, Vector cursorPosition, bool renderRaytracing, bool renderDebug)
         {
-            RerenderCamera(cameraPosition, cameraSize, level.bmpLevelMap);
+            var cameraPosition = camera.Position;
+            var cameraSize = camera.Size;
+            
+            clock.Start();
+            
+            RerenderCamera(cameraPosition, cameraSize);
+            var rC = Measure();
+
             RenderSprites(level.Sprites, cameraPosition);
-            RenderParticles(level.Particles, cameraPosition, level.gfxLevelMap);
+            var rS = Measure();
+
+            RenderParticles(level.Particles, cameraPosition);
+            var rP = Measure();
+
             RenderBullets(level.Bullets, cameraPosition);
-            //RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
-            //RenderMachine.RenderShadowMask();
+            var rB = Measure();
+            
+
+            var rT = 0L;
+            if (renderRaytracing)
+            {
+                RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
+                RenderMachine.RenderShadowMask();
+                rT += Measure();
+            }
+            clock.Stop();
+            clock.Reset();
+
+            var perfomanceInfo = 
+                "summary: " + (rC + rS + rP + rB + rT).ToString() +
+                "ms, camera: " + rC.ToString() + 
+                "ms, sprites: " + rS.ToString() + 
+                "ms, particles: " + rP.ToString() + 
+                "ms, bullets: " + rB.ToString() + 
+                "ms, raytracing: " + rT.ToString(); 
+            if (renderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
+            
             var playerWeapon = level.Player.CurrentWeapon;
             RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
 
             RenderMachine.Invalidate();
         }
 
-        public static void RenderDebugInfo(Level level, Camera camera, Vector cursorPosition, string updateTime)
+        private static void RenderDebugInfo(Level level, Camera camera, Vector cursorPosition, string perfomanceInfo)
         {
             var playerPosition = level.Player.Position;
             var cameraPosition = camera.Position;
@@ -41,7 +75,7 @@ namespace App.Engine.Render
 
             var debugInfo = new []
             {
-                updateTime,
+                perfomanceInfo,
                 "Camera Size: " + camera.Size.Width.ToString() + " x " + camera.Size.Height.ToString(),
                 "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width.ToString() + " x " + level.LevelSizeInTiles.Height.ToString(),
                 "(WAxis) Scroll Position: " + camera.Position,
@@ -59,7 +93,7 @@ namespace App.Engine.Render
                 new Size(levelSizeInTiles.Width * tileSize, levelSizeInTiles.Height * tileSize));
             foreach (var layer in layers)
                 RenderLayer(layer.Tiles, levelSizeInTiles.Width, levelSizeInTiles.Height, tileSize, levelTileSet.Image);
-            return RenderMachine.GetLevelMap();
+            return RenderMachine.GetLevelMapCopy();
         }
 
         private static void RenderLayer(
@@ -81,16 +115,16 @@ namespace App.Engine.Render
         private static void RenderTile(int targetX, int targetY, int tileID, Bitmap tileMap, int tileSize)
         {
             var src = GetSourceRectangle(tileID, tileMap.Width / tileSize, tileSize);
-            RenderMachine.RenderNewTile(tileMap, targetX * tileSize, targetY * tileSize, src);
+            RenderMachine.RenderTile(tileMap, targetX * tileSize, targetY * tileSize, src);
         }
 
-        private static void RerenderCamera(Vector cameraPosition, Size cameraSize, Bitmap bmpLevelMap)
+        private static void RerenderCamera(Vector cameraPosition, Size cameraSize)
         {
             var sourceRectangle = new Rectangle(
                 (int) cameraPosition.X, (int) cameraPosition.Y,
                 cameraSize.Width, cameraSize.Height);
             
-            RenderMachine.RenderCamera(sourceRectangle, bmpLevelMap);
+            RenderMachine.RenderCamera(sourceRectangle);
         }
         
         private static void RenderSprites(List<SpriteContainer> spriteContainers, Vector cameraPosition)
@@ -99,13 +133,13 @@ namespace App.Engine.Render
                 if (!container.IsEmpty()) RenderMachine.RenderSpriteOnCamera(container, cameraPosition);
         }
 
-        private static void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition, Graphics gfxLevelMap)
+        private static void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition)
         {
             foreach (var container in particleUnits)
             {
                 if (container.ShouldBeBurned)
                 {
-                    RenderMachine.BurnParticleOnRenderedTiles(container, gfxLevelMap);
+                    RenderMachine.BurnParticleOnRenderedTiles(container);
                     container.ShouldBeBurned = false;
                     container.IsExpired = true;
                 }
@@ -173,6 +207,15 @@ namespace App.Engine.Render
             var sourceX = tileID % columnsInTileMap * tileSize;
             var sourceY = tileID / columnsInTileMap * tileSize;
             return new Rectangle(sourceX, sourceY, tileSize - 1, tileSize - 1);
+        }
+
+        private static long Measure()
+        {
+            clock.Stop();
+            var result = clock.ElapsedMilliseconds;
+            clock.Reset();
+            clock.Start();
+            return result;
         }
     }
 }

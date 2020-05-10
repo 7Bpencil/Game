@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using App.Engine.Audio;
@@ -19,8 +18,7 @@ namespace App.Engine
     {
         private readonly ViewForm viewForm;
         private Size screenSize;
-        private Stopwatch clock;
-        
+
         private KeyStates keyState;
         private MouseState mouseState;
         private CustomCursor cursor;
@@ -28,14 +26,14 @@ namespace App.Engine
         
         private Level currentLevel;
         private Player player;
-
-        private string updateTime;
+        
         private const int tileSize = 32;
         
         private class KeyStates
         {
-            public bool W, S, A, D, I, R;
+            public bool W, S, A, D, I, R, P;
             public int pressesOnIAmount;
+            public int pressesOnPAmount;
         }
 
         private class MouseState
@@ -75,7 +73,6 @@ namespace App.Engine
             currentLevel.Sprites.Add(cursor.SpriteContainer);
             keyState = new KeyStates();
             mouseState = new MouseState();
-            clock = new Stopwatch();
         }
         
         private void ResetState()
@@ -91,37 +88,21 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (keyState.R)
-            {
-                ResetState();
-            }
+            if (keyState.R) ResetState();
             if (currentLevel.IsCompleted 
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 currentLevel = LevelManager.LoadLevel(1);
                 InitState();
             }
-            
-            clock.Start();
-            
+
             UpdateState();
-            
-            clock.Stop();
-            var logicTime = clock.ElapsedMilliseconds;
-            clock.Reset();
-            clock.Start();
-            
-            RenderPipeline.Render(currentLevel, camera.Size, camera.Position);
-            
-            if (keyState.pressesOnIAmount % 2 == 1)
-                RenderPipeline.RenderDebugInfo(currentLevel, camera, cursor.Position, updateTime);
-            
+
+            var renderRaytracing = keyState.pressesOnPAmount % 2 == 1;
+            var renderDebug = keyState.pressesOnIAmount % 2 == 1; 
+            RenderPipeline.Render(currentLevel, camera, cursor.Position, renderRaytracing, renderDebug);
+
             AudioEngine.Update();
-            
-            clock.Stop();
-            var renderTime = clock.ElapsedMilliseconds;
-            clock.Reset();
-            updateTime = "logic=" + logicTime + "ms render=" + renderTime + "ms";
         }
         
         private void UpdateState()
@@ -342,6 +323,11 @@ namespace App.Engine
                 case Keys.R:
                     keyState.R = true;
                     break;
+                
+                case Keys.P:
+                    keyState.P = true;
+                    keyState.pressesOnPAmount++;
+                    break;
             }
         }
 
@@ -376,6 +362,10 @@ namespace App.Engine
                 
                 case Keys.R:
                     keyState.R = false;
+                    break;
+                
+                case Keys.P:
+                    keyState.P = false;
                     break;
             }
         }
