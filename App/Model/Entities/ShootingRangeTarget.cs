@@ -278,12 +278,7 @@ namespace App.Model.Entities
             result.Add(new Vector(0, -Center.Y % 32));*/
             for (var i = 0; i < currentPath.Count - 1; i++)
             {
-                var diffx = (int)(currentPath[i + 1].X - currentPath[i].X);
-                var diffy = (int)(currentPath[i + 1].Y - currentPath[i].Y);
-                for (var j = 0; j < Math.Abs(diffx) / 6; ++j)
-                    result.Add(new Vector(6 * Math.Sign(diffx), 0));
-                for (var j = 0; j < Math.Abs(diffy) / 6; ++j)
-                    result.Add(new Vector(0, 6 * Math.Sign(diffy)));
+                result.Add(currentPath[i + 1] - currentPath[i]);
             }
 
             return result;
@@ -392,7 +387,7 @@ namespace App.Model.Entities
             {
                 for (var x = 0; x < grid.width; x++)
                 {
-                    var id = new Point(y, x);
+                    var id = new Point(x, y);
                     if (pathPoints.Contains(id)) Console.Write("$$");
                     else if (grid.walls.Contains(id)) Console.Write("##");
                     else Console.Write("* ");
@@ -424,7 +419,7 @@ namespace App.Model.Entities
                 
             } ;
             AddWals(level);
-            DrawGrid(grid);
+            //DrawGrid(grid);
             appointmentIndex = 0;
             UpdatePatrolPath();
             //previous
@@ -475,11 +470,10 @@ namespace App.Model.Entities
 
         public void UpdatePatrolPath()
         {
-            Point start;
-            start = new Point(
-                ((int) Center.X / currentLevel.TileSet.tileWidth),
-                ((int) Center.Y / currentLevel.TileSet.tileHeight));
-            var goal = new Point((int) patrolPathTilesCoords[appointmentIndex].X , (int) patrolPathTilesCoords[appointmentIndex].Y); 
+            Point start = new Point(
+                ((int) Center.X / currentLevel.TileSet.tileWidth) - 1,
+                ((int) Center.Y / currentLevel.TileSet.tileHeight) - 1);
+            var goal = new Point((int) patrolPathTilesCoords[appointmentIndex].X - 1 , (int) patrolPathTilesCoords[appointmentIndex].Y - 1); 
             var astar = new AStarSearch(grid, start, goal);
             var path = ReconstructPath(astar, start, goal);
             currentPath = GetCurrentPath(path);
