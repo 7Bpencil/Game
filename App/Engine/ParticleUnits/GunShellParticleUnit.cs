@@ -23,7 +23,7 @@ namespace App.Engine.ParticleUnits
         {
             this.content = content;
             position = startPosition;
-            shellDirectionVector = directionVector.GetNormal() * 5 + new Vector(angle, -angle) / 10;
+            shellDirectionVector = directionVector.GetNormal().Normalize() * 5 + new Vector(angle, -angle) / 10;
             Angle = angle;
         }
 
