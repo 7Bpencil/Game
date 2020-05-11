@@ -52,7 +52,7 @@ namespace App.Model.Entities.Weapons
                 position,
                 direction * 40,
                 bulletWeight,
-                new Edge(gunPosition.Copy(), position),
+                new Edge(position, position + direction * 40),
                 40));
             
             ammo--;
@@ -73,7 +73,7 @@ namespace App.Model.Entities.Weapons
                 position,
                 direction * 40,
                 bulletWeight,
-                new Edge(gunPosition.Copy(), position),
+                new Edge(position, position + direction * 40),
                 40));
             
             ammo--;

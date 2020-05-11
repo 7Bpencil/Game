@@ -46,13 +46,13 @@ namespace App.Model.Entities.Weapons
         {
             var spray = new List<Bullet>();
             var direction = (cursor.Position - gunPosition).Normalize();
-            var position = gunPosition + direction * 30;
+            var position = gunPosition + direction * 48;
             
             spray.Add(new Bullet(
                 position,
                 direction * 30,
                 bulletWeight,
-                new Edge(gunPosition.Copy(), position),
+                new Edge(position, position + direction * 32),
                 20));
             
             ammo--;
@@ -67,13 +67,13 @@ namespace App.Model.Entities.Weapons
         {
             var spray = new List<Bullet>();
             var direction = sightDirection.Normalize();
-            var position = gunPosition + direction * 30;
+            var position = gunPosition + direction * 48;
             
             spray.Add(new Bullet(
                 position,
                 direction * 30,
                 bulletWeight,
-                new Edge(gunPosition.Copy(), position),
+                new Edge(position, position + direction * 32),
                 20));
             
             ammo--;

@@ -7,19 +7,20 @@
   </playerInfo>
   
   <bots>
-    <bot health="100" armor="100" position="840, 420" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
-      <weapon type="MP6" ammo="120"/>
-    </bot>
-    <bot health="50" armor="200" position="350, 580" angle="0" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
-      <weapon type="SaigaFA" ammo="100"/>
-    </bot>
-    <bot health="100" armor="0" position="720, 920" angle="45" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
-      <weapon type="Shotgun" ammo="96"/>
-    </bot>
-    <bot health="100" armor="300" position="340, 280" angle="-45" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
-      <weapon type="AK303" ammo="120"/>
-    </bot>
+    <bot type="CrazyBitch" position="840, 420" angle="90"/>
+    <bot type="SpetzNaz" position="350, 580" angle="0"/>
+    <bot type="Shotgunner" position="720, 920" angle="45"/>
+    <bot type="Rifleman" position="340, 280" angle="-45"/> 
   </bots>
+  
+  <botSpawnPoints wavesAmount="5">
+    <point position="292, 350"/>
+    <point position="285, 990"/>
+    <point position="1100, 990"/>
+    <point position="820, 645"/>
+    <point position="1148, 340"/>
+    <point position="608, 192"/>
+  </botSpawnPoints>
   
   <collectables>
     <collectableWeapon position="1130, 700" angle="0" type="AK303" ammo="30"/>

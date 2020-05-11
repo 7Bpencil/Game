@@ -12,7 +12,7 @@ namespace App.Model.Factories
 {
     public static class EntityFactory
     {
-        private static readonly Dictionary<string, Bitmap> cachedBitmaps = new Dictionary<string, Bitmap>();
+        private static readonly Dictionary<string, Bitmap> CachedBitmaps = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>
         {
             {typeof(AK303), 0},
@@ -52,19 +52,20 @@ namespace App.Model.Factories
         public static Bot CreateBot(BotInfo info)
         {
             var position = info.Position.Copy();
+            var type = BotBank.GetBotTypeInfo(info.Type);
             return new Bot(
-                info.Health, info.Armor, position, info.Angle,
-                new PlayerBodySprite(position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
-                new StaticSprite(GetBitmap(info.WeaponsTileMapPath), WeaponFramesId[info.weapon.WeaponType], new Size(79, 57)),
+                type.Health, type.Armor, position, info.Angle,
+                new PlayerBodySprite(position, GetBitmap(type.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
+                new StaticSprite(GetBitmap(type.WeaponsTileMapPath), WeaponFramesId[type.Weapon.WeaponType], new Size(79, 57)),
                 new RigidCircle(position, 32, false, true),
-                AbstractWeaponFactory.CreateGun(info.weapon));
+                AbstractWeaponFactory.CreateGun(type.Weapon));
         }
 
         private static Bitmap GetBitmap(string path)
         {
-            if (cachedBitmaps.ContainsKey(path)) return cachedBitmaps[path];
+            if (CachedBitmaps.ContainsKey(path)) return CachedBitmaps[path];
             var newBitmap = new Bitmap(path);
-            cachedBitmaps.Add(path, newBitmap);
+            CachedBitmaps.Add(path, newBitmap);
             return newBitmap;
         }
 
@@ -96,23 +97,31 @@ namespace App.Model.Factories
 
         public class BotInfo
         {
-            public readonly int Health;
-            public readonly int Armor;
             public readonly Vector Position;
             public readonly float Angle;
-            public readonly WeaponInfo weapon;
+            public readonly string Type;
+
+            public BotInfo(Vector position, float angle, string type)
+            {
+                Position = position;
+                Angle = angle;
+                Type = type;
+            }
+        }
+
+        public class BotType
+        {
+            public readonly int Health;
+            public readonly int Armor;
+            public readonly WeaponInfo Weapon;
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
 
-            public BotInfo(
-                int health, int armor, Vector position, float angle, WeaponInfo weapon, 
-                string clothesTileMapPath, string weaponsTileMapPath)
+            public BotType(int health, int armor, WeaponInfo weapon, string clothesTileMapPath, string weaponsTileMapPath)
             {
                 Health = health;
                 Armor = armor;
-                Position = position;
-                Angle = angle;
-                this.weapon = weapon;
+                Weapon = weapon;
                 ClothesTileMapPath = clothesTileMapPath;
                 WeaponsTileMapPath = weaponsTileMapPath;
             }

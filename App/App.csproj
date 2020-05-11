@@ -85,6 +85,7 @@
         <Compile Include="Engine\Sprites\MeleeWeaponSprite.cs" />
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
+        <Compile Include="Model\DataParser\BotTypesParser.cs" />
         <Compile Include="Model\DataParser\TileSetParser.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
@@ -101,6 +102,7 @@
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
         <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
         <Compile Include="Model\Factories\AbstractWeaponFactory.cs" />
+        <Compile Include="Model\Factories\BotBank.cs" />
         <Compile Include="Model\Factories\EntityFactory.cs" />
         <Compile Include="Model\Factories\GenericWeaponFactory.cs" />
         <Compile Include="Model\Factories\LevelDynamicEntitiesFactory.cs" />
@@ -122,6 +124,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Audio\Desktop\Master.strings.bank">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\BotBank.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Levels\arena_second.tmx">

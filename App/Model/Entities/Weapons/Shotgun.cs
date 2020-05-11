@@ -57,7 +57,7 @@ namespace App.Model.Entities.Weapons
                     position,
                     e * 30,
                     bulletWeight,
-                    new Edge(gunPosition.Copy(), position),
+                    new Edge(position, position + e * 40),
                     12));
             }
 
@@ -84,7 +84,7 @@ namespace App.Model.Entities.Weapons
                     position,
                     e * 30,
                     bulletWeight,
-                    new Edge(gunPosition.Copy(), position),
+                    new Edge(position, position + e * 40),
                     12));
             }
 

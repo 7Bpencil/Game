@@ -22,6 +22,8 @@ namespace App.Model.LevelData
         public ShapesIterator SceneShapes { get; private set; }
         public readonly List<Edge> RaytracingEdges;
         public readonly NavMesh NavMesh;
+        public readonly List<Vector> BotSpawnPoints;
+        public int WavesAmount;
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
         public List<Collectable> Collectables { get; private set; }
@@ -43,6 +45,7 @@ namespace App.Model.LevelData
             StaticShapes = levelInfo.StaticShapes;
             RaytracingEdges = levelInfo.RaytracingEdges;
             NavMesh = levelInfo.NavMesh;
+            BotSpawnPoints = levelInfo.BotSpawnPoints;
 
             SetDynamicEntities();
         }
@@ -51,6 +54,7 @@ namespace App.Model.LevelData
         {
             DynamicShapes = new List<RigidShape> {Capacity = 50};
             SceneShapes = new ShapesIterator(StaticShapes, DynamicShapes);
+            WavesAmount = levelInfo.WavesAmount;
 
             Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
             Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo);

@@ -69,7 +69,7 @@ namespace App.Model.Entities
 
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);
 
-        public List<Vector> Update(Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, ShapesIterator shapes)
+        public void Update(Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths)
         {
             weapon.IncrementTick();
             AvoidCollision(shapes);
@@ -92,7 +92,7 @@ namespace App.Model.Entities
                 Patrol();
             }
 
-            return currentPath;
+            if (currentPath != null && currentPath.Count != 0) botPaths.Add(currentPath);
         }
 
         private void MoveCirclesAround(Vector target, float angle)

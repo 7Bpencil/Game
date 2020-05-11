@@ -26,6 +26,7 @@ namespace App.Engine
         
         private Level currentLevel;
         private Player player;
+        private int livingBotsAmount;
         
         private const int tileSize = 32;
         
@@ -49,11 +50,7 @@ namespace App.Engine
             currentLevel = LevelManager.LoadLevel(0);
             InitState();
 
-            // These 2 lines defines level-completing logic 
-            currentLevel.IsCompleted = true;
-            currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
-            
-            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -63,6 +60,7 @@ namespace App.Engine
             LevelManager.Initialize();
             ParticleFactory.Initialize();
             AbstractWeaponFactory.Initialize();
+            BotBank.Initialize();
         }
         
         private void InitState()
@@ -74,6 +72,7 @@ namespace App.Engine
             currentLevel.Sprites.Add(cursor.SpriteContainer);
             keyState = new KeyStates();
             mouseState = new MouseState();
+            livingBotsAmount = currentLevel.Bots.Count;
         }
         
         private void ResetState()
@@ -89,6 +88,11 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
+            if (currentLevel.WavesAmount == 0)
+            {
+                currentLevel.IsCompleted = true;
+                currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
+            }
             if (keyState.R) ResetState();
             if (currentLevel.IsCompleted 
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
@@ -252,7 +256,9 @@ namespace App.Engine
                     BulletCollisionDetector.AreCollideWithDynamic(bullet, bot.CollisionShape, bot.Velocity);
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
+                var botState = bot.IsDead;
                 bot.TakeHit(bullet.Damage);
+                if (botState != bot.IsDead) livingBotsAmount--;
                 if (bot.Armour > 50) bullet.IsStuck = true;
                 else bullet.SlowDown();
 
@@ -266,6 +272,13 @@ namespace App.Engine
         
         private void UpdateBots()
         {
+            if (livingBotsAmount == 1 && currentLevel.WavesAmount != 0)
+            {
+                LevelDynamicEntitiesFactory.SpawnBots(
+                    currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes);
+                livingBotsAmount += currentLevel.BotSpawnPoints.Count;
+                currentLevel.WavesAmount--;
+            }
             var regions = new List<Raytracing.VisibilityRegion>();
             regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var paths = new List<List<Vector>> {Capacity = 10};
@@ -280,8 +293,7 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                var currentPath = bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes);
-                if (currentPath != null && currentPath.Count != 0) paths.Add(currentPath);
+                bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths);
             }
 
             currentLevel.VisibilityRegions = regions;

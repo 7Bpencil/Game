@@ -15,7 +15,7 @@ namespace App.Model.DataParser
 {
     public static class LevelParser
     {
-        private static Dictionary<string, Type> weaponTypesTable = new Dictionary<string, Type>
+        private static readonly Dictionary<string, Type> WeaponTypesTable = new Dictionary<string, Type>
         {
             {"AK303", typeof(AK303)},
             {"Shotgun", typeof(Shotgun)},
@@ -61,7 +61,9 @@ namespace App.Model.DataParser
             List<Edge> raytracingEdges = null;
             var collectableWeapons = new List<CollectableWeaponInfo> {Capacity = 8};
             EntityFactory.PlayerInfo playerInfo = null;
-            List<EntityFactory.BotInfo> botsInfo = null; 
+            List<EntityFactory.BotInfo> botsInfo = null;
+            List<Vector> botSpawnPoints = null;
+            int wavesAmount = 0;
             RigidAABB exit = null;
 
             foreach (XmlNode node in root.ChildNodes)
@@ -83,6 +85,11 @@ namespace App.Model.DataParser
 
                             if (property.Name == "playerInfo") playerInfo = LoadPlayerInfo(property);
                             if (property.Name == "bots") botsInfo = loadBots(property);
+                            if (property.Name == "botSpawnPoints")
+                            {
+                                wavesAmount = int.Parse(property.Attributes.GetNamedItem("wavesAmount").Value);
+                                botSpawnPoints = LoadBotSpawnPoints(property);
+                            }
                         }
 
                         break;
@@ -107,7 +114,9 @@ namespace App.Model.DataParser
             var navMesh = new NavMesh(levelSizeInTiles, staticShapes);
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
             return new LevelInfo(
-                levelSizeInTiles, name, exit, staticShapes, levelMap, raytracingEdges, navMesh, playerInfo, botsInfo, collectableWeapons);
+                levelSizeInTiles, name, exit, staticShapes, 
+                levelMap, raytracingEdges, navMesh, botSpawnPoints, 
+                wavesAmount, playerInfo, botsInfo, collectableWeapons);
         }
 
         private static EntityFactory.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
@@ -136,23 +145,25 @@ namespace App.Model.DataParser
                 bots.Add(LoadBotInfo(bot));
             return bots;
         }
+
+        private static List<Vector> LoadBotSpawnPoints(XmlNode spawnPoints)
+        {
+            var points = new List<Vector>();
+            foreach (XmlNode point in spawnPoints.ChildNodes)
+            {
+                points.Add(LoadVector(point.Attributes.GetNamedItem("position").Value));
+            }
+
+            return points;
+        }
         
         private static EntityFactory.BotInfo LoadBotInfo(XmlNode botNode)
         {
-            var health = int.Parse(botNode.Attributes.GetNamedItem("health").Value);
-            var armor = int.Parse(botNode.Attributes.GetNamedItem("armor").Value);
             var position = LoadVector(botNode.Attributes.GetNamedItem("position").Value);
             var angle = int.Parse(botNode.Attributes.GetNamedItem("angle").Value);
-            var clothesTileMapPath = botNode.Attributes.GetNamedItem("clothesTileMap").Value;
-            var weaponsTileMapPath = botNode.Attributes.GetNamedItem("weaponsTileMap").Value;
-            WeaponInfo weapon = null;
-            foreach (XmlNode node in botNode.ChildNodes)
-            {
-                if (node.Name == "weapon") weapon = LoadWeapon(node);
-            }
-            
-            return new EntityFactory.BotInfo
-                (health, armor, position, angle, weapon, clothesTileMapPath, weaponsTileMapPath);
+            var type = botNode.Attributes.GetNamedItem("type").Value;
+
+            return new EntityFactory.BotInfo(position, angle, type);
         }
 
         private static List<RigidShape> LoadStaticShapes(XmlNode staticShapeNode)
@@ -176,10 +187,10 @@ namespace App.Model.DataParser
                 int.Parse(node.Attributes.GetNamedItem("angle").Value));
         }
 
-        private static WeaponInfo LoadWeapon(XmlNode weaponNode)
+        public static WeaponInfo LoadWeapon(XmlNode weaponNode)
         {
             return new WeaponInfo(
-                weaponTypesTable[weaponNode.Attributes.GetNamedItem("type").Value],
+                WeaponTypesTable[weaponNode.Attributes.GetNamedItem("type").Value],
                 int.Parse(weaponNode.Attributes.GetNamedItem("ammo").Value));
         }
 
