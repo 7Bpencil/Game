@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Factories;
 using App.Model.LevelData;
@@ -69,11 +70,13 @@ namespace App.Model.Entities
 
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);
 
-        public void Update(Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths)
+        public void Update(
+            Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
+            ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             weapon.IncrementTick();
             AvoidCollision(shapes);
-            if (IsInView(playerPosition))
+            if (IsInView(playerPosition, walls))
             {
                 Fire(playerPosition, sceneBullets, particles);
                 var v = playerPosition - Center;
@@ -199,7 +202,7 @@ namespace App.Model.Entities
             }
         }
 
-        private bool IsInView(Vector objectCenter)
+        private bool IsInView(Vector objectCenter, List<Edge> sceneEdges)
         {
             var vectorToObject = (objectCenter - Center).Normalize();
             var sightNormal = sight.GetNormal();
@@ -210,6 +213,14 @@ namespace App.Model.Entities
             var sightAngleVector =
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
+            /*if (Math.Abs(sightAngleVectorProjection) > Math.Abs(v))
+            {
+                var sightSegment = new Edge(Center, objectCenter);
+                foreach (var wall in sceneEdges)
+                {
+                    if (CollisionDetector.AreCollide(sightSegment, wall))
+                }
+            }*/
             return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
         }
     }

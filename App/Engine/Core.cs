@@ -256,9 +256,7 @@ namespace App.Engine
                     BulletCollisionDetector.AreCollideWithDynamic(bullet, bot.CollisionShape, bot.Velocity);
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
-                var botState = bot.IsDead;
                 bot.TakeHit(bullet.Damage);
-                if (botState != bot.IsDead) livingBotsAmount--;
                 if (bot.Armour > 50) bullet.IsStuck = true;
                 else bullet.SlowDown();
 
@@ -283,6 +281,7 @@ namespace App.Engine
             regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
+            livingBotsAmount = 0;
             foreach (var bot in bots)
             {
                 if (bot.IsDead) continue;
@@ -293,7 +292,8 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths);
+                bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
+                if (!bot.IsDead) livingBotsAmount++;
             }
 
             currentLevel.VisibilityRegions = regions;
