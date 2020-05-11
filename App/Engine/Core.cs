@@ -280,8 +280,8 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                var currentPath = bot.Update(player.Position, currentLevel.SceneShapes);
-                if (currentPath.Count != 0) paths.Add(currentPath);
+                var currentPath = bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes);
+                if (currentPath != null && currentPath.Count != 0) paths.Add(currentPath);
             }
 
             currentLevel.VisibilityRegions = regions;
