@@ -46,6 +46,7 @@
     <ItemGroup>
         <Compile Include="Engine\AbstractParticle.cs" />
         <Compile Include="Engine\AbstractParticleUnit.cs" />
+        <Compile Include="Engine\AStarSearch.cs" />
         <Compile Include="Engine\Audio\AudioEngine.cs" />
         <Compile Include="Engine\Audio\FMOD\fmod.cs" />
         <Compile Include="Engine\Audio\FMOD\fmod_dsp.cs" />
@@ -58,7 +59,6 @@
         <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
-        <Compile Include="Engine\Physics\AStarSearch.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />

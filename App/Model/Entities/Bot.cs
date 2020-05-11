@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
@@ -16,9 +18,14 @@ namespace App.Model.Entities
         private readonly Weapon weapon;
         public Vector Velocity = Vector.ZeroVector;
         private float speed = 6;
-        private float speedAngular = 6;
+        private float speedAngular = 12;
         private Vector sight;
         private readonly float collisionAvoidanceFactor;
+        
+        private List<Vector> patrolPoints;
+        private int patrolPointIndex;
+        private List<Vector> currentPath;
+        private int currentPathPointIndex;
 
         public Vector Center => CollisionShape.Center;
         
@@ -34,6 +41,15 @@ namespace App.Model.Entities
             this.weapon = weapon;
             sight = new Vector(1, 0).Rotate(-startAngle, Vector.ZeroVector).Normalize();
             collisionAvoidanceFactor = collisionShape.Diameter * 2;
+            patrolPoints = new List<Vector>
+            {
+                new Vector(11, 16) * 32,
+                new Vector(34, 13) * 32, 
+                new Vector(27, 21) * 32,
+                new Vector(10, 26) * 32,
+            };
+            patrolPointIndex = 0;
+            currentPathPointIndex = 0;
         }
         
         public void TakeHit(int damage)
@@ -51,19 +67,58 @@ namespace App.Model.Entities
         
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);
         
-        public void Update(Vector playerPosition, ShapesIterator shapes) // Placeholder
+        public List<Vector> Update(Vector playerPosition, ShapesIterator shapes) // Placeholder
         {
             AvoidCollision(shapes);
-            RotateToPlayer(playerPosition);
-            //MoveTo(Center + sight * speed);
+            //ChasePrey(playerPosition);
+            Patrol();
+            return currentPath;
         }
 
-        private void RotateToPlayer(Vector playerPosition) // Placeholder
+        private void Patrol()
+        {
+            if (patrolPointIndex == patrolPoints.Count)
+            {
+                patrolPointIndex = 0;
+            }
+            if (currentPath == null || currentPathPointIndex == currentPath.Count)
+            {
+                currentPathPointIndex = 0;
+                currentPath = AStarSearch.SearchPath(Center, patrolPoints[patrolPointIndex]);
+                patrolPointIndex++;
+            }
+
+            ChasePrey(currentPath[currentPathPointIndex]);
+            var distVector = currentPath[currentPathPointIndex] - Center;
+            if (Vector.ScalarProduct(distVector, distVector) < 32 * 32)
+            {
+                currentPathPointIndex++;
+            }
+        }
+
+        private void ChasePrey(Vector preyPosition)
+        {
+            RotateToPrey(preyPosition);
+            MoveTo(Center + sight * speed);
+        }
+
+        private void RotateToPrey(Vector playerPosition) // Placeholder
         {
             var vectorToPrey = (playerPosition - Center).Normalize();
             var sightNormal = sight.GetNormal();
             var v = Vector.ScalarProduct(vectorToPrey, sightNormal);
-            Rotate(v > 0);
+
+            var sightAngleVector =
+                v > 0 ? sight.Rotate(speedAngular, Vector.ZeroVector) : sight.Rotate(-speedAngular, Vector.ZeroVector);
+            var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
+            if (Math.Abs(sightAngleVectorProjection) > Math.Abs(v))
+            {
+                var angle = Vector.GetAngle(sight, vectorToPrey);
+                sight = vectorToPrey.Normalize();
+                TorsoContainer.Angle -= angle;
+                LegsContainer.Angle -= angle;
+            }
+            else Rotate(v > 0);
         }
 
         private void Rotate(bool isRightTurn)

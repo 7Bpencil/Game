@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using App.Engine.Physics;
 
-namespace App.Engine.Physics
+namespace App.Engine
 {
     public static class AStarSearch
     {

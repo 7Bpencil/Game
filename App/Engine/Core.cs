@@ -273,8 +273,6 @@ namespace App.Engine
             foreach (var bot in bots)
             {
                 if (bot.IsDead) continue;
-                var newPath = AStarSearch.SearchPath(bot.Center, player.Position);
-                if (newPath.Count != 0) paths.Add(newPath);
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
                     bot.TakeHit(player.MeleeWeapon.Damage);
@@ -282,7 +280,8 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update(player.Position, currentLevel.SceneShapes);
+                var currentPath = bot.Update(player.Position, currentLevel.SceneShapes);
+                if (currentPath.Count != 0) paths.Add(currentPath);
             }
 
             currentLevel.VisibilityRegions = regions;

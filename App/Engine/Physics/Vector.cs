@@ -121,6 +121,20 @@ namespace App.Engine.Physics
         
         public float Angle => (float) Math.Atan2(-Y, X);
 
+        /// <summary>
+        /// The (directed) angle from first vector to second 
+        /// </summary>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <returns></returns>
+        public static float GetAngle(Vector first, Vector second)
+        {
+            var angle = Math.Atan2(second.Y, second.X) - Math.Atan2(first.Y, first.X);
+            if (angle > Math.PI) angle -= 2 * Math.PI;
+            else if (angle <= -Math.PI) angle += 2 * Math.PI;
+            return (float) (angle * 180 / Math.PI);
+        }
+
         public Vector Normalize()
         {
             var thisLength = Length;
