@@ -252,7 +252,7 @@ namespace App.Engine
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
             foreach (var bot in bots)
-                CalculateEntityRespond(bot, bullet, particles);
+                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles);
 
             CalculateEntityRespond(player, bullet, particles);
         }
@@ -270,9 +270,12 @@ namespace App.Engine
                 bullet.SlowDown();
                 levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
             }
-                
+
             if (entity.IsDead && !entity.Velocity.Equals(Vector.ZeroVector))
+            {
                 entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * penetrationTimes[0]);
+                HandleKill(entity, entity.Position - bullet.Position, levelParticles);
+            }
         }
         
         private void UpdateBots()
@@ -288,6 +291,7 @@ namespace App.Engine
             regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
+            var particles = currentLevel.Particles;
             livingBotsAmount = 0;
             foreach (var bot in bots)
             {
@@ -295,6 +299,7 @@ namespace App.Engine
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
                     bot.TakeHit(player.MeleeWeapon.Damage);
+                    if (bot.IsDead) HandleKill(bot, bot.Position - player.Position, particles);
                     var particlePosition = player.Position + (bot.Position - player.Position).Normalize() * player.Radius * 3;
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
@@ -305,6 +310,14 @@ namespace App.Engine
 
             currentLevel.VisibilityRegions = regions;
             currentLevel.Paths = paths;
+        }
+
+        private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
+        {
+            deadEntity.LegsContainer.ClearContent();
+            deadEntity.TorsoContainer.ClearContent();
+            deadEntity.CollisionShape.CanCollide = false;
+            sceneParticles.Add(ParticleFactory.CreateDeadMenBody(EntityFactory.CreateDeadBody(deadEntity.DeadBodyPath),deadEntity.Position, bodyDirection));
         }
 
         private void UpdateCollectables() // TODO

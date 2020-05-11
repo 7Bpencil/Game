@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <botTypes>
-    <type name="Shotgunner" health="100" armor="0" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
+    <type name="Shotgunner" health="100" armor="0" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png" deathTileMap="Assets\TileMaps\boroda_death.png">
         <weapon type="Shotgun" ammo="96"/>
     </type>
 
-    <type name="Rifleman" health="100" armor="100" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+    <type name="Rifleman" health="100" armor="100" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" deathTileMap="Assets\TileMaps\pinkHair_death.png">
     <weapon type="AK303" ammo="120"/>
     </type>
 
-    <type name="SpetzNaz" health="100" armor="100" position="840, 420" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png">
+    <type name="SpetzNaz" health="100" armor="100" position="840, 420" angle="90" clothesTileMap="Assets\TileMaps\boroda.png" weaponsTileMap="Assets\Sprites\Weapons\boroda.png" deathTileMap="Assets\TileMaps\boroda_death.png">
         <weapon type="MP6" ammo="120"/>
     </type>
 
-    <type name="CrazyBitch" health="50" armor="100" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png">
+    <type name="CrazyBitch" health="50" armor="100" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" deathTileMap="Assets\TileMaps\pinkHair_death.png">
         <weapon type="SaigaFA" ammo="100"/>
     </type>
 </botTypes>

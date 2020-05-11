@@ -128,6 +128,7 @@ namespace App.Model.DataParser
             var clothesTileMapPath = playerNode.Attributes.GetNamedItem("clothesTileMap").Value;
             var weaponsTileMapPath = playerNode.Attributes.GetNamedItem("weaponsTileMap").Value;
             var meleeWeaponTileMapPath = playerNode.Attributes.GetNamedItem("meleeWeaponTileMap").Value;
+            var deadBodyTileMapPath = playerNode.Attributes.GetNamedItem("deathTileMap").Value;
             var weapons = new List<WeaponInfo>();
             foreach (XmlNode node in playerNode.ChildNodes)
             {
@@ -135,7 +136,7 @@ namespace App.Model.DataParser
             }
 
             return new EntityFactory.PlayerInfo
-                (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath);
+                (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath, deadBodyTileMapPath);
         }
 
         private static List<EntityFactory.BotInfo> loadBots(XmlNode botsNode)

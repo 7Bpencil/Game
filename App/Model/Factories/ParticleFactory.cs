@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using App.Engine;
 using App.Engine.Particles;
@@ -77,6 +78,12 @@ namespace App.Model.Factories
             var dirAngle = Math.Atan2(-direction.Y, direction.X);
             var angle = 180 / Math.PI * dirAngle + 90;
             return new ExpiringAnimatedParticleUnit(wallDust, penetrationPosition, (float) angle);
+        }
+
+        public static AbstractParticleUnit CreateDeadMenBody(StaticParticle body, Vector position, Vector bodyDirection)
+        {
+            var angle = Vector.GetAngle(bodyDirection, new Vector(1, 0));
+            return new DeadMenParticleUnit(body, position, angle);
         }
 
         private static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)

@@ -20,8 +20,8 @@ namespace App.Model.Entities
         public Player(int health, int armor, RigidCircle collisionShape, 
             SpriteContainer legsContainer, SpriteContainer torsoContainer,
             List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, 
-            MeleeWeaponSprite meleeWeaponSprite, MeleeWeapon meleeWeapon) 
-            : base(health, armor, collisionShape, legsContainer, torsoContainer)
+            MeleeWeaponSprite meleeWeaponSprite, MeleeWeapon meleeWeapon, string deadBodyPath) 
+            : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             MeleeWeapon = meleeWeapon;
             this.meleeWeaponSprite = meleeWeaponSprite;

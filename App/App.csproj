@@ -57,6 +57,7 @@
         <Compile Include="Engine\Particles\AnimatedParticle.cs" />
         <Compile Include="Engine\Particles\StaticParticle.cs" />
         <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\DeadMenParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
@@ -193,7 +194,13 @@
       <Content Include="Assets\TileMaps\boroda.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <Content Include="Assets\TileMaps\boroda_death.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="Assets\TileMaps\pinkHair.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\TileMaps\pinkHair_death.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\TileMaps\rooms.png">

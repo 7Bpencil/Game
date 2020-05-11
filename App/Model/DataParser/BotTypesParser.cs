@@ -31,13 +31,14 @@ namespace App.Model.DataParser
             var armor = int.Parse(typeNode.Attributes.GetNamedItem("armor").Value);
             var clothesTileMapPath = typeNode.Attributes.GetNamedItem("clothesTileMap").Value;
             var weaponsTileMapPath = typeNode.Attributes.GetNamedItem("weaponsTileMap").Value;
+            var deadBodyTileMapPath = typeNode.Attributes.GetNamedItem("deathTileMap").Value;
             WeaponInfo weapon = null;
             foreach (XmlNode node in typeNode.ChildNodes)
             {
                 if (node.Name == "weapon") weapon = LevelParser.LoadWeapon(node);
             }
 
-            return new EntityFactory.BotType(health, armor, weapon, clothesTileMapPath, weaponsTileMapPath);
+            return new EntityFactory.BotType(health, armor, weapon, clothesTileMapPath, weaponsTileMapPath, deadBodyTileMapPath);
         }
     }
 }

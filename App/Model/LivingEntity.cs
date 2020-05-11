@@ -15,9 +15,11 @@ namespace App.Model
         public Vector Velocity;
         public Vector Position => CollisionShape.Center;
 
+        public readonly string DeadBodyPath;
+
         protected LivingEntity(
-            int health, int armor, RigidCircle collisionShape, 
-            SpriteContainer legsContainer, SpriteContainer torsoContainer)
+            int health, int armor, RigidCircle collisionShape, SpriteContainer legsContainer, 
+            SpriteContainer torsoContainer, string deadBodyPath)
         {
             Health = health;
             Armor = armor;
@@ -25,6 +27,7 @@ namespace App.Model
             TorsoContainer = torsoContainer;
             LegsContainer = legsContainer;
             Velocity = Vector.ZeroVector;
+            this.DeadBodyPath = deadBodyPath;
         }
 
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);

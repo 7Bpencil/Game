@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using App.Engine;
+using App.Engine.Particles;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
@@ -20,7 +21,7 @@ namespace App.Model.Factories
             {typeof(MP6), 2},
             {typeof(SaigaFA), 3},
         };
-        
+
         public static Player CreatePlayer(PlayerInfo info)
         {
             var meleeWeaponSprite = new MeleeWeaponSprite(
@@ -50,7 +51,7 @@ namespace App.Model.Factories
 
             return new Player(
                 info.Health, info.Armor, new RigidCircle(position, 32, false, true), 
-                legsContainer, torsoContainer, weapons, weaponSprites, meleeWeaponSprite, meleeWeapon);
+                legsContainer, torsoContainer, weapons, weaponSprites, meleeWeaponSprite, meleeWeapon, info.DeadBodyTileMapPath);
         }
 
         public static Bot CreateBot(BotInfo info)
@@ -66,7 +67,7 @@ namespace App.Model.Factories
             return new Bot(
                 type.Health, type.Armor, legsContainer, torsoContainer, sightVector,
                 new RigidCircle(position, 32, false, true),
-                AbstractWeaponFactory.CreateGun(type.Weapon));
+                AbstractWeaponFactory.CreateGun(type.Weapon), type.DeadBodyTileMapPath);
         }
 
         private static Bitmap GetBitmap(string path)
@@ -77,6 +78,11 @@ namespace App.Model.Factories
             return newBitmap;
         }
 
+        public static StaticParticle CreateDeadBody(string deadBodyPath)
+        {
+            return new StaticParticle(LevelManager.GetTileMap(deadBodyPath), 0, new Size(135, 125));
+        }
+        
         public class PlayerInfo
         {
             public readonly int Health;
@@ -87,10 +93,11 @@ namespace App.Model.Factories
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
             public readonly string MeleeWeaponTileMapPath;
+            public readonly string DeadBodyTileMapPath;
 
             public PlayerInfo(
                 int health, int armor, Vector position, float angle, List<WeaponInfo> weapons, 
-                string clothesTileMapPath, string weaponsTileMapPath, string meleeWeaponTileMapPath)
+                string clothesTileMapPath, string weaponsTileMapPath, string meleeWeaponTileMapPath, string deadBodyTileMapPath)
             {
                 Health = health;
                 Armor = armor;
@@ -100,6 +107,7 @@ namespace App.Model.Factories
                 ClothesTileMapPath = clothesTileMapPath;
                 WeaponsTileMapPath = weaponsTileMapPath;
                 MeleeWeaponTileMapPath = meleeWeaponTileMapPath;
+                DeadBodyTileMapPath = deadBodyTileMapPath;
             }
         }
 
@@ -124,14 +132,18 @@ namespace App.Model.Factories
             public readonly WeaponInfo Weapon;
             public readonly string ClothesTileMapPath;
             public readonly string WeaponsTileMapPath;
+            public readonly string DeadBodyTileMapPath;
 
-            public BotType(int health, int armor, WeaponInfo weapon, string clothesTileMapPath, string weaponsTileMapPath)
+            public BotType(
+                int health, int armor, WeaponInfo weapon, 
+                string clothesTileMapPath, string weaponsTileMapPath, string deadBodyTileMapPath)
             {
                 Health = health;
                 Armor = armor;
                 Weapon = weapon;
                 ClothesTileMapPath = clothesTileMapPath;
                 WeaponsTileMapPath = weaponsTileMapPath;
+                DeadBodyTileMapPath = deadBodyTileMapPath;
             }
         }
     }

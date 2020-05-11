@@ -25,9 +25,9 @@ namespace App.Model.Entities
         
 
         public Bot(
-            int health, int armor, SpriteContainer legsContainer, 
-            SpriteContainer torsoContainer, Vector sight, RigidCircle collisionShape, Weapon weapon) 
-            : base(health, armor, collisionShape, legsContainer, torsoContainer)
+            int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer, 
+            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath) 
+            : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             CurrentWeapon = weapon;
             this.sight = sight;
