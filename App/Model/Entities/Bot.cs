@@ -76,6 +76,16 @@ namespace App.Model.Entities
             if (IsInView(playerPosition))
             {
                 Fire(playerPosition, sceneBullets, particles);
+                var v = playerPosition - Center;
+                var radius = CollisionShape.Diameter * 4;
+                if (Vector.ScalarProduct(v, v) < radius * radius)
+                {
+                    MoveCirclesAround(playerPosition, 2);
+                }
+                else
+                {
+                    ChasePrey(playerPosition);
+                }
             }
             else
             {
@@ -83,6 +93,12 @@ namespace App.Model.Entities
             }
 
             return currentPath;
+        }
+
+        private void MoveCirclesAround(Vector target, float angle)
+        {
+            var direction = Center - target;
+            MoveTo(target + direction.Rotate(angle, Vector.ZeroVector));
         }
 
         private void Fire(Vector aim, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles)
