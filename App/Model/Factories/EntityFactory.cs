@@ -81,7 +81,7 @@ namespace App.Model.Factories
 
         public static StaticParticle CreateDeadBody(string deadBodyPath)
         {
-            return new StaticParticle(LevelManager.GetTileMap(deadBodyPath), r.Next(0, 4), new Size(135, 125));
+            return new StaticParticle(GetBitmap(deadBodyPath), r.Next(0, 4), new Size(135, 125));
         }
         
         public class PlayerInfo
