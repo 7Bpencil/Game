@@ -13,6 +13,7 @@ namespace App.Model.Factories
 {
     public static class EntityFactory
     {
+        private static readonly Random r = new Random();
         private static readonly Dictionary<string, Bitmap> CachedBitmaps = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<Type, int> WeaponFramesId = new Dictionary<Type, int>
         {
@@ -80,7 +81,7 @@ namespace App.Model.Factories
 
         public static StaticParticle CreateDeadBody(string deadBodyPath)
         {
-            return new StaticParticle(LevelManager.GetTileMap(deadBodyPath), 0, new Size(135, 125));
+            return new StaticParticle(LevelManager.GetTileMap(deadBodyPath), r.Next(0, 4), new Size(135, 125));
         }
         
         public class PlayerInfo
