@@ -55,7 +55,7 @@ namespace App.Model.Entities
         {
             AvoidCollision(shapes);
             RotateToPlayer(playerPosition);
-            MoveTo(Center + sight * speed);
+            //MoveTo(Center + sight * speed);
         }
 
         private void RotateToPlayer(Vector playerPosition) // Placeholder

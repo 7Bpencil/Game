@@ -24,7 +24,7 @@ namespace App.Engine.Render.Renderers
         
         private static void FillTriangle(Vector a, Vector b, Vector c, Brush brush, Graphics g)
         {
-            g.FillPolygon(brush, new []{a.GetPoint(), b.GetPoint(), c.GetPoint()});
+            g.FillPolygon(brush, new []{a.GetPointF(), b.GetPointF(), c.GetPointF()});
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using App.Engine.Physics.Collision;
@@ -6,25 +5,11 @@ using App.Engine.Physics.RigidShapes;
 
 namespace App.Engine.Physics
 {
-    public class Graph<Point>
-    {
-        public Dictionary<Point, Point[]> edges = new Dictionary<Point, Point[]>();
-
-        public Point[] Neighbors(Point id) => edges[id];
-    }
-
-    public interface IWeightedGraph<L>
-    {
-        double Cost(Point a, Point b);
-        IEnumerable<Point> Neighbors(Point id);
-    }
-
-
-    public class NavMesh : IWeightedGraph<Point>
+    public class NavMesh
     {
         public readonly int Width;
         public readonly int Height;
-        private readonly HashSet<Point> walls;
+        public readonly HashSet<Point> walls;
         public readonly NavMeshRenderForm RenderForm;
         
         private static readonly Point[] DIRS =
@@ -121,31 +106,6 @@ namespace App.Engine.Physics
                     }
                 }
             }
-        }
-    }
-
-    public class PriorityQueue<T>
-    {
-        private List<Tuple<T, double>> elements = new List<Tuple<T, double>>();
-
-        public int Count => elements.Count;
-
-        public void Enqueue(T item, double priority)
-        {
-            elements.Add(Tuple.Create(item, priority));
-        }
-
-        public T Dequeue()
-        {
-            var bestIndex = 0;
-            for (var i = 0; i < elements.Count; i++)
-            {
-                if (elements[i].Item2 < elements[bestIndex].Item2) bestIndex = i;
-            }
-
-            var bestItem = elements[bestIndex].Item1;
-            elements.RemoveAt(bestIndex);
-            return bestItem;
         }
     }
 }

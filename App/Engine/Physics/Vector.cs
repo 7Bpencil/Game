@@ -153,7 +153,9 @@ namespace App.Engine.Physics
 
         public Vector Copy() => new Vector(X, Y);
 
-        public PointF GetPoint() => new PointF(X, Y);
+        public PointF GetPointF() => new PointF(X, Y);
+        
+        public Point GetPoint() => new Point((int) X, (int) Y);
         
         public static Vector GetVector(Point point) => new Vector(point.X, point.Y);
     }

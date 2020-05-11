@@ -67,6 +67,7 @@ namespace App.Engine
         
         private void InitState()
         {
+            AStarSearch.SetMesh(currentLevel.NavMesh);
             player = currentLevel.Player;
             camera = new Camera(player.Position, player.Radius, screenSize);
             cursor = new CustomCursor(player.Position.Copy());
@@ -267,10 +268,13 @@ namespace App.Engine
         {
             var regions = new List<Raytracing.VisibilityRegion>();
             regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
+            var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             foreach (var bot in bots)
             {
                 if (bot.IsDead) continue;
+                var newPath = AStarSearch.SearchPath(bot.Center, player.Position);
+                if (newPath.Count != 0) paths.Add(newPath);
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
                     bot.TakeHit(player.MeleeWeapon.Damage);
@@ -282,6 +286,7 @@ namespace App.Engine
             }
 
             currentLevel.VisibilityRegions = regions;
+            currentLevel.Paths = paths;
         }
 
         private void UpdateCollectables() // TODO

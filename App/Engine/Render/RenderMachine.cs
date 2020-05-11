@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using App.Engine.Physics;
@@ -139,6 +140,11 @@ namespace App.Engine.Render
         public static void RenderPoint(Vector point, Vector cameraPosition)
         {
             VectorRenderer.Fill(point, cameraPosition, PenetrationBrush, gfxCamera);
+        }
+
+        public static void RenderPath(List<Vector> path, Vector cameraPosition)
+        {
+            PathRenderer.Draw(path, cameraPosition, gfxCamera);
         }
         
         public static void PrintMessages(string[] messages)

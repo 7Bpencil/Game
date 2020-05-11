@@ -88,7 +88,7 @@ namespace App.Engine.Render.Renderers
         {
             var pointsInCamera = new PointF[3];
             for (var i = 0; i < 3; i++)
-                pointsInCamera[i] = shape.Points[i].ConvertFromWorldToCamera(cameraPosition).GetPoint();
+                pointsInCamera[i] = shape.Points[i].ConvertFromWorldToCamera(cameraPosition).GetPointF();
             
             g.DrawPolygon(strokePen, pointsInCamera);
         }
@@ -97,19 +97,19 @@ namespace App.Engine.Render.Renderers
         {
             var points = new PointF[3];
             for (var i = 0; i < 3; i++)
-                points[i] = shape.Points[i].GetPoint();
+                points[i] = shape.Points[i].GetPointF();
             
             g.DrawPolygon(strokePen, points);
         }
         
         private static void DrawCircleQuarter(RigidCircleQuarter shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
-            var start = shape.GetCurveStart().ConvertFromWorldToCamera(cameraPosition).GetPoint();
-            var end = shape.GetCurveEnd().ConvertFromWorldToCamera(cameraPosition).GetPoint(); 
+            var start = shape.GetCurveStart().ConvertFromWorldToCamera(cameraPosition).GetPointF();
+            var end = shape.GetCurveEnd().ConvertFromWorldToCamera(cameraPosition).GetPointF(); 
             g.DrawBezier(strokePen, 
                 start,
                 start,
-                shape.GetCurveCorner().ConvertFromWorldToCamera(cameraPosition).GetPoint(),
+                shape.GetCurveCorner().ConvertFromWorldToCamera(cameraPosition).GetPointF(),
                 end);
             EdgeRenderer.Draw(new Edge(shape.Center, shape.GetCurveStart()), cameraPosition, strokePen, g);
             EdgeRenderer.Draw(new Edge(shape.Center, shape.GetCurveEnd()), cameraPosition, strokePen, g);
@@ -120,10 +120,10 @@ namespace App.Engine.Render.Renderers
             var start = shape.GetCurveStart();
             var end = shape.GetCurveEnd(); 
             g.DrawBezier(strokePen, 
-                start.GetPoint(),
-                start.GetPoint(),
-                shape.GetCurveCorner().GetPoint(),
-                end.GetPoint());
+                start.GetPointF(),
+                start.GetPointF(),
+                shape.GetCurveCorner().GetPointF(),
+                end.GetPointF());
             EdgeRenderer.Draw(new Edge(shape.Center, start), strokePen, g);
             EdgeRenderer.Draw(new Edge(shape.Center, end), strokePen, g);
         }

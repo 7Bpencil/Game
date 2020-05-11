@@ -30,6 +30,7 @@ namespace App.Model.LevelData
         public List<SpriteContainer> Sprites { get; private set; }
         public List<CollisionInfo> CollisionsInfo;
         public List<Raytracing.VisibilityRegion> VisibilityRegions;
+        public List<List<Vector>> Paths;
         public bool IsCompleted;
 
         public Level(LevelInfo levelInfo)
@@ -58,7 +59,7 @@ namespace App.Model.LevelData
             Particles = new List<AbstractParticleUnit> {Capacity = 1000};
             Sprites = new List<SpriteContainer> {Capacity = 100};
             VisibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 2};
-            
+
             HookUpSprites();
             HookUpCollisions();
         }

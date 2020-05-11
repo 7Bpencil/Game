@@ -58,6 +58,7 @@
         <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
+        <Compile Include="Engine\Physics\AStarSearch.cs" />
         <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
@@ -73,6 +74,7 @@
         <Compile Include="Engine\Render\Raytracing.cs" />
         <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\PathRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\RigidBodyRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\SpriteRenderer.cs" />
         <Compile Include="Engine\Render\Renderers\VectorRenderer.cs" />

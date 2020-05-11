@@ -64,6 +64,7 @@ namespace App.Engine.Render
             var cameraSize = camera.Size;
 
             RenderNavMesh(level.NavMesh, cameraPosition);
+            RenderPaths(level.Paths, cameraPosition);
             RenderShapes(level.SceneShapes, cameraPosition);
             RenderCollectablesShapes(level.Collectables, cameraPosition);
             RenderRaytracingEdges(level.RaytracingEdges, cameraPosition);
@@ -211,6 +212,12 @@ namespace App.Engine.Render
                 RenderMachine.RenderPoint(p, cameraPosition);
             foreach (var edge in edges)
                 RenderMachine.RenderEdgeOnCamera(edge, cameraPosition);
+        }
+
+        private static void RenderPaths(List<List<Vector>> paths, Vector cameraPosition)
+        {
+            foreach (var path in paths)
+                RenderMachine.RenderPath(path, cameraPosition);
         }
 
         private static Rectangle GetSourceRectangle(int tileID, int columnsInTileMap, int tileSize)

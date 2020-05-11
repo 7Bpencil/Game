@@ -13,6 +13,22 @@ using App.Model.LevelData;
 
 namespace App.Model.Entities
 {
+    
+    
+    
+    public class Graph<Point>
+    {
+        // Если вы всегда используете для точек типы string,
+        // то здесь разумной альтернативой будет NameValueCollection
+        public Dictionary<Point, Point[]> edges
+            = new Dictionary<Point, Point[]>();
+
+        public Point[] Neighbors(Point id)
+        {
+            return edges[id];
+        }
+    };
+
     class BreadthFirstSearch
     {
         static void Search(Graph<string> graph, string start)
@@ -40,55 +56,85 @@ namespace App.Model.Entities
         }
     }
 
-    public class AStarSearch
+    /*public class Point
     {
-        public Dictionary<Point, Point> cameFrom
-            = new Dictionary<Point, Point>();
-        public Dictionary<Point, double> costSoFar
-            = new Dictionary<Point, double>();
-
-        // Примечание: обобщённая версия A* абстрагируется от Point
-        // и Heuristic
-        static public double Heuristic(Point a, Point b)
+        // Примечания по реализации: я использую Equals по умолчанию,
+        // но это может быть медленно. Возможно, в реальном проекте стоит
+        // заменить Equals и GetHashCode.
+        public override bool Equals(object obj) => 
+            obj is Point mys
+            && mys.x == this.x
+            && mys.y == this.y;
+        
+        public readonly int x, y;
+        public Point(int x, int y)
         {
-            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+            this.x = x;
+            this.y = y;
+        }
+    }#1#
+
+    public interface WeightedGraph<L>
+    {
+        double Cost(Point a, Point b);
+        IEnumerable<Point> Neighbors(Point id);
+    }
+
+
+    public class SquareGrid : WeightedGraph<Point>
+    {
+
+        public static readonly Point[] DIRS = new[]
+        {
+            new Point(1, 0),
+            new Point(0, -1),
+            new Point(-1, 0),
+            new Point(0, 1)
+        };
+
+        public int width, height;
+        public HashSet<Point> walls = new HashSet<Point>();
+        public HashSet<Point> forests = new HashSet<Point>();
+
+        public SquareGrid(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
         }
 
-        public AStarSearch(IWeightedGraph<Point> graph, Point start, Point goal)
+        public bool InBounds(Point id)
         {
-            var frontier = new PriorityQueue<Point>();
-            frontier.Enqueue(start, 0);
+            return 0 <= id.X && id.X < width && 0 <= id.Y && id.Y < height;
+        }
 
-            cameFrom[start] = start;
-            costSoFar[start] = 0;
-            var current = frontier.Dequeue();
+        public bool Passable(Point id)
+        {
+            return !walls.Contains(id);
+        }
 
-            while (!current.Equals(goal))
+        public double Cost(Point a, Point b)
+        {
+            return 1;
+        }
+
+        public IEnumerable<Point> Neighbors(Point id)
+        {
+            foreach (var dir in DIRS)
             {
-                if (current.Equals(goal))
+                Point next = new Point(id.X + dir.X, id.Y + dir.Y);
+                if (InBounds(next) && Passable(next))
                 {
-                    break;
+                    yield return next;
                 }
-
-                foreach (var next in graph.Neighbors(current))
-                {
-                    double newCost = costSoFar[current] + graph.Cost(current, next);
-                    if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next]) //change || and &&
-                    {
-                        costSoFar[next] = newCost;
-                        double priority = newCost + Heuristic(next, goal);
-                        frontier.Enqueue(next, priority);
-                        cameFrom[next] = current;
-                    }
-                }
-                current = frontier.Dequeue();
             }
         }
     }
 
+    
+
     public class ShootingRangeTarget
     {
-        public static NavMesh grid;
+        public static SquareGrid grid;
 
         public List<Vector> currentPath;
 
@@ -128,7 +174,7 @@ namespace App.Model.Entities
             while (!current.Equals(start))
             {
                 path.Add(current);
-                current = astar.cameFrom[current];
+                current = astar.CameFrom[current];
             }
             path.Add(start);
             path.Reverse();
@@ -157,13 +203,94 @@ namespace App.Model.Entities
 
             return result;
         }
-        
-        static void DrawGrid(NavMesh grid) {
-            // Печать массива cameFrom
-            var ptr = new Point(0, 0);
-            for (var y = 0; y < grid.Height; y++)
+
+        private void AddWals(Level level)
+        {
+            foreach (var layer in level.Layers)
             {
-                for (var x = 0; x < grid.Width; x++)
+                for (var j = 1; j < layer.WidthInTiles; ++j)
+                for (var i = 1; i < layer.HeightInTiles; ++i)
+                {
+                    var circle = new RigidCircle(new Vector(j, i) * 32, 32, true, true);
+                    var canWalk = true;
+                    foreach (var staticShape in currentLevel.StaticShapes)
+                    {
+                        if (CollisionSolver.GetCollisionInfo(circle, staticShape) != null)
+                        {
+                            canWalk = false;
+                            break;
+                        }
+                    }
+
+                    if (!canWalk)
+                        grid.walls.Add(new Point(j, i));
+                }
+            }
+        }
+
+        public SquareGrid AddAdditionalWalls(Level level)
+        {
+            var result = new SquareGrid(45, 40);
+            var di = new int[] {0, 0, 1, -1};
+            var dj = new int[] {1, -1, 0, 0};
+            var cdi = new int[] {1, 1, -1, -1};
+            var cdj = new int[] {-1, 1, -1, 1};
+            //Updated part
+            for (var j = 0; j < level.LevelSizeInTiles.Width; ++j)
+            for (var i = 0; i < level.LevelSizeInTiles.Height; ++i)
+            {
+                var currentPoint = new Point(i, j);
+                if (grid.walls.Contains(currentPoint))
+                {
+                    var counter = 0;
+                    result.walls.Add(currentPoint);
+                    for (var k = 0; k < 4; ++k)
+                    {
+                        var additionalWall = new Point(i + di[k], j + dj[k]);
+                        if (grid.InBounds(additionalWall))
+                        {
+                            var isFreeSurounded = true;
+                            for (var l = 1; l <= 3; ++l)
+                            {
+                                var pointForCheck = new Point(i + di[k] * l, j + dj[k] * l);
+                                if (grid.InBounds(pointForCheck) && grid.walls.Contains(pointForCheck))
+                                    isFreeSurounded = false; 
+                            }
+
+                            if (isFreeSurounded)
+                            {
+                                ++counter;
+                                result.walls.Add(additionalWall);   
+                            }
+                        }
+
+                        
+                    }
+                    //Updated part
+                    if (counter == 3)
+                    {
+                        for (var k = 0; k < 4; ++k)
+                        {
+                            var newPoint = new Point(i + cdi[k], j + cdj[k]);
+                            if (grid.InBounds(newPoint) && !result.walls.Contains(newPoint))
+                            {
+                                result.walls.Add(newPoint);
+                            }
+                        }
+                    }
+                }
+                    
+            }
+
+            return result;
+        }
+
+        static void DrawGrid(SquareGrid grid) {
+            // Печать массива CameFrom
+            var ptr = new Point(0, 0);
+            for (var y = 0; y < grid.height; y++)
+            {
+                for (var x = 0; x < grid.width; x++)
                 {
                     Point id = new Point(x, y);
                     if (grid.walls.Contains(id)) { Console.Write("##"); }
@@ -172,13 +299,13 @@ namespace App.Model.Entities
                 Console.WriteLine();
             }
         }
-        static void DrawPath(NavMesh grid, AStarSearch astar, List<Point> path) {
-            // Печать массива cameFrom
+        static void DrawPath(SquareGrid grid, AStarSearch astar, List<Point> path) {
+            // Печать массива CameFrom
             var pathPoints = new HashSet<Point>(path);
             var ptr = new Point(0, 0);
-            for (var y = 0; y < grid.Height; y++)
+            for (var y = 0; y < grid.height; y++)
             {
-                for (var x = 0; x < grid.Width; x++)
+                for (var x = 0; x < grid.width; x++)
                 {
                     var id = new Point(x, y);
                     if (pathPoints.Contains(id)) Console.Write("$$");
@@ -198,7 +325,7 @@ namespace App.Model.Entities
             collisionShape = new RigidCircle(centerPosition, 32, false, true);
             //included
             currentLevel = level;
-            grid = new NavMesh(45 - 2, 40 - 2);
+            grid = new SquareGrid(45 - 2, 40 - 2);
             aim = null;
             player = _player;
             this.weapon = weapon;
