@@ -287,7 +287,7 @@ namespace App.Engine
         
         private void UpdateBots()
         {
-            if (livingBotsAmount == 1 && currentLevel.WavesAmount != 0)
+            if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
             {
                 LevelDynamicEntitiesFactory.SpawnBots(
                     currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes);
