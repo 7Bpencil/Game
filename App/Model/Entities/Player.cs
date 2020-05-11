@@ -1,58 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using App.Engine;
-using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
 using App.Model.Entities.Weapons;
 
 namespace App.Model.Entities
 {
-    public class Player
+    public class Player : LivingEntity
     {
-        public int Health;
-        public int Armor;
-        public bool IsDead;
-        public readonly RigidCircle CollisionShape;
-        public Vector Position => CollisionShape.Center;
         public float Radius => CollisionShape.Radius;
-        
-        public readonly SpriteContainer TorsoContainer;
-        public readonly SpriteContainer LegsContainer;
         private readonly Dictionary<Type, Sprite> weaponSprites;
         private readonly MeleeWeaponSprite meleeWeaponSprite;
         private readonly List<Weapon> weapons;
         public readonly MeleeWeapon MeleeWeapon;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
-        public Vector Velocity;
 
-        public Player(int health, int armor, Vector startPosition, float startAngle, Sprite legs, RigidCircle collisionShape,
-            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, MeleeWeaponSprite meleeWeapon)
+        public Player(int health, int armor, RigidCircle collisionShape, 
+            SpriteContainer legsContainer, SpriteContainer torsoContainer,
+            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, 
+            MeleeWeaponSprite meleeWeaponSprite, MeleeWeapon meleeWeapon) 
+            : base(health, armor, collisionShape, legsContainer, torsoContainer)
         {
-            Health = health;
-            Armor = armor;
-            MeleeWeapon = new MeleeWeapon(startPosition, startAngle);
-            this.weaponSprites = weaponSprites;
-            meleeWeaponSprite = meleeWeapon;
+            MeleeWeapon = meleeWeapon;
+            this.meleeWeaponSprite = meleeWeaponSprite;
             weapons = startWeapons;
+            this.weaponSprites = weaponSprites;
             currentWeaponIndex = 0;
-            CollisionShape = collisionShape;
-            LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
-            TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.GetType()], startPosition, startAngle);
-            Velocity = Vector.ZeroVector;
-        }
-
-        public void MoveBy(Vector delta)
-        {
-            CollisionShape.MoveBy(delta);
         }
         
-        public void MoveTo(Vector newPosition)
-        {
-            CollisionShape.MoveTo(newPosition);
-        }
-
         public void AddWeapon(Weapon newWeapon)
         {
             foreach (var weapon in weapons)
@@ -95,18 +72,5 @@ namespace App.Model.Entities
         }
 
         public bool WasMeleeWeaponRaised => meleeWeaponSprite.WasRaised;
-        
-        public void TakeHit(int damage)
-        {
-            if (IsDead) return;
-            Armor -= damage;
-            if (Armor < 0)
-            {
-                Health += Armor;
-                Armor = 0;
-            }
-
-            if (Health <= 0) IsDead = true;
-        }
     }
 }

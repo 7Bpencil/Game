@@ -8,40 +8,29 @@ using App.Model.LevelData;
 
 namespace App.Model.Entities
 {
-    public class Bot
+    public class Bot : LivingEntity
     {
-        public int Health;
-        public int Armor;
-        public bool IsDead;
-        public readonly SpriteContainer TorsoContainer;
-        public readonly SpriteContainer LegsContainer;
-        public readonly RigidCircle CollisionShape;
-        private readonly Weapon weapon;
-        public Vector Velocity = Vector.ZeroVector;
+        private readonly Weapon CurrentWeapon;
+
         private float speed = 6;
         private float speedAngular = 12;
         private Vector sight;
         private float sightAngle = 60 / 2;
         private readonly float collisionAvoidanceFactor;
 
-        private List<Vector> patrolPoints;
+        private readonly List<Vector> patrolPoints;
         private int patrolPointIndex;
         private List<Vector> currentPath;
         private int currentPathPointIndex;
-
-        public Vector Center => CollisionShape.Center;
+        
 
         public Bot(
-            int health, int armor, Vector startPosition, float startAngle,
-            Sprite legs, Sprite torso, RigidCircle collisionShape, Weapon weapon)
+            int health, int armor, SpriteContainer legsContainer, 
+            SpriteContainer torsoContainer, Vector sight, RigidCircle collisionShape, Weapon weapon) 
+            : base(health, armor, collisionShape, legsContainer, torsoContainer)
         {
-            Health = health;
-            Armor = armor;
-            CollisionShape = collisionShape;
-            LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
-            TorsoContainer = new SpriteContainer(torso, startPosition, startAngle);
-            this.weapon = weapon;
-            sight = new Vector(1, 0).Rotate(-startAngle, Vector.ZeroVector).Normalize();
+            CurrentWeapon = weapon;
+            this.sight = sight;
             collisionAvoidanceFactor = collisionShape.Diameter * 2;
             patrolPoints = new List<Vector>
             {
@@ -53,32 +42,17 @@ namespace App.Model.Entities
             patrolPointIndex = 0;
             currentPathPointIndex = 0;
         }
-
-        public void TakeHit(int damage)
-        {
-            if (IsDead) return;
-            Armor -= damage;
-            if (Armor < 0)
-            {
-                Health += Armor;
-                Armor = 0;
-            }
-
-            if (Health <= 0) IsDead = true;
-        }
-
-        public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);
-
+        
         public void Update(
             Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
             ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
-            weapon.IncrementTick();
+            CurrentWeapon.IncrementTick();
             AvoidCollision(shapes);
             if (IsInView(playerPosition, walls))
             {
                 Fire(playerPosition, sceneBullets, particles);
-                var v = playerPosition - Center;
+                var v = playerPosition - Position;
                 var radius = CollisionShape.Diameter * 4;
                 if (Vector.ScalarProduct(v, v) < radius * radius)
                 {
@@ -95,21 +69,22 @@ namespace App.Model.Entities
             }
 
             if (currentPath != null && currentPath.Count != 0) botPaths.Add(currentPath);
+            Velocity = sight * speed;
         }
 
         private void MoveCirclesAround(Vector target, float angle)
         {
-            var direction = Center - target;
+            var direction = Position - target;
             MoveTo(target + direction.Rotate(angle, Vector.ZeroVector));
         }
 
         private void Fire(Vector aim, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles)
         {
             RotateToPrey(aim);
-            if (weapon.IsReady)
+            if (CurrentWeapon.IsReady)
             {
-                sceneBullets.AddRange(weapon.Fire(Center, sight));
-                particles.Add(ParticleFactory.CreateShell(Center, sight, weapon));
+                sceneBullets.AddRange(CurrentWeapon.Fire(Position, sight));
+                particles.Add(ParticleFactory.CreateShell(Position, sight, CurrentWeapon));
             }
         }
 
@@ -123,12 +98,12 @@ namespace App.Model.Entities
             if (currentPath == null || currentPathPointIndex == currentPath.Count)
             {
                 currentPathPointIndex = 0;
-                currentPath = AStarSearch.SearchPath(Center, patrolPoints[patrolPointIndex]);
+                currentPath = AStarSearch.SearchPath(Position, patrolPoints[patrolPointIndex]);
                 patrolPointIndex++;
             }
 
             ChasePrey(currentPath[currentPathPointIndex]);
-            var distVector = currentPath[currentPathPointIndex] - Center;
+            var distVector = currentPath[currentPathPointIndex] - Position;
             if (Vector.ScalarProduct(distVector, distVector) < 32 * 32)
             {
                 currentPathPointIndex++;
@@ -138,12 +113,12 @@ namespace App.Model.Entities
         private void ChasePrey(Vector preyPosition)
         {
             RotateToPrey(preyPosition);
-            MoveTo(Center + sight * speed);
+            MoveTo(Position + sight * speed);
         }
 
         private void RotateToPrey(Vector playerPosition)
         {
-            var vectorToPrey = (playerPosition - Center).Normalize();
+            var vectorToPrey = (playerPosition - Position).Normalize();
             var sightNormal = sight.GetNormal();
             var v = Vector.ScalarProduct(vectorToPrey, sightNormal);
 
@@ -178,7 +153,7 @@ namespace App.Model.Entities
                 if (shapes[i] is RigidCircle)
                 {
                     var circle = (RigidCircle) shapes[i];
-                    if (circle.Center == Center) continue;
+                    if (circle.Center == Position) continue;
                     TryAvoidCircle(circle);
                 }
             }
@@ -186,7 +161,7 @@ namespace App.Model.Entities
 
         private void TryAvoidCircle(RigidCircle circle)
         {
-            var vectorToShape = circle.Center - Center;
+            var vectorToShape = circle.Center - Position;
             var sc = Vector.ScalarProduct(vectorToShape, sight);
             if (sc < 0) return;
 
@@ -203,7 +178,7 @@ namespace App.Model.Entities
 
         private bool IsInView(Vector objectCenter, List<Edge> sceneEdges)
         {
-            var vectorToObject = (objectCenter - Center).Normalize();
+            var vectorToObject = (objectCenter - Position).Normalize();
             var sightNormal = sight.GetNormal();
             var v = Vector.ScalarProduct(vectorToObject, sightNormal);
             var sc = Vector.ScalarProduct(vectorToObject, sight);

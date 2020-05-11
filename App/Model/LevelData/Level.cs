@@ -61,7 +61,7 @@ namespace App.Model.LevelData
             Collectables = LevelDynamicEntitiesFactory.CreateCollectables(levelInfo.CollectableWeaponsInfo);
             Bullets = new List<Bullet> {Capacity = 1000};
             Particles = new List<AbstractParticleUnit> {Capacity = 1000};
-            Sprites = new List<SpriteContainer> {Capacity = 100};
+            Sprites = new List<SpriteContainer> {Capacity = 50};
             VisibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 2};
 
             HookUpSprites();

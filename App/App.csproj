@@ -64,7 +64,7 @@
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
-        <Compile Include="Engine\Physics\Graph.cs" />
+        <Compile Include="Engine\Physics\NavMesh.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidCircleQuarter.cs" />
@@ -115,6 +115,7 @@
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
         <Compile Include="Model\DataParser\LevelParser.cs" />
+        <Compile Include="Model\LivingEntity.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="View\ViewForm.cs" />

@@ -252,37 +252,27 @@ namespace App.Engine
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
             foreach (var bot in bots)
+                CalculateEntityRespond(bot, bullet, particles);
+
+            CalculateEntityRespond(player, bullet, particles);
+        }
+
+        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
+        {
+            var penetrationTimes = 
+                BulletCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
+            if (penetrationTimes == null) return;
+            var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
+            entity.TakeHit(bullet.Damage);
+            if (entity.Armor > 50) bullet.IsStuck = true;
+            else
             {
-                var penetrationTimes = 
-                    BulletCollisionDetector.AreCollideWithDynamic(bullet, bot.CollisionShape, bot.Velocity);
-                if (penetrationTimes == null) continue;
-                var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
-                bot.TakeHit(bullet.Damage);
-                if (bot.Armor > 50) bullet.IsStuck = true;
-                else bullet.SlowDown();
-
-                particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
-                particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
-
-                if (bot.IsDead && !bot.Velocity.Equals(Vector.ZeroVector))
-                    bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
+                bullet.SlowDown();
+                levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
             }
-            
-            // TODO remove copy-paste
-            var pTimes = 
-                BulletCollisionDetector.AreCollideWithDynamic(bullet, player.CollisionShape, player.Velocity);
-            if (pTimes == null) return;
-            var pPlace = bullet.Position + bullet.Velocity * pTimes[0];
-            player.TakeHit(bullet.Damage);
-            if (player.Armor > 50) bullet.IsStuck = true;
-            else bullet.SlowDown();
-
-            particles.Add(ParticleFactory.CreateBloodSplash(pPlace));
-            particles.Add(ParticleFactory.CreateBloodSplash(pPlace));
-
-            if (player.IsDead && !player.Velocity.Equals(Vector.ZeroVector))
-                player.MoveTo(player.CollisionShape.Center + player.Velocity * pTimes[0]);
-            
+                
+            if (entity.IsDead && !entity.Velocity.Equals(Vector.ZeroVector))
+                entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * penetrationTimes[0]);
         }
         
         private void UpdateBots()
@@ -305,7 +295,7 @@ namespace App.Engine
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
                     bot.TakeHit(player.MeleeWeapon.Damage);
-                    var particlePosition = player.Position + (bot.Center - player.Position).Normalize() * player.Radius * 3;
+                    var particlePosition = player.Position + (bot.Position - player.Position).Normalize() * player.Radius * 3;
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }

@@ -30,7 +30,7 @@ namespace App.Model.Entities.Weapons
         {
             name = "Shotgun";
             capacity = 8;
-            firePeriod = 20;
+            firePeriod = 30;
             ticksFromLastFire = firePeriod + 1;
             bulletWeight = 0.2f;
             this.ammo = ammo;

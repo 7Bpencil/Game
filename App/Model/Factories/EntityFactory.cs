@@ -23,7 +23,7 @@ namespace App.Model.Factories
         
         public static Player CreatePlayer(PlayerInfo info)
         {
-            var meleeWeapon = new MeleeWeaponSprite(
+            var meleeWeaponSprite = new MeleeWeaponSprite(
                 GetBitmap(info.MeleeWeaponTileMapPath),
                 1, 0, 5, new Size(170, 170));
             
@@ -42,21 +42,29 @@ namespace App.Model.Factories
                 weapons.Add(AbstractWeaponFactory.CreateGun(weaponInfo));
 
             var position = info.Position.Copy();
+            var angle = info.Angle;
+            var legs = new PlayerBodySprite(position, GetBitmap(info.ClothesTileMapPath), 1, 14, 27, new Size(64, 64));
+            var legsContainer = new SpriteContainer(legs, position, angle);
+            var torsoContainer = new SpriteContainer(weaponSprites[weapons[0].GetType()], position, angle);
+            var meleeWeapon = new MeleeWeapon(position, angle);
+
             return new Player(
-                info.Health, info.Armor, position, info.Angle, 
-                new PlayerBodySprite(position, GetBitmap(info.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
-                new RigidCircle(position, 32, false, true), 
-                weapons, weaponSprites, meleeWeapon);
+                info.Health, info.Armor, new RigidCircle(position, 32, false, true), 
+                legsContainer, torsoContainer, weapons, weaponSprites, meleeWeaponSprite, meleeWeapon);
         }
 
         public static Bot CreateBot(BotInfo info)
         {
             var position = info.Position.Copy();
+            var angle = info.Angle;
             var type = BotBank.GetBotTypeInfo(info.Type);
+            var legs = new PlayerBodySprite(position, GetBitmap(type.ClothesTileMapPath), 1, 14, 27, new Size(64, 64));
+            var torso = new StaticSprite(GetBitmap(type.WeaponsTileMapPath), WeaponFramesId[type.Weapon.WeaponType], new Size(79, 57));
+            var legsContainer = new SpriteContainer(legs, position, angle);
+            var torsoContainer = new SpriteContainer(torso, position, angle);
+            var sightVector = new Vector(1, 0).Rotate(-angle, Vector.ZeroVector).Normalize(); 
             return new Bot(
-                type.Health, type.Armor, position, info.Angle,
-                new PlayerBodySprite(position, GetBitmap(type.ClothesTileMapPath),1, 14, 27, new Size(64, 64)),
-                new StaticSprite(GetBitmap(type.WeaponsTileMapPath), WeaponFramesId[type.Weapon.WeaponType], new Size(79, 57)),
+                type.Health, type.Armor, legsContainer, torsoContainer, sightVector,
                 new RigidCircle(position, 32, false, true),
                 AbstractWeaponFactory.CreateGun(type.Weapon));
         }

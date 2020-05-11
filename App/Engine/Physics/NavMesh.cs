@@ -35,6 +35,24 @@ namespace App.Engine.Physics
             AddWalls(staticShapes, levelSizeInTiles);
             RenderForm = new NavMeshRenderForm(this);
         }
+        
+        private void AddWalls(List<RigidShape> staticShapes, Size levelSizeInTiles)
+        {
+            for (var j = 1; j < levelSizeInTiles.Width - 1; ++j)
+            for (var i = 1; i < levelSizeInTiles.Height - 1; ++i)
+            {
+                var circle = new RigidCircle(new Vector(j, i) * 32, 32, true, true);
+                var canWalk = true;
+                foreach (var staticShape in staticShapes)
+                {
+                    if (CollisionDetector.GetCollisionInfo(circle, staticShape) == null) continue;
+                    canWalk = false;
+                    break;
+                }
+
+                if (!canWalk) walls.Add(new Point(j, i));
+            }
+        }
 
         public bool InBounds(Point id)
         {
@@ -60,24 +78,6 @@ namespace App.Engine.Physics
                 {
                     yield return next;
                 }
-            }
-        }
-
-        private void AddWalls(List<RigidShape> staticShapes, Size levelSizeInTiles)
-        {
-            for (var j = 1; j < levelSizeInTiles.Width - 1; ++j)
-            for (var i = 1; i < levelSizeInTiles.Height - 1; ++i)
-            {
-                var circle = new RigidCircle(new Vector(j, i) * 32, 32, true, true);
-                var canWalk = true;
-                foreach (var staticShape in staticShapes)
-                {
-                    if (CollisionDetector.GetCollisionInfo(circle, staticShape) == null) continue;
-                    canWalk = false;
-                    break;
-                }
-
-                if (!canWalk) walls.Add(new Point(j, i));
             }
         }
 
