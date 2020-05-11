@@ -10,9 +10,9 @@ namespace App.Model.Entities
 {
     public class Player
     {
-        public readonly int Health;
-        public readonly int Armor;
-        public readonly bool IsDead;
+        public int Health;
+        public int Armor;
+        public bool IsDead;
         public readonly RigidCircle CollisionShape;
         public Vector Position => CollisionShape.Center;
         public float Radius => CollisionShape.Radius;
@@ -25,6 +25,7 @@ namespace App.Model.Entities
         public readonly MeleeWeapon MeleeWeapon;
         private int currentWeaponIndex;
         public Weapon CurrentWeapon => weapons[currentWeaponIndex];
+        public Vector Velocity;
 
         public Player(int health, int armor, Vector startPosition, float startAngle, Sprite legs, RigidCircle collisionShape,
             List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, MeleeWeaponSprite meleeWeapon)
@@ -39,11 +40,17 @@ namespace App.Model.Entities
             CollisionShape = collisionShape;
             LegsContainer = new SpriteContainer(legs, startPosition, startAngle);
             TorsoContainer = new SpriteContainer(weaponSprites[CurrentWeapon.GetType()], startPosition, startAngle);
+            Velocity = Vector.ZeroVector;
         }
 
         public void MoveBy(Vector delta)
         {
             CollisionShape.MoveBy(delta);
+        }
+        
+        public void MoveTo(Vector newPosition)
+        {
+            CollisionShape.MoveTo(newPosition);
         }
 
         public void AddWeapon(Weapon newWeapon)
@@ -88,5 +95,18 @@ namespace App.Model.Entities
         }
 
         public bool WasMeleeWeaponRaised => meleeWeaponSprite.WasRaised;
+        
+        public void TakeHit(int damage)
+        {
+            if (IsDead) return;
+            Armor -= damage;
+            if (Armor < 0)
+            {
+                Health += Armor;
+                Armor = 0;
+            }
+
+            if (Health <= 0) IsDead = true;
+        }
     }
 }

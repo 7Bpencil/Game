@@ -93,7 +93,7 @@ namespace App.Engine
                 currentLevel.IsCompleted = true;
                 currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
             }
-            if (keyState.R) ResetState();
+            if (player.IsDead) ResetState();
             if (currentLevel.IsCompleted 
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
@@ -120,6 +120,7 @@ namespace App.Engine
             currentLevel.CollisionsInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
             AudioEngine.UpdateListenerPosition(player.Position);
             var positionDelta = player.Position - previousPosition;
+            player.Velocity = positionDelta;
             cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
             player.MeleeWeapon.MoveRangeBy(positionDelta);
             UpdatePlayerByMouse();
@@ -257,7 +258,7 @@ namespace App.Engine
                 if (penetrationTimes == null) continue;
                 var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
                 bot.TakeHit(bullet.Damage);
-                if (bot.Armour > 50) bullet.IsStuck = true;
+                if (bot.Armor > 50) bullet.IsStuck = true;
                 else bullet.SlowDown();
 
                 particles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
@@ -266,6 +267,22 @@ namespace App.Engine
                 if (bot.IsDead && !bot.Velocity.Equals(Vector.ZeroVector))
                     bot.MoveTo(bot.CollisionShape.Center + bot.Velocity * penetrationTimes[0]);
             }
+            
+            // TODO remove copy-paste
+            var pTimes = 
+                BulletCollisionDetector.AreCollideWithDynamic(bullet, player.CollisionShape, player.Velocity);
+            if (pTimes == null) return;
+            var pPlace = bullet.Position + bullet.Velocity * pTimes[0];
+            player.TakeHit(bullet.Damage);
+            if (player.Armor > 50) bullet.IsStuck = true;
+            else bullet.SlowDown();
+
+            particles.Add(ParticleFactory.CreateBloodSplash(pPlace));
+            particles.Add(ParticleFactory.CreateBloodSplash(pPlace));
+
+            if (player.IsDead && !player.Velocity.Equals(Vector.ZeroVector))
+                player.MoveTo(player.CollisionShape.Center + player.Velocity * pTimes[0]);
+            
         }
         
         private void UpdateBots()

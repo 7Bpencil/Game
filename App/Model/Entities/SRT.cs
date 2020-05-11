@@ -234,7 +234,7 @@
 //         public float viewAngle = 180;
 //         public Vector aim;
 //         public int Health;
-//         public int Armour;
+//         public int Armor;
 //         public bool IsDead;
 //         private Weapon weapon;
 //         private List<Bullet> sceneBullets;
@@ -425,7 +425,7 @@
 //             //previous
 //             this.sceneBullets = sceneBullets;
 //             Health = health;
-//             Armour = armour;
+//             Armor = armour;
 //             IsDead = false;
 //             this.ticksForMovement = ticksForMovement;
 //             TorsoContainer = new SpriteContainer(torso, centerPosition, angle);
@@ -435,11 +435,11 @@
 //         public void TakeHit(int damage)
 //         {
 //             if (IsDead) return;
-//             Armour -= damage;
-//             if (Armour < 0)
+//             Armor -= damage;
+//             if (Armor < 0)
 //             {
-//                 Health += Armour;
-//                 Armour = 0;
+//                 Health += Armor;
+//                 Armor = 0;
 //             }
 //
 //             if (Health <= 0) IsDead = true;

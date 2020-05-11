@@ -200,7 +200,7 @@ namespace App.Engine.Render
                     t.CollisionShape.Center.X - t.CollisionShape.Radius / 2,
                     t.CollisionShape.Center.Y - t.CollisionShape.Radius / 2);
                 var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
-                RenderMachine.PrintString(t.Health.ToString() + "\n" + t.Armour.ToString(), positionInCamera);    
+                RenderMachine.PrintString(t.Health.ToString() + "\n" + t.Armor.ToString(), positionInCamera);    
             }
         }
 
