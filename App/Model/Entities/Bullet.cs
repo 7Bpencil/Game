@@ -14,7 +14,7 @@ namespace App.Model.Entities
         private float bulletPenetration;
         public int Damage;
         public bool IsStuck;
-        private bool isDeformed;
+        public bool isDeformed;
         public Vector ClosestPenetrationPoint;
 
         public Bullet(Vector position, Vector velocity, float weight, Edge shape, int damage)

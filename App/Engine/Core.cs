@@ -221,7 +221,7 @@ namespace App.Engine
             var particles = currentLevel.Particles;
             foreach (var bullet in bullets)
             {
-                if (bullet.IsStuck) continue;
+                if (bullet.IsStuck || bullet.isDeformed) continue;
                 if (bullet.StaticPenetrations.Count == 0)
                     CalculateStaticPenetrations(bullet);
                 CalculateDynamicPenetrations(bullet);
