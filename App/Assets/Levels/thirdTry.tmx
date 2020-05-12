@@ -13,13 +13,12 @@
     <bot type="Rifleman" position="340, 280" angle="-45"/> 
   </bots>
   
-  <botSpawnPoints wavesAmount="5">
+  <botSpawnPoints wavesAmount="2">
     <point position="292, 350"/>
     <point position="285, 990"/>
     <point position="1100, 990"/>
     <point position="820, 645"/>
     <point position="1148, 340"/>
-    <point position="608, 192"/>
   </botSpawnPoints>
   
   <collectables>

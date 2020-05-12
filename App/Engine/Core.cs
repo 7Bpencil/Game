@@ -50,7 +50,7 @@ namespace App.Engine
             currentLevel = LevelManager.LoadLevel(0);
             InitState();
 
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -146,9 +146,9 @@ namespace App.Engine
             viewForm.CursorReset();
 
             foreach (var spriteContainer in currentLevel.Sprites)
-                if (!spriteContainer.IsEmpty()) spriteContainer.Content.UpdateFrame();
+                if (!spriteContainer.IsEmpty) spriteContainer.Content.UpdateFrame();
             foreach (var unit in currentLevel.Particles)
-                unit.UpdateFrame();
+                if (!unit.IsExpired) unit.UpdateFrame();
         }
         
         private Vector UpdatePlayerPosition(int step)
@@ -312,7 +312,7 @@ namespace App.Engine
             currentLevel.Paths = paths;
         }
 
-        private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
+        private static void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
         {
             deadEntity.LegsContainer.ClearContent();
             deadEntity.TorsoContainer.ClearContent();

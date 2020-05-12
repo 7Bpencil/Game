@@ -6,7 +6,8 @@ namespace App.Engine.ParticleUnits
 {
     public class DeadMenParticleUnit : AbstractParticleUnit
     {
-        public override AbstractParticle Content { get; }
+        private StaticParticle content;
+        public override AbstractParticle Content => content;
         public override Rectangle CurrentFrame => Content.CurrentFrame;
         public override Vector CenterPosition { get; }
         public override float Angle { get; }
@@ -15,7 +16,7 @@ namespace App.Engine.ParticleUnits
 
         public DeadMenParticleUnit(StaticParticle content, Vector startPosition, float angle)
         {
-            Content = content;
+            this.content = content;
             CenterPosition = startPosition;
             Angle = angle;
         }
@@ -23,6 +24,11 @@ namespace App.Engine.ParticleUnits
         public override void UpdateFrame()
         {
             ShouldBeBurned = true;
+        }
+        
+        public override void ClearContent()
+        {
+            content = null;
         }
     }
 }

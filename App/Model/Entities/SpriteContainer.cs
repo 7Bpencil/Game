@@ -8,6 +8,7 @@ namespace App.Model.Entities
         public Sprite Content;
         public Vector CenterPosition;
         public float Angle;
+        public bool IsEmpty;
 
         public SpriteContainer(Sprite startContent, Vector startCenterPosition, float startAngle)
         {
@@ -15,8 +16,11 @@ namespace App.Model.Entities
             CenterPosition = startCenterPosition;
             Angle = startAngle;
         }
-        
-        public void ClearContent() => Content = null;
-        public bool IsEmpty() => Content == null;
+
+        public void ClearContent()
+        {
+            Content = null;
+            IsEmpty = true;
+        }
     }
 }

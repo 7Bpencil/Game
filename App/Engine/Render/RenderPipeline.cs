@@ -132,7 +132,7 @@ namespace App.Engine.Render
         private static void RenderSprites(List<SpriteContainer> spriteContainers, Vector cameraPosition)
         {
             foreach (var container in spriteContainers)
-                if (!container.IsEmpty()) RenderMachine.RenderSpriteOnCamera(container, cameraPosition);
+                if (!container.IsEmpty) RenderMachine.RenderSpriteOnCamera(container, cameraPosition);
         }
 
         private static void RenderParticles(List<AbstractParticleUnit> particleUnits, Vector cameraPosition)
@@ -144,6 +144,7 @@ namespace App.Engine.Render
                     RenderMachine.BurnParticleOnRenderedTiles(container);
                     container.ShouldBeBurned = false;
                     container.IsExpired = true;
+                    container.ClearContent();
                 }
                 if (!container.IsExpired)
                     RenderMachine.RenderParticleOnCamera(container, cameraPosition);

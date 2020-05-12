@@ -12,5 +12,6 @@ namespace App.Engine
         public abstract void UpdateFrame();
         public abstract bool IsExpired { get; set; }
         public abstract bool ShouldBeBurned { set; get; }
+        public abstract void ClearContent();
     }
 }

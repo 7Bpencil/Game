@@ -6,7 +6,7 @@ namespace App.Engine.ParticleUnits
 {
     public class ExpiringAnimatedParticleUnit : AbstractParticleUnit
     {
-        private readonly AnimatedParticle content;
+        private AnimatedParticle content;
         private int currentFrame;
         private int ticksFromLastFrame;
         private readonly int framePeriodInTicks;
@@ -41,6 +41,11 @@ namespace App.Engine.ParticleUnits
                 currentFrame++;
                 if (currentFrame > framesAmount) IsExpired = true;
             }
+        }
+        
+        public override void ClearContent()
+        {
+            content = null;
         }
     }
 }

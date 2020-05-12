@@ -6,7 +6,7 @@ namespace App.Engine.ParticleUnits
 {
     public class BloodSplashParticleUnit : AbstractParticleUnit
     {
-        private readonly AnimatedParticle content;
+        private AnimatedParticle content;
         private int currentFrame;
         private readonly int frameToBurn;
         private int ticksFromLastFrame;
@@ -44,6 +44,11 @@ namespace App.Engine.ParticleUnits
                 if (currentFrame == frameToBurn) ShouldBeBurned = true;
                 if (currentFrame > framesAmount) IsExpired = true;
             }
+        }
+        
+        public override void ClearContent()
+        {
+            content = null;
         }
     }
 }

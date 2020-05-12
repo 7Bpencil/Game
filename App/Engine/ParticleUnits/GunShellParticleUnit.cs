@@ -6,7 +6,7 @@ namespace App.Engine.ParticleUnits
 {
     public class GunShellParticleUnit : AbstractParticleUnit
     {
-        private readonly StaticParticle content;
+        private StaticParticle content;
         private readonly Vector shellDirectionVector;
         private Vector position;
         private int frame;
@@ -34,6 +34,11 @@ namespace App.Engine.ParticleUnits
             frame++;
             if (frame > 10)
                 ShouldBeBurned = true;
+        }
+        
+        public override void ClearContent()
+        {
+            content = null;
         }
     }
 }
