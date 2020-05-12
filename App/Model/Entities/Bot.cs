@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Factories;
 using App.Model.LevelData;
@@ -44,6 +45,7 @@ namespace App.Model.Entities
             AvoidCollision(shapes);
             if (IsInView(playerPosition, walls))
             {
+                currentPath = null;
                 Fire(playerPosition, sceneBullets, particles);
                 var v = playerPosition - Position;
                 var radius = CollisionShape.Diameter * 4;
@@ -58,7 +60,17 @@ namespace App.Model.Entities
             }
             else
             {
-                Patrol();
+                if (currentPath == null || currentPathPointIndex == currentPath.Count)
+                {
+                    currentPath = AStarSearch.SearchPath(Position, playerPosition);
+                    currentPathPointIndex = 0;
+                }
+                ChasePrey(currentPath[currentPathPointIndex]);
+                var distVector = currentPath[currentPathPointIndex] - Position;
+                if (Vector.ScalarProduct(distVector, distVector) < 32 * 32)
+                {
+                    currentPathPointIndex++;
+                }
             }
 
             if (currentPath != null && currentPath.Count != 0) botPaths.Add(currentPath);
@@ -180,7 +192,10 @@ namespace App.Model.Entities
             var sightAngleVector =
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
-            return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
+            if (!(Math.Abs(sightAngleVectorProjection) > Math.Abs(v))) return false;
+            foreach (var wall in sceneEdges)
+                if (CollisionDetector.AreCollide(Position, objectCenter, wall)) return false;
+            return true;
         }
 
         public override Type GetWeaponType()
