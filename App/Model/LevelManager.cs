@@ -12,6 +12,7 @@ namespace App.Model
         private static Dictionary<string, TileSet> tileSets;
         private static Dictionary<int, string> levelList;
         private static Dictionary<int, LevelInfo> cachedLevelsInfo;
+        private static int currentLevelId;
 
         public static void Initialize()
         {
@@ -19,6 +20,7 @@ namespace App.Model
             tileSets = TileSetParser.LoadTileSets(tileMaps);
             levelList = LevelParser.LoadLevelList();
             cachedLevelsInfo = new Dictionary<int, LevelInfo>();
+            currentLevelId = -1;
         }
 
         public static Level LoadLevel(int id)
@@ -47,6 +49,12 @@ namespace App.Model
         public static Bitmap GetTileMap(string tileMapName)
         {
             return tileMaps[tileMapName];
+        }
+
+        public static Level MoveNextLevel()
+        {
+            currentLevelId = (currentLevelId + 1) & levelList.Count;
+            return LoadLevel(currentLevelId);
         }
     }
 }

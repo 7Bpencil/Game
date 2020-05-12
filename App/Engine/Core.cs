@@ -47,7 +47,7 @@ namespace App.Engine
             this.viewForm = viewForm;
             this.screenSize = screenSize;
             InitializeSystems();
-            currentLevel = LevelManager.LoadLevel(1);
+            currentLevel = LevelManager.MoveNextLevel();
             InitState();
 
             //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
@@ -97,7 +97,7 @@ namespace App.Engine
             if (currentLevel.IsCompleted 
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
-                currentLevel = LevelManager.LoadLevel(1);
+                currentLevel = LevelManager.MoveNextLevel();
                 InitState();
             }
 
