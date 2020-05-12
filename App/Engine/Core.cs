@@ -88,7 +88,7 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (currentLevel.WavesAmount == -1)
+            if (currentLevel.WavesAmount == 0)
             {
                 currentLevel.IsCompleted = true;
                 currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));

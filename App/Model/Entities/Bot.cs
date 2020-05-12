@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Factories;
 using App.Model.LevelData;
@@ -187,15 +188,10 @@ namespace App.Model.Entities
             var sightAngleVector =
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
-            /*if (Math.Abs(sightAngleVectorProjection) > Math.Abs(v))
-            {
-                var sightSegment = new Edge(Center, objectCenter);
-                foreach (var wall in sceneEdges)
-                {
-                    if (CollisionDetector.AreCollide(sightSegment, wall))
-                }
-            }*/
-            return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
+            if (!(Math.Abs(sightAngleVectorProjection) > Math.Abs(v))) return false;
+            foreach (var wall in sceneEdges)
+                if (CollisionDetector.AreCollide(Position, objectCenter, wall)) return false;
+            return true;
         }
     }
 }
