@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using App.Engine;
 using App.Engine.Physics;
+using App.Engine.Physics.Collision;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Factories;
 using App.Model.LevelData;
@@ -12,11 +13,13 @@ namespace App.Model.Entities
     {
         private readonly Weapon CurrentWeapon;
 
-        private float speed = 6;
+        private float patrolSpeed = 6;
+        private float chasingSpeed = 12;
         private float speedAngular = 12;
         private Vector sight;
         private float sightAngle = 60 / 2;
         private readonly float collisionAvoidanceFactor;
+        private float gunfireHearRadius = 10 * 32;
 
         private readonly List<Vector> patrolPoints;
         private int patrolPointIndex;
@@ -44,8 +47,8 @@ namespace App.Model.Entities
         }
         
         public void Update(
-            Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
-            ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
+            Vector playerPosition, Vector lastPlayerGunFirePosition, List<Bullet> sceneBullets, 
+            List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             CurrentWeapon.IncrementTick();
             AvoidCollision(shapes);
@@ -60,16 +63,41 @@ namespace App.Model.Entities
                 }
                 else
                 {
-                    ChasePrey(playerPosition);
+                    ChasePrey(playerPosition, chasingSpeed);
+                    Velocity = sight * chasingSpeed;
                 }
             }
             else
             {
-                Patrol();
+                if (lastPlayerGunFirePosition != null)
+                {
+                    var distVector = lastPlayerGunFirePosition - Position;
+                    if (Vector.ScalarProduct(distVector, distVector) < gunfireHearRadius * gunfireHearRadius)
+                    {
+                        if (currentPathPointIndex == currentPath.Count)
+                        {
+                            lastPlayerGunFirePosition = null;
+                            currentPath = AStarSearch.SearchPath(Position, patrolPoints[patrolPointIndex]);
+                            currentPathPointIndex = 0;
+                        }
+                        else
+                        {
+                            currentPath = AStarSearch.SearchPath(Position, lastPlayerGunFirePosition);
+                            currentPathPointIndex = 0;
+                            MoveOnCurrentPath(chasingSpeed);
+                            Velocity = sight * chasingSpeed;
+                        }
+                    }
+                }
+                else
+                {
+                    Patrol();
+                    Velocity = sight * patrolSpeed;
+                }
             }
 
             if (currentPath != null && currentPath.Count != 0) botPaths.Add(currentPath);
-            Velocity = sight * speed;
+            
         }
 
         private void MoveCirclesAround(Vector target, float angle)
@@ -102,7 +130,12 @@ namespace App.Model.Entities
                 patrolPointIndex++;
             }
 
-            ChasePrey(currentPath[currentPathPointIndex]);
+            MoveOnCurrentPath(patrolSpeed);
+        }
+
+        private void MoveOnCurrentPath(float speed)
+        {
+            ChasePrey(currentPath[currentPathPointIndex], speed);
             var distVector = currentPath[currentPathPointIndex] - Position;
             if (Vector.ScalarProduct(distVector, distVector) < 32 * 32)
             {
@@ -110,7 +143,7 @@ namespace App.Model.Entities
             }
         }
 
-        private void ChasePrey(Vector preyPosition)
+        private void ChasePrey(Vector preyPosition, float speed)
         {
             RotateToPrey(preyPosition);
             MoveTo(Position + sight * speed);
@@ -187,15 +220,12 @@ namespace App.Model.Entities
             var sightAngleVector =
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
-            /*if (Math.Abs(sightAngleVectorProjection) > Math.Abs(v))
-            {
-                var sightSegment = new Edge(Center, objectCenter);
-                foreach (var wall in sceneEdges)
-                {
-                    if (CollisionDetector.AreCollide(sightSegment, wall))
-                }
-            }*/
-            return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
+            if (!(Math.Abs(sightAngleVectorProjection) > Math.Abs(v))) return false;
+            foreach (var wall in sceneEdges)
+                if (CollisionDetector.AreCollide(Position, objectCenter, wall)) return false;
+                
+            return true;
+
         }
     }
 }

@@ -176,6 +176,11 @@ namespace App.Engine.Physics.Collision
             return IsCrossSegments(first.Start, first.End, second.Start, second.End);
         }
         
+        public static bool AreCollide(Vector firstStart, Vector firstEnd, Edge second)
+        {
+            return IsCrossSegments(firstStart, firstEnd, second.Start, second.End);
+        }
+        
         private static bool IsCrossSegments(Vector firstStart, Vector firstEnd, Vector secondStart, Vector secondEnd)
         {
             var firstSegmentVector = firstEnd - firstStart;

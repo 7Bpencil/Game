@@ -29,7 +29,8 @@ namespace App.Engine
         private int livingBotsAmount;
         
         private const int tileSize = 32;
-        
+        private Vector lastPlayerGunFirePosition;
+
         private class KeyStates
         {
             public bool W, S, A, D, I, R, P;
@@ -88,7 +89,7 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (currentLevel.WavesAmount == -1)
+            if (currentLevel.WavesAmount == 0)
             {
                 currentLevel.IsCompleted = true;
                 currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
@@ -137,6 +138,7 @@ namespace App.Engine
                 AudioEngine.PlayNewInstance("event:/gunfire/2D/misc/DROPPED_SHELL");
                 currentLevel.Bullets.AddRange(firedBullets);
                 currentLevel.Particles.Add(ParticleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                lastPlayerGunFirePosition = player.Position.Copy();
             }
 
             UpdateCollectables();
@@ -305,7 +307,7 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
+                bot.Update(player.Position, lastPlayerGunFirePosition, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
                 if (!bot.IsDead) livingBotsAmount++;
             }
 
