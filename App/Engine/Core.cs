@@ -88,7 +88,7 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (currentLevel.WavesAmount == 0)
+            if (currentLevel.WavesAmount == -1)
             {
                 currentLevel.IsCompleted = true;
                 currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
@@ -282,6 +282,7 @@ namespace App.Engine
         {
             if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
             {
+                currentLevel.TryOptimize();
                 LevelDynamicEntitiesFactory.SpawnBots(
                     currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes);
                 livingBotsAmount += currentLevel.BotSpawnPoints.Count;

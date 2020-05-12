@@ -59,8 +59,8 @@ namespace App.Model.LevelData
             Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
             Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo);
             Collectables = LevelDynamicEntitiesFactory.CreateCollectables(levelInfo.CollectableWeaponsInfo);
-            Bullets = new List<Bullet> {Capacity = 1000};
-            Particles = new List<AbstractParticleUnit> {Capacity = 1000};
+            Bullets = new List<Bullet> {Capacity = 700};
+            Particles = new List<AbstractParticleUnit> {Capacity = 700};
             Sprites = new List<SpriteContainer> {Capacity = 50};
             VisibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 2};
 
@@ -94,6 +94,24 @@ namespace App.Model.LevelData
         {
             SetDynamicEntities();
             RenderMachine.ResetLevelMap(levelInfo.LevelMap);
+        }
+
+        public void TryOptimize()
+        {
+            if (Particles.Count > 600)
+            {
+                var newParticles = new List<AbstractParticleUnit> {Capacity = 700};
+                foreach (var particle in Particles)
+                    if (!particle.IsExpired) newParticles.Add(particle);
+                Particles = newParticles;
+            }
+            if (Bullets.Count > 600)
+            {
+                var newBullets = new List<Bullet> {Capacity = 700};
+                foreach (var bullet in Bullets)
+                    if (!bullet.IsStuck) newBullets.Add(bullet);
+                Bullets = newBullets;
+            }
         }
     }
 }
