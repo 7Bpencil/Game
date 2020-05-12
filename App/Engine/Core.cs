@@ -8,7 +8,6 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
-using App.Model.Entities.Collectables;
 using App.Model.Factories;
 using App.Model.LevelData;
 using App.View;
@@ -17,6 +16,7 @@ namespace App.Engine
 {
     public class Core
     {
+        private readonly Random r;
         private readonly ViewForm viewForm;
         private Size screenSize;
 
@@ -45,6 +45,7 @@ namespace App.Engine
         
         public Core(ViewForm viewForm, Size screenSize)
         {
+            r = new Random();
             this.viewForm = viewForm;
             this.screenSize = screenSize;
             InitializeSystems();
@@ -265,7 +266,11 @@ namespace App.Engine
             if (penetrationTimes == null) return;
             var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
             entity.TakeHit(bullet.Damage);
-            if (entity.Armor > 50) bullet.IsStuck = true;
+            if (entity.Armor > 50)
+            {
+                bullet.IsStuck = true;
+                levelParticles.Add(ParticleFactory.CreateSmallBloodSplash(penetrationPlace));
+            }
             else
             {
                 bullet.SlowDown();
@@ -321,12 +326,13 @@ namespace App.Engine
             deadEntity.TorsoContainer.ClearContent();
             deadEntity.CollisionShape.CanCollide = false;
             sceneParticles.Add(ParticleFactory.CreateDeadMenBody(EntityFactory.CreateDeadBody(deadEntity.DeadBodyPath),deadEntity.Position, bodyDirection));
-            var collectableWeapon = AbstractWeaponFactory.CreateRuntimeCollectable(deadEntity.Position, deadEntity.GetWeaponType());
+            var wPosition = deadEntity.Position + new Vector(r.Next(48, 64), r.Next(48, 64));
+            var collectableWeapon = AbstractWeaponFactory.CreateRuntimeCollectable(wPosition, deadEntity.GetWeaponType());
             currentLevel.Collectables.Add(collectableWeapon);
             currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
         }
 
-        private void UpdateCollectables() // TODO
+        private void UpdateCollectables()
         {
             var collectables = currentLevel.Collectables;
             foreach (var collectable in collectables)

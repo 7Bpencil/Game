@@ -96,7 +96,7 @@ namespace App.Model.Factories
             return new DeadMenParticleUnit(exit, exitCenter, 0);
         }
 
-        private static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)
+        public static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)
         {
             return new BloodSplashParticleUnit(bloodSplashSmall, centerPosition, r.Next(-45, 45), r.Next(0, 6));
         }
