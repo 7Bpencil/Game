@@ -1,3 +1,4 @@
+using System;
 using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
@@ -16,6 +17,11 @@ namespace App.Model
         public Vector Position => CollisionShape.Center;
 
         public readonly string DeadBodyPath;
+
+        public virtual Type GetWeaponType()
+        {
+            return null;
+        }
 
         protected LivingEntity(
             int health, int armor, RigidCircle collisionShape, SpriteContainer legsContainer, 

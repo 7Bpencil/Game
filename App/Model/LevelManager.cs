@@ -53,7 +53,7 @@ namespace App.Model
 
         public static Level MoveNextLevel()
         {
-            currentLevelId = (currentLevelId + 1) & levelList.Count;
+            currentLevelId = (currentLevelId + 1) % levelList.Count;
             return LoadLevel(currentLevelId);
         }
     }

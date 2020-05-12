@@ -2,7 +2,7 @@
 <map name="Zero Try" width="45" height="40" tilewidth="32" tileheight="32">
  <properties>
  
-  <playerInfo health="1000" armor="1000" position="608, 192" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" meleeWeaponTileMap="Assets\Sprites\Weapons\pinkHair_katana.png" deathTileMap="Assets\TileMaps\pinkHair_death.png">
+  <playerInfo health="100000" armor="100000" position="608, 192" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" meleeWeaponTileMap="Assets\Sprites\Weapons\pinkHair_katana.png" deathTileMap="Assets\TileMaps\pinkHair_death.png">
     <weapon type="Shotgun" ammo="8"/>
   </playerInfo>
   

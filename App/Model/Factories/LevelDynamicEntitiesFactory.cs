@@ -40,7 +40,7 @@ namespace App.Model.Factories
 
         public static List<Collectable> CreateCollectables(List<CollectableWeaponInfo> collectablesInfo)
         {
-            var collectables = new List<Collectable>();
+            var collectables = new List<Collectable> {Capacity = 110};
             foreach (var info in collectablesInfo)
                 collectables.Add(AbstractWeaponFactory.CreateCollectable(info));
             return collectables;

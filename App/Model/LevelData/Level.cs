@@ -114,6 +114,13 @@ namespace App.Model.LevelData
                     if (!bullet.IsStuck) newBullets.Add(bullet);
                 Bullets = newBullets;
             }
+            if (Collectables.Count > 100)
+            {
+                var newCollectables = new List<Collectable> {Capacity = 110};
+                foreach (var collectable in Collectables)
+                    if (!collectable.IsPicked) newCollectables.Add(collectable);
+                Collectables = newCollectables;
+            }
         }
     }
 }

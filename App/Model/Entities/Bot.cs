@@ -22,7 +22,6 @@ namespace App.Model.Entities
         private int patrolPointIndex;
         private List<Vector> currentPath;
         private int currentPathPointIndex;
-        
 
         public Bot(
             int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer, 
@@ -182,6 +181,11 @@ namespace App.Model.Entities
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
             return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
+        }
+
+        public override Type GetWeaponType()
+        {
+            return CurrentWeapon.GetType();
         }
     }
 }

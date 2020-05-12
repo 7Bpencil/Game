@@ -1,5 +1,7 @@
+using System;
 using System.Drawing;
 using System.Reflection;
+using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
 using App.Model.Entities;
@@ -34,6 +36,16 @@ namespace App.Model.Factories
                 new SpriteContainer(
                     new StaticSprite(collectableIcon,0, collectableIcon.Size), position, info.Angle));
         }
+
+        public override CollectableWeapon CreateRuntimeCollectable(Vector position, int ammo, int angle)
+        {
+            return new CollectableWeapon(
+                CreateGun(ammo),
+                new RigidCircle(position, 40, true, true),
+                new SpriteContainer(
+                    new StaticSprite(collectableIcon,0, collectableIcon.Size), position, angle));
+        }
+
 
         public override Bitmap GetHUDicon()
         {

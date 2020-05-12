@@ -8,6 +8,7 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
+using App.Model.Entities.Collectables;
 using App.Model.Factories;
 using App.Model.LevelData;
 using App.View;
@@ -88,7 +89,7 @@ namespace App.Engine
         
         public void GameLoop(object sender, EventArgs args)
         {
-            if (currentLevel.WavesAmount == -1)
+            if (currentLevel.WavesAmount == 0)
             {
                 currentLevel.IsCompleted = true;
                 currentLevel.Particles.Add(ParticleFactory.CreateExit(currentLevel.Exit.Center));
@@ -251,13 +252,14 @@ namespace App.Engine
         {
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
+            var collectables = currentLevel.Collectables;
             foreach (var bot in bots)
-                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles);
+                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles, collectables);
 
-            CalculateEntityRespond(player, bullet, particles);
+            CalculateEntityRespond(player, bullet, particles, collectables);
         }
 
-        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
+        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles, List<Collectable> sceneCollectables)
         {
             var penetrationTimes = 
                 BulletCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
@@ -293,6 +295,7 @@ namespace App.Engine
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
+            var collectables = currentLevel.Collectables;
             livingBotsAmount = 0;
             foreach (var bot in bots)
             {
@@ -313,12 +316,15 @@ namespace App.Engine
             currentLevel.Paths = paths;
         }
 
-        private static void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
+        private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
         {
             deadEntity.LegsContainer.ClearContent();
             deadEntity.TorsoContainer.ClearContent();
             deadEntity.CollisionShape.CanCollide = false;
             sceneParticles.Add(ParticleFactory.CreateDeadMenBody(EntityFactory.CreateDeadBody(deadEntity.DeadBodyPath),deadEntity.Position, bodyDirection));
+            var collectableWeapon = AbstractWeaponFactory.CreateRuntimeCollectable(deadEntity.Position, deadEntity.GetWeaponType());
+            currentLevel.Collectables.Add(collectableWeapon);
+            currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
         }
 
         private void UpdateCollectables() // TODO

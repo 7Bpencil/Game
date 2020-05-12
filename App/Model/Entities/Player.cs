@@ -72,5 +72,10 @@ namespace App.Model.Entities
         }
 
         public bool WasMeleeWeaponRaised => meleeWeaponSprite.WasRaised;
+
+        public override Type GetWeaponType()
+        {
+            return CurrentWeapon.GetType();
+        }
     }
 }
