@@ -51,7 +51,7 @@ namespace App.Engine
             currentLevel = LevelManager.MoveNextLevel();
             InitState();
 
-            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -252,14 +252,13 @@ namespace App.Engine
         {
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
-            var collectables = currentLevel.Collectables;
             foreach (var bot in bots)
-                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles, collectables);
+                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles);
 
-            CalculateEntityRespond(player, bullet, particles, collectables);
+            CalculateEntityRespond(player, bullet, particles);
         }
 
-        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles, List<Collectable> sceneCollectables)
+        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
         {
             var penetrationTimes = 
                 BulletCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
@@ -270,6 +269,7 @@ namespace App.Engine
             else
             {
                 bullet.SlowDown();
+                levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
                 levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
             }
 
@@ -295,7 +295,6 @@ namespace App.Engine
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
-            var collectables = currentLevel.Collectables;
             livingBotsAmount = 0;
             foreach (var bot in bots)
             {

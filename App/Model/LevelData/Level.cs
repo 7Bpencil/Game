@@ -114,9 +114,9 @@ namespace App.Model.LevelData
                     if (!bullet.IsStuck) newBullets.Add(bullet);
                 Bullets = newBullets;
             }
-            if (Collectables.Count > 100)
+            if (Collectables.Count > 20)
             {
-                var newCollectables = new List<Collectable> {Capacity = 110};
+                var newCollectables = new List<Collectable> {Capacity = 30};
                 foreach (var collectable in Collectables)
                     if (!collectable.IsPicked) newCollectables.Add(collectable);
                 Collectables = newCollectables;
