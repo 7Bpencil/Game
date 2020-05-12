@@ -19,17 +19,17 @@ namespace App.Model.Entities
         private Vector sight;
         private float sightAngle = 60 / 2;
         private readonly float collisionAvoidanceFactor;
-        private float gunfireHearRadius = 10 * 32;
+        private float gunfireHearRadius = 16 * 32;
 
         private readonly List<Vector> patrolPoints;
         private int patrolPointIndex;
         private List<Vector> currentPath;
         private int currentPathPointIndex;
-        
+
 
         public Bot(
-            int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer, 
-            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath) 
+            int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer,
+            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath)
             : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             CurrentWeapon = weapon;
@@ -45,9 +45,9 @@ namespace App.Model.Entities
             patrolPointIndex = 0;
             currentPathPointIndex = 0;
         }
-        
+
         public void Update(
-            Vector playerPosition, Vector lastPlayerGunFirePosition, List<Bullet> sceneBullets, 
+            Vector playerPosition, Vector lastPlayerGunFirePosition, List<Bullet> sceneBullets,
             List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             CurrentWeapon.IncrementTick();
@@ -69,24 +69,21 @@ namespace App.Model.Entities
             }
             else
             {
-                if (lastPlayerGunFirePosition != null)
+                if (lastPlayerGunFirePosition != null
+                    && Vector.ScalarProduct(lastPlayerGunFirePosition - Position, lastPlayerGunFirePosition - Position) < gunfireHearRadius * gunfireHearRadius)
                 {
-                    var distVector = lastPlayerGunFirePosition - Position;
-                    if (Vector.ScalarProduct(distVector, distVector) < gunfireHearRadius * gunfireHearRadius)
+                    if (currentPathPointIndex == currentPath.Count)
                     {
-                        if (currentPathPointIndex == currentPath.Count)
-                        {
-                            lastPlayerGunFirePosition = null;
-                            currentPath = AStarSearch.SearchPath(Position, patrolPoints[patrolPointIndex]);
-                            currentPathPointIndex = 0;
-                        }
-                        else
-                        {
-                            currentPath = AStarSearch.SearchPath(Position, lastPlayerGunFirePosition);
-                            currentPathPointIndex = 0;
-                            MoveOnCurrentPath(chasingSpeed);
-                            Velocity = sight * chasingSpeed;
-                        }
+                        lastPlayerGunFirePosition = null;
+                        currentPath = AStarSearch.SearchPath(Position, patrolPoints[patrolPointIndex]);
+                        currentPathPointIndex = 0;
+                    }
+                    else
+                    {
+                        currentPath = AStarSearch.SearchPath(Position, lastPlayerGunFirePosition);
+                        currentPathPointIndex = 0;
+                        MoveOnCurrentPath(chasingSpeed);
+                        Velocity = sight * chasingSpeed;
                     }
                 }
                 else
@@ -97,7 +94,6 @@ namespace App.Model.Entities
             }
 
             if (currentPath != null && currentPath.Count != 0) botPaths.Add(currentPath);
-            
         }
 
         private void MoveCirclesAround(Vector target, float angle)
@@ -223,9 +219,7 @@ namespace App.Model.Entities
             if (!(Math.Abs(sightAngleVectorProjection) > Math.Abs(v))) return false;
             foreach (var wall in sceneEdges)
                 if (CollisionDetector.AreCollide(Position, objectCenter, wall)) return false;
-                
             return true;
-
         }
     }
 }
