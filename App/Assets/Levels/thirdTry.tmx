@@ -34,7 +34,7 @@
     <collectableWeapon position="300, 330" angle="45" type="MP6" ammo="40"/>
   </collectables>
   
-  <exit x="704" y="112" width="96" height="112"/>
+  <exit x="704" y="112" width="96" height="96"/>
   
  </properties>
  <tileset firstgid="1" source="rooms.tsx"/>

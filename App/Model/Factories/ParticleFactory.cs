@@ -23,6 +23,8 @@ namespace App.Model.Factories
         private static StaticParticle shellGauge12;
         private static StaticParticle shell762;
         private static StaticParticle shell919;
+        
+        private static StaticParticle exit;
 
         public static void Initialize()
         {
@@ -53,6 +55,9 @@ namespace App.Model.Factories
             wallDust = new AnimatedParticle(
                 new Bitmap(@"Assets\Sprites\SMOKE\bullet_smoke.png"),
                 1, 0, 5, new Size(13, 25));
+            
+            exit = new StaticParticle(
+                new Bitmap(@"Assets\Sprites\exit.png"), 0, new Size(96, 96));
         }
         
         public static AbstractParticleUnit CreateBloodSplash(Vector centerPosition)
@@ -84,6 +89,11 @@ namespace App.Model.Factories
         {
             var angle = Vector.GetAngle(bodyDirection, new Vector(1, 0));
             return new DeadMenParticleUnit(body, position, angle);
+        }
+
+        public static AbstractParticleUnit CreateExit(Vector exitCenter)
+        {
+            return new DeadMenParticleUnit(exit, exitCenter, 0);
         }
 
         private static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)

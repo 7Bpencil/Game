@@ -108,7 +108,6 @@
         <Compile Include="Model\Factories\GenericWeaponFactory.cs" />
         <Compile Include="Model\Factories\LevelDynamicEntitiesFactory.cs" />
         <Compile Include="Model\Factories\ParticleFactory.cs" />
-        <Compile Include="Model\Factories\SpriteFactory.cs" />
         <Compile Include="Model\Factories\WeaponFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
         <Compile Include="Model\LevelData\LevelInfo.cs" />

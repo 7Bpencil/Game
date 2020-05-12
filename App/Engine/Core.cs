@@ -91,7 +91,7 @@ namespace App.Engine
             if (currentLevel.WavesAmount == -1)
             {
                 currentLevel.IsCompleted = true;
-                currentLevel.Sprites.Add(SpriteFactory.CreateExitSprite(currentLevel.Exit));
+                currentLevel.Particles.Add(ParticleFactory.CreateExit(currentLevel.Exit.Center));
             }
             if (player.IsDead) ResetState();
             if (currentLevel.IsCompleted 
