@@ -190,7 +190,15 @@ namespace App.Engine.Render
         private static void RenderBullets(List<Bullet> bullets, Vector cameraPosition)
         {
             foreach (var bullet in bullets)
-                if (!bullet.IsStuck) RenderMachine.RenderEdgeOnCamera(bullet.Shape, cameraPosition);
+            {
+                if (bullet.IsStuck) continue;
+                if (bullet.isDeformed)
+                {
+                    RenderMachine.RenderEdgeOnTiles(bullet.Shape);
+                    bullet.IsStuck = true;
+                }
+                else RenderMachine.RenderEdgeOnCamera(bullet.Shape, cameraPosition);
+            }
         }
 
         private static void RenderEnemyInfo(List<Bot> targets, Vector cameraPosition)

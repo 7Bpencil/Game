@@ -60,7 +60,7 @@ namespace App.Model.Entities
             }
             else
             {
-                if (currentPath == null || currentPathPointIndex == currentPath.Count)
+                if (currentPath == null || currentPathPointIndex == currentPath.Count || currentPath.Count == 0)
                 {
                     currentPath = AStarSearch.SearchPath(Position, playerPosition);
                     currentPathPointIndex = 0;

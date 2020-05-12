@@ -109,6 +109,11 @@ namespace App.Engine.Render
         {
             EdgeRenderer.Draw(edge, cameraPosition, RaytracingEdgePen, gfxCamera);
         }
+        
+        public static void RenderEdgeOnTiles(Edge edge)
+        {
+            EdgeRenderer.Draw(edge, RaytracingEdgePen, gfxLevelMap);
+        }
 
         public static void RenderShapeOnCamera(RigidShape shape, Vector cameraPosition)
         {
