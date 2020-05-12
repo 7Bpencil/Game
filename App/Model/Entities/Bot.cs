@@ -26,19 +26,13 @@ namespace App.Model.Entities
 
         public Bot(
             int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer, 
-            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath) 
+            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath, List<Vector> patrolPoints) 
             : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             CurrentWeapon = weapon;
             this.sight = sight;
             collisionAvoidanceFactor = collisionShape.Diameter * 2;
-            patrolPoints = new List<Vector>
-            {
-                new Vector(11, 16) * 32,
-                new Vector(34, 13) * 32,
-                new Vector(27, 21) * 32,
-                new Vector(10, 26) * 32,
-            };
+            this.patrolPoints = patrolPoints;
             patrolPointIndex = 0;
             currentPathPointIndex = 0;
         }
@@ -187,14 +181,6 @@ namespace App.Model.Entities
             var sightAngleVector =
                 v > 0 ? sight.Rotate(sightAngle, Vector.ZeroVector) : sight.Rotate(-sightAngle, Vector.ZeroVector);
             var sightAngleVectorProjection = Vector.ScalarProduct(sightAngleVector, sightNormal);
-            /*if (Math.Abs(sightAngleVectorProjection) > Math.Abs(v))
-            {
-                var sightSegment = new Edge(Center, objectCenter);
-                foreach (var wall in sceneEdges)
-                {
-                    if (CollisionDetector.AreCollide(sightSegment, wall))
-                }
-            }*/
             return Math.Abs(sightAngleVectorProjection) > Math.Abs(v);
         }
     }

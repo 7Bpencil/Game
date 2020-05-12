@@ -47,7 +47,7 @@ namespace App.Engine
             this.viewForm = viewForm;
             this.screenSize = screenSize;
             InitializeSystems();
-            currentLevel = LevelManager.LoadLevel(0);
+            currentLevel = LevelManager.LoadLevel(1);
             InitState();
 
             //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
@@ -284,7 +284,7 @@ namespace App.Engine
             {
                 currentLevel.TryOptimize();
                 LevelDynamicEntitiesFactory.SpawnBots(
-                    currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes);
+                    currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes, currentLevel.BotPatrolPoints);
                 livingBotsAmount += currentLevel.BotSpawnPoints.Count;
                 currentLevel.WavesAmount--;
             }

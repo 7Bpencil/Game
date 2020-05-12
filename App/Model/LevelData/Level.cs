@@ -23,6 +23,7 @@ namespace App.Model.LevelData
         public readonly List<Edge> RaytracingEdges;
         public readonly NavMesh NavMesh;
         public readonly List<Vector> BotSpawnPoints;
+        public readonly List<Vector> BotPatrolPoints;
         public int WavesAmount;
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
@@ -46,6 +47,7 @@ namespace App.Model.LevelData
             RaytracingEdges = levelInfo.RaytracingEdges;
             NavMesh = levelInfo.NavMesh;
             BotSpawnPoints = levelInfo.BotSpawnPoints;
+            BotPatrolPoints = levelInfo.BotPatrolPoints;
 
             SetDynamicEntities();
         }
@@ -57,7 +59,7 @@ namespace App.Model.LevelData
             WavesAmount = levelInfo.WavesAmount;
 
             Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
-            Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo);
+            Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo, levelInfo.BotPatrolPoints);
             Collectables = LevelDynamicEntitiesFactory.CreateCollectables(levelInfo.CollectableWeaponsInfo);
             Bullets = new List<Bullet> {Capacity = 700};
             Particles = new List<AbstractParticleUnit> {Capacity = 700};

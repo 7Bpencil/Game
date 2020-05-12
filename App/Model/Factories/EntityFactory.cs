@@ -8,6 +8,7 @@ using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
 using App.Model.Entities;
 using App.Model.Entities.Weapons;
+using App.Model.LevelData;
 
 namespace App.Model.Factories
 {
@@ -55,7 +56,7 @@ namespace App.Model.Factories
                 legsContainer, torsoContainer, weapons, weaponSprites, meleeWeaponSprite, meleeWeapon, info.DeadBodyTileMapPath);
         }
 
-        public static Bot CreateBot(BotInfo info)
+        public static Bot CreateBot(BotInfo info, List<Vector> patrolPoints)
         {
             var position = info.Position.Copy();
             var angle = info.Angle;
@@ -68,7 +69,7 @@ namespace App.Model.Factories
             return new Bot(
                 type.Health, type.Armor, legsContainer, torsoContainer, sightVector,
                 new RigidCircle(position, 32, false, true),
-                AbstractWeaponFactory.CreateGun(type.Weapon), type.DeadBodyTileMapPath);
+                AbstractWeaponFactory.CreateGun(type.Weapon), type.DeadBodyTileMapPath, patrolPoints);
         }
 
         private static Bitmap GetBitmap(string path)

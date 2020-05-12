@@ -63,6 +63,7 @@ namespace App.Model.DataParser
             EntityFactory.PlayerInfo playerInfo = null;
             List<EntityFactory.BotInfo> botsInfo = null;
             List<Vector> botSpawnPoints = null;
+            List<Vector> botPatrolPoints = null;
             int wavesAmount = 0;
             RigidAABB exit = null;
 
@@ -88,8 +89,10 @@ namespace App.Model.DataParser
                             if (property.Name == "botSpawnPoints")
                             {
                                 wavesAmount = int.Parse(property.Attributes.GetNamedItem("wavesAmount").Value);
-                                botSpawnPoints = LoadBotSpawnPoints(property);
+                                botSpawnPoints = LoadPoints(property);
                             }
+
+                            if (property.Name == "botPatrolPoints") botPatrolPoints = LoadPoints(property);
                         }
 
                         break;
@@ -115,8 +118,8 @@ namespace App.Model.DataParser
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
             return new LevelInfo(
                 levelSizeInTiles, name, exit, staticShapes, 
-                levelMap, raytracingEdges, navMesh, botSpawnPoints, 
-                wavesAmount, playerInfo, botsInfo, collectableWeapons);
+                levelMap, raytracingEdges, navMesh, botSpawnPoints,
+                wavesAmount, playerInfo, botsInfo, collectableWeapons, botPatrolPoints);
         }
 
         private static EntityFactory.PlayerInfo LoadPlayerInfo(XmlNode playerNode)
@@ -147,7 +150,7 @@ namespace App.Model.DataParser
             return bots;
         }
 
-        private static List<Vector> LoadBotSpawnPoints(XmlNode spawnPoints)
+        private static List<Vector> LoadPoints(XmlNode spawnPoints)
         {
             var points = new List<Vector>();
             foreach (XmlNode point in spawnPoints.ChildNodes)

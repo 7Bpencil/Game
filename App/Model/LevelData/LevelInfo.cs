@@ -18,6 +18,7 @@ namespace App.Model.LevelData
         public readonly List<Edge> RaytracingEdges;
         public readonly NavMesh NavMesh;
         public readonly List<Vector> BotSpawnPoints;
+        public readonly List<Vector> BotPatrolPoints;
         public readonly int WavesAmount;
         public readonly EntityFactory.PlayerInfo PlayerInfo;
         public readonly List<EntityFactory.BotInfo> BotsInfo;
@@ -27,7 +28,7 @@ namespace App.Model.LevelData
             Size levelSizeInTiles, string name, RigidAABB exit, List<RigidShape> staticShapes, 
             Bitmap levelMap, List<Edge> raytracingEdges, NavMesh navMesh, List<Vector> botSpawnPoints, 
             int wavesAmount, EntityFactory.PlayerInfo playerInfo, List<EntityFactory.BotInfo> botsInfo, 
-            List<CollectableWeaponInfo> collectableWeaponsInfo)
+            List<CollectableWeaponInfo> collectableWeaponsInfo, List<Vector> botPatrolPoints)
         {
             LevelSizeInTiles = levelSizeInTiles;
             Name = name;
@@ -37,6 +38,7 @@ namespace App.Model.LevelData
             RaytracingEdges = raytracingEdges;
             NavMesh = navMesh;
             BotSpawnPoints = botSpawnPoints;
+            BotPatrolPoints = botPatrolPoints;
             WavesAmount = wavesAmount;
             PlayerInfo = playerInfo;
             BotsInfo = botsInfo;

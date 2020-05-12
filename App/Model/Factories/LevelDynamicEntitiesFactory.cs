@@ -3,6 +3,7 @@ using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
 using App.Model.Entities.Collectables;
+using App.Model.LevelData;
 
 namespace App.Model.Factories
 {
@@ -13,23 +14,23 @@ namespace App.Model.Factories
             return EntityFactory.CreatePlayer(playerInfo);
         }
 
-        public static List<Bot> CreateBots(List<EntityFactory.BotInfo> botsInfo)
+        public static List<Bot> CreateBots(List<EntityFactory.BotInfo> botsInfo, List<Vector> patrolPoints)
         {
             var bots = new List<Bot>();
             foreach (var info in botsInfo)
-                bots.Add(EntityFactory.CreateBot(info));
+                bots.Add(EntityFactory.CreateBot(info, patrolPoints));
             return bots;
         }
 
         public static void SpawnBots(
             List<Vector> spawnPositions, Vector playerPosition, List<Bot> levelBots, 
-            List<SpriteContainer> levelSprites, List<RigidShape> levelDynamicShapes)
+            List<SpriteContainer> levelSprites, List<RigidShape> levelDynamicShapes, List<Vector> patrolPoints)
         {
             var xAxisVector = new Vector(1, 0);
             foreach (var position in spawnPositions)
             {
                 var angle = Vector.GetAngle(xAxisVector, playerPosition - position);
-                var newBot = EntityFactory.CreateBot(new EntityFactory.BotInfo(position, angle, BotBank.GetRandomBotType()));
+                var newBot = EntityFactory.CreateBot(new EntityFactory.BotInfo(position, angle, BotBank.GetRandomBotType()), patrolPoints);
                 levelBots.Add(newBot);
                 levelDynamicShapes.Add(newBot.CollisionShape);
                 levelSprites.Add(newBot.LegsContainer);
