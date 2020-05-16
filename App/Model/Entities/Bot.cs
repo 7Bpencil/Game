@@ -38,7 +38,7 @@ namespace App.Model.Entities
         }
         
         public void Update(
-            Vector playerPosition, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
+            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
             ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             CurrentWeapon.IncrementTick();
@@ -46,7 +46,7 @@ namespace App.Model.Entities
             if (IsInView(playerPosition, walls))
             {
                 currentPath = null;
-                Fire(playerPosition, sceneBullets, particles);
+                Fire(playerPosition + playerVelocity, sceneBullets, particles);
                 var v = playerPosition - Position;
                 var radius = CollisionShape.Diameter * 4;
                 if (Vector.ScalarProduct(v, v) < radius * radius)
@@ -93,7 +93,10 @@ namespace App.Model.Entities
             }
         }
 
-        private void Patrol()
+        /// <summary>
+        /// Bot will move from point to point
+        /// </summary>
+        /*private void Patrol()
         {
             if (patrolPointIndex == patrolPoints.Count)
             {
@@ -113,7 +116,7 @@ namespace App.Model.Entities
             {
                 currentPathPointIndex++;
             }
-        }
+        }*/
 
         private void ChasePrey(Vector preyPosition)
         {

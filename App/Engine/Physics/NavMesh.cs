@@ -38,10 +38,11 @@ namespace App.Engine.Physics
         
         private void AddWalls(List<RigidShape> staticShapes, Size levelSizeInTiles)
         {
+            var circle = new RigidCircle(Vector.ZeroVector, 32, true, true);
             for (var j = 1; j < levelSizeInTiles.Width - 1; ++j)
             for (var i = 1; i < levelSizeInTiles.Height - 1; ++i)
             {
-                var circle = new RigidCircle(new Vector(j, i) * 32, 32, true, true);
+                circle.MoveTo(new Vector(j, i) * 32);
                 var canWalk = true;
                 foreach (var staticShape in staticShapes)
                 {

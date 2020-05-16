@@ -23,13 +23,13 @@ namespace App.Engine
             this.playerRadius = playerRadius;
         }
 
-        public void UpdateCamera(Vector playerPosition, Vector playerVelocity, Vector cursorPosition, int step)
+        public void UpdateCamera(Vector playerPosition, Vector playerVelocity, Vector cursorPosition)
         {
-            CorrectCameraDependsOnPlayerPosition(playerPosition, playerVelocity, step);
+            CorrectCameraDependsOnPlayerPosition(playerPosition, playerVelocity);
             CorrectCameraDependsOnCursorPosition(cursorPosition);
         }
 
-        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerVelocity, float step)
+        private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerVelocity)
         {
             var dist = (chaserPosition - playerPosition).Length; 
             
@@ -37,8 +37,8 @@ namespace App.Engine
                 playerVelocity = 8 * (playerPosition - chaserPosition).Normalize();
             else if (dist > playerRadius)
                 playerVelocity = (playerPosition - chaserPosition).Normalize() * (dist - playerRadius);
-            else 
-                playerVelocity = playerVelocity.Normalize() * (step - 4);
+            else
+                playerVelocity /= 2;
 
             chaserPosition += playerVelocity;
             position += playerVelocity;

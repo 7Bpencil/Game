@@ -31,9 +31,9 @@ namespace App.Engine
         
         private const int tileSize = 32;
         
-        private class KeyStates
+        public class KeyStates
         {
-            public bool W, S, A, D, I, R, P;
+            public bool W, S, A, D, I, R, P, Shift;
             public int pressesOnIAmount;
             public int pressesOnPAmount;
         }
@@ -52,7 +52,7 @@ namespace App.Engine
             currentLevel = LevelManager.MoveNextLevel();
             InitState();
 
-            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -114,19 +114,15 @@ namespace App.Engine
         
         private void UpdateState()
         {
-            const int step = 6;
             var previousPosition = player.Position.Copy();
-            var playerVelocity = UpdatePlayerPosition(step);
-            CorrectPlayer();
             
+            player.UpdatePosition(keyState, currentLevel.StaticShapes);
             currentLevel.CollisionsInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
             AudioEngine.UpdateListenerPosition(player.Position);
-            var positionDelta = player.Position - previousPosition;
-            player.Velocity = positionDelta;
-            cursor.MoveBy(viewForm.GetCursorDiff() + positionDelta);
-            player.MeleeWeapon.MoveRangeBy(positionDelta);
-            UpdatePlayerByMouse();
-            RotatePlayerLegs(playerVelocity);
+            var realVelocity = player.Position - previousPosition;
+            player.MeleeWeapon.MoveRangeBy(realVelocity);
+            cursor.MoveBy(viewForm.GetCursorDiff() + realVelocity);
+            player.UpdateSprites(cursor.Position);
 
             if (mouseState.RMB && player.MeleeWeapon.IsReady)
             {
@@ -144,7 +140,7 @@ namespace App.Engine
             UpdateCollectables();
             UpdateEntities();
             
-            camera.UpdateCamera(player.Position, playerVelocity, cursor.Position, step);
+            camera.UpdateCamera(player.Position, player.Velocity, cursor.Position);
             viewForm.CursorReset();
 
             foreach (var spriteContainer in currentLevel.Sprites)
@@ -153,40 +149,10 @@ namespace App.Engine
                 if (!unit.IsExpired) unit.UpdateFrame();
         }
         
-        private Vector UpdatePlayerPosition(int step)
-        {
-            var delta = Vector.ZeroVector;
-            if (keyState.W) 
-                delta.Y -= step;
-            if (keyState.S)
-                delta.Y += step;
-            if (keyState.A)
-                delta.X -= step;
-            if (keyState.D)
-                delta.X += step;
-            
-            player.MoveBy(delta);
-            return delta;
-        }
-        
-        private void UpdatePlayerByMouse()
-        {
-            var direction = cursor.Position - player.Position;
-            var dirAngle = direction.Angle;
-            var angle = (float) (180 / Math.PI * dirAngle);
-            player.TorsoContainer.Angle = angle;
-            player.MeleeWeapon.RotateRangeTo(angle, player.Position);
-        }
-        
-        private void RotatePlayerLegs(Vector delta)
-        {
-            if (delta.Equals(Vector.ZeroVector)) return;
-            var dirAngle = Math.Atan2(-delta.Y, delta.X);
-            var angle = 180 / Math.PI * dirAngle;
-            player.LegsContainer.Angle = (float) angle;
-        }
-        
-        private void CorrectPlayer()
+        /// <summary>
+        /// Makes sure that player can't escape from world
+        /// </summary>
+        /*private void CorrectPlayer()
         {
             var delta = Vector.ZeroVector;
             var rightBorder = currentLevel.LevelSizeInTiles.Width * tileSize;
@@ -205,14 +171,14 @@ namespace App.Engine
             if (d > 0) delta.X -= d;
             
             player.MoveBy(delta);
-        }
+        }*/
 
         private void UpdateEntities()
         {
             UpdateBullets();
             UpdateBots();
 
-            player.IncrementWeaponsTick();
+            player.IncrementTick();
         }
 
         private void UpdateBullets()
@@ -285,9 +251,21 @@ namespace App.Engine
             }
         }
         
+        private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
+        {
+            deadEntity.LegsContainer.ClearContent();
+            deadEntity.TorsoContainer.ClearContent();
+            deadEntity.CollisionShape.CanCollide = false;
+            sceneParticles.Add(ParticleFactory.CreateDeadMenBody(EntityFactory.CreateDeadBody(deadEntity.DeadBodyPath),deadEntity.Position, bodyDirection));
+            var wPosition = deadEntity.Position + new Vector(r.Next(48, 64), r.Next(48, 64));
+            var collectableWeapon = AbstractWeaponFactory.CreateRuntimeCollectable(wPosition, deadEntity.GetWeaponType());
+            currentLevel.Collectables.Add(collectableWeapon);
+            currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
+        }
+        
         private void UpdateBots()
         {
-            if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
+            if (livingBotsAmount < 2 && currentLevel.WavesAmount != 0)
             {
                 currentLevel.TryOptimize();
                 LevelDynamicEntitiesFactory.SpawnBots(
@@ -296,7 +274,7 @@ namespace App.Engine
                 currentLevel.WavesAmount--;
             }
             var regions = new List<Raytracing.VisibilityRegion>();
-            regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
+            //regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
@@ -312,24 +290,15 @@ namespace App.Engine
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                     currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
                 }
-                bot.Update(player.Position, currentLevel.Bullets, currentLevel.Particles, currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
+                bot.Update(
+                    player.Position, player.Velocity, 
+                    currentLevel.Bullets, currentLevel.Particles, 
+                    currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
                 if (!bot.IsDead) livingBotsAmount++;
             }
 
             currentLevel.VisibilityRegions = regions;
             currentLevel.Paths = paths;
-        }
-
-        private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
-        {
-            deadEntity.LegsContainer.ClearContent();
-            deadEntity.TorsoContainer.ClearContent();
-            deadEntity.CollisionShape.CanCollide = false;
-            sceneParticles.Add(ParticleFactory.CreateDeadMenBody(EntityFactory.CreateDeadBody(deadEntity.DeadBodyPath),deadEntity.Position, bodyDirection));
-            var wPosition = deadEntity.Position + new Vector(r.Next(48, 64), r.Next(48, 64));
-            var collectableWeapon = AbstractWeaponFactory.CreateRuntimeCollectable(wPosition, deadEntity.GetWeaponType());
-            currentLevel.Collectables.Add(collectableWeapon);
-            currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
         }
 
         private void UpdateCollectables()
@@ -377,6 +346,10 @@ namespace App.Engine
                     keyState.P = true;
                     keyState.pressesOnPAmount++;
                     break;
+                
+                case Keys.ShiftKey:
+                    keyState.Shift = true;
+                    break;
             }
         }
 
@@ -415,6 +388,10 @@ namespace App.Engine
                 
                 case Keys.P:
                     keyState.P = false;
+                    break;
+                
+                case Keys.ShiftKey:
+                    keyState.Shift = false;
                     break;
             }
         }

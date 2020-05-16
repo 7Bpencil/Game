@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using App.Engine.Physics;
 
 namespace App.Engine
@@ -109,7 +110,7 @@ namespace App.Engine
         public T Dequeue()
         {
             var bestIndex = 0;
-            if (elements.Count == 0) throw new IndexOutOfRangeException();
+            if (elements.Count == 0) throw new TargetException();
             for (var i = 0; i < elements.Count; i++)
             {
                 if (elements[i].Item2 < elements[bestIndex].Item2) bestIndex = i;
