@@ -17,13 +17,15 @@ namespace App.Model.Entities.Weapons
             range.Rotate(startAngle, playerCenter);
 
             Damage = 500;
-            attackPeriod = 33;
+            attackPeriod = 30;
             ticksFromLastAttack = attackPeriod + 1;
         }
         
         public bool IsInRange(Bot target) => range.IsCollide(target.CollisionShape);
 
         public void IncrementTick() => ticksFromLastAttack++;
+
+        public void ResetTick() => ticksFromLastAttack = 0;
         
         public bool IsReady => ticksFromLastAttack >= attackPeriod;
 

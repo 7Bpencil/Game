@@ -88,12 +88,12 @@ namespace App.Model.Factories
         public static AbstractParticleUnit CreateDeadMenBody(StaticParticle body, Vector position, Vector bodyDirection)
         {
             var angle = Vector.GetAngle(bodyDirection, new Vector(1, 0));
-            return new DeadMenParticleUnit(body, position, angle);
+            return new AutoBurnParticleUnit(body, position, angle);
         }
 
         public static AbstractParticleUnit CreateExit(Vector exitCenter)
         {
-            return new DeadMenParticleUnit(exit, exitCenter, 0);
+            return new AutoBurnParticleUnit(exit, exitCenter, 0);
         }
 
         public static AbstractParticleUnit CreateSmallBloodSplash(Vector centerPosition)

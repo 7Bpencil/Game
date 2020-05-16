@@ -76,6 +76,7 @@ namespace App.Model.Entities
         {
             TorsoContainer.Content = meleeWeaponSprite;
             meleeWeaponSprite.InAction = true;
+            MeleeWeapon.ResetTick();
         }
 
         public void HideMeleeWeapon()
@@ -93,6 +94,8 @@ namespace App.Model.Entities
         }
 
         public bool WasMeleeWeaponRaised => meleeWeaponSprite.WasRaised;
+
+        public bool IsMeleeWeaponInAction => meleeWeaponSprite.InAction;
 
         public override Type GetWeaponType()
         {
@@ -119,7 +122,7 @@ namespace App.Model.Entities
 
             foreach (var shape in sceneStaticShapes)
             {
-                var penetrationTimes = BulletCollisionDetector.AreCollideWithStatic(firstPosition, Velocity, shape);
+                var penetrationTimes = DynamicCollisionDetector.AreCollideWithStatic(firstPosition, Velocity, shape);
                 if (penetrationTimes == null) continue;
                 if (penetrationTimes[0] < 1 && penetrationTimes[0] < closestPenetrationTime && penetrationTimes[0] > 0)
                     closestPenetrationTime = penetrationTimes[0];

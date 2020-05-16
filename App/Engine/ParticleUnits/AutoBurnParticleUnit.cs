@@ -4,7 +4,7 @@ using App.Engine.Physics;
 
 namespace App.Engine.ParticleUnits
 {
-    public class DeadMenParticleUnit : AbstractParticleUnit
+    public class AutoBurnParticleUnit : AbstractParticleUnit
     {
         private StaticParticle content;
         public override AbstractParticle Content => content;
@@ -14,7 +14,7 @@ namespace App.Engine.ParticleUnits
         public override bool IsExpired { get; set; }
         public override bool ShouldBeBurned { get; set; }
 
-        public DeadMenParticleUnit(StaticParticle content, Vector startPosition, float angle)
+        public AutoBurnParticleUnit(StaticParticle content, Vector startPosition, float angle)
         {
             this.content = content;
             CenterPosition = startPosition;

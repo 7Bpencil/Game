@@ -57,10 +57,10 @@
         <Compile Include="Engine\Particles\AnimatedParticle.cs" />
         <Compile Include="Engine\Particles\StaticParticle.cs" />
         <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
-        <Compile Include="Engine\ParticleUnits\DeadMenParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\AutoBurnParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
-        <Compile Include="Engine\Physics\Collision\BulletCollisionDetector.cs" />
+        <Compile Include="Engine\Physics\Collision\DynamicCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
@@ -95,7 +95,6 @@
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\Bot.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
-        <Compile Include="Model\Entities\SRT.cs" />
         <Compile Include="Model\Entities\Weapon.cs" />
         <Compile Include="Model\Entities\Weapons\AK303.cs" />
         <Compile Include="Model\Entities\Weapons\MeleeWeapon.cs" />

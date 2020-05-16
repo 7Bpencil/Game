@@ -11,7 +11,7 @@ namespace App.Model.Entities
 {
     public class Bot : LivingEntity
     {
-        private readonly Weapon CurrentWeapon;
+        private readonly Weapon currentWeapon;
 
         private float speed = 6;
         private float speedAngular = 12;
@@ -29,7 +29,7 @@ namespace App.Model.Entities
             Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath, List<Vector> patrolPoints) 
             : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
-            CurrentWeapon = weapon;
+            currentWeapon = weapon;
             this.sight = sight;
             collisionAvoidanceFactor = collisionShape.Diameter * 2;
             this.patrolPoints = patrolPoints;
@@ -38,10 +38,10 @@ namespace App.Model.Entities
         }
         
         public void Update(
-            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles, 
-            ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
+            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets, 
+            List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
-            CurrentWeapon.IncrementTick();
+            currentWeapon.IncrementTick();
             AvoidCollision(shapes);
             if (IsInView(playerPosition, walls))
             {
@@ -86,10 +86,10 @@ namespace App.Model.Entities
         private void Fire(Vector aim, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles)
         {
             RotateToPrey(aim);
-            if (CurrentWeapon.IsReady)
+            if (currentWeapon.IsReady)
             {
-                sceneBullets.AddRange(CurrentWeapon.Fire(Position, sight));
-                particles.Add(ParticleFactory.CreateShell(Position, sight, CurrentWeapon));
+                sceneBullets.AddRange(currentWeapon.Fire(Position, sight));
+                particles.Add(ParticleFactory.CreateShell(Position, sight, currentWeapon));
             }
         }
 
@@ -203,7 +203,7 @@ namespace App.Model.Entities
 
         public override Type GetWeaponType()
         {
-            return CurrentWeapon.GetType();
+            return currentWeapon.GetType();
         }
     }
 }

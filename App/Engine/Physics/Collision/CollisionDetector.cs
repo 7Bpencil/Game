@@ -34,17 +34,17 @@ namespace App.Engine.Physics.Collision
 
         private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second)
         {
-            var vectorFromFirstToSecond = second.Center - first.Center;
-            var distance = vectorFromFirstToSecond.Length;
-            var collisionDepth = first.Radius + second.Radius - distance;
-            if (collisionDepth < 0)
-                return null;
-            if (collisionDepth != 0)
+            var vFromFirstToSecond = second.Center - first.Center;
+            var sumRadii = first.Radius + second.Radius;
+            var collisionDepthSqrt = sumRadii * sumRadii - Vector.ScalarProduct(vFromFirstToSecond, vFromFirstToSecond);
+            
+            if (collisionDepthSqrt < 0) return null;
+            if (collisionDepthSqrt > 0)
             {
                 return new CollisionInfo(
-                    collisionDepth,
-                    -vectorFromFirstToSecond.Normalize(),
-                    first.Center + vectorFromFirstToSecond.Normalize() * first.Radius);
+                    sumRadii - vFromFirstToSecond.Length,
+                    -vFromFirstToSecond.Normalize(),
+                    first.Center + vFromFirstToSecond.Normalize() * first.Radius);
             }
 
             var maxRadius = Math.Max(first.Radius, second.Radius);
@@ -98,6 +98,7 @@ namespace App.Engine.Physics.Collision
         private static Vector GetClosestPoint(Vector point, Vector a, Vector b, Vector c)
         {
             float v, w;
+            
             // Check if P in vertex region outside A
             var ab = b - a;
             var ac = c - a;

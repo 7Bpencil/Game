@@ -28,9 +28,7 @@ namespace App.Engine
         private Level currentLevel;
         private Player player;
         private int livingBotsAmount;
-        
-        private const int tileSize = 32;
-        
+
         public class KeyStates
         {
             public bool W, S, A, D, I, R, P, Shift;
@@ -95,7 +93,10 @@ namespace App.Engine
                 currentLevel.IsCompleted = true;
                 currentLevel.Particles.Add(ParticleFactory.CreateExit(currentLevel.Exit.Center));
             }
-            if (player.IsDead) ResetState();
+            if (player.IsDead)
+            {
+                ResetState();
+            }
             if (currentLevel.IsCompleted 
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
@@ -114,6 +115,27 @@ namespace App.Engine
         
         private void UpdateState()
         {
+            UpdateEntities();
+            
+            camera.UpdateCamera(player.Position, player.Velocity, cursor.Position);
+            viewForm.CursorReset();
+
+            foreach (var spriteContainer in currentLevel.Sprites)
+                if (!spriteContainer.IsEmpty) spriteContainer.Content.UpdateFrame();
+            foreach (var unit in currentLevel.Particles)
+                if (!unit.IsExpired) unit.UpdateFrame();
+        }
+        
+        private void UpdateEntities()
+        {
+            UpdatePlayer();
+            UpdateBullets();
+            UpdateBots();
+            UpdateCollectables();
+        }
+
+        private void UpdatePlayer()
+        {
             var previousPosition = player.Position.Copy();
             
             player.UpdatePosition(keyState, currentLevel.StaticShapes);
@@ -128,7 +150,7 @@ namespace App.Engine
             {
                 player.RaiseMeleeWeapon();
             }
-            else if (mouseState.LMB && player.CurrentWeapon.IsReady && player.MeleeWeapon.IsReady)
+            else if (mouseState.LMB && player.CurrentWeapon.IsReady && !player.IsMeleeWeaponInAction)
             {
                 player.HideMeleeWeapon();
                 var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
@@ -136,49 +158,20 @@ namespace App.Engine
                 currentLevel.Bullets.AddRange(firedBullets);
                 currentLevel.Particles.Add(ParticleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
-
-            UpdateCollectables();
-            UpdateEntities();
             
-            camera.UpdateCamera(player.Position, player.Velocity, cursor.Position);
-            viewForm.CursorReset();
-
-            foreach (var spriteContainer in currentLevel.Sprites)
-                if (!spriteContainer.IsEmpty) spriteContainer.Content.UpdateFrame();
-            foreach (var unit in currentLevel.Particles)
-                if (!unit.IsExpired) unit.UpdateFrame();
-        }
-        
-        /// <summary>
-        /// Makes sure that player can't escape from world
-        /// </summary>
-        /*private void CorrectPlayer()
-        {
-            var delta = Vector.ZeroVector;
-            var rightBorder = currentLevel.LevelSizeInTiles.Width * tileSize;
-            const int leftBorder = 0;
-            var bottomBorder = currentLevel.LevelSizeInTiles.Height * tileSize;
-            const int topBorder = 0;
-
-            var a = player.Position.Y - player.Radius - topBorder;
-            var b = player.Position.Y + player.Radius - bottomBorder;
-            var c = player.Position.X - player.Radius - leftBorder;
-            var d = player.Position.X + player.Radius - rightBorder;
-
-            if (a < 0) delta.Y -= a;
-            if (b > 0) delta.Y -= b;
-            if (c < 0) delta.X -= c;
-            if (d > 0) delta.X -= d;
-            
-            player.MoveBy(delta);
-        }*/
-
-        private void UpdateEntities()
-        {
-            UpdateBullets();
-            UpdateBots();
-
             player.IncrementTick();
+        }
+
+        private void UpdateCollectables()
+        {
+            var collectables = currentLevel.Collectables;
+            foreach (var collectable in collectables)
+            {
+                if (collectable.IsPicked) continue;
+                var collision = CollisionDetector.GetCollisionInfo(player.CollisionShape, collectable.CollisionShape);
+                if (collision == null) continue;
+                collectable.Pick(player);
+            }
         }
 
         private void UpdateBullets()
@@ -205,7 +198,7 @@ namespace App.Engine
             var staticShapes = currentLevel.StaticShapes;
             foreach (var obstacle in staticShapes)
             {
-                var penetrationTime = BulletCollisionDetector.AreCollideWithStatic(bullet, obstacle);
+                var penetrationTime = DynamicCollisionDetector.AreCollideWithStatic(bullet, obstacle);
                 if (penetrationTime == null) continue;
                 var distanceToPenetrations = new float[2];
                 for (var i = 0; i < 2; i++)
@@ -228,7 +221,7 @@ namespace App.Engine
         private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
         {
             var penetrationTimes = 
-                BulletCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
+                DynamicCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
             if (penetrationTimes == null) return;
             var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
             entity.TakeHit(bullet.Damage);
@@ -265,7 +258,7 @@ namespace App.Engine
         
         private void UpdateBots()
         {
-            if (livingBotsAmount < 2 && currentLevel.WavesAmount != 0)
+            if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
             {
                 currentLevel.TryOptimize();
                 LevelDynamicEntitiesFactory.SpawnBots(
@@ -284,11 +277,7 @@ namespace App.Engine
                 if (bot.IsDead) continue;
                 if (player.WasMeleeWeaponRaised && player.MeleeWeapon.IsInRange(bot))
                 {
-                    bot.TakeHit(player.MeleeWeapon.Damage);
-                    if (bot.IsDead) HandleKill(bot, bot.Position - player.Position, particles);
-                    var particlePosition = player.Position + (bot.Position - player.Position).Normalize() * player.Radius * 3;
-                    currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
-                    currentLevel.Particles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
+                    HandleMeleeHit(bot, particles);
                 }
                 bot.Update(
                     player.Position, player.Velocity, 
@@ -301,16 +290,13 @@ namespace App.Engine
             currentLevel.Paths = paths;
         }
 
-        private void UpdateCollectables()
+        private void HandleMeleeHit(LivingEntity bot, List<AbstractParticleUnit> sceneParticles)
         {
-            var collectables = currentLevel.Collectables;
-            foreach (var collectable in collectables)
-            {
-                if (collectable.IsPicked) continue;
-                var collision = CollisionDetector.GetCollisionInfo(player.CollisionShape, collectable.CollisionShape);
-                if (collision == null) continue;
-                collectable.Pick(player);
-            }
+            bot.TakeHit(player.MeleeWeapon.Damage);
+            if (bot.IsDead) HandleKill(bot, bot.Position - player.Position, sceneParticles);
+            var particlePosition = player.Position + (bot.Position - player.Position).Normalize() * player.Radius * 3;
+            sceneParticles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
+            sceneParticles.Add(ParticleFactory.CreateBigBloodSplash(particlePosition));
         }
 
         public void OnKeyDown(Keys keyPressed)
