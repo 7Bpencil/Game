@@ -28,7 +28,7 @@ namespace App.Engine.Render
             RenderParticles(level.Particles, cameraPosition);
             var rP = Measure();
 
-            RenderBullets(level.Bullets, cameraPosition);
+            RenderBullets(level.Projectiles, cameraPosition);
             var rB = Measure();
             
 

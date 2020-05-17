@@ -154,10 +154,12 @@ namespace App.Engine
             else if (mouseState.LMB && player.CurrentWeapon.IsReady && !player.IsMeleeWeaponInAction)
             {
                 player.HideMeleeWeapon();
-                var firedBullets = player.CurrentWeapon.Fire(player.Position, cursor);
+                var firedProjectiles = player.CurrentWeapon.Fire(player.Position, cursor);
                 AudioEngine.PlayNewInstance("event:/gunfire/2D/misc/DROPPED_SHELL");
-                currentLevel.Bullets.AddRange(firedBullets);
+                currentLevel.Projectiles.AddRange(firedProjectiles);
                 currentLevel.Particles.Add(ParticleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
+                foreach (var projectile in firedProjectiles)
+                    if (projectile is Grenade grenade) currentLevel.Particles.Add(grenade.GetWarheadParticle());
             }
             
             player.IncrementTick();
@@ -177,21 +179,36 @@ namespace App.Engine
 
         private void UpdateBullets()
         {
-            var bullets = currentLevel.Bullets;
+            var projectiles = currentLevel.Projectiles;
             var particles = currentLevel.Particles;
-            foreach (var bullet in bullets)
+            foreach (var projectile in projectiles)
             {
-                if (bullet.IsStuck) continue;
-                if (bullet.StaticPenetrations.Count == 0)
-                    CalculateStaticPenetrations(bullet);
-                CalculateDynamicPenetrations(bullet);
-                bullet.Update();
-                if (bullet.ClosestPenetrationPoint != null)
-                {
-                    particles.Add(ParticleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
-                    bullet.ClosestPenetrationPoint = null;
-                }
+                if (projectile.IsStuck) continue;
+                if (projectile.StaticPenetrations.Count == 0)
+                    CalculateStaticPenetrations(projectile);
+                CalculateDynamicPenetrations(projectile);
+                projectile.Update();
+                if (projectile.ClosestPenetrationPoint != null)
+                    HandleProjectileStaticStuck(projectile, particles);
             }
+        }
+
+        private void HandleProjectileStaticStuck(AbstractProjectile projectile, List<AbstractParticleUnit> levelParticles)
+        {
+            if (projectile is Grenade grenade) HandleGrenadeStaticStuck(grenade, levelParticles);
+            else if (projectile is Bullet bullet) HandleBulletStaticStuck(bullet, levelParticles);
+        }
+
+        private void HandleBulletStaticStuck(Bullet bullet, List<AbstractParticleUnit> levelParticles)
+        {
+            levelParticles.Add(ParticleFactory.CreateWallDust(bullet.ClosestPenetrationPoint, bullet.Velocity));
+            bullet.ClosestPenetrationPoint = null;
+        }
+
+        private void HandleGrenadeStaticStuck(Grenade grenade, List<AbstractParticleUnit> levelParticles)
+        {
+            HandleGrenadeExplosion(grenade, levelParticles, 0);
+            grenade.ClosestPenetrationPoint = null;
         }
 
         private void CalculateStaticPenetrations(AbstractProjectile projectile)
@@ -232,7 +249,7 @@ namespace App.Engine
                     HandleBulletHit(entity, bullet, levelParticles, penetrationPlace, firstPenetrationTime);
                     break;
                 case Grenade grenade:
-                    HandleGrenadeHit(grenade, penetrationPlace, levelParticles, firstPenetrationTime);
+                    HandleGrenadeExplosion(grenade, levelParticles, firstPenetrationTime);
                     break;
             }
         }
@@ -254,19 +271,39 @@ namespace App.Engine
             }
         }
 
-        private void HandleGrenadeHit(
-            Grenade grenade, Vector penetrationPlace, List<AbstractParticleUnit> levelParticles, float firstPenetrationTime)
+        private void HandleGrenadeExplosion(
+            Grenade grenade, List<AbstractParticleUnit> levelParticles, float firstPenetrationTime)
         {
             foreach (var bot in currentLevel.Bots)
             {
-                var v = bot.Position - penetrationPlace;
-                if (Vector.ScalarProduct(v, v) < grenade.DamageRadius)
+                if (bot.IsDead) continue;
+                var v = bot.Position - grenade.Position;
+                if (Vector.ScalarProduct(v, v) < grenade.DamageRadius * grenade.DamageRadius)
+                {
                     HandleHit(bot, grenade, levelParticles, firstPenetrationTime);
+                    levelParticles.Add(ParticleFactory.CreateBigBloodSplash(bot.Position));
+                    levelParticles.Add(ParticleFactory.CreateBigBloodSplash(bot.Position));
+                    levelParticles.Add(ParticleFactory.CreateBigBloodSplash(bot.Position));
+                    levelParticles.Add(ParticleFactory.CreateBigBloodSplash(bot.Position));
+                }
             }
             
-            var x = player.Position - penetrationPlace;
+            var x = player.Position - grenade.Position;
             if (Vector.ScalarProduct(x, x) < grenade.DamageRadius)
+            {
                 HandleHit(player, grenade, levelParticles, firstPenetrationTime);
+                levelParticles.Add(ParticleFactory.CreateBigBloodSplash(player.Position));
+                levelParticles.Add(ParticleFactory.CreateBigBloodSplash(player.Position));
+                levelParticles.Add(ParticleFactory.CreateBigBloodSplash(player.Position));
+                levelParticles.Add(ParticleFactory.CreateBigBloodSplash(player.Position));
+            }
+            
+            levelParticles.Add(ParticleFactory.CreateExplosion(grenade.Position));
+            levelParticles.Add(ParticleFactory.CreateExplosionFunnel(grenade.Position));
+            AudioEngine.PlayNewInstance(@"event:/gunfire/3D/misc/GL_EXPLOSION_3D", grenade.Position);
+
+            grenade.IsStuck = true;
+            grenade.GetWarheadParticle().IsExpired = true;
         }
 
         private void HandleHit(
@@ -317,7 +354,7 @@ namespace App.Engine
                 }
                 bot.Update(
                     player.Position, player.Velocity, 
-                    currentLevel.Bullets, currentLevel.Particles, 
+                    currentLevel.Projectiles, currentLevel.Particles, 
                     currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
                 if (!bot.IsDead) livingBotsAmount++;
             }

@@ -48,7 +48,7 @@ namespace App.Model.Entities.Weapons
             var direction = (cursor.Position - gunPosition).Normalize();
             var position = gunPosition + direction * 40;
 
-            spray.Add(new Grenade(position, direction * 40, 500, cursor.Position, 96, 2));
+            spray.Add(new Grenade(position, direction * 40, 500, cursor.Position.Copy(), 192, 7));
             
             ammo--;
             ticksFromLastFire = 0;
@@ -63,8 +63,7 @@ namespace App.Model.Entities.Weapons
             var spray = new List<AbstractProjectile>();
             var direction = (targetPosition - gunPosition).Normalize();
             var position = gunPosition + direction * 40;
-            
-            spray.Add(new Grenade(position, direction * 40, 500, targetPosition, 96, 2));
+            spray.Add(new Grenade(position, direction * 40, 500, targetPosition.Copy(), 192, 7));
             
             ammo--;
             ticksFromLastFire = 0;

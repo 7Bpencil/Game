@@ -88,8 +88,11 @@ namespace App.Model.Entities
             RotateToPrey(aim);
             if (currentWeapon.IsReady)
             {
-                sceneBullets.AddRange(currentWeapon.Fire(Position, aim));
+                var firedProjectiles = currentWeapon.Fire(Position, aim);
+                sceneBullets.AddRange(firedProjectiles);
                 particles.Add(ParticleFactory.CreateShell(Position, sight, currentWeapon));
+                foreach (var projectile in firedProjectiles)
+                    if (projectile is Grenade grenade) particles.Add(grenade.GetWarheadParticle());
             }
         }
 

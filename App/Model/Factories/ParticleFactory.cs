@@ -18,6 +18,9 @@ namespace App.Model.Factories
         private static AnimatedParticle bloodSplashMedium;
         private static AnimatedParticle bloodSplashBig;
 
+        private static AnimatedParticle explosion;
+        private static StaticParticle explosion_funnel;
+        
         private static AnimatedParticle wallDust;
         
         private static StaticParticle shellGauge12;
@@ -26,7 +29,7 @@ namespace App.Model.Factories
         private static StaticParticle shellGrenade;
 
         private static StaticParticle grenadeWarhead;
-        
+
         private static StaticParticle exit;
 
         public static void Initialize()
@@ -68,6 +71,13 @@ namespace App.Model.Factories
             
             exit = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\exit.png"), 0, new Size(96, 96));
+            
+            explosion = new AnimatedParticle(
+                new Bitmap(@"Assets\Sprites\EXPLOSIONS\explosion.png"), 
+                1, 0, 12, new Size(170, 128));
+            explosion_funnel = new StaticParticle(
+                new Bitmap(@"Assets\Sprites\EXPLOSIONS\explosion_funnel.png"), 
+                0, new Size(64, 64));
         }
         
         public static AbstractParticleUnit CreateBloodSplash(Vector centerPosition)
@@ -76,6 +86,16 @@ namespace App.Model.Factories
             if (chance > 8) return CreateBigBloodSplash(centerPosition);
             if (chance > 5) return CreateMediumBloodSplash(centerPosition);
             return CreateSmallBloodSplash(centerPosition);
+        }
+
+        public static AbstractParticleUnit CreateExplosion(Vector position)
+        {
+            return new ExpiringAnimatedParticleUnit(explosion, position, r.Next(-45, 45));
+        }
+        
+        public static AbstractParticleUnit CreateExplosionFunnel(Vector position)
+        {
+            return new AutoBurnParticleUnit(explosion_funnel, position, r.Next(-45, 45));
         }
 
         public static AbstractParticleUnit CreateShell(Vector startPosition, Vector direction, Weapon weapon)

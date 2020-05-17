@@ -7,7 +7,7 @@ namespace App.Model.Entities
 {
     public class Grenade : AbstractProjectile
     {
-        private readonly Vector ExpectedDetonationPlace;
+        private readonly Vector expectedDetonationPlace;
         public readonly int DamageRadius;
         private readonly AbstractParticleUnit grenadeWarheadParticleUnit;
         private int ticksBeforeDetonation;
@@ -17,7 +17,7 @@ namespace App.Model.Entities
             Vector position, Vector startVelocity, int damage, Vector expectedDetonationPlace, int damageRadius, int ticksBeforeDetonation) : 
             base(position, startVelocity, damage)
         {
-            ExpectedDetonationPlace = expectedDetonationPlace;
+            this.expectedDetonationPlace = expectedDetonationPlace;
             StaticPenetrations = new List<float[]> {Capacity = 4};
             DamageRadius = damageRadius;
             grenadeWarheadParticleUnit = ParticleFactory.CreateGrenadeWarhead(position, startVelocity.Normalize());
@@ -30,18 +30,27 @@ namespace App.Model.Entities
             foreach (var distanceBeforeCollision in StaticPenetrations)
             {
                 distanceBeforeCollision[0] -= Speed; distanceBeforeCollision[1] -= Speed;
-                var v = Position - ExpectedDetonationPlace;
+                var v = Position - expectedDetonationPlace;
                 if (Vector.ScalarProduct(v, v) <= 32 * 32)
                 {
                     canMove = false;
                     ticksBeforeDetonation--;
                     if (ticksBeforeDetonation == 0)
                     {
-                        ClosestPenetrationPoint = ExpectedDetonationPlace;
+                        ClosestPenetrationPoint = expectedDetonationPlace;
+                        grenadeWarheadParticleUnit.IsExpired = true;
                     }
                 }
-                else if (distanceBeforeCollision[0] < Speed)
-                    ClosestPenetrationPoint = Position + Velocity.Normalize() * distanceBeforeCollision[1];
+                else if (distanceBeforeCollision[0] <= 0)
+                {
+                    canMove = false;
+                    ticksBeforeDetonation--;
+                    if (ticksBeforeDetonation == 0)
+                    {
+                        ClosestPenetrationPoint = Position + Velocity.Normalize() * distanceBeforeCollision[1];
+                        grenadeWarheadParticleUnit.IsExpired = true;
+                    }
+                }
             }
             
             if (StaticPenetrations[StaticPenetrations.Count - 1][1] < -500) IsStuck = true;
@@ -52,6 +61,11 @@ namespace App.Model.Entities
         {
             Position.X += Velocity.X;
             Position.Y += Velocity.Y;
+        }
+
+        public AbstractParticleUnit GetWarheadParticle()
+        {
+            return grenadeWarheadParticleUnit;
         }
     }
 }
