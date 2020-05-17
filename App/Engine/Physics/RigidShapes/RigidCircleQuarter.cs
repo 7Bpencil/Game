@@ -1,3 +1,5 @@
+using System;
+
 namespace App.Engine.Physics.RigidShapes
 {
     public class RigidCircleQuarter : RigidShape
@@ -9,6 +11,7 @@ namespace App.Engine.Physics.RigidShapes
 
         public RigidCircleQuarter(Vector direction, int quarterIndex, RigidCircle wholeCircle)
         {
+            if (quarterIndex < 1 || quarterIndex > 4) throw new ArgumentException();
             Direction = direction.Normalize();
             DirectionNormal = direction.GetNormal();
             QuarterIndex = quarterIndex;

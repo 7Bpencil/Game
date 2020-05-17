@@ -159,13 +159,13 @@ namespace App.Engine.Physics.Collision
             var horizontal = Vector.ScalarProduct(vector, circleQuarter.DirectionNormal);
             switch (circleQuarter.QuarterIndex)
             {
-                case 1 when vertical > 0 && horizontal > 0:
+                case 1 when vertical >= 0 && horizontal >= 0:
                     return info;
-                case 2 when vertical > 0 && horizontal < 0:
+                case 2 when vertical >= 0 && horizontal <= 0:
                     return info;
-                case 3 when vertical < 0 && horizontal < 0:
+                case 3 when vertical <= 0 && horizontal <= 0:
                     return info;
-                case 4 when vertical < 0 && horizontal > 0:
+                case 4 when vertical <= 0 && horizontal >= 0:
                     return info;
                 default:
                     return null;
