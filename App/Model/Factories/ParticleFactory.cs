@@ -74,7 +74,7 @@ namespace App.Model.Factories
             
             explosion = new AnimatedParticle(
                 new Bitmap(@"Assets\Sprites\EXPLOSIONS\explosion.png"), 
-                1, 0, 12, new Size(170, 128));
+                1, 0, 12, new Size(272, 205));
             explosion_funnel = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\EXPLOSIONS\explosion_funnel.png"), 
                 0, new Size(64, 64));
