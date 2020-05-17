@@ -38,7 +38,7 @@ namespace App.Model.Entities
         }
         
         public void Update(
-            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets, 
+            Vector playerPosition, Vector playerVelocity, List<AbstractProjectile> sceneBullets, 
             List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             currentWeapon.IncrementTick();
@@ -83,12 +83,12 @@ namespace App.Model.Entities
             MoveTo(target + direction.Rotate(angle, Vector.ZeroVector));
         }
 
-        private void Fire(Vector aim, List<Bullet> sceneBullets, List<AbstractParticleUnit> particles)
+        private void Fire(Vector aim, List<AbstractProjectile> sceneBullets, List<AbstractParticleUnit> particles)
         {
             RotateToPrey(aim);
             if (currentWeapon.IsReady)
             {
-                sceneBullets.AddRange(currentWeapon.Fire(Position, sight));
+                sceneBullets.AddRange(currentWeapon.Fire(Position, aim));
                 particles.Add(ParticleFactory.CreateShell(Position, sight, currentWeapon));
             }
         }

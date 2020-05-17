@@ -23,6 +23,9 @@ namespace App.Model.Factories
         private static StaticParticle shellGauge12;
         private static StaticParticle shell762;
         private static StaticParticle shell919;
+        private static StaticParticle shellGrenade;
+
+        private static StaticParticle grenadeWarhead;
         
         private static StaticParticle exit;
 
@@ -50,11 +53,18 @@ namespace App.Model.Factories
             shell919 = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\Weapons\gun_shells.png"),
                 2, new Size(4, 20));
+            shellGrenade = new StaticParticle(
+                new Bitmap(@"Assets\Sprites\Weapons\grenade_shell.png"), 
+                0, new Size(15, 18));
             
             
             wallDust = new AnimatedParticle(
                 new Bitmap(@"Assets\Sprites\SMOKE\bullet_smoke.png"),
                 1, 0, 5, new Size(13, 25));
+            
+            grenadeWarhead = new StaticParticle(
+                new Bitmap(@"Assets\Sprites\Weapons\grenade_warhead.png"), 
+                0, new Size(15, 26));
             
             exit = new StaticParticle(
                 new Bitmap(@"Assets\Sprites\exit.png"), 0, new Size(96, 96));
@@ -75,13 +85,13 @@ namespace App.Model.Factories
             if (weaponType == typeof(Shotgun)) return CreateGauge12Shell(startPosition, direction);
             if (weaponType == typeof(SaigaFA)) return CreateGauge12Shell(startPosition, direction);
             if (weaponType == typeof(MP6)) return Create919Shell(startPosition, direction);
+            if (weaponType == typeof(GrenadeLauncher)) return CreateGrenadeShell(startPosition, direction);
             return null;
         }
 
         public static AbstractParticleUnit CreateWallDust(Vector penetrationPosition, Vector direction)
         {
-            var dirAngle = Math.Atan2(-direction.Y, direction.X);
-            var angle = 180 / Math.PI * dirAngle + 90;
+            var angle = 180 / Math.PI * direction.Angle + 90;
             return new ExpiringAnimatedParticleUnit(wallDust, penetrationPosition, (float) angle);
         }
 
@@ -89,6 +99,12 @@ namespace App.Model.Factories
         {
             var angle = Vector.GetAngle(bodyDirection, new Vector(1, 0));
             return new AutoBurnParticleUnit(body, position, angle);
+        }
+
+        public static AbstractParticleUnit CreateGrenadeWarhead(Vector startPosition, Vector direction)
+        {
+            var angle = 180 / Math.PI * direction.Angle - 90;
+            return new ExpiringStaticParticleUnit(grenadeWarhead, startPosition, (float) angle);
         }
 
         public static AbstractParticleUnit CreateExit(Vector exitCenter)
@@ -124,6 +140,11 @@ namespace App.Model.Factories
         private static AbstractParticleUnit Create919Shell(Vector startPosition, Vector direction)
         {
             return new GunShellParticleUnit(shell919, startPosition, direction, r.Next(-45, 45));
+        }
+        
+        private static AbstractParticleUnit CreateGrenadeShell(Vector startPosition, Vector direction)
+        {
+            return new GunShellParticleUnit(shellGrenade, startPosition, direction, r.Next(-45, 45));
         }
     }
 }

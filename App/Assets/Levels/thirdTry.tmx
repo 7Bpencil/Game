@@ -4,6 +4,7 @@
  
   <playerInfo health="3000" armor="2000" position="608, 192" angle="90" clothesTileMap="Assets\TileMaps\pinkHair.png" weaponsTileMap="Assets\Sprites\Weapons\pinkHair.png" meleeWeaponTileMap="Assets\Sprites\Weapons\pinkHair_katana.png" deathTileMap="Assets\TileMaps\pinkHair_death.png">
     <weapon type="Shotgun" ammo="8"/>
+    <weapon type="GL" ammo="48"/>
   </playerInfo>
   
   <bots>

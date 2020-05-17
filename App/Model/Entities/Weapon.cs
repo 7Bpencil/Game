@@ -16,15 +16,15 @@ namespace App.Model.Entities
         /// <param name="gunPosition"></param>
         /// <param name="cursor"></param>
         /// <returns></returns>
-        public abstract List<Bullet> Fire(Vector gunPosition, CustomCursor cursor);
+        public abstract List<AbstractProjectile> Fire(Vector gunPosition, CustomCursor cursor);
         
         /// <summary>
         /// Bot version - it plays 3D sound
         /// </summary>
         /// <param name="gunPosition"></param>
-        /// <param name="sightDirection"></param>
+        /// <param name="targetPosition"></param>
         /// <returns></returns>
-        public abstract List<Bullet> Fire(Vector gunPosition, Vector sightDirection);
+        public abstract List<AbstractProjectile> Fire(Vector gunPosition, Vector targetPosition);
         public abstract void IncrementTick();
         public abstract float BulletWeight { get; }
         public abstract void AddAmmo(int amount);

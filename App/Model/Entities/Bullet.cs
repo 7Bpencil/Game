@@ -1,41 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using App.Engine.Physics;
 
 namespace App.Model.Entities
 {
-    public class Bullet
+    public class Bullet : AbstractProjectile
     {
-        public Vector Position;
-        public Vector Velocity;
-        public float Speed;
-        public List<float[]> StaticPenetrations;
         public readonly Edge Shape;
         private float bulletPenetration;
-        public int Damage;
-        public bool IsStuck;
-        public bool isDeformed;
-        public Vector ClosestPenetrationPoint;
+        public bool IsDeformed;
 
-        public Bullet(Vector position, Vector velocity, float weight, Edge shape, int damage)
+        public Bullet(Vector position, Vector velocity, int damage, float weight, Edge shape) : 
+            base(position, velocity, damage)
         {
-            Position = position;
-            Velocity = velocity;
-            Speed = velocity.Length;
             bulletPenetration = Speed * weight;
             StaticPenetrations = new List<float[]> {Capacity = 4};
             Shape = shape;
-            Damage = damage;
         }
 
-        public void CalculateTrajectory()
+        public override void Update()
         {
-            StaticPenetrations = StaticPenetrations.OrderBy(n => n[0]).ToList();
-        }
-
-        public void Update()
-        {
-            if (isDeformed) IsStuck = true;
+            if (IsDeformed) IsStuck = true;
             foreach (var distanceBeforeCollision in StaticPenetrations)
             {
                 distanceBeforeCollision[0] -= Speed; distanceBeforeCollision[1] -= Speed;
@@ -43,7 +27,7 @@ namespace App.Model.Entities
                 ClosestPenetrationPoint = Position + Velocity.Normalize() * distanceBeforeCollision[1];
                 if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0])
                 {
-                    isDeformed = true;
+                    IsDeformed = true;
                     var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];    
                     Shape.End = stuckPoint;
                     Shape.Start = Position.Copy();
@@ -55,7 +39,7 @@ namespace App.Model.Entities
             if (StaticPenetrations[StaticPenetrations.Count - 1][1] < -500) IsStuck = true;
             Move();
         }
-        
+
         public void SlowDown()
         {
             Velocity *= 0.8f;

@@ -64,6 +64,7 @@
         <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\AutoBurnParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\ExpiringStaticParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
         <Compile Include="Engine\Physics\Collision\DynamicCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
@@ -93,15 +94,18 @@
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\DataParser\BotTypesParser.cs" />
         <Compile Include="Model\DataParser\TileSetParser.cs" />
+        <Compile Include="Model\Entities\AbstractProjectile.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
+        <Compile Include="Model\Entities\Grenade.cs" />
         <Compile Include="Model\Entities\Player.cs" />
         <Compile Include="Model\Entities\Bot.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
         <Compile Include="Model\Entities\Weapon.cs" />
         <Compile Include="Model\Entities\Weapons\AK303.cs" />
+        <Compile Include="Model\Entities\Weapons\GrenadeLauncher.cs" />
         <Compile Include="Model\Entities\Weapons\MeleeWeapon.cs" />
         <Compile Include="Model\Entities\Weapons\MP6.cs" />
         <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
@@ -169,6 +173,18 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\Weapons\AK303_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\GL_hud.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\GL_icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\grenade_shell.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Assets\Sprites\Weapons\grenade_warhead.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Assets\Sprites\Weapons\gun_shells.png">

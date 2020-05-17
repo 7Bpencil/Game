@@ -8,6 +8,7 @@ using App.Engine.Physics.Collision;
 using App.Engine.Render;
 using App.Model;
 using App.Model.Entities;
+using App.Model.Entities.Weapons;
 using App.Model.Factories;
 using App.Model.LevelData;
 using App.View;
@@ -180,7 +181,7 @@ namespace App.Engine
             var particles = currentLevel.Particles;
             foreach (var bullet in bullets)
             {
-                if (bullet.IsStuck || bullet.isDeformed) continue;
+                if (bullet.IsStuck) continue;
                 if (bullet.StaticPenetrations.Count == 0)
                     CalculateStaticPenetrations(bullet);
                 CalculateDynamicPenetrations(bullet);
@@ -193,38 +194,53 @@ namespace App.Engine
             }
         }
 
-        private void CalculateStaticPenetrations(Bullet bullet)
+        private void CalculateStaticPenetrations(AbstractProjectile projectile)
         {
             var staticShapes = currentLevel.StaticShapes;
             foreach (var obstacle in staticShapes)
             {
-                var penetrationTime = DynamicCollisionDetector.AreCollideWithStatic(bullet, obstacle);
+                var penetrationTime = DynamicCollisionDetector.AreCollideWithStatic(projectile, obstacle);
                 if (penetrationTime == null) continue;
                 var distanceToPenetrations = new float[2];
                 for (var i = 0; i < 2; i++)
-                    distanceToPenetrations[i] = bullet.Speed * penetrationTime[i];
-                bullet.StaticPenetrations.Add(distanceToPenetrations);
+                    distanceToPenetrations[i] = projectile.Speed * penetrationTime[i];
+                projectile.StaticPenetrations.Add(distanceToPenetrations);
             }
-            bullet.CalculateTrajectory();
+            projectile.CalculateTrajectory();
         }
 
-        private void CalculateDynamicPenetrations(Bullet bullet)
+        private void CalculateDynamicPenetrations(AbstractProjectile projectile)
         {
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;
             foreach (var bot in bots)
-                if (!bot.IsDead) CalculateEntityRespond(bot, bullet, particles);
+                if (!bot.IsDead) CalculateEntityRespond(bot, projectile, particles);
 
-            CalculateEntityRespond(player, bullet, particles);
+            CalculateEntityRespond(player, projectile, particles);
         }
 
-        private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
+        private void CalculateEntityRespond(LivingEntity entity, AbstractProjectile projectile, List<AbstractParticleUnit> levelParticles)
         {
             var penetrationTimes = 
-                DynamicCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
+                DynamicCollisionDetector.AreCollideWithDynamic(projectile, entity.CollisionShape, entity.Velocity);
             if (penetrationTimes == null) return;
-            var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
-            entity.TakeHit(bullet.Damage);
+            var penetrationPlace = projectile.Position + projectile.Velocity * penetrationTimes[0];
+            var firstPenetrationTime = penetrationTimes[0];
+            switch (projectile)
+            {
+                case Bullet bullet:
+                    HandleBulletHit(entity, bullet, levelParticles, penetrationPlace, firstPenetrationTime);
+                    break;
+                case Grenade grenade:
+                    HandleGrenadeHit(grenade, penetrationPlace, levelParticles, firstPenetrationTime);
+                    break;
+            }
+        }
+
+        private void HandleBulletHit(
+            LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles, Vector penetrationPlace, float firstPenetrationTime)
+        {
+            HandleHit(entity, bullet, levelParticles, firstPenetrationTime);
             if (entity.Armor > 50)
             {
                 bullet.IsStuck = true;
@@ -236,11 +252,31 @@ namespace App.Engine
                 levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
                 levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
             }
+        }
 
+        private void HandleGrenadeHit(
+            Grenade grenade, Vector penetrationPlace, List<AbstractParticleUnit> levelParticles, float firstPenetrationTime)
+        {
+            foreach (var bot in currentLevel.Bots)
+            {
+                var v = bot.Position - penetrationPlace;
+                if (Vector.ScalarProduct(v, v) < grenade.DamageRadius)
+                    HandleHit(bot, grenade, levelParticles, firstPenetrationTime);
+            }
+            
+            var x = player.Position - penetrationPlace;
+            if (Vector.ScalarProduct(x, x) < grenade.DamageRadius)
+                HandleHit(player, grenade, levelParticles, firstPenetrationTime);
+        }
+
+        private void HandleHit(
+            LivingEntity entity, AbstractProjectile projectile, List<AbstractParticleUnit> levelParticles, float firstPenetrationTime)
+        {
+            entity.TakeHit(projectile.Damage);
             if (entity.IsDead && !entity.Velocity.Equals(Vector.ZeroVector))
             {
-                entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * penetrationTimes[0]);
-                HandleKill(entity, entity.Position - bullet.Position, levelParticles);
+                entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * firstPenetrationTime);
+                HandleKill(entity, entity.Position - projectile.Position, levelParticles);
             }
         }
         

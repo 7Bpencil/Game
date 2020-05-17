@@ -22,6 +22,7 @@ namespace App.Model.Factories
             {typeof(Shotgun), 1},
             {typeof(MP6), 2},
             {typeof(SaigaFA), 3},
+            {typeof(GrenadeLauncher), 4},
         };
 
         public static Player CreatePlayer(PlayerInfo info)

@@ -47,7 +47,7 @@ namespace App.Engine.Render
                 "ms, camera: " + rC.ToString() + 
                 "ms, sprites: " + rS.ToString() + 
                 "ms, particles: " + rP.ToString() + 
-                "ms, bullets: " + rB.ToString() + 
+                "ms, projectiles: " + rB.ToString() + 
                 "ms, raytracing: " + rT.ToString(); 
             if (renderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
             
@@ -187,12 +187,14 @@ namespace App.Engine.Render
                 RenderMachine.RenderEdgeOnCamera(edge, cameraPosition);
         }
 
-        private static void RenderBullets(List<Bullet> bullets, Vector cameraPosition)
+        private static void RenderBullets(List<AbstractProjectile> projectiles, Vector cameraPosition)
         {
-            foreach (var bullet in bullets)
+            foreach (var projectile in projectiles)
             {
+                if (!(projectile is Bullet)) continue;
+                var bullet = (Bullet) projectile;
                 if (bullet.IsStuck) continue;
-                if (bullet.isDeformed)
+                if (bullet.IsDeformed)
                 {
                     RenderMachine.RenderEdgeOnTiles(bullet.Shape);
                     bullet.IsStuck = true;

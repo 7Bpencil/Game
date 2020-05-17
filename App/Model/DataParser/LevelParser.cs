@@ -20,7 +20,8 @@ namespace App.Model.DataParser
             {"AK303", typeof(AK303)},
             {"Shotgun", typeof(Shotgun)},
             {"MP6", typeof(MP6)},
-            {"SaigaFA", typeof(SaigaFA)}
+            {"SaigaFA", typeof(SaigaFA)},
+            {"GL", typeof(GrenadeLauncher)}
         };
         
         public static Dictionary<int, string> LoadLevelList()
@@ -85,7 +86,7 @@ namespace App.Model.DataParser
                             }
 
                             if (property.Name == "playerInfo") playerInfo = LoadPlayerInfo(property);
-                            if (property.Name == "bots") botsInfo = loadBots(property);
+                            if (property.Name == "bots") botsInfo = LoadBots(property);
                             if (property.Name == "botSpawnPoints")
                             {
                                 wavesAmount = int.Parse(property.Attributes.GetNamedItem("wavesAmount").Value);
@@ -142,7 +143,7 @@ namespace App.Model.DataParser
                 (health, armor, position, angle, weapons, clothesTileMapPath, weaponsTileMapPath, meleeWeaponTileMapPath, deadBodyTileMapPath);
         }
 
-        private static List<EntityFactory.BotInfo> loadBots(XmlNode botsNode)
+        private static List<EntityFactory.BotInfo> LoadBots(XmlNode botsNode)
         {
             var bots = new List<EntityFactory.BotInfo> {Capacity = 8};
             foreach (XmlNode bot in botsNode.ChildNodes)

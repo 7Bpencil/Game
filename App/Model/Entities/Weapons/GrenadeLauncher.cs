@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using App.Engine.Audio;
 using App.Engine.Physics;
 
 namespace App.Model.Entities.Weapons
 {
-    public class SaigaFA : Weapon
+    public class GrenadeLauncher : Weapon
     {
         private readonly Random r;
         private readonly string fireSoundPath;
@@ -26,18 +26,18 @@ namespace App.Model.Entities.Weapons
         private readonly int firePeriod;
         private int ticksFromLastFire;
 
-        public SaigaFA(int ammo)
+        public GrenadeLauncher(int ammo)
         {
-            name = "Saiga Full-Auto";
-            capacity = 20;
+            name = "Grenade-Launcher";
+            capacity = 6;
             firePeriod = 12;
             ticksFromLastFire = firePeriod + 1;
-            bulletWeight = 0.2f;
+            bulletWeight = 1f;
             this.ammo = ammo;
             r = new Random();
             
-            fireSoundPath = @"event:/gunfire/2D/SAIGAFA_FIRE";
-            fireSoundPath3D = @"event:/gunfire/3D/SAIGAFA_FIRE_3D";
+            fireSoundPath = @"event:/gunfire/2D/GL_FIRE";
+            fireSoundPath3D = @"event:/gunfire/3D/GL_FIRE_3D";
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
@@ -46,25 +46,14 @@ namespace App.Model.Entities.Weapons
         {
             var spray = new List<AbstractProjectile>();
             var direction = (cursor.Position - gunPosition).Normalize();
-                
-            const int shotsAmount = 6;
-            for (var i = 0; i < shotsAmount; i++)
-            {
-                var offset = new Vector(r.Next(-3, 3), r.Next(-3, 3)) / 30;
-                var e = direction + offset;
-                var position = gunPosition + e * 40;
-                spray.Add(new Bullet(
-                    position,
-                    e * 35,
-                    10,
-                    bulletWeight,
-                    new Edge(position, position + e * 40)));
-            }
+            var position = gunPosition + direction * 40;
+
+            spray.Add(new Grenade(position, direction * 40, 500, cursor.Position, 96, 2));
             
             ammo--;
             ticksFromLastFire = 0;
             AudioEngine.PlayNewInstance(fireSoundPath);
-            cursor.MoveBy(new Vector(r.Next(-20, 20), r.Next(-20, 20)));
+            cursor.MoveBy(direction.GetNormal() * r.Next(-30, 30) + new Vector(r.Next(2, 2), r.Next(2, 2)));
 
             return spray;
         }
@@ -73,20 +62,9 @@ namespace App.Model.Entities.Weapons
         {
             var spray = new List<AbstractProjectile>();
             var direction = (targetPosition - gunPosition).Normalize();
-                
-            const int shotsAmount = 6;
-            for (var i = 0; i < shotsAmount; i++)
-            {
-                var offset = new Vector(r.Next(-3, 3), r.Next(-3, 3)) / 30;
-                var e = direction + offset;
-                var position = gunPosition + e * 40;
-                spray.Add(new Bullet(
-                    position,
-                    e * 35,
-                    10,
-                    bulletWeight,
-                    new Edge(position, position + e * 40)));
-            }
+            var position = gunPosition + direction * 40;
+            
+            spray.Add(new Grenade(position, direction * 40, 500, targetPosition, 96, 2));
             
             ammo--;
             ticksFromLastFire = 0;
@@ -94,12 +72,12 @@ namespace App.Model.Entities.Weapons
 
             return spray;
         }
-
+        
         public override void AddAmmo(int amount)
         {
             if (amount > ammo) ammo = amount;
         }
-        
+
         public override bool IsReady => ticksFromLastFire >= firePeriod && ammo > 0;
     }
 }

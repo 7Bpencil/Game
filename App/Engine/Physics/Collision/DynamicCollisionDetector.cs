@@ -6,12 +6,12 @@ namespace App.Engine.Physics.Collision
 {
     public static class DynamicCollisionDetector
     {
-        public static float[] AreCollideWithStatic(Bullet bullet, RigidShape staticBody)
+        public static float[] AreCollideWithStatic(AbstractProjectile projectile, RigidShape staticBody)
         {
             if (staticBody is RigidAABB)
-                return AreCollide(bullet.Position, bullet.Velocity, (RigidAABB) staticBody);
+                return AreCollide(projectile.Position, projectile.Velocity, (RigidAABB) staticBody);
             if (staticBody is RigidCircle)
-                return AreCollide(bullet.Position, bullet.Velocity, (RigidCircle) staticBody);
+                return AreCollide(projectile.Position, projectile.Velocity, (RigidCircle) staticBody);
             return null;
         }
         
@@ -58,9 +58,9 @@ namespace App.Engine.Physics.Collision
             return GetPenetrationTimeWithMovingCircle(objectPosition, objectVelocity, circle, Vector.ZeroVector);
         }
 
-        public static float[] AreCollideWithDynamic(Bullet bullet, RigidCircle circle, Vector circleVelocity)
+        public static float[] AreCollideWithDynamic(AbstractProjectile projectile, RigidCircle circle, Vector circleVelocity)
         {
-            var time = GetPenetrationTimeWithMovingCircle(bullet.Position, bullet.Velocity, circle, circleVelocity);
+            var time = GetPenetrationTimeWithMovingCircle(projectile.Position, projectile.Velocity, circle, circleVelocity);
             if (time == null) return null;
             var t1 = time[0];
             var t2 = time[1];

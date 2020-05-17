@@ -28,7 +28,7 @@ namespace App.Model.LevelData
         public Player Player { get; private set; }
         public List<Bot> Bots { get; private set; }
         public List<Collectable> Collectables { get; private set; }
-        public List<Bullet> Bullets { get; private set; }
+        public List<AbstractProjectile> Bullets { get; private set; }
         public List<AbstractParticleUnit> Particles { get; private set; }
         public List<SpriteContainer> Sprites { get; private set; }
         public List<CollisionInfo> CollisionsInfo;
@@ -61,7 +61,7 @@ namespace App.Model.LevelData
             Player = LevelDynamicEntitiesFactory.CreatePlayer(levelInfo.PlayerInfo);
             Bots = LevelDynamicEntitiesFactory.CreateBots(levelInfo.BotsInfo, levelInfo.BotPatrolPoints);
             Collectables = LevelDynamicEntitiesFactory.CreateCollectables(levelInfo.CollectableWeaponsInfo);
-            Bullets = new List<Bullet> {Capacity = 700};
+            Bullets = new List<AbstractProjectile> {Capacity = 700};
             Particles = new List<AbstractParticleUnit> {Capacity = 700};
             Sprites = new List<SpriteContainer> {Capacity = 50};
             VisibilityRegions = new List<Raytracing.VisibilityRegion> {Capacity = 2};
@@ -109,7 +109,7 @@ namespace App.Model.LevelData
             }
             if (Bullets.Count > 600)
             {
-                var newBullets = new List<Bullet> {Capacity = 700};
+                var newBullets = new List<AbstractProjectile> {Capacity = 700};
                 foreach (var bullet in Bullets)
                     if (!bullet.IsStuck) newBullets.Add(bullet);
                 Bullets = newBullets;

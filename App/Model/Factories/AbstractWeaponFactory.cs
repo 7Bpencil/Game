@@ -21,14 +21,16 @@ namespace App.Model.Factories
                 {typeof(AK303), CreateAK303factory()},
                 {typeof(Shotgun), CreateShotgunFactory()},
                 {typeof(SaigaFA), CreateSaigaFAfactory()},
-                {typeof(MP6), CreateMP6factory()}
+                {typeof(MP6), CreateMP6factory()},
+                {typeof(GrenadeLauncher), CreateGLFactory()}
             };
             ammoDistribution = new Dictionary<Type, int>
             {
                 {typeof(AK303), 31},
                 {typeof(Shotgun), 9},
                 {typeof(SaigaFA), 21},
-                {typeof(MP6), 41}
+                {typeof(MP6), 41},
+                {typeof(GrenadeLauncher), 9}
             };
         }
 
@@ -81,6 +83,13 @@ namespace App.Model.Factories
             return new GenericWeaponFactory<Shotgun>
             (new Bitmap(@"Assets\Sprites\Weapons\Shotgun_hud.png"),
                 new Bitmap(@"Assets\Sprites\Weapons\Shotgun_icon.png"));
+        }
+        
+        private static GenericWeaponFactory<GrenadeLauncher> CreateGLFactory()
+        {
+            return new GenericWeaponFactory<GrenadeLauncher>
+            (new Bitmap(@"Assets\Sprites\Weapons\GL_hud.png"),
+                new Bitmap(@"Assets\Sprites\Weapons\GL_icon.png"));
         }
     }
 }

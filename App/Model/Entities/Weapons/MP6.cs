@@ -42,18 +42,18 @@ namespace App.Model.Entities.Weapons
 
         public override void IncrementTick() => ticksFromLastFire++;
         
-        public override List<Bullet> Fire(Vector gunPosition, CustomCursor cursor)
+        public override List<AbstractProjectile> Fire(Vector gunPosition, CustomCursor cursor)
         {
-            var spray = new List<Bullet>();
+            var spray = new List<AbstractProjectile>();
             var direction = (cursor.Position - gunPosition).Normalize();
             var position = gunPosition + direction * 48;
             
             spray.Add(new Bullet(
                 position,
                 direction * 30,
+                20,
                 bulletWeight,
-                new Edge(position, position + direction * 32),
-                20));
+                new Edge(position, position + direction * 32)));
             
             ammo--;
             ticksFromLastFire = 0;
@@ -63,18 +63,18 @@ namespace App.Model.Entities.Weapons
             return spray;
         }
         
-        public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection)
+        public override List<AbstractProjectile> Fire(Vector gunPosition, Vector targetPosition)
         {
-            var spray = new List<Bullet>();
-            var direction = sightDirection.Normalize();
+            var spray = new List<AbstractProjectile>();
+            var direction = (targetPosition - gunPosition).Normalize();
             var position = gunPosition + direction * 48;
             
             spray.Add(new Bullet(
                 position,
                 direction * 30,
+                20,
                 bulletWeight,
-                new Edge(position, position + direction * 32),
-                20));
+                new Edge(position, position + direction * 32)));
             
             ammo--;
             ticksFromLastFire = 0;
