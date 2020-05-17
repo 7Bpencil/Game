@@ -4,5 +4,11 @@
     &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.CollisionDetection.TestTwoCircles&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.CollisionDetection.TestCircleAndAABB&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.CollisionDetection.TestCircleAndCircleQuarter&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.CollisionDetection.TestTwoEdges&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.Navigation.TestNavMesh.TestPassableFalse&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.Navigation.TestNavMesh.TestInBoundsTrue&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.Navigation.TestNavMesh&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.Navigation.TestAStarSearch&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.CollisionDetection.TestDynamicCollisionDetector&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -17,7 +17,7 @@ namespace App.Engine
             mesh = levelNavMesh;
         }
 
-        private static Point GetCorrectPoint(Point point)
+        public static Point TryGetCorrectPoint(Point point)
         {
             if (!mesh.walls.Contains(point)) return point;
             for (var i = -1; i < 2; ++i)
@@ -36,8 +36,8 @@ namespace App.Engine
             costSoFar = new Dictionary<Point, float>();
             var frontier = new PriorityQueue<Point>();
 
-            var start = GetCorrectPoint((startVector / 32).GetPoint());
-            var goal = GetCorrectPoint((goalVector / 32).GetPoint());
+            var start = TryGetCorrectPoint((startVector / 32).GetPoint());
+            var goal = TryGetCorrectPoint((goalVector / 32).GetPoint());
             if (mesh.walls.Contains(start) || mesh.walls.Contains(goal)) return new List<Vector>();
 
             frontier.Enqueue(start, 0);

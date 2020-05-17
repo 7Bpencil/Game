@@ -124,7 +124,11 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Tests\CollisionDetection\TestCircleAndAABB.cs" />
         <Compile Include="Tests\CollisionDetection\TestCircleAndCircleQuarter.cs" />
+        <Compile Include="Tests\CollisionDetection\TestDynamicCollisionDetector.cs" />
         <Compile Include="Tests\CollisionDetection\TestTwoCircles.cs" />
+        <Compile Include="Tests\CollisionDetection\TestTwoEdges.cs" />
+        <Compile Include="Tests\Navigation\TestAStarSearch.cs" />
+        <Compile Include="Tests\Navigation\TestNavMesh.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>

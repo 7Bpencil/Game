@@ -174,15 +174,15 @@ namespace App.Engine.Physics.Collision
 
         public static bool AreCollide(Edge first, Edge second)
         {
-            return IsCrossSegments(first.Start, first.End, second.Start, second.End);
+            return AreEdgesCross(first.Start, first.End, second.Start, second.End);
         }
         
         public static bool AreCollide(Vector firstStart, Vector firstEnd, Edge second)
         {
-            return IsCrossSegments(firstStart, firstEnd, second.Start, second.End);
+            return AreEdgesCross(firstStart, firstEnd, second.Start, second.End);
         }
         
-        private static bool IsCrossSegments(Vector firstStart, Vector firstEnd, Vector secondStart, Vector secondEnd)
+        private static bool AreEdgesCross(Vector firstStart, Vector firstEnd, Vector secondStart, Vector secondEnd)
         {
             var firstSegmentVector = firstEnd - firstStart;
             var secondSegmentVector = secondEnd - secondStart;
@@ -190,10 +190,10 @@ namespace App.Engine.Physics.Collision
                 Vector.VectorProduct(secondEnd - firstStart, firstSegmentVector) <= 0;
             var secondCase = Vector.VectorProduct(firstStart - secondStart, secondSegmentVector) *
                 Vector.VectorProduct(firstEnd - secondStart, secondSegmentVector) <= 0;
-            return IsCrossBb(firstStart, firstEnd, secondStart, secondEnd) && firstCase && secondCase;
+            return AreBoundingBoxesCross(firstStart, firstEnd, secondStart, secondEnd) && firstCase && secondCase;
         }
         
-        private static bool IsCrossBb(Vector firstStart, Vector firstEnd, Vector secondStart, Vector secondEnd)
+        private static bool AreBoundingBoxesCross(Vector firstStart, Vector firstEnd, Vector secondStart, Vector secondEnd)
         {
             return Math.Max(firstStart.X, firstEnd.X) >= Math.Min(secondStart.X, secondEnd.X)
                    && Math.Max(secondStart.X, secondEnd.X) >= Math.Min(firstStart.X, firstEnd.X)
