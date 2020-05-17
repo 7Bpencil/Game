@@ -27,7 +27,7 @@ namespace App.Tests.Navigation
         }
 
         [Test]
-        public void TestSearchPathIncorrectSart()
+        public void TestSearchPathIncorrectStart()
         {
             AStarSearch.SetMesh(OneWall);
             Assert.AreEqual(AStarSearch.SearchPath(new Vector(1, 2), new Vector(5, 5)), new List<Vector>(){new Vector(0, 0)});

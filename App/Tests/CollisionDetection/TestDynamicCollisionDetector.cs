@@ -14,7 +14,7 @@ namespace App.Tests.CollisionDetection
         private static readonly RigidAABB StaticBodyAABB = new RigidAABB(new Vector(-1, 1), new Vector(1, 3), true, true);
         
         [Test]
-        public void TestAreCollideWithStaticCantHit()
+        public void TestCanNotHit()
         {
             var objectVelocity = new Vector(1, 0);
             Assert.IsNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyCircle));
@@ -22,7 +22,7 @@ namespace App.Tests.CollisionDetection
         }
         
         [Test]
-        public void TestAreCollideWithStaticCanHit()
+        public void TestCanHit()
         {
             var objectVelocity = new Vector(0, 1);
             Assert.IsNotNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyCircle));
@@ -30,7 +30,7 @@ namespace App.Tests.CollisionDetection
         }
         
         [Test]
-        public void TestAreCollideWithStaticCheckTime()
+        public void TestCheckTime()
         {
             var objectVelocity = new Vector(0, 1);
             var resultTime = new float[] {1, 3};
