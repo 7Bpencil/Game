@@ -35,11 +35,11 @@ namespace App.Engine.Physics.Collision
         private static CollisionInfo GetCollisionInfo(RigidCircle first, RigidCircle second)
         {
             var vFromFirstToSecond = second.Center - first.Center;
+            var vLengthSqrt = Vector.ScalarProduct(vFromFirstToSecond, vFromFirstToSecond);
             var sumRadii = first.Radius + second.Radius;
-            var collisionDepthSqrt = sumRadii * sumRadii - Vector.ScalarProduct(vFromFirstToSecond, vFromFirstToSecond);
-            
-            if (collisionDepthSqrt < 0) return null;
-            if (collisionDepthSqrt > 0)
+
+            if (sumRadii * sumRadii < vLengthSqrt) return null;
+            if (Math.Abs(vLengthSqrt) > 0.01)
             {
                 return new CollisionInfo(
                     sumRadii - vFromFirstToSecond.Length,

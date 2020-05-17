@@ -122,7 +122,8 @@
         <Compile Include="Model\LivingEntity.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Tests\TestsCollisionDetector.cs" />
+        <Compile Include="Tests\TestCircleAndAABBCollisionDetector.cs" />
+        <Compile Include="Tests\TestCirclesCollisionDetector.cs" />
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>

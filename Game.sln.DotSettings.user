@@ -1,6 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2e913b89_002D6ee3_002D4a39_002Da58a_002D2557fca2074d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestSimpleCirclesCollision" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.TestsCollisionDetector.TestSimpleCirclesCollision&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.TestCirclesCollisionDetector&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EDDDD837-B494-4689-9175-FE550EEC5AA4::.NETFramework,Version=v4.8::App.Tests.TestCircleAndAABBCollisionDetector&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

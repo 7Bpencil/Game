@@ -20,5 +20,26 @@
             Start = collisionStart;
             End = collisionStart + normal * depth;
         }
+
+        public override string ToString()
+        {
+            return "Depth=" + Depth.ToString() + ", Normal=" + Normal + ", Start=" + Start;
+        }
+
+        private bool Equals(CollisionInfo other)
+        {
+            return Depth.Equals(other.Depth)
+                   && Normal.Equals(other.Normal)
+                   && Start.Equals(other.Start)
+                   && End.Equals(other.End);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((CollisionInfo) obj);
+        }
     }
 }
