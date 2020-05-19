@@ -8,7 +8,6 @@ using App.Engine.Physics.RigidShapes;
 using App.Engine.Sprites;
 using App.Model.Entities;
 using App.Model.Entities.Weapons;
-using App.Model.LevelData;
 
 namespace App.Model.Factories
 {

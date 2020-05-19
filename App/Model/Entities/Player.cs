@@ -30,8 +30,7 @@ namespace App.Model.Entities
 
         private bool IsInDash => ticksFromLastDash <= DashPeriod;
         private bool CanDash
-            => dashCount == 0
-               || dashCount == 1 && ticksFromLastDash > TicksBetweenTwoDashes
+            => dashCount == 1 && ticksFromLastDash > TicksBetweenTwoDashes
                || dashCount == 2 && ticksFromLastDash > TicksBetweenDashes; 
         
 
@@ -47,6 +46,7 @@ namespace App.Model.Entities
             this.weaponSprites = weaponSprites;
             currentWeaponIndex = 0;
             ticksFromLastDash = TicksBetweenDashes + 1;
+            dashCount = 2;
         }
         
         public void AddWeapon(Weapon newWeapon)

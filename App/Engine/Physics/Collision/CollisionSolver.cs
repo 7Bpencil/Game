@@ -4,7 +4,7 @@ using App.Model.LevelData;
 
 namespace App.Engine.Physics.Collision
 {
-    public class CollisionSolver
+    public static class CollisionSolver
     {
         public static List<CollisionInfo> ResolveCollisions(ShapesIterator sceneObjects)
         {

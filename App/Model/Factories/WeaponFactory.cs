@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using App.Engine.Physics;
 using App.Model.Entities;

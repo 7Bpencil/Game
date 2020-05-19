@@ -12,7 +12,7 @@ namespace App.Engine.Render
     {
         private static readonly Stopwatch Clock = new Stopwatch();
         
-        public static void Render(Level level, Camera camera, Vector cursorPosition, bool renderRaytracing, bool renderDebug)
+        public static void Render(Level level, Camera camera, Vector cursorPosition, bool shouldRenderRaytracing, bool shouldRenderDebug)
         {
             var cameraPosition = camera.Position;
             var cameraSize = camera.Size;
@@ -33,7 +33,7 @@ namespace App.Engine.Render
             
 
             var rT = 0L;
-            if (renderRaytracing)
+            if (shouldRenderRaytracing)
             {
                 RenderVisibilityRegions(level.VisibilityRegions, cameraPosition);
                 RenderMachine.RenderShadowMask();
@@ -49,10 +49,10 @@ namespace App.Engine.Render
                 "ms, particles: " + rP.ToString() + 
                 "ms, bullets: " + rB.ToString() + 
                 "ms, raytracing: " + rT.ToString(); 
-            if (renderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
+            if (shouldRenderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
             
             var playerWeapon = level.Player.CurrentWeapon;
-            RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
+            RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount.ToString(), cameraSize);
 
             RenderMachine.Invalidate();
         }
@@ -192,7 +192,7 @@ namespace App.Engine.Render
             foreach (var bullet in bullets)
             {
                 if (bullet.IsStuck) continue;
-                if (bullet.isDeformed)
+                if (bullet.IsDeformed)
                 {
                     RenderMachine.RenderEdgeOnTiles(bullet.Shape);
                     bullet.IsStuck = true;

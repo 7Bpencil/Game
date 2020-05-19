@@ -50,7 +50,7 @@ namespace App.Engine
             currentLevel = LevelManager.MoveNextLevel();
             InitState();
 
-            //AudioEngine.PlayNewInstance(@"event:/themes/THEME");
+            AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
         
         private void InitializeSystems()
@@ -106,9 +106,9 @@ namespace App.Engine
 
             UpdateState();
 
-            var renderRaytracing = keyState.pressesOnPAmount % 2 == 1;
-            var renderDebug = keyState.pressesOnIAmount % 2 == 1; 
-            RenderPipeline.Render(currentLevel, camera, cursor.Position, renderRaytracing, renderDebug);
+            var shouldRenderRaytracing = keyState.pressesOnPAmount % 2 == 1;
+            var shouldRenderDebug = keyState.pressesOnIAmount % 2 == 1; 
+            RenderPipeline.Render(currentLevel, camera, cursor.Position, shouldRenderRaytracing, shouldRenderDebug);
 
             AudioEngine.Update();
         }
@@ -180,7 +180,7 @@ namespace App.Engine
             var particles = currentLevel.Particles;
             foreach (var bullet in bullets)
             {
-                if (bullet.IsStuck || bullet.isDeformed) continue;
+                if (bullet.IsStuck || bullet.IsDeformed) continue;
                 if (bullet.StaticPenetrations.Count == 0)
                     CalculateStaticPenetrations(bullet);
                 CalculateDynamicPenetrations(bullet);
@@ -267,7 +267,7 @@ namespace App.Engine
                 currentLevel.WavesAmount--;
             }
             var regions = new List<Raytracing.VisibilityRegion>();
-            //regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));
+            //regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000)); TODO find use for raytracing
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;

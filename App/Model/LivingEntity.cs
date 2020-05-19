@@ -33,7 +33,7 @@ namespace App.Model
             TorsoContainer = torsoContainer;
             LegsContainer = legsContainer;
             Velocity = Vector.ZeroVector;
-            this.DeadBodyPath = deadBodyPath;
+            DeadBodyPath = deadBodyPath;
         }
 
         public void MoveTo(Vector newPosition) => CollisionShape.MoveTo(newPosition);

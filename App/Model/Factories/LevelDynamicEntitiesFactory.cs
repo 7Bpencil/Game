@@ -3,7 +3,6 @@ using App.Engine.Physics;
 using App.Engine.Physics.RigidShapes;
 using App.Model.Entities;
 using App.Model.Entities.Collectables;
-using App.Model.LevelData;
 
 namespace App.Model.Factories
 {

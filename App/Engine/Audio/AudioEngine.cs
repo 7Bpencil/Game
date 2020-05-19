@@ -12,7 +12,7 @@ namespace App.Engine.Audio
         private static FMOD.Studio.System system;
         private static FMOD.System fmodSystem;
         private static ATTRIBUTES_3D attributes3d;
-        private static FMOD.Studio.Bank masterBank;
+        private static Bank masterBank;
         private static Dictionary<string, EventDescription> cachedEventDescriptions;
 
 
@@ -41,7 +41,7 @@ namespace App.Engine.Audio
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
         /// <returns></returns>
-        public static FMOD.Studio.EventInstance CreateEventInstance(string path, Vector instancePosition)
+        public static EventInstance CreateEventInstance(string path, Vector instancePosition)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
@@ -61,7 +61,7 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static FMOD.Studio.EventInstance CreateEventInstance(string path)
+        public static EventInstance CreateEventInstance(string path)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
@@ -74,7 +74,7 @@ namespace App.Engine.Audio
             return instance;
         }
 
-        public static void PlayInstance(FMOD.Studio.EventInstance instance)
+        public static void PlayInstance(EventInstance instance)
         {
             instance.start();
             instance.release();
@@ -105,7 +105,7 @@ namespace App.Engine.Audio
             system.setListenerAttributes(0, attributes3d);
         }
 
-        private static FMOD.Studio.EventDescription GetEventDescription(string path)
+        private static EventDescription GetEventDescription(string path)
         {
             if (cachedEventDescriptions.ContainsKey(path))
                 return cachedEventDescriptions[path];
@@ -117,7 +117,7 @@ namespace App.Engine.Audio
 
         public static void Initialize()
         {
-            CheckResult(FMOD.Factory.System_Create(out fmodSystem));
+            CheckResult(Factory.System_Create(out fmodSystem));
             fmodSystem.init(512, INITFLAGS.NORMAL, IntPtr.Zero);
             fmodSystem.set3DSettings(1, 64, 1);
             CheckResult(FMOD.Studio.System.create(out system));
