@@ -237,9 +237,10 @@ namespace App.Engine
                 levelParticles.Add(ParticleFactory.CreateBloodSplash(penetrationPlace));
             }
 
-            if (entity.IsDead && !entity.Velocity.Equals(Vector.ZeroVector))
+            if (entity.IsDead)
             {
-                entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * penetrationTimes[0]);
+                if (!entity.Velocity.Equals(Vector.ZeroVector))
+                    entity.MoveTo(entity.CollisionShape.Center + entity.Velocity * penetrationTimes[0]);
                 HandleKill(entity, entity.Position - bullet.Position, levelParticles);
             }
         }
