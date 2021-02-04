@@ -8,7 +8,7 @@ But I am thankful that this project happened - it showed me what is what in game
 
 Click on picture to watch gameplay:
 
-[![](pictures/preview.png)](https://www.youtube.com/watch?v=kpBl_tBHNdA "Gameplay video")
+[![](pictures/preview.png)](https://www.youtube.com/watch?v=kpBl_tBHNdA "gameplay video")
 
 ### Build
     use "dotnet cake" command to build
