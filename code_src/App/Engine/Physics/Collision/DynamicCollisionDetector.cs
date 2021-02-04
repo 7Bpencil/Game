@@ -8,20 +8,22 @@ namespace App.Engine.Physics.Collision
     {
         public static float[] AreCollideWithStatic(Bullet bullet, RigidShape staticBody)
         {
-            if (staticBody is RigidAABB)
-                return AreCollide(bullet.Position, bullet.Velocity, (RigidAABB) staticBody);
-            if (staticBody is RigidCircle)
-                return AreCollide(bullet.Position, bullet.Velocity, (RigidCircle) staticBody);
-            return null;
+            switch (staticBody)
+            {
+                case RigidAABB aabb: return AreCollide(bullet.Position, bullet.Velocity, aabb);
+                case RigidCircle circle: return AreCollide(bullet.Position, bullet.Velocity, circle);
+                default: return null;
+            }
         }
 
         public static float[] AreCollideWithStatic(Vector objectPosition, Vector objectVelocity, RigidShape staticBody)
         {
-            if (staticBody is RigidAABB)
-                return AreCollide(objectPosition, objectVelocity, (RigidAABB) staticBody);
-            if (staticBody is RigidCircle)
-                return AreCollide(objectPosition, objectVelocity, (RigidCircle) staticBody);
-            return null;
+            switch (staticBody)
+            {
+                case RigidAABB aabb: return AreCollide(objectPosition, objectVelocity, aabb);
+                case RigidCircle circle: return AreCollide(objectPosition, objectVelocity, circle);
+                default: return null;
+            }
         }
 
         private static float[] AreCollide(Vector objectPosition, Vector objectVelocity, RigidAABB rectangle)

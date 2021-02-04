@@ -23,7 +23,7 @@
 
         public override string ToString()
         {
-            return "Depth=" + Depth.ToString() + ", Normal=" + Normal + ", Start=" + Start;
+            return "Depth=" + Depth + ", Normal=" + Normal + ", Start=" + Start;
         }
 
         private bool Equals(CollisionInfo other)

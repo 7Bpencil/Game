@@ -9,23 +9,16 @@ namespace App.Engine.Physics.Collision
         {
             switch (first)
             {
-                case RigidCircle firstCircle when second is RigidCircle secondCircle:
-                    return GetCollisionInfo(firstCircle, secondCircle);
+                case RigidCircle firstCircle when second is RigidCircle secondCircle: return GetCollisionInfo(firstCircle, secondCircle);
 
-                case RigidAABB aabb when second is RigidCircle circle:
-                    return GetCollisionInfo(aabb, circle);
-                case RigidCircle circle when second is RigidAABB aabb:
-                    return GetCollisionInfo(aabb, circle);
+                case RigidAABB aabb when second is RigidCircle circle: return GetCollisionInfo(aabb, circle);
+                case RigidCircle circle when second is RigidAABB aabb: return GetCollisionInfo(aabb, circle);
 
-                case RigidCircle circle when second is RigidCircleQuarter quarter:
-                    return GetCollisionInfo(circle, quarter);
-                case RigidCircleQuarter quarter when second is RigidCircle circle:
-                    return GetCollisionInfo(circle, quarter);
+                case RigidCircle circle when second is RigidCircleQuarter quarter: return GetCollisionInfo(circle, quarter);
+                case RigidCircleQuarter quarter when second is RigidCircle circle: return GetCollisionInfo(circle, quarter);
 
-                case RigidCircle circle when second is RigidTriangle triangle:
-                    return GetCollisionInfo(circle, triangle);
-                case RigidTriangle triangle when second is RigidCircle circle:
-                    return GetCollisionInfo(circle, triangle);
+                case RigidCircle circle when second is RigidTriangle triangle: return GetCollisionInfo(circle, triangle);
+                case RigidTriangle triangle when second is RigidCircle circle: return GetCollisionInfo(circle, triangle);
 
                 default:
                     return null;
@@ -159,16 +152,11 @@ namespace App.Engine.Physics.Collision
             var horizontal = Vector.ScalarProduct(vector, circleQuarter.DirectionNormal);
             switch (circleQuarter.QuarterIndex)
             {
-                case 1 when vertical >= 0 && horizontal >= 0:
-                    return info;
-                case 2 when vertical >= 0 && horizontal <= 0:
-                    return info;
-                case 3 when vertical <= 0 && horizontal <= 0:
-                    return info;
-                case 4 when vertical <= 0 && horizontal >= 0:
-                    return info;
-                default:
-                    return null;
+                case 1 when vertical >= 0 && horizontal >= 0: return info;
+                case 2 when vertical >= 0 && horizontal <= 0: return info;
+                case 3 when vertical <= 0 && horizontal <= 0: return info;
+                case 4 when vertical <= 0 && horizontal >= 0: return info;
+                default: return null;
             }
         }
 

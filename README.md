@@ -48,7 +48,7 @@ We tried to add some shadows, but GDI+ cannot handle it, framerate drops signifi
 
 ### License
 Sounds are from random youtube videos.  
-Some sprites I draw myself, some are from [Hotline Miami](https://store.steampowered.com/app/219150/Hotline_Miami/), some (like blood) are from [Brutal Doom](https://www.moddb.com/mods/brutal-doom).  
+Some sprites I drew myself, some are from [Hotline Miami](https://store.steampowered.com/app/219150/Hotline_Miami/), some (like blood) are from [Brutal Doom](https://www.moddb.com/mods/brutal-doom).  
 So I will leave it unlicensed.
 
 ### Participants:
