@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
+    <Import Project="..\packages\NUnit.3.13.1\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" />
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{EDDDD837-B494-4689-9175-FE550EEC5AA4}</ProjectGuid>
+        <ProjectGuid>{A25F83EC-9BC1-4207-9DE6-7F4BD48C7C07}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>App</RootNamespace>
@@ -18,7 +18,7 @@
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
+        <OutputPath>..\..\bin\Debug\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
         <PlatformTarget>x64</PlatformTarget>
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
+        <OutputPath>..\..\bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -37,8 +37,8 @@
         <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
-          <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
+        <Reference Include="nunit.framework, Version=3.13.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+          <HintPath>..\packages\NUnit.3.13.1\lib\net45\nunit.framework.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="System" />
@@ -61,14 +61,14 @@
         <Compile Include="Engine\Core.cs" />
         <Compile Include="Engine\Particles\AnimatedParticle.cs" />
         <Compile Include="Engine\Particles\StaticParticle.cs" />
-        <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\AutoBurnParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
         <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
-        <Compile Include="Engine\Physics\Collision\DynamicCollisionDetector.cs" />
-        <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
+        <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
         <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
+        <Compile Include="Engine\Physics\Collision\DynamicCollisionDetector.cs" />
         <Compile Include="Engine\Physics\Edge.cs" />
         <Compile Include="Engine\Physics\NavMesh.cs" />
         <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
@@ -92,13 +92,14 @@
         <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
         <Compile Include="Engine\Sprites\StaticSprite.cs" />
         <Compile Include="Model\DataParser\BotTypesParser.cs" />
+        <Compile Include="Model\DataParser\LevelParser.cs" />
         <Compile Include="Model\DataParser\TileSetParser.cs" />
+        <Compile Include="Model\Entities\Bot.cs" />
         <Compile Include="Model\Entities\Bullet.cs" />
         <Compile Include="Model\Entities\Collectable.cs" />
         <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
         <Compile Include="Model\Entities\CustomCursor.cs" />
         <Compile Include="Model\Entities\Player.cs" />
-        <Compile Include="Model\Entities\Bot.cs" />
         <Compile Include="Model\Entities\SpriteContainer.cs" />
         <Compile Include="Model\Entities\Weapon.cs" />
         <Compile Include="Model\Entities\Weapons\AK303.cs" />
@@ -114,11 +115,10 @@
         <Compile Include="Model\Factories\ParticleFactory.cs" />
         <Compile Include="Model\Factories\WeaponFactory.cs" />
         <Compile Include="Model\LevelData\Layer.cs" />
-        <Compile Include="Model\LevelData\LevelInfo.cs" />
         <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\LevelInfo.cs" />
         <Compile Include="Model\LevelData\TileSet.cs" />
         <Compile Include="Model\LevelManager.cs" />
-        <Compile Include="Model\DataParser\LevelParser.cs" />
         <Compile Include="Model\LivingEntity.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -132,111 +132,6 @@
         <Compile Include="View\ViewForm.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Assets\Audio\Desktop\Master.bank">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Audio\Desktop\Master.strings.bank">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\BotBank.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Levels\arena_second.tmx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Levels\LevelList.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Levels\thirdTry.tmx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash_small.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash_big.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\BLOOD\blood_splash_medium.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\exit.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\SMOKE\bullet_smoke.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\AK303_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\AK303_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\gun_shells.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\MP6_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\MP6_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\pinkHair_katana.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\SaigaFA_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\SaigaFA_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\Shotgun_hud.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\Shotgun_icon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\boroda.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\Sprites\Weapons\pinkHair.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\boroda.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\boroda_death.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\pinkHair.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\pinkHair_death.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\rooms.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Assets\TileMaps\crosshair.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="libs\fmodstudio.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="libs\fmod.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="Assets\TileMaps\shooting_range_target.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="Assets\TileSets\rooms.tsx">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-    <ItemGroup>
       <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -244,7 +139,7 @@
       <PropertyGroup>
         <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
       </PropertyGroup>
-      <Error Condition="!Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.12.0\build\NUnit.props'))" />
+      <Error Condition="!Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.13.1\build\NUnit.props'))" />
     </Target>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
