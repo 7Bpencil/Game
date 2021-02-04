@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="..\packages\NUnit.3.13.1\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" />
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{A25F83EC-9BC1-4207-9DE6-7F4BD48C7C07}</ProjectGuid>
+        <OutputType>Exe</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>App</RootNamespace>
+        <AssemblyName>App</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>x64</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>..\..\bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Prefer32bit>false</Prefer32bit>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>x64</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>..\..\bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Prefer32bit>false</Prefer32bit>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="nunit.framework, Version=3.13.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
+          <HintPath>..\packages\NUnit.3.13.1\lib\net45\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Drawing" />
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Engine\AbstractParticle.cs" />
+        <Compile Include="Engine\AbstractParticleUnit.cs" />
+        <Compile Include="Engine\AStarSearch.cs" />
+        <Compile Include="Engine\Audio\AudioEngine.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_dsp.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_errors.cs" />
+        <Compile Include="Engine\Audio\FMOD\fmod_studio.cs" />
+        <Compile Include="Engine\Camera.cs" />
+        <Compile Include="Engine\Core.cs" />
+        <Compile Include="Engine\Logger.cs" />
+        <Compile Include="Engine\Particles\AnimatedParticle.cs" />
+        <Compile Include="Engine\Particles\StaticParticle.cs" />
+        <Compile Include="Engine\ParticleUnits\AutoBurnParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\BloodSplashParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\ExpiringAnimatedParticleUnit.cs" />
+        <Compile Include="Engine\ParticleUnits\GunShellParticleUnit.cs" />
+        <Compile Include="Engine\Physics\Collision\CollisionDetector.cs" />
+        <Compile Include="Engine\Physics\Collision\CollisionInfo.cs" />
+        <Compile Include="Engine\Physics\Collision\CollisionSolver.cs" />
+        <Compile Include="Engine\Physics\Collision\DynamicCollisionDetector.cs" />
+        <Compile Include="Engine\Physics\Edge.cs" />
+        <Compile Include="Engine\Physics\NavMesh.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidAABB.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidCircle.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidCircleQuarter.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidShape.cs" />
+        <Compile Include="Engine\Physics\RigidShapes\RigidTriangle.cs" />
+        <Compile Include="Engine\Physics\Vector.cs" />
+        <Compile Include="Engine\Render\Raytracing.cs" />
+        <Compile Include="Engine\Render\Renderers\CollisionInfoRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\EdgeRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\PathRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\RigidBodyRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\SpriteRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\VectorRenderer.cs" />
+        <Compile Include="Engine\Render\Renderers\VisibilityPolygonRenderer.cs" />
+        <Compile Include="Engine\Render\RenderMachine.cs" />
+        <Compile Include="Engine\Render\RenderPipeline.cs" />
+        <Compile Include="Engine\Sprite.cs" />
+        <Compile Include="Engine\Sprites\MeleeWeaponSprite.cs" />
+        <Compile Include="Engine\Sprites\PlayerBodySprite.cs" />
+        <Compile Include="Engine\Sprites\StaticSprite.cs" />
+        <Compile Include="Model\DataParser\BotTypesParser.cs" />
+        <Compile Include="Model\DataParser\LevelParser.cs" />
+        <Compile Include="Model\DataParser\TileSetParser.cs" />
+        <Compile Include="Model\Entities\Bot.cs" />
+        <Compile Include="Model\Entities\Bullet.cs" />
+        <Compile Include="Model\Entities\Collectable.cs" />
+        <Compile Include="Model\Entities\Collectables\CollectableWeapon.cs" />
+        <Compile Include="Model\Entities\CustomCursor.cs" />
+        <Compile Include="Model\Entities\Player.cs" />
+        <Compile Include="Model\Entities\SpriteContainer.cs" />
+        <Compile Include="Model\Entities\Weapon.cs" />
+        <Compile Include="Model\Entities\Weapons\AK303.cs" />
+        <Compile Include="Model\Entities\Weapons\MeleeWeapon.cs" />
+        <Compile Include="Model\Entities\Weapons\MP6.cs" />
+        <Compile Include="Model\Entities\Weapons\SaigaFA.cs" />
+        <Compile Include="Model\Entities\Weapons\Shotgun.cs" />
+        <Compile Include="Model\Factories\AbstractWeaponFactory.cs" />
+        <Compile Include="Model\Factories\BotBank.cs" />
+        <Compile Include="Model\Factories\EntityFactory.cs" />
+        <Compile Include="Model\Factories\GenericWeaponFactory.cs" />
+        <Compile Include="Model\Factories\LevelDynamicEntitiesFactory.cs" />
+        <Compile Include="Model\Factories\ParticleFactory.cs" />
+        <Compile Include="Model\Factories\WeaponFactory.cs" />
+        <Compile Include="Model\LevelData\Layer.cs" />
+        <Compile Include="Model\LevelData\Level.cs" />
+        <Compile Include="Model\LevelData\LevelInfo.cs" />
+        <Compile Include="Model\LevelData\TileSet.cs" />
+        <Compile Include="Model\LevelManager.cs" />
+        <Compile Include="Model\LivingEntity.cs" />
+        <Compile Include="Program.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Tests\CollisionDetection\TestCircleAndAABB.cs" />
+        <Compile Include="Tests\CollisionDetection\TestCircleAndCircleQuarter.cs" />
+        <Compile Include="Tests\CollisionDetection\TestDynamicCollisionDetector.cs" />
+        <Compile Include="Tests\CollisionDetection\TestTwoCircles.cs" />
+        <Compile Include="Tests\CollisionDetection\TestTwoEdges.cs" />
+        <Compile Include="Tests\Navigation\TestAStarSearch.cs" />
+        <Compile Include="Tests\Navigation\TestNavMesh.cs" />
+        <Compile Include="View\ViewForm.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+      <PropertyGroup>
+        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+      </PropertyGroup>
+      <Error Condition="!Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.13.1\build\NUnit.props'))" />
+    </Target>
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>
