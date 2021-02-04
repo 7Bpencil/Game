@@ -20,25 +20,25 @@ namespace App.Model.Entities.Weapons
             attackPeriod = 30;
             ticksFromLastAttack = attackPeriod + 1;
         }
-        
+
         public bool IsInRange(Bot target) => range.IsCollide(target.CollisionShape);
 
         public void IncrementTick() => ticksFromLastAttack++;
 
         public void ResetTick() => ticksFromLastAttack = 0;
-        
+
         public bool IsReady => ticksFromLastAttack >= attackPeriod;
 
         public void MoveRangeBy(Vector delta) => range.MoveBy(delta);
 
         public void RotateRangeTo(float newAngle, Vector playerCenterPosition) =>
             range.Rotate(newAngle, playerCenterPosition);
-        
+
         /// <summary>
         /// Attention: creates new RigidShape[] every time
         /// </summary>
-        public RigidShape[] GetRangeShapes() => new RigidShape[] {range.Sector, range.Triangle}; 
-        
+        public RigidShape[] GetRangeShapes() => new RigidShape[] {range.Sector, range.Triangle};
+
         private class Range
         {
             public readonly RigidCircleQuarter Sector;
@@ -53,15 +53,15 @@ namespace App.Model.Entities.Weapons
                     playerCenter + new Vector(0, -74),
                     playerCenter + new Vector(32, 0)
                 };
-                
+
                 Sector = new RigidCircleQuarter(
-                    new Vector(0, -1), 
-                    2, 
+                    new Vector(0, -1),
+                    2,
                     new RigidCircle(playerCenter.Copy(), 74, false, false));
-                Triangle = new RigidTriangle(trianglePoints, false, false); 
+                Triangle = new RigidTriangle(trianglePoints, false, false);
                 currentAngle = 90;
             }
-            
+
             public void Rotate(float newAngle, Vector playerCenterPosition)
             {
                 var delta = currentAngle - newAngle;

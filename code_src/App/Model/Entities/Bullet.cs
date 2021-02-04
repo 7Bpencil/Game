@@ -44,18 +44,18 @@ namespace App.Model.Entities
                 if (bulletPenetration < distanceBeforeCollision[1] - distanceBeforeCollision[0])
                 {
                     IsDeformed = true;
-                    var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];    
+                    var stuckPoint = Position + Velocity.Normalize() * distanceBeforeCollision[0];
                     Shape.End = stuckPoint;
                     Shape.Start = Position.Copy();
                     Position = stuckPoint;
                 }
                 else SlowDown();
             }
-            
+
             if (StaticPenetrations[StaticPenetrations.Count - 1][1] < -500) IsStuck = true;
             Move();
         }
-        
+
         public void SlowDown()
         {
             Velocity *= 0.8f;

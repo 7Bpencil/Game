@@ -6,12 +6,12 @@ namespace App.Engine.Sprites
     {
         public bool InAction;
         public bool WasRaised => CurrentFrame == StartFrame + 1 && TicksFromLastFrame == 0;
-        
+
         public MeleeWeaponSprite(Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size)
             : base(bitmap, framePeriodInTicks, startFrame, endFrame, size)
         {
         }
-        
+
         public MeleeWeaponSprite(
             Bitmap bitmap, int framePeriodInTicks, int startFrame, int endFrame, Size size, float destWidth, float destHeight)
             : base(bitmap, framePeriodInTicks, startFrame, endFrame, size, destWidth, destHeight)

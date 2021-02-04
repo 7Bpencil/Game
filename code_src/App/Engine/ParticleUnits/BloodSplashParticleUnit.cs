@@ -12,7 +12,7 @@ namespace App.Engine.ParticleUnits
         private int ticksFromLastFrame;
         private readonly int framePeriodInTicks;
         private readonly int framesAmount;
-        
+
         public override AbstractParticle Content => content;
         public override Rectangle CurrentFrame => content.GetFrame(currentFrame);
         public override Vector CenterPosition { get; }
@@ -25,7 +25,7 @@ namespace App.Engine.ParticleUnits
             this.content = content;
             CenterPosition = position;
             Angle = angle;
-            
+
             framesAmount = content.FramesAmount;
             framePeriodInTicks = content.FramePeriodInTicks;
             currentFrame = 0;
@@ -45,7 +45,7 @@ namespace App.Engine.ParticleUnits
                 if (currentFrame > framesAmount) IsExpired = true;
             }
         }
-        
+
         public override void ClearContent()
         {
             content = null;

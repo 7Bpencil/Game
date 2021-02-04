@@ -4,15 +4,15 @@ namespace App.Engine.Physics.RigidShapes
     {
         private readonly Vector center;
         public override Vector Center => center;
-        
+
         public readonly Vector MinPoint;
         public readonly Vector MaxPoint;
         public readonly float Width;
         public readonly float Height;
-        
+
         private bool isStatic;
         public override bool IsStatic { get => isStatic; set => isStatic = value; }
-        
+
         private bool canCollide;
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
 
@@ -34,7 +34,7 @@ namespace App.Engine.Physics.RigidShapes
         {
             throw new System.NotImplementedException();
         }
-        
+
         public override void MoveTo(Vector newPosition)
         {
             throw new System.NotImplementedException();

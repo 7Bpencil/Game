@@ -13,13 +13,13 @@ namespace App.Model.Entities.Weapons
 
         private readonly string name;
         public override string Name => name;
-        
+
         private readonly int capacity;
         public override int MagazineCapacity => capacity;
-        
+
         private readonly float bulletWeight;
         public override float BulletWeight => bulletWeight;
-        
+
         private int ammo;
         public override int AmmoAmount => ammo;
 
@@ -35,18 +35,18 @@ namespace App.Model.Entities.Weapons
             bulletWeight = 0.2f;
             this.ammo = ammo;
             r = new Random();
-            
+
             fireSoundPath = @"event:/gunfire/2D/SAIGAFA_FIRE";
             fireSoundPath3D = @"event:/gunfire/3D/SAIGAFA_FIRE_3D";
         }
 
         public override void IncrementTick() => ticksFromLastFire++;
-        
+
         public override List<Bullet> Fire(Vector gunPosition, CustomCursor cursor)
         {
             var spray = new List<Bullet>();
             var direction = (cursor.Position - gunPosition).Normalize();
-                
+
             const int shotsAmount = 6;
             for (var i = 0; i < shotsAmount; i++)
             {
@@ -60,7 +60,7 @@ namespace App.Model.Entities.Weapons
                     new Edge(position, position + e * 40),
                     10));
             }
-            
+
             ammo--;
             ticksFromLastFire = 0;
             AudioEngine.PlayNewInstance(fireSoundPath);
@@ -68,12 +68,12 @@ namespace App.Model.Entities.Weapons
 
             return spray;
         }
-        
+
         public override List<Bullet> Fire(Vector gunPosition, Vector sightDirection)
         {
             var spray = new List<Bullet>();
             var direction = sightDirection.Normalize();
-                
+
             const int shotsAmount = 6;
             for (var i = 0; i < shotsAmount; i++)
             {
@@ -87,7 +87,7 @@ namespace App.Model.Entities.Weapons
                     new Edge(position, position + e * 40),
                     10));
             }
-            
+
             ammo--;
             ticksFromLastFire = 0;
             AudioEngine.PlayNewInstance(fireSoundPath3D, gunPosition);
@@ -99,7 +99,7 @@ namespace App.Model.Entities.Weapons
         {
             if (amount > ammo) ammo = amount;
         }
-        
+
         public override bool IsReady => ticksFromLastFire >= firePeriod && ammo > 0;
     }
 }

@@ -22,7 +22,7 @@ namespace App.Model.Factories
         }
 
         public static void SpawnBots(
-            List<Vector> spawnPositions, Vector playerPosition, List<Bot> levelBots, 
+            List<Vector> spawnPositions, Vector playerPosition, List<Bot> levelBots,
             List<SpriteContainer> levelSprites, List<RigidShape> levelDynamicShapes, List<Vector> patrolPoints)
         {
             var xAxisVector = new Vector(1, 0);

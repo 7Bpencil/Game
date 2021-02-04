@@ -14,7 +14,7 @@ namespace App.Tests.CollisionDetection
             var second = new Edge(new Vector(10, 10), new Vector(10, -10));
             Assert.IsTrue(CollisionDetector.AreCollide(first, second));
         }
-        
+
         [Test]
         public void TestTwoEdgesDontCross()
         {
@@ -22,7 +22,7 @@ namespace App.Tests.CollisionDetection
             var second = new Edge(new Vector(0, 10), new Vector(20, 10));
             Assert.IsFalse(CollisionDetector.AreCollide(first, second));
         }
-        
+
         [Test]
         public void TestTwoEdgesCoincide()
         {
@@ -30,7 +30,7 @@ namespace App.Tests.CollisionDetection
             var second = new Edge(new Vector(-10, 0), new Vector(30, 0));
             Assert.IsTrue(CollisionDetector.AreCollide(first, second));
         }
-        
+
         [Test]
         public void TestTwoEdgesCreateAngle()
         {

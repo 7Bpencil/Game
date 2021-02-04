@@ -11,14 +11,14 @@ namespace App.Engine.Render
     public static class RenderPipeline
     {
         private static readonly Stopwatch Clock = new Stopwatch();
-        
+
         public static void Render(Level level, Camera camera, Vector cursorPosition, bool shouldRenderRaytracing, bool shouldRenderDebug)
         {
             var cameraPosition = camera.Position;
             var cameraSize = camera.Size;
-            
+
             Clock.Start();
-            
+
             RerenderCamera(cameraPosition, cameraSize);
             var rC = Measure();
 
@@ -30,7 +30,7 @@ namespace App.Engine.Render
 
             RenderBullets(level.Bullets, cameraPosition);
             var rB = Measure();
-            
+
 
             var rT = 0L;
             if (shouldRenderRaytracing)
@@ -42,15 +42,15 @@ namespace App.Engine.Render
             Clock.Stop();
             Clock.Reset();
 
-            var perfomanceInfo = 
+            var perfomanceInfo =
                 "summary: " + (rC + rS + rP + rB + rT).ToString() +
-                "ms, camera: " + rC.ToString() + 
-                "ms, sprites: " + rS.ToString() + 
-                "ms, particles: " + rP.ToString() + 
-                "ms, bullets: " + rB.ToString() + 
-                "ms, raytracing: " + rT.ToString(); 
+                "ms, camera: " + rC.ToString() +
+                "ms, sprites: " + rS.ToString() +
+                "ms, particles: " + rP.ToString() +
+                "ms, bullets: " + rB.ToString() +
+                "ms, raytracing: " + rT.ToString();
             if (shouldRenderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
-            
+
             var playerWeapon = level.Player.CurrentWeapon;
             RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount.ToString(), cameraSize);
 
@@ -106,10 +106,10 @@ namespace App.Engine.Render
             {
                 var tileIndex = y * layerWidthInTiles + x;
                 if (tileIndex > tiles.Length - 1) break;
-                
+
                 var tileID = tiles[tileIndex];
                 if (tileID == 0) continue;
-                
+
                 RenderTile(x, y, tileID - 1, levelTileMap, tileSize);
             }
         }
@@ -125,10 +125,10 @@ namespace App.Engine.Render
             var sourceRectangle = new Rectangle(
                 (int) cameraPosition.X, (int) cameraPosition.Y,
                 cameraSize.Width, cameraSize.Height);
-            
+
             RenderMachine.RenderCamera(sourceRectangle);
         }
-        
+
         private static void RenderSprites(List<SpriteContainer> spriteContainers, Vector cameraPosition)
         {
             foreach (var container in spriteContainers)
@@ -159,7 +159,7 @@ namespace App.Engine.Render
                 RenderMachine.RenderShapeOnCamera(item.CollisionShape, cameraPosition);
             }
         }
-        
+
         private static void RenderVisibilityRegions(List<Raytracing.VisibilityRegion> visibilityRegions, Vector cameraPosition)
         {
             RenderMachine.PrepareShadowMask();
@@ -180,7 +180,7 @@ namespace App.Engine.Render
             foreach (var info in collisionInfo)
                 RenderMachine.RenderCollisionInfoOnCamera(info, cameraPosition);
         }
-        
+
         private static void RenderRaytracingEdges(List<Edge> raytracingEdges, Vector cameraPosition)
         {
             foreach (var edge in raytracingEdges)
@@ -209,7 +209,7 @@ namespace App.Engine.Render
                     t.CollisionShape.Center.X - t.CollisionShape.Radius / 2,
                     t.CollisionShape.Center.Y - t.CollisionShape.Radius / 2);
                 var positionInCamera = position.ConvertFromWorldToCamera(cameraPosition);
-                RenderMachine.PrintString(t.Health.ToString() + "\n" + t.Armor.ToString(), positionInCamera);    
+                RenderMachine.PrintString(t.Health.ToString() + "\n" + t.Armor.ToString(), positionInCamera);
             }
         }
 

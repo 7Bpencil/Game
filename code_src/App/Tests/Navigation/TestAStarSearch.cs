@@ -16,8 +16,8 @@ namespace App.Tests.Navigation
         {
             new RigidAABB(new Vector(32, 32), new Vector(64, 64), true, true)
         });
-        
-        
+
+
         [Test]
         public void TestGetCorrectPoint()
         {
@@ -32,14 +32,14 @@ namespace App.Tests.Navigation
             AStarSearch.SetMesh(OneWall);
             Assert.AreEqual(AStarSearch.SearchPath(new Vector(1, 2), new Vector(5, 5)), new List<Vector>(){new Vector(0, 0)});
         }
-        
+
         [Test]
         public void TestSearchPathIncorrectGoal()
         {
             AStarSearch.SetMesh(OneWall);
             Assert.AreEqual(AStarSearch.SearchPath(new Vector(5, 5), new Vector(1, 1)), new List<Vector>(){new Vector(0, 0)});
         }
-        
+
         [Test]
         public void TestSearchPathCorrect()
         {

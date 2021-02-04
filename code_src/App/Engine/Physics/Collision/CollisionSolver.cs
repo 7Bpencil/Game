@@ -17,7 +17,7 @@ namespace App.Engine.Physics.Collision
                 {
                     if (sceneObjects[i].IsStatic && sceneObjects[k].IsStatic
                         || !(sceneObjects[i].CanCollide && sceneObjects[k].CanCollide)) continue;
-                    
+
                     var collisionInfo = CollisionDetector.GetCollisionInfo(sceneObjects[i], sceneObjects[k]);
                     if (collisionInfo == null) continue;
 
@@ -29,14 +29,14 @@ namespace App.Engine.Physics.Collision
 
             return collisions;
         }
-        
+
         private static void ResolveCollisionStatically(CollisionInfo info, RigidShape first, RigidShape second)
         {
             if (second.IsStatic) first.MoveBy(info.Normal * info.Depth);
             else if (first.IsStatic) second.MoveBy(info.Normal * info.Depth);
             else first.MoveBy(info.Normal * info.Depth);
         }
-        
+
         private static void ClearColliding(ShapesIterator sceneObjects)
         {
             for (var i = 0; i < sceneObjects.Length; i++)

@@ -5,14 +5,13 @@ using NUnit.Framework;
 
 namespace App.Tests.CollisionDetection
 {
-    
     [TestFixture]
     public class TestDynamicCollisionDetector
     {
         private static readonly Vector StartPosition = new Vector(0, 0);
         private static readonly RigidCircle StaticBodyCircle = new RigidCircle(new Vector(0, 2), 1, true, true);
         private static readonly RigidAABB StaticBodyAABB = new RigidAABB(new Vector(-1, 1), new Vector(1, 3), true, true);
-        
+
         [Test]
         public void TestCanNotHit()
         {
@@ -20,7 +19,7 @@ namespace App.Tests.CollisionDetection
             Assert.IsNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyCircle));
             Assert.IsNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyAABB));
         }
-        
+
         [Test]
         public void TestCanHit()
         {
@@ -28,7 +27,7 @@ namespace App.Tests.CollisionDetection
             Assert.IsNotNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyCircle));
             Assert.IsNotNull(DynamicCollisionDetector.AreCollideWithStatic(StartPosition, objectVelocity, StaticBodyAABB));
         }
-        
+
         [Test]
         public void TestCheckTime()
         {

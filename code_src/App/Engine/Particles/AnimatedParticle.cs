@@ -8,7 +8,7 @@ namespace App.Engine.Particles
         private readonly Size frameSize;
         private readonly int columns;
         private readonly Rectangle destRectInCamera;
-        
+
         private readonly int startFrame;
         public readonly int FramesAmount;
         public readonly int FramePeriodInTicks;
@@ -19,16 +19,16 @@ namespace App.Engine.Particles
             this.frameSize = frameSize;
             this.startFrame = startFrame;
             columns = bitmap.Width / frameSize.Width;
-            
+
             FramesAmount = framesAmount;
             FramePeriodInTicks = framePeriodInTicks;
-            
+
             destRectInCamera = new Rectangle(
                 -frameSize.Width / 2,
                 -frameSize.Height / 2,
                 frameSize.Width, frameSize.Height);
         }
-        
+
         public Rectangle GetFrame(int currentFrame)
         {
             var frame = startFrame + currentFrame;

@@ -45,7 +45,7 @@ namespace App.Engine
             cameFrom[start] = start;
             costSoFar[start] = 0;
             var current = frontier.Dequeue();
-            
+
             while (current != goal)
             {
                 if (current == goal) break;
@@ -60,13 +60,13 @@ namespace App.Engine
                         cameFrom[next] = current;
                     }
                 }
-                
+
                 current = frontier.Dequeue();
             }
 
             return GetCurrentPath(ReconstructPath(start, goal));
         }
-        
+
         private static double Heuristic(Point a, Point b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
@@ -85,23 +85,23 @@ namespace App.Engine
             path.Reverse();
             return path;
         }
-        
+
         private static List<Vector> GetCurrentPath(List<Point> path)
         {
             var result = new List<Vector>();
             foreach (var point in path)
                 result.Add(new Vector(point.X, point.Y) * 32);
-            
+
             return result;
         }
     }
-    
+
     public class PriorityQueue<T>
     {
         private readonly List<Tuple<T, double>> elements = new List<Tuple<T, double>>();
 
         public int Count => elements.Count;
-        
+
         public void Enqueue(T item, double priority)
         {
             elements.Add(Tuple.Create(item, priority));
@@ -115,7 +115,7 @@ namespace App.Engine
             {
                 if (elements[i].Item2 < elements[bestIndex].Item2) bestIndex = i;
             }
-            
+
             var bestItem = elements[bestIndex].Item1;
             elements.RemoveAt(bestIndex);
             return bestItem;

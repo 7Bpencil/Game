@@ -7,10 +7,10 @@ namespace App.Engine.Physics.RigidShapes
         public readonly Vector[] Points;
         private Vector center;
         public override Vector Center => center;
-        
+
         private bool isStatic;
         public override bool IsStatic { get => isStatic; set => isStatic = value; }
-        
+
         private bool canCollide;
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
 
@@ -60,7 +60,7 @@ namespace App.Engine.Physics.RigidShapes
             var pointsCopy = new[] { Points[0].Copy(), Points[1].Copy(), Points[2].Copy()};
             return new RigidTriangle(pointsCopy, isStatic, canCollide);
         }
-        
+
         private void CalculateCenter() => center = (Points[0] + Points[1] + Points[2]) / 3;
     }
 }

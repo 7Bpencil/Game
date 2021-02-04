@@ -10,7 +10,7 @@ namespace App.Model.DataParser
     {
         public static Dictionary<string, TileSet> LoadTileSets(Dictionary<string, Bitmap> tileMaps)
         {
-            var tileSetFileNames = Directory.GetFiles("Assets/TileSets");
+            var tileSetFileNames = Directory.GetFiles("assets/TileSets");
             var tileSets = new Dictionary<string, TileSet>();
             foreach (var fileName in tileSetFileNames)
             {
@@ -20,13 +20,13 @@ namespace App.Model.DataParser
 
             return tileSets;
         }
-        
+
         private static TileSet ParseTileSet(string tileSetFilename, Dictionary<string, Bitmap> tileMaps)
         {
             var doc = new XmlDocument();
             doc.Load(tileSetFilename);
             var root = doc.DocumentElement;
-            
+
             string source = null;
             foreach (XmlNode node in root)
             {

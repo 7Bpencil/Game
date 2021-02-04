@@ -9,15 +9,15 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory($"./bin/{configuration}");
-	CleanDirectory($"./code_src/App/obj");
+    CleanDirectory($"./code_src/App/obj");
 });
 
 Task("CopyAssets")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    CreateDirectory($"./bin/{configuration}/Assets");
-    CopyDirectory($"./assets/", $"./bin/{configuration}/Assets");
+    CreateDirectory($"./bin/{configuration}/assets");
+    CopyDirectory($"./assets/", $"./bin/{configuration}/assets");
 });
 
 Task("CopyLibs")
@@ -30,7 +30,7 @@ Task("CopyLibs")
 
 Task("Build")
     .IsDependentOn("CopyAssets")
-	.IsDependentOn("CopyLibs")
+    .IsDependentOn("CopyLibs")
     .Does(() =>
 {
     NuGetRestore("./code_src/Game.sln");

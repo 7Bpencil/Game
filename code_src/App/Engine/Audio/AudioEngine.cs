@@ -25,7 +25,7 @@ namespace App.Engine.Audio
         {
             PlayInstance(CreateEventInstance(path, instancePosition));
         }
-        
+
         /// <summary>
         /// Creates and plays instance without position - position doesn't affect sound
         /// </summary>
@@ -34,7 +34,7 @@ namespace App.Engine.Audio
         {
             PlayInstance(CreateEventInstance(path));
         }
-        
+
         /// <summary>
         /// Creates instance that has position in world
         /// </summary>
@@ -55,7 +55,7 @@ namespace App.Engine.Audio
             }
             return instance;
         }
-        
+
         /// <summary>
         /// Creates instance without position - position doesn't affect sound
         /// </summary>
@@ -79,7 +79,7 @@ namespace App.Engine.Audio
             instance.start();
             instance.release();
         }
-        
+
         public static void PositionEvent(EventInstance instance, Vector position)
         {
             var vector = new VECTOR
@@ -100,7 +100,7 @@ namespace App.Engine.Audio
                 y = newPosition.Y,
                 z = 0,
             };
-            
+
             attributes3d.position = vector;
             system.setListenerAttributes(0, attributes3d);
         }
@@ -126,9 +126,9 @@ namespace App.Engine.Audio
 
 
             cachedEventDescriptions = new Dictionary<string, EventDescription>();
-            system.loadBankFile(@"Assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out masterBank);
-            system.loadBankFile(@"Assets\Audio\Desktop\Master.strings.bank", LOAD_BANK_FLAGS.NORMAL, out var masterBankStrings);
-            
+            system.loadBankFile(@"assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out masterBank);
+            system.loadBankFile(@"assets\Audio\Desktop\Master.strings.bank", LOAD_BANK_FLAGS.NORMAL, out var masterBankStrings);
+
             while (true)
             {
                 masterBank.getLoadingState(out var loadingState);
@@ -162,16 +162,16 @@ namespace App.Engine.Audio
         private static void SetAttributes3D()
         {
             attributes3d = new ATTRIBUTES_3D();
-            
-            var vector = new VECTOR 
+
+            var vector = new VECTOR
             {
                 x = 0f,
                 y = 0f,
                 z = 1f
             };
             attributes3d.forward = vector;
-            
-            vector = new VECTOR 
+
+            vector = new VECTOR
             {
                 x = 0f,
                 y = 1f,

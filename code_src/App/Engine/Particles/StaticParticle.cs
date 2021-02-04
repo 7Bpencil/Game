@@ -7,7 +7,7 @@ namespace App.Engine.Particles
         private readonly Rectangle frame;
         private readonly Bitmap bitmap;
         private readonly Rectangle destRectInCamera;
-        
+
         public override Bitmap Bitmap => bitmap;
         public override Rectangle DestRectInCamera => destRectInCamera;
         public override Rectangle CurrentFrame => frame;
@@ -19,7 +19,7 @@ namespace App.Engine.Particles
                 -frameSize.Width / 2,
                 -frameSize.Height / 2,
                 frameSize.Width, frameSize.Height);
-            
+
             var columns = bitmap.Width / frameSize.Width;
             frame = new Rectangle(
                 frameID % columns * frameSize.Width,

@@ -118,11 +118,11 @@ namespace App.Engine.Physics
                 (float) (rotationCenter.Y + x * sin + y * cos)
             );
         }
-        
+
         public float Angle => (float) Math.Atan2(-Y, X);
 
         /// <summary>
-        /// The (directed) angle from first vector to second 
+        /// The (directed) angle from first vector to second
         /// </summary>
         /// <param name="first"></param>
         /// <param name="second"></param>
@@ -168,9 +168,9 @@ namespace App.Engine.Physics
         public Vector Copy() => new Vector(X, Y);
 
         public PointF GetPointF() => new PointF(X, Y);
-        
+
         public Point GetPoint() => new Point((int) X, (int) Y);
-        
+
         public static Vector GetVector(Point point) => new Vector(point.X, point.Y);
     }
 }

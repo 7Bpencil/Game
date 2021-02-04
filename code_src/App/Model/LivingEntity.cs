@@ -24,7 +24,7 @@ namespace App.Model
         }
 
         protected LivingEntity(
-            int health, int armor, RigidCircle collisionShape, SpriteContainer legsContainer, 
+            int health, int armor, RigidCircle collisionShape, SpriteContainer legsContainer,
             SpriteContainer torsoContainer, string deadBodyPath)
         {
             Health = health;

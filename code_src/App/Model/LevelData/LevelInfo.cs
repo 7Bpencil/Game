@@ -25,9 +25,9 @@ namespace App.Model.LevelData
         public readonly List<CollectableWeaponInfo> CollectableWeaponsInfo;
 
         public LevelInfo(
-            Size levelSizeInTiles, string name, RigidAABB exit, List<RigidShape> staticShapes, 
-            Bitmap levelMap, List<Edge> raytracingEdges, NavMesh navMesh, List<Vector> botSpawnPoints, 
-            int wavesAmount, EntityFactory.PlayerInfo playerInfo, List<EntityFactory.BotInfo> botsInfo, 
+            Size levelSizeInTiles, string name, RigidAABB exit, List<RigidShape> staticShapes,
+            Bitmap levelMap, List<Edge> raytracingEdges, NavMesh navMesh, List<Vector> botSpawnPoints,
+            int wavesAmount, EntityFactory.PlayerInfo playerInfo, List<EntityFactory.BotInfo> botsInfo,
             List<CollectableWeaponInfo> collectableWeaponsInfo, List<Vector> botPatrolPoints)
         {
             LevelSizeInTiles = levelSizeInTiles;

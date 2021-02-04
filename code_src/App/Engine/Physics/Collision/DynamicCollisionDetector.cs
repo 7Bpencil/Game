@@ -14,7 +14,7 @@ namespace App.Engine.Physics.Collision
                 return AreCollide(bullet.Position, bullet.Velocity, (RigidCircle) staticBody);
             return null;
         }
-        
+
         public static float[] AreCollideWithStatic(Vector objectPosition, Vector objectVelocity, RigidShape staticBody)
         {
             if (staticBody is RigidAABB)
@@ -23,7 +23,7 @@ namespace App.Engine.Physics.Collision
                 return AreCollide(objectPosition, objectVelocity, (RigidCircle) staticBody);
             return null;
         }
-        
+
         private static float[] AreCollide(Vector objectPosition, Vector objectVelocity, RigidAABB rectangle)
         {
             var tMin = 0f;
@@ -34,7 +34,7 @@ namespace App.Engine.Physics.Collision
                     && (objectPosition[i] < rectangle.MinPoint[i]
                         || objectPosition[i] > rectangle.MaxPoint[i]))
                     return null;
-                
+
                 var ood = 1.0f / objectVelocity[i];
                 var t1 = (rectangle.MinPoint[i] - objectPosition[i]) * ood;
                 var t2 = (rectangle.MaxPoint[i] - objectPosition[i]) * ood;

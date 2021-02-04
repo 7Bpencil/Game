@@ -24,7 +24,7 @@ namespace App.Engine.ParticleUnits
             this.content = content;
             CenterPosition = position;
             Angle = angle;
-            
+
             framesAmount = content.FramesAmount;
             framePeriodInTicks = content.FramePeriodInTicks;
             currentFrame = 0;
@@ -42,7 +42,7 @@ namespace App.Engine.ParticleUnits
                 if (currentFrame > framesAmount) IsExpired = true;
             }
         }
-        
+
         public override void ClearContent()
         {
             content = null;

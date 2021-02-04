@@ -28,15 +28,15 @@ namespace App.Model.Factories
             var meleeWeaponSprite = new MeleeWeaponSprite(
                 GetBitmap(info.MeleeWeaponTileMapPath),
                 1, 0, 5, new Size(170, 170));
-            
+
             var weaponSprites = new Dictionary<Type, Sprite>();
             foreach (var weaponType in WeaponFramesId.Keys)
             {
                 weaponSprites.Add(
                     weaponType, new StaticSprite(
                         GetBitmap(info.WeaponsTileMapPath),
-                        WeaponFramesId[weaponType], 
-                        new Size(79, 57))); 
+                        WeaponFramesId[weaponType],
+                        new Size(79, 57)));
             }
 
             var weapons = new List<Weapon>();
@@ -51,7 +51,7 @@ namespace App.Model.Factories
             var meleeWeapon = new MeleeWeapon(position, angle);
 
             return new Player(
-                info.Health, info.Armor, new RigidCircle(position, 32, false, true), 
+                info.Health, info.Armor, new RigidCircle(position, 32, false, true),
                 legsContainer, torsoContainer, weapons, weaponSprites, meleeWeaponSprite, meleeWeapon, info.DeadBodyTileMapPath);
         }
 
@@ -64,7 +64,7 @@ namespace App.Model.Factories
             var torso = new StaticSprite(GetBitmap(type.WeaponsTileMapPath), WeaponFramesId[type.Weapon.WeaponType], new Size(79, 57));
             var legsContainer = new SpriteContainer(legs, position, angle);
             var torsoContainer = new SpriteContainer(torso, position, angle);
-            var sightVector = new Vector(1, 0).Rotate(-angle, Vector.ZeroVector).Normalize(); 
+            var sightVector = new Vector(1, 0).Rotate(-angle, Vector.ZeroVector).Normalize();
             return new Bot(
                 type.Health, type.Armor, legsContainer, torsoContainer, sightVector,
                 new RigidCircle(position, 32, false, true),
@@ -83,7 +83,7 @@ namespace App.Model.Factories
         {
             return new StaticParticle(GetBitmap(deadBodyPath), r.Next(0, 4), new Size(135, 125));
         }
-        
+
         public class PlayerInfo
         {
             public readonly int Health;
@@ -97,7 +97,7 @@ namespace App.Model.Factories
             public readonly string DeadBodyTileMapPath;
 
             public PlayerInfo(
-                int health, int armor, Vector position, float angle, List<WeaponInfo> weapons, 
+                int health, int armor, Vector position, float angle, List<WeaponInfo> weapons,
                 string clothesTileMapPath, string weaponsTileMapPath, string meleeWeaponTileMapPath, string deadBodyTileMapPath)
             {
                 Health = health;
@@ -136,7 +136,7 @@ namespace App.Model.Factories
             public readonly string DeadBodyTileMapPath;
 
             public BotType(
-                int health, int armor, WeaponInfo weapon, 
+                int health, int armor, WeaponInfo weapon,
                 string clothesTileMapPath, string weaponsTileMapPath, string deadBodyTileMapPath)
             {
                 Health = health;

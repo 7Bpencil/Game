@@ -55,7 +55,7 @@ namespace App.Engine.Physics.RigidShapes
 
             return null;
         }
-        
+
         public Vector GetCurveCorner()
         {
             var r = WholeCircle.Radius;
@@ -73,7 +73,7 @@ namespace App.Engine.Physics.RigidShapes
 
             return null;
         }
-        
+
         public Vector GetCurveEnd()
         {
             var r = WholeCircle.Radius;

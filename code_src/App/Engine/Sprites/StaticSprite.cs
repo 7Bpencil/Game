@@ -6,7 +6,7 @@ namespace App.Engine.Sprites
     {
         private readonly Rectangle frameTile;
         public override Rectangle GetCurrentFrame() => frameTile;
-        
+
         public StaticSprite(Bitmap bitmap, int frameID, Size size)
             : base(bitmap, 0, frameID, frameID, size)
         {
@@ -18,7 +18,7 @@ namespace App.Engine.Sprites
                 Height = size.Height
             };
         }
-        
+
         public StaticSprite(Bitmap bitmap, int frameID, Size size, float destWidth, float destHeight)
             : base(bitmap, 0, frameID, frameID, size, destWidth, destHeight)
         {
@@ -30,7 +30,7 @@ namespace App.Engine.Sprites
                 Height = size.Height
             };
         }
-        
+
         /// <summary>
         /// This method does nothing (because it's static, LOL)
         /// </summary>

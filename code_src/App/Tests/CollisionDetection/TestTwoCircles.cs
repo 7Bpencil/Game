@@ -9,7 +9,7 @@ namespace App.Tests.CollisionDetection
     public class TestTwoCircles
     {
         private static readonly RigidCircle MainCircle = new RigidCircle(Vector.ZeroVector, 30, true, true);
-        
+
         [Test]
         public void TestTwoCirclesAreInTouch()
         {
@@ -17,7 +17,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(5, new Vector(1, 0), new Vector(25, 0));
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(circle, MainCircle));
         }
-        
+
         [Test]
         public void TestTwoCirclesAreInTouchCircleCenterIsInMainCircle()
         {
@@ -25,7 +25,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(25, new Vector(1, 0), new Vector(5, 0));
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(circle, MainCircle));
         }
-        
+
         [Test]
         public void TestTwoCirclesAreInTouchOnEdge()
         {
@@ -33,7 +33,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(0, new Vector(1, 0), new Vector(30, 0));
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(first, MainCircle));
         }
-        
+
         [Test]
         public void TestOneCircleIsInAnother()
         {
@@ -41,7 +41,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(25, new Vector(1, 0), new Vector(5, 0));
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(first, MainCircle));
         }
-        
+
         [Test]
         public void TestTwoCirclesHaveTheSameCenters()
         {

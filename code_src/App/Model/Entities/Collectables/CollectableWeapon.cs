@@ -16,7 +16,7 @@ namespace App.Model.Entities.Collectables
             CollisionShape = collisionShape;
             SpriteContainer = spriteContainer;
         }
-        
+
         public override void Pick(Player player)
         {
             IsPicked = true;

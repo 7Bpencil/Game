@@ -10,8 +10,8 @@ namespace App.Engine.Render.Renderers
         {
             var collisionStartInCamera = collision.Start.ConvertFromWorldToCamera(cameraPosition);
             var collisionEndInCamera = collision.End.ConvertFromWorldToCamera(cameraPosition);
-            g.DrawEllipse(strokePen, 
-                collisionEndInCamera.X - strokePen.Width, collisionEndInCamera.Y - strokePen.Width, 
+            g.DrawEllipse(strokePen,
+                collisionEndInCamera.X - strokePen.Width, collisionEndInCamera.Y - strokePen.Width,
                 2 * strokePen.Width, 2 * strokePen.Width);
             g.DrawLine(strokePen,
                 collisionStartInCamera.X, collisionStartInCamera.Y,

@@ -13,7 +13,7 @@ namespace App.Model.LevelData
     public class Level
     {
         private readonly LevelInfo levelInfo;
-        
+
         public readonly Size LevelSizeInTiles;
         public readonly string Name;
         public readonly RigidAABB Exit;
@@ -69,7 +69,7 @@ namespace App.Model.LevelData
             HookUpSprites();
             HookUpCollisions();
         }
-        
+
         private void HookUpSprites()
         {
             foreach (var item in Collectables)
@@ -79,7 +79,7 @@ namespace App.Model.LevelData
                 Sprites.Add(bot.LegsContainer);
                 Sprites.Add(bot.TorsoContainer);
             }
-            
+
             Sprites.Add(Player.LegsContainer);
             Sprites.Add(Player.TorsoContainer);
         }
@@ -91,7 +91,7 @@ namespace App.Model.LevelData
             DynamicShapes.Add(Player.CollisionShape);
             DynamicShapes.AddRange(Player.MeleeWeapon.GetRangeShapes());
         }
-        
+
         public void Reset()
         {
             SetDynamicEntities();

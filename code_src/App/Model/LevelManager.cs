@@ -38,11 +38,11 @@ namespace App.Model
 
         private static Dictionary<string, Bitmap> LoadTileMaps()
         {
-            var bitmapFileNames = Directory.GetFiles("Assets/TileMaps");
+            var bitmapFileNames = Directory.GetFiles("assets/TileMaps");
             var tileMaps = new Dictionary<string, Bitmap>();
             foreach (var fileName in bitmapFileNames)
                 tileMaps.Add(Path.GetFileName(fileName), new Bitmap(fileName));
-            
+
             return tileMaps;
         }
 

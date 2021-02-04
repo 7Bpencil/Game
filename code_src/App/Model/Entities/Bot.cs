@@ -25,8 +25,8 @@ namespace App.Model.Entities
         private int currentPathPointIndex;
 
         public Bot(
-            int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer, 
-            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath, List<Vector> patrolPoints) 
+            int health, int armor, SpriteContainer legsContainer, SpriteContainer torsoContainer,
+            Vector sight, RigidCircle collisionShape, Weapon weapon, string deadBodyPath, List<Vector> patrolPoints)
             : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             currentWeapon = weapon;
@@ -36,9 +36,9 @@ namespace App.Model.Entities
             patrolPointIndex = 0;
             currentPathPointIndex = 0;
         }
-        
+
         public void Update(
-            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets, 
+            Vector playerPosition, Vector playerVelocity, List<Bullet> sceneBullets,
             List<AbstractParticleUnit> particles, ShapesIterator shapes, List<List<Vector>> botPaths, List<Edge> walls)
         {
             currentWeapon.IncrementTick();

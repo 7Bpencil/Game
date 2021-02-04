@@ -10,7 +10,7 @@ namespace App.View
     {
         private readonly BufferedGraphics cameraBuffer;
         private readonly Core engineCore;
-        private readonly Point screenCenter;        
+        private readonly Point screenCenter;
 
         public ViewForm()
         {
@@ -19,16 +19,16 @@ namespace App.View
                 SystemInformation.PrimaryMonitorSize.Height);
             screenCenter = new Point(screenSize.Width / 2, screenSize.Height / 2);
             SetUpView(screenSize);
-            
+
             engineCore = new Core(this, screenSize);
             cameraBuffer = RenderMachine.GetCameraBuffer();
-            
+
             var timer = new Timer();
             timer.Interval = 16;
             timer.Tick += engineCore.GameLoop;
             timer.Start();
         }
-        
+
         private void SetUpView(Size viewSize)
         {
             DoubleBuffered = true;
@@ -38,7 +38,7 @@ namespace App.View
             Cursor.Hide();
             CursorReset();
         }
-        
+
         public Vector GetCursorDiff()
         {
             return new Vector(
@@ -60,7 +60,7 @@ namespace App.View
         {
             engineCore.OnKeyUp(e.KeyCode);
         }
-        
+
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             engineCore.OnMouseWheel(e.Delta);

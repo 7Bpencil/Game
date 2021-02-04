@@ -20,7 +20,7 @@ namespace App.Model.Factories
             this.collectableIcon = collectableIcon;
             ctor = typeof(TW).GetConstructor(new[] {typeof(int)});
         }
-        
+
         public override Weapon CreateGun(int ammoAmount)
         {
             return (TW) ctor.Invoke(new object[] {ammoAmount});

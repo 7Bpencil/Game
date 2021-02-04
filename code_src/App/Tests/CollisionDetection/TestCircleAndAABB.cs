@@ -9,7 +9,7 @@ namespace App.Tests.CollisionDetection
     public class TestCircleAndAABB
     {
         private static readonly RigidAABB MainAABB = new RigidAABB(Vector.ZeroVector, new Vector(40, 40), true, true);
-            
+
         [Test]
         public void TestCircleAndAABBAreInTouch()
         {
@@ -17,7 +17,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(15, new Vector(0, -1), Vector.ZeroVector);
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(circle, MainAABB));
         }
-        
+
         [Test]
         public void TestCircleAndAABBAreInTouchOnEdge()
         {
@@ -25,7 +25,7 @@ namespace App.Tests.CollisionDetection
             var expected = new CollisionInfo(0, new Vector(0, -1), new Vector(5, 0));
             Assert.AreEqual(expected, CollisionDetector.GetCollisionInfo(circle, MainAABB));
         }
-        
+
         [Test]
         public void TestCircleAndAABBAreNotInTouch()
         {

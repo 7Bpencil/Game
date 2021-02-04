@@ -9,7 +9,7 @@ namespace App.Model.Factories
     {
         private static Dictionary<string, EntityFactory.BotType> botTypes;
         private static Random r;
-        
+
         public static void Initialize()
         {
             botTypes = BotTypesParser.LoadBotTypes();
@@ -20,7 +20,7 @@ namespace App.Model.Factories
         {
             return botTypes[type];
         }
-        
+
         public static string GetRandomBotType()
         {
             return botTypes.ElementAt(r.Next(0, botTypes.Count)).Key;

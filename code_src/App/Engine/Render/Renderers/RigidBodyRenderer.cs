@@ -31,7 +31,7 @@ namespace App.Engine.Render.Renderers
                     break;
             }
         }
-        
+
         /// <summary>
         /// Draws the shapeObject. Coordinates are took in camera axis.
         /// </summary>
@@ -56,7 +56,7 @@ namespace App.Engine.Render.Renderers
                     break;
             }
         }
-        
+
         private static void DrawCircle(RigidCircle shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             var inCameraPosition = shape.Center.ConvertFromWorldToCamera(cameraPosition);
@@ -64,7 +64,7 @@ namespace App.Engine.Render.Renderers
                 inCameraPosition.X - shape.Radius, inCameraPosition.Y - shape.Radius,
                 shape.Diameter, shape.Diameter);
         }
-        
+
         private static void DrawCircle(RigidCircle shape, Pen strokePen, Graphics g)
         {
             g.DrawEllipse(strokePen,
@@ -76,37 +76,37 @@ namespace App.Engine.Render.Renderers
         {
             var inCameraPosition = shape.MinPoint.ConvertFromWorldToCamera(cameraPosition);
             g.DrawRectangle(strokePen, inCameraPosition.X, inCameraPosition.Y, shape.Width, shape.Height);
-            
+
         }
-        
+
         private static void DrawAABB(RigidAABB shape, Pen strokePen, Graphics g)
         {
             g.DrawRectangle(strokePen, shape.MinPoint.X, shape.MinPoint.Y, shape.Width, shape.Height);
         }
-        
+
         private static void DrawTriangle(RigidTriangle shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             var pointsInCamera = new PointF[3];
             for (var i = 0; i < 3; i++)
                 pointsInCamera[i] = shape.Points[i].ConvertFromWorldToCamera(cameraPosition).GetPointF();
-            
+
             g.DrawPolygon(strokePen, pointsInCamera);
         }
-        
+
         private static void DrawTriangle(RigidTriangle shape, Pen strokePen, Graphics g)
         {
             var points = new PointF[3];
             for (var i = 0; i < 3; i++)
                 points[i] = shape.Points[i].GetPointF();
-            
+
             g.DrawPolygon(strokePen, points);
         }
-        
+
         private static void DrawCircleQuarter(RigidCircleQuarter shape, Vector cameraPosition, Pen strokePen, Graphics g)
         {
             var start = shape.GetCurveStart().ConvertFromWorldToCamera(cameraPosition).GetPointF();
-            var end = shape.GetCurveEnd().ConvertFromWorldToCamera(cameraPosition).GetPointF(); 
-            g.DrawBezier(strokePen, 
+            var end = shape.GetCurveEnd().ConvertFromWorldToCamera(cameraPosition).GetPointF();
+            g.DrawBezier(strokePen,
                 start,
                 start,
                 shape.GetCurveCorner().ConvertFromWorldToCamera(cameraPosition).GetPointF(),
@@ -114,12 +114,12 @@ namespace App.Engine.Render.Renderers
             EdgeRenderer.Draw(new Edge(shape.Center, shape.GetCurveStart()), cameraPosition, strokePen, g);
             EdgeRenderer.Draw(new Edge(shape.Center, shape.GetCurveEnd()), cameraPosition, strokePen, g);
         }
-        
+
         private static void DrawCircleQuarter(RigidCircleQuarter shape, Pen strokePen, Graphics g)
         {
             var start = shape.GetCurveStart();
-            var end = shape.GetCurveEnd(); 
-            g.DrawBezier(strokePen, 
+            var end = shape.GetCurveEnd();
+            g.DrawBezier(strokePen,
                 start.GetPointF(),
                 start.GetPointF(),
                 shape.GetCurveCorner().GetPointF(),
@@ -127,6 +127,6 @@ namespace App.Engine.Render.Renderers
             EdgeRenderer.Draw(new Edge(shape.Center, start), strokePen, g);
             EdgeRenderer.Draw(new Edge(shape.Center, end), strokePen, g);
         }
-        
+
     }
 }

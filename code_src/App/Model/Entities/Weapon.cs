@@ -9,7 +9,7 @@ namespace App.Model.Entities
         public abstract string Name { get; }
         public abstract int AmmoAmount { get;}
         public abstract int MagazineCapacity { get;}
-        
+
         /// <summary>
         /// Player version - it plays 2D gunfire sound, and fire has impact on cursor
         /// </summary>
@@ -17,7 +17,7 @@ namespace App.Model.Entities
         /// <param name="cursor"></param>
         /// <returns></returns>
         public abstract List<Bullet> Fire(Vector gunPosition, CustomCursor cursor);
-        
+
         /// <summary>
         /// Bot version - it plays 3D sound
         /// </summary>

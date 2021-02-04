@@ -6,9 +6,9 @@
         public readonly Vector Normal;
         public readonly Vector Start;
         public readonly Vector End;
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="depth">the smallest amount that the objects interpenetrated</param>
         /// <param name="normal">the direction along which the collision depth is measured</param>

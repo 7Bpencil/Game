@@ -13,13 +13,13 @@ namespace App.Engine.Render
     public static class RenderMachine
     {
         private static ViewForm view;
-        
+
         private static BufferedGraphics cameraBuffer;
         private static Graphics gfxCamera;
-        
+
         private static Bitmap bmpLevelMap;
         private static Graphics gfxLevelMap;
-        
+
         private static Bitmap bmpShadowMask;
         private static Graphics gfxShadowMask;
 
@@ -37,10 +37,10 @@ namespace App.Engine.Render
         {
             view = viewForm;
             SetCameraBuffer(cameraSize);
-            
+
             gfxCamera = cameraBuffer.Graphics;
             gfxCamera.InterpolationMode = InterpolationMode.Bilinear;
-            
+
             bmpShadowMask = new Bitmap(cameraSize.Width, cameraSize.Height);
             gfxShadowMask = Graphics.FromImage(bmpShadowMask);
             gfxShadowMask.CompositingMode = CompositingMode.SourceCopy;
@@ -63,13 +63,13 @@ namespace App.Engine.Render
         {
             gfxCamera.DrawImage(bmpShadowMask, 0, 0, bmpShadowMask.Width, bmpShadowMask.Height);
         }
-        
+
         public static void PrepareLevelMap(Size levelSize)
         {
             bmpLevelMap = new Bitmap(levelSize.Width, levelSize.Height);
             gfxLevelMap = Graphics.FromImage(bmpLevelMap);
         }
-        
+
         public static void RenderTile(Bitmap tileMap, int x, int y, Rectangle src)
         {
             gfxLevelMap.DrawImage(tileMap, x, y, src, GraphicsUnit.Pixel);
@@ -109,7 +109,7 @@ namespace App.Engine.Render
         {
             EdgeRenderer.Draw(edge, cameraPosition, RaytracingEdgePen, gfxCamera);
         }
-        
+
         public static void RenderEdgeOnTiles(Edge edge)
         {
             EdgeRenderer.Draw(edge, RaytracingEdgePen, gfxLevelMap);
@@ -131,7 +131,7 @@ namespace App.Engine.Render
                 TransparentBrush,
                 gfxShadowMask);
         }
-        
+
         public static void PrepareShadowMask()
         {
             gfxShadowMask.Clear(ShadowColor);
@@ -151,7 +151,7 @@ namespace App.Engine.Render
         {
             PathRenderer.Draw(path, cameraPosition, gfxCamera);
         }
-        
+
         public static void PrintMessages(string[] messages)
         {
             for (var i = 0; i < messages.Length; i++)

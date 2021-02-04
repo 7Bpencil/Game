@@ -21,7 +21,7 @@ namespace App.Model.Entities
 
         private const int RegularSpeed = 8;
         private const int DashSpeed = 24;
-        
+
         private int dashCount;
         private const int DashPeriod = 2;
         private const int TicksBetweenTwoDashes = 5;
@@ -31,13 +31,13 @@ namespace App.Model.Entities
         private bool IsInDash => ticksFromLastDash <= DashPeriod;
         private bool CanDash
             => dashCount == 1 && ticksFromLastDash > TicksBetweenTwoDashes
-               || dashCount == 2 && ticksFromLastDash > TicksBetweenDashes; 
-        
+               || dashCount == 2 && ticksFromLastDash > TicksBetweenDashes;
 
-        public Player(int health, int armor, RigidCircle collisionShape, 
+
+        public Player(int health, int armor, RigidCircle collisionShape,
             SpriteContainer legsContainer, SpriteContainer torsoContainer,
-            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites, 
-            MeleeWeaponSprite meleeWeaponSprite, MeleeWeapon meleeWeapon, string deadBodyPath) 
+            List<Weapon> startWeapons, Dictionary<Type, Sprite> weaponSprites,
+            MeleeWeaponSprite meleeWeaponSprite, MeleeWeapon meleeWeapon, string deadBodyPath)
             : base(health, armor, collisionShape, legsContainer, torsoContainer, deadBodyPath)
         {
             MeleeWeapon = meleeWeapon;
@@ -48,7 +48,7 @@ namespace App.Model.Entities
             ticksFromLastDash = TicksBetweenDashes + 1;
             dashCount = 2;
         }
-        
+
         public void AddWeapon(Weapon newWeapon)
         {
             foreach (var weapon in weapons)
@@ -65,7 +65,7 @@ namespace App.Model.Entities
             currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
             TorsoContainer.Content = weaponSprites[CurrentWeapon.GetType()];
         }
-        
+
         public void MovePreviousWeapon()
         {
             currentWeaponIndex = (weapons.Count + currentWeaponIndex - 1) % weapons.Count;
@@ -101,12 +101,12 @@ namespace App.Model.Entities
         {
             return CurrentWeapon.GetType();
         }
-        
+
         public void UpdatePosition(Core.KeyStates keyState, List<RigidShape> sceneStaticShapes)
         {
             if (keyState.Shift && !IsInDash && CanDash)
                 Dash(keyState, sceneStaticShapes);
-            else if (!IsInDash) 
+            else if (!IsInDash)
                 CreateVelocity(keyState, RegularSpeed);
 
             MoveBy(Velocity);
@@ -116,7 +116,7 @@ namespace App.Model.Entities
         {
             CreateVelocity(keyState, DashSpeed);
             if (Equals(Velocity, Vector.ZeroVector)) return;
-            
+
             var firstPosition = Position + Velocity.Normalize() * (Radius - 1);
             var closestPenetrationTime = float.PositiveInfinity;
 
@@ -130,7 +130,7 @@ namespace App.Model.Entities
 
             if (closestPenetrationTime < 1)
                 Velocity *= closestPenetrationTime;
-            
+
             ticksFromLastDash = 0;
             dashCount++;
             if (dashCount == 3) dashCount = 1;
@@ -140,7 +140,7 @@ namespace App.Model.Entities
         {
             var delta = Vector.ZeroVector;
 
-            if (keyState.W) 
+            if (keyState.W)
                 delta.Y -= speed;
             if (keyState.S)
                 delta.Y += speed;
@@ -151,13 +151,13 @@ namespace App.Model.Entities
 
             Velocity = delta.Normalize() * speed;
         }
-        
+
         public void UpdateSprites(Vector cursorPosition)
         {
             RotateLegs(Velocity);
             RotateTorso(cursorPosition);
         }
-        
+
         private void RotateLegs(Vector delta)
         {
             if (delta.Equals(Vector.ZeroVector)) return;
@@ -165,7 +165,7 @@ namespace App.Model.Entities
             var angle = 180 / Math.PI * dirAngle;
             LegsContainer.Angle = (float) angle;
         }
-        
+
         private void RotateTorso(Vector cursorPosition)
         {
             var direction = cursorPosition - Position;

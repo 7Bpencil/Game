@@ -31,8 +31,8 @@ namespace App.Engine
 
         private void CorrectCameraDependsOnPlayerPosition(Vector playerPosition, Vector playerVelocity)
         {
-            var dist = (chaserPosition - playerPosition).Length; 
-            
+            var dist = (chaserPosition - playerPosition).Length;
+
             if (playerVelocity.Equals(Vector.ZeroVector) && Math.Abs(dist) > 6)
                 playerVelocity = 8 * (playerPosition - chaserPosition).Normalize();
             else if (dist > playerRadius)

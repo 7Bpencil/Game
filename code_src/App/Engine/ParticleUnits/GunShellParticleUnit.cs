@@ -10,7 +10,7 @@ namespace App.Engine.ParticleUnits
         private readonly Vector shellDirectionVector;
         private Vector position;
         private int frame;
-        
+
         public override AbstractParticle Content => content;
         public override Rectangle CurrentFrame => content.CurrentFrame;
         public override Vector CenterPosition => position;
@@ -35,7 +35,7 @@ namespace App.Engine.ParticleUnits
             if (frame > 10)
                 ShouldBeBurned = true;
         }
-        
+
         public override void ClearContent()
         {
             content = null;

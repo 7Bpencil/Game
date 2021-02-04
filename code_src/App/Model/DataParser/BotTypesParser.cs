@@ -10,9 +10,9 @@ namespace App.Model.DataParser
         public static Dictionary<string, EntityFactory.BotType> LoadBotTypes()
         {
             var botTypes = new Dictionary<string, EntityFactory.BotType>();
-            
+
             var doc = new XmlDocument();
-            doc.Load(@"Assets\BotBank.xml");
+            doc.Load(@"assets\BotBank.xml");
             var root = doc.DocumentElement;
 
             foreach (XmlNode node in root)

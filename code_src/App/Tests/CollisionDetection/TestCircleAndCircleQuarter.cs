@@ -24,76 +24,76 @@ namespace App.Tests.CollisionDetection
             Assert.IsNull(CollisionDetector.GetCollisionInfo(circle, quarterSecondDirection));
         }
 
-        
-        
+
+
         private static readonly RigidCircleQuarter CircleFirstQuarterMain = new RigidCircleQuarter(MainDirection, 1, MainWholeCircle);
         private static readonly RigidCircleQuarter CircleFirstQuarterSecond = new RigidCircleQuarter(SecondDirection, 1, MainWholeCircle);
         [Test]
         public void TestCircleAndFirstQuarterAreInTouch()
         {
             TestInTouch(
-                new RigidCircle(new Vector(40, 0), 15, true, true), 
-                CircleFirstQuarterMain, 
-                CircleFirstQuarterSecond, 
+                new RigidCircle(new Vector(40, 0), 15, true, true),
+                CircleFirstQuarterMain,
+                CircleFirstQuarterSecond,
                 new CollisionInfo(5, new Vector(1, 0), new Vector(25, 0)));
         }
-        
+
         [Test]
         public void TestCircleAndFirstQuarterAreNotInTouch()
         {
             TestNotInTouch(
-                new RigidCircle(new Vector(-20, 0), 15, true, true), 
-                CircleFirstQuarterMain, 
+                new RigidCircle(new Vector(-20, 0), 15, true, true),
+                CircleFirstQuarterMain,
                 CircleFirstQuarterSecond);
         }
-        
-        
-        
+
+
+
         private static readonly RigidCircleQuarter CircleSecondQuarterMain = new RigidCircleQuarter(MainDirection, 2, MainWholeCircle);
         private static readonly RigidCircleQuarter CircleSecondQuarterSecond = new RigidCircleQuarter(SecondDirection, 2, MainWholeCircle);
         [Test]
         public void TestCircleAndSecondQuarterAreInTouch()
         {
             TestInTouch(
-                new RigidCircle(new Vector(0, -35), 15, true, true), 
-                CircleSecondQuarterMain, 
-                CircleSecondQuarterSecond, 
+                new RigidCircle(new Vector(0, -35), 15, true, true),
+                CircleSecondQuarterMain,
+                CircleSecondQuarterSecond,
                 new CollisionInfo(10, new Vector(0, -1), new Vector(0, -20)));
         }
-        
+
         [Test]
         public void TestCircleAndSecondQuarterAreNotInTouch()
         {
             TestNotInTouch(
-                new RigidCircle(new Vector(0, 20), 15, true, true), 
-                CircleSecondQuarterMain, 
+                new RigidCircle(new Vector(0, 20), 15, true, true),
+                CircleSecondQuarterMain,
                 CircleSecondQuarterSecond);
         }
-        
-        
-        
+
+
+
         private static readonly RigidCircleQuarter CircleThirdQuarterMain = new RigidCircleQuarter(MainDirection, 3, MainWholeCircle);
         private static readonly RigidCircleQuarter CircleThirdQuarterSecond = new RigidCircleQuarter(SecondDirection, 3, MainWholeCircle);
         [Test]
         public void TestCircleAndThirdQuarterAreInTouch()
         {
             TestInTouch(
-                new RigidCircle(new Vector(-30, 0), 20, true, true), 
-                CircleThirdQuarterMain, 
-                CircleThirdQuarterSecond, 
+                new RigidCircle(new Vector(-30, 0), 20, true, true),
+                CircleThirdQuarterMain,
+                CircleThirdQuarterSecond,
                 new CollisionInfo(20, new Vector(-1, 0), new Vector(-10, 0)));
         }
-        
+
         [Test]
         public void TestCircleAndThirdQuarterAreNotInTouch()
         {
             TestNotInTouch(
-                new RigidCircle(new Vector(0, 50), 19, true, true), 
-                CircleThirdQuarterMain, 
+                new RigidCircle(new Vector(0, 50), 19, true, true),
+                CircleThirdQuarterMain,
                 CircleThirdQuarterSecond);
         }
 
-        
+
 
         private static readonly RigidCircleQuarter CircleFourthQuarterMain = new RigidCircleQuarter(MainDirection, 4, MainWholeCircle);
         private static readonly RigidCircleQuarter CircleFourthQuarterSecond = new RigidCircleQuarter(SecondDirection, 4, MainWholeCircle);
@@ -101,18 +101,18 @@ namespace App.Tests.CollisionDetection
         public void TestCircleAndFourthQuarterAreInTouch()
         {
             TestInTouch(
-                new RigidCircle(new Vector(0, 200), 180, true, true), 
-                CircleFourthQuarterMain, 
-                CircleFourthQuarterSecond, 
+                new RigidCircle(new Vector(0, 200), 180, true, true),
+                CircleFourthQuarterMain,
+                CircleFourthQuarterSecond,
                 new CollisionInfo(10, new Vector(0, 1), new Vector(0, 20)));
         }
-        
+
         [Test]
         public void TestCircleAndFourthQuarterAreNotInTouch()
         {
             TestNotInTouch(
-                new RigidCircle(new Vector(0, -20), 19, true, true), 
-                CircleFourthQuarterMain, 
+                new RigidCircle(new Vector(0, -20), 19, true, true),
+                CircleFourthQuarterMain,
                 CircleFourthQuarterSecond);
         }
     }

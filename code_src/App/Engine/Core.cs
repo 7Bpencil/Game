@@ -24,7 +24,7 @@ namespace App.Engine
         private MouseState mouseState;
         private CustomCursor cursor;
         private Camera camera;
-        
+
         private Level currentLevel;
         private Player player;
         private int livingBotsAmount;
@@ -40,7 +40,7 @@ namespace App.Engine
         {
             public bool LMB, RMB;
         }
-        
+
         public Core(ViewForm viewForm, Size screenSize)
         {
             r = new Random();
@@ -52,7 +52,7 @@ namespace App.Engine
 
             AudioEngine.PlayNewInstance(@"event:/themes/THEME");
         }
-        
+
         private void InitializeSystems()
         {
             RenderMachine.Initialize(viewForm, screenSize);
@@ -62,7 +62,7 @@ namespace App.Engine
             AbstractWeaponFactory.Initialize();
             BotBank.Initialize();
         }
-        
+
         private void InitState()
         {
             AStarSearch.SetMesh(currentLevel.NavMesh);
@@ -74,7 +74,7 @@ namespace App.Engine
             mouseState = new MouseState();
             livingBotsAmount = currentLevel.Bots.Count;
         }
-        
+
         private void ResetState()
         {
             currentLevel.Reset();
@@ -85,7 +85,7 @@ namespace App.Engine
             keyState = new KeyStates();
             mouseState = new MouseState();
         }
-        
+
         public void GameLoop(object sender, EventArgs args)
         {
             if (currentLevel.WavesAmount == 0)
@@ -97,7 +97,7 @@ namespace App.Engine
             {
                 ResetState();
             }
-            if (currentLevel.IsCompleted 
+            if (currentLevel.IsCompleted
                 && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 currentLevel = LevelManager.MoveNextLevel();
@@ -107,16 +107,16 @@ namespace App.Engine
             UpdateState();
 
             var shouldRenderRaytracing = keyState.pressesOnPAmount % 2 == 1;
-            var shouldRenderDebug = keyState.pressesOnIAmount % 2 == 1; 
+            var shouldRenderDebug = keyState.pressesOnIAmount % 2 == 1;
             RenderPipeline.Render(currentLevel, camera, cursor.Position, shouldRenderRaytracing, shouldRenderDebug);
 
             AudioEngine.Update();
         }
-        
+
         private void UpdateState()
         {
             UpdateEntities();
-            
+
             camera.UpdateCamera(player.Position, player.Velocity, cursor.Position);
             viewForm.CursorReset();
 
@@ -125,7 +125,7 @@ namespace App.Engine
             foreach (var unit in currentLevel.Particles)
                 if (!unit.IsExpired) unit.UpdateFrame();
         }
-        
+
         private void UpdateEntities()
         {
             UpdatePlayer();
@@ -137,7 +137,7 @@ namespace App.Engine
         private void UpdatePlayer()
         {
             var previousPosition = player.Position.Copy();
-            
+
             player.UpdatePosition(keyState, currentLevel.StaticShapes);
             currentLevel.CollisionsInfo = CollisionSolver.ResolveCollisions(currentLevel.SceneShapes);
             AudioEngine.UpdateListenerPosition(player.Position);
@@ -158,7 +158,7 @@ namespace App.Engine
                 currentLevel.Bullets.AddRange(firedBullets);
                 currentLevel.Particles.Add(ParticleFactory.CreateShell(player.Position, cursor.Position - player.Position, player.CurrentWeapon));
             }
-            
+
             player.IncrementTick();
         }
 
@@ -220,7 +220,7 @@ namespace App.Engine
 
         private void CalculateEntityRespond(LivingEntity entity, Bullet bullet, List<AbstractParticleUnit> levelParticles)
         {
-            var penetrationTimes = 
+            var penetrationTimes =
                 DynamicCollisionDetector.AreCollideWithDynamic(bullet, entity.CollisionShape, entity.Velocity);
             if (penetrationTimes == null) return;
             var penetrationPlace = bullet.Position + bullet.Velocity * penetrationTimes[0];
@@ -244,7 +244,7 @@ namespace App.Engine
                 HandleKill(entity, entity.Position - bullet.Position, levelParticles);
             }
         }
-        
+
         private void HandleKill(LivingEntity deadEntity, Vector bodyDirection, List<AbstractParticleUnit> sceneParticles)
         {
             deadEntity.LegsContainer.ClearContent();
@@ -256,7 +256,7 @@ namespace App.Engine
             currentLevel.Collectables.Add(collectableWeapon);
             currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
         }
-        
+
         private void UpdateBots()
         {
             if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
@@ -281,8 +281,8 @@ namespace App.Engine
                     HandleMeleeHit(bot, particles);
                 }
                 bot.Update(
-                    player.Position, player.Velocity, 
-                    currentLevel.Bullets, currentLevel.Particles, 
+                    player.Position, player.Velocity,
+                    currentLevel.Bullets, currentLevel.Particles,
                     currentLevel.SceneShapes, paths, currentLevel.RaytracingEdges);
                 if (!bot.IsDead) livingBotsAmount++;
             }
@@ -319,21 +319,21 @@ namespace App.Engine
                 case Keys.D:
                     keyState.D = true;
                     break;
-                
+
                 case Keys.I:
                     keyState.I = true;
                     keyState.pressesOnIAmount++;
                     break;
-                
+
                 case Keys.R:
                     keyState.R = true;
                     break;
-                
+
                 case Keys.P:
                     keyState.P = true;
                     keyState.pressesOnPAmount++;
                     break;
-                
+
                 case Keys.ShiftKey:
                     keyState.Shift = true;
                     break;
@@ -348,7 +348,7 @@ namespace App.Engine
                     AudioEngine.Release();
                     Application.Exit();
                     break;
-                
+
                 case Keys.W:
                     keyState.W = false;
                     break;
@@ -364,25 +364,25 @@ namespace App.Engine
                 case Keys.D:
                     keyState.D = false;
                     break;
-                
+
                 case Keys.I:
                     keyState.I = false;
                     break;
-                
+
                 case Keys.R:
                     keyState.R = false;
                     break;
-                
+
                 case Keys.P:
                     keyState.P = false;
                     break;
-                
+
                 case Keys.ShiftKey:
                     keyState.Shift = false;
                     break;
             }
         }
-        
+
         public void OnMouseWheel(int wheelDelta)
         {
             if (wheelDelta > 0) player.MoveNextWeapon();
@@ -396,7 +396,7 @@ namespace App.Engine
                 case MouseButtons.Left:
                     mouseState.LMB = true;
                     break;
-                
+
                 case MouseButtons.Right:
                     mouseState.RMB = true;
                     break;
@@ -410,7 +410,7 @@ namespace App.Engine
                 case MouseButtons.Left:
                     mouseState.LMB = false;
                     break;
-                
+
                 case MouseButtons.Right:
                     mouseState.RMB = false;
                     break;

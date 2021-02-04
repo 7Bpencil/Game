@@ -22,20 +22,20 @@ namespace App.Model.DataParser
             {"MP6", typeof(MP6)},
             {"SaigaFA", typeof(SaigaFA)}
         };
-        
+
         public static Dictionary<int, string> LoadLevelList()
         {
             var levels = new Dictionary<int, string>();
-            
+
             var doc = new XmlDocument();
-            doc.Load(@"Assets\Levels\LevelList.xml");
+            doc.Load(@"assets\Levels\LevelList.xml");
             var root = doc.DocumentElement;
 
             foreach (XmlNode node in root)
             {
                 if (node.Name != "level") continue;
                 levels.Add(
-                    int.Parse(node.Attributes.GetNamedItem("id").Value), 
+                    int.Parse(node.Attributes.GetNamedItem("id").Value),
                     node.Attributes.GetNamedItem("source").Value);
             }
 
@@ -48,11 +48,11 @@ namespace App.Model.DataParser
             var doc = new XmlDocument();
             doc.Load(sourcePath);
             var root = doc.DocumentElement;
-            
+
             var levelSizeInTiles = new Size(
-                int.Parse(root.GetAttribute("width")), 
+                int.Parse(root.GetAttribute("width")),
                 int.Parse(root.GetAttribute("height")));
-            
+
             var name = root.GetAttribute("name");
             var tilesInLayerAmount = 0;
             TileSet tileSet = null;
@@ -106,18 +106,18 @@ namespace App.Model.DataParser
                         break;
                     case "objectgroup":
                     {
-                        var nodeContentName = node.Attributes.GetNamedItem("name").Value; 
+                        var nodeContentName = node.Attributes.GetNamedItem("name").Value;
                         if (nodeContentName == "StaticShapes") staticShapes = LoadStaticShapes(node);
                         if (nodeContentName == "RaytracingPolygons") raytracingEdges = LoadRaytracingEdges(node);
                         break;
                     }
                 }
             }
-            
+
             var navMesh = new NavMesh(levelSizeInTiles, staticShapes);
             var levelMap = RenderPipeline.RenderLevelMap(layers, tileSet, tileSet.TileSize, levelSizeInTiles);
             return new LevelInfo(
-                levelSizeInTiles, name, exit, staticShapes, 
+                levelSizeInTiles, name, exit, staticShapes,
                 levelMap, raytracingEdges, navMesh, botSpawnPoints,
                 wavesAmount, playerInfo, botsInfo, collectableWeapons, botPatrolPoints);
         }
@@ -160,7 +160,7 @@ namespace App.Model.DataParser
 
             return points;
         }
-        
+
         private static EntityFactory.BotInfo LoadBotInfo(XmlNode botNode)
         {
             var position = LoadVector(botNode.Attributes.GetNamedItem("position").Value);
@@ -204,11 +204,11 @@ namespace App.Model.DataParser
             var y = int.Parse(shape.Attributes.GetNamedItem("y").Value);
             var width = int.Parse(shape.Attributes.GetNamedItem("width").Value);
             var height = int.Parse(shape.Attributes.GetNamedItem("height").Value);
-                
+
             return new RigidAABB(
-                new Vector(x, y), 
-                new Vector(x + width, y + height), 
-                true, 
+                new Vector(x, y),
+                new Vector(x + width, y + height),
+                true,
                 true);
         }
 
@@ -216,15 +216,15 @@ namespace App.Model.DataParser
         {
             var edges = new List<Edge>();
             var separators = new[] {" ", ","};
-            
+
             foreach (XmlNode polygonRaw in raytracingPolygonsNode.ChildNodes)
             {
                 var offsetX = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetX").Value);
                 var offsetY = int.Parse(polygonRaw.Attributes.GetNamedItem("offsetY").Value);
-                var points = polygonRaw.Attributes.GetNamedItem("points").Value; 
+                var points = polygonRaw.Attributes.GetNamedItem("points").Value;
                 edges.AddRange(LoadPolygon(points, offsetX, offsetY, separators));
             }
-            
+
             return edges;
         }
 
@@ -238,11 +238,11 @@ namespace App.Model.DataParser
                     int.Parse(p[i]), int.Parse(p[i + 1]),
                     int.Parse(p[i + 2]), int.Parse(p[i + 3])));
             }
-            
+
             edges.Add(new Edge(
                 int.Parse(p[p.Length - 2]), int.Parse(p[p.Length - 1]),
                 int.Parse(p[0]), int.Parse(p[1])));
-            
+
             edges.MoveBy(new Vector(offsetX, offsetY));
             return edges;
         }

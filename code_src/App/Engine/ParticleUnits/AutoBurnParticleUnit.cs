@@ -25,7 +25,7 @@ namespace App.Engine.ParticleUnits
         {
             ShouldBeBurned = true;
         }
-        
+
         public override void ClearContent()
         {
             content = null;

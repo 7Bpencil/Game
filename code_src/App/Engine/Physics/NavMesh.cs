@@ -11,7 +11,7 @@ namespace App.Engine.Physics
         public readonly int Height;
         public readonly HashSet<Point> walls;
         public readonly NavMeshRenderForm RenderForm;
-        
+
         private static readonly Point[] DIRS =
         {
             new Point(1, 0),
@@ -35,11 +35,11 @@ namespace App.Engine.Physics
             AddWalls(staticShapes, levelSizeInTiles);
             RenderForm = new NavMeshRenderForm(this);
         }
-        
+
         private void AddWalls(List<RigidShape> staticShapes, Size levelSizeInTiles)
         {
             var circle = new RigidCircle(Vector.ZeroVector, 32, true, true);
-            
+
             for (var j = 1; j < levelSizeInTiles.Width - 1; ++j)
             for (var i = 1; i < levelSizeInTiles.Height - 1; ++i)
             {

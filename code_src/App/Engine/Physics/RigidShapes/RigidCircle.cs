@@ -8,7 +8,7 @@
 
         private readonly Vector center;
         public override Vector Center => center;
-        
+
         private bool isStatic;
         public override bool IsStatic { get => isStatic; set => isStatic = value; }
 
@@ -16,8 +16,8 @@
         public override bool CanCollide { get => canCollide; set => canCollide = value; }
 
         public override bool IsCollided { get; set; }
-        
-        
+
+
         public RigidCircle(Vector center, float radius, bool isStatic, bool canCollide)
         {
             this.radius = radius;
@@ -31,7 +31,7 @@
             center.X += delta.X;
             center.Y += delta.Y;
         }
-        
+
         public override void MoveTo(Vector newPosition)
         {
             center.X = newPosition.X;
