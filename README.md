@@ -7,8 +7,7 @@ I was inexperienced and naive, so code is mostly dumb.
 Yet, some ideas are interesting - amount of blood, ammo cases, and bodies is basically unlimited.  
 I am thankful that this project happened - it showed me what is what in game dev.
 
-Click on picture to watch gameplay:
-
+Click on picture to watch gameplay (made by Vl4d1sl0veZ4r1p0v):
 [![](pictures/thumbnail.png)](https://www.youtube.com/watch?v=kpBl_tBHNdA "gameplay video")
 
 ### Gameplay
