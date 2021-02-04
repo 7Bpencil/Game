@@ -104,18 +104,20 @@ namespace App.Engine
                 InitState();
             }
 
-            UpdateState();
-
             var shouldRenderRaytracing = keyState.pressesOnPAmount % 2 == 1;
             var shouldRenderDebug = keyState.pressesOnIAmount % 2 == 1;
+            UpdateState(shouldRenderRaytracing);
             RenderPipeline.Render(currentLevel, camera, cursor.Position, shouldRenderRaytracing, shouldRenderDebug);
 
             AudioEngine.Update();
         }
 
-        private void UpdateState()
+        private void UpdateState(bool calculateLight)
         {
-            UpdateEntities();
+            UpdatePlayer();
+            UpdateBullets();
+            UpdateBots(calculateLight);
+            UpdateCollectables();
 
             camera.UpdateCamera(player.Position, player.Velocity, cursor.Position);
             viewForm.CursorReset();
@@ -124,14 +126,6 @@ namespace App.Engine
                 if (!spriteContainer.IsEmpty) spriteContainer.Content.UpdateFrame();
             foreach (var unit in currentLevel.Particles)
                 if (!unit.IsExpired) unit.UpdateFrame();
-        }
-
-        private void UpdateEntities()
-        {
-            UpdatePlayer();
-            UpdateBullets();
-            UpdateBots();
-            UpdateCollectables();
         }
 
         private void UpdatePlayer()
@@ -257,7 +251,7 @@ namespace App.Engine
             currentLevel.Sprites.Add(collectableWeapon.SpriteContainer);
         }
 
-        private void UpdateBots()
+        private void UpdateBots(bool calculateLight)
         {
             if (livingBotsAmount == 0 && currentLevel.WavesAmount != 0)
             {
@@ -268,7 +262,9 @@ namespace App.Engine
                 currentLevel.WavesAmount--;
             }
             var regions = new List<Raytracing.VisibilityRegion>();
-            //regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000)); TODO find use for raytracing
+            if (calculateLight) {
+                regions.Add(new Raytracing.VisibilityRegion(player.Position, currentLevel.RaytracingEdges, 1000));  // TODO find use for it
+            }
             var paths = new List<List<Vector>> {Capacity = 10};
             var bots = currentLevel.Bots;
             var particles = currentLevel.Particles;

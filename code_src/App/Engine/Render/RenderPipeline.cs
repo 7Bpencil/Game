@@ -43,16 +43,16 @@ namespace App.Engine.Render
             Clock.Reset();
 
             var perfomanceInfo =
-                "summary: " + (rC + rS + rP + rB + rT).ToString() +
-                "ms, camera: " + rC.ToString() +
-                "ms, sprites: " + rS.ToString() +
-                "ms, particles: " + rP.ToString() +
-                "ms, bullets: " + rB.ToString() +
-                "ms, raytracing: " + rT.ToString();
+                "summary: " + (rC + rS + rP + rB + rT) +
+                "ms, camera: " + rC +
+                "ms, sprites: " + rS +
+                "ms, particles: " + rP +
+                "ms, bullets: " + rB +
+                "ms, raytracing: " + rT;
             if (shouldRenderDebug) RenderDebugInfo(level, camera, cursorPosition, perfomanceInfo);
 
             var playerWeapon = level.Player.CurrentWeapon;
-            RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount.ToString(), cameraSize);
+            RenderMachine.RenderHUD(playerWeapon.Name + " " + playerWeapon.AmmoAmount, cameraSize);
 
             RenderMachine.Invalidate();
         }
@@ -78,8 +78,8 @@ namespace App.Engine.Render
             var debugInfo = new []
             {
                 perfomanceInfo,
-                "Camera Size: " + camera.Size.Width.ToString() + " x " + camera.Size.Height.ToString(),
-                "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width.ToString() + " x " + level.LevelSizeInTiles.Height.ToString(),
+                "Camera Size: " + camera.Size.Width + " x " + camera.Size.Height,
+                "Scene Size (in Tiles): " + level.LevelSizeInTiles.Width + " x " + level.LevelSizeInTiles.Height,
                 "(WAxis) Scroll Position: " + camera.Position,
                 "(WAxis) Player Position: " + playerPosition,
                 "(CAxis) Player Position: " + playerPosition.ConvertFromWorldToCamera(camera.Position),

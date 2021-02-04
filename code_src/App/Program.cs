@@ -9,7 +9,14 @@ namespace App
         [STAThread]
         public static void Main(string[] args)
         {
-            Application.Run(new ViewForm());
+            try
+            {
+                Application.Run(new ViewForm());
+            }
+            catch (SystemException e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
