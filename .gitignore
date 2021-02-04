@@ -1,6 +1,6 @@
 #idea
-/.idea
-/classes
+*/.idea
+*/classes
 *.iml
 
 #compiled
