@@ -1,20 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using App.Engine.Physics;
 using FMOD;
 using FMOD.Studio;
-using INITFLAGS = FMOD.INITFLAGS;
 
 namespace App.Engine.Audio
 {
     public static class AudioEngine
     {
         private static FMOD.Studio.System system;
-        private static FMOD.System fmodSystem;
-        private static ATTRIBUTES_3D attributes3d;
-        private static Bank masterBank;
         private static Dictionary<string, EventDescription> cachedEventDescriptions;
+        private static ATTRIBUTES_3D attributes3d;
 
+        public static void Initialize()
+        {
+            CheckResult(FMOD.Studio.System.create(out system));
+            CheckResult(system.initialize(512, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
+            CheckResult(system.loadBankFile(@"assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out _));
+            CheckResult(system.loadBankFile(@"assets\Audio\Desktop\Master.strings.bank", LOAD_BANK_FLAGS.NORMAL, out _));
+
+            cachedEventDescriptions = new Dictionary<string, EventDescription>();
+            attributes3d = new ATTRIBUTES_3D
+            {
+                forward = new VECTOR {x = 0f, y = 0f, z = 1f},
+                up = new VECTOR {x = 0f, y = 1f, z = 0f}
+            };
+        }
 
         /// <summary>
         /// Creates and plays instance that has position in world
@@ -41,16 +53,15 @@ namespace App.Engine.Audio
         /// <param name="path"></param>
         /// <param name="instancePosition"></param>
         /// <returns></returns>
-        public static EventInstance CreateEventInstance(string path, Vector instancePosition)
+        private static EventInstance CreateEventInstance(string path, Vector instancePosition)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
             eventDescription.is3D(out var is3D);
-            if (is3D && instancePosition != null)
-                PositionEvent(instance, instancePosition);
+            if (is3D) PositionEvent(ref instance, instancePosition);
             else
             {
-                Console.WriteLine(path + " is not 3D");
+                Logger.Log($"{path} is not 3D", MessageClass.ERROR);
                 throw new ArgumentException();
             }
             return instance;
@@ -61,47 +72,34 @@ namespace App.Engine.Audio
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static EventInstance CreateEventInstance(string path)
+        private static EventInstance CreateEventInstance(string path)
         {
             var eventDescription = GetEventDescription(path);
             eventDescription.createInstance(out var instance);
             eventDescription.is3D(out var is3D);
             if (is3D)
             {
-                Console.WriteLine(path + " is not 2D");
+                Logger.Log($"{path} is not 2D", MessageClass.ERROR);
                 throw new ArgumentException();
             }
             return instance;
         }
 
-        public static void PlayInstance(EventInstance instance)
+        private static void PlayInstance(EventInstance instance)
         {
             instance.start();
             instance.release();
         }
 
-        public static void PositionEvent(EventInstance instance, Vector position)
+        private static void PositionEvent(ref EventInstance instance, Vector position)
         {
-            var vector = new VECTOR
-            {
-                x = position.X,
-                y = position.Y,
-                z = 0,
-            };
-            attributes3d.position = vector;
+            attributes3d.position = Convert(position);
             instance.set3DAttributes(attributes3d);
         }
 
         public static void UpdateListenerPosition(Vector newPosition)
         {
-            var vector = new VECTOR
-            {
-                x = newPosition.X,
-                y = newPosition.Y,
-                z = 0,
-            };
-
-            attributes3d.position = vector;
+            attributes3d.position = Convert(newPosition);
             system.setListenerAttributes(0, attributes3d);
         }
 
@@ -115,37 +113,13 @@ namespace App.Engine.Audio
             return description;
         }
 
-        public static void Initialize()
-        {
-            CheckResult(Factory.System_Create(out fmodSystem));
-            fmodSystem.init(512, INITFLAGS.NORMAL, IntPtr.Zero);
-            fmodSystem.set3DSettings(1, 64, 1);
-            CheckResult(FMOD.Studio.System.create(out system));
-            CheckResult(system.initialize(512, FMOD.Studio.INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
-            SetAttributes3D();
-
-
-            cachedEventDescriptions = new Dictionary<string, EventDescription>();
-            system.loadBankFile(@"assets\Audio\Desktop\Master.bank", LOAD_BANK_FLAGS.NORMAL, out masterBank);
-            system.loadBankFile(@"assets\Audio\Desktop\Master.strings.bank", LOAD_BANK_FLAGS.NORMAL, out var masterBankStrings);
-
-            while (true)
-            {
-                masterBank.getLoadingState(out var loadingState);
-                masterBankStrings.getLoadingState(out var stringsState);
-                if (loadingState == LOADING_STATE.LOADED && stringsState == LOADING_STATE.LOADED)
-                {
-                    masterBank.loadSampleData();
-                    break;
-                }
-            }
-        }
-
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
         private static void CheckResult(RESULT result)
         {
             if (result != RESULT.OK)
             {
-                throw new Exception("FMOD Failed: " + result);
+                Logger.Log($"FMOD Failed: {result}: {Error.String(result)}", MessageClass.ERROR);
+                throw new Exception();
             }
         }
 
@@ -159,25 +133,14 @@ namespace App.Engine.Audio
             system.release();
         }
 
-        private static void SetAttributes3D()
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        private static VECTOR Convert(Vector vector)
         {
-            attributes3d = new ATTRIBUTES_3D();
-
-            var vector = new VECTOR
-            {
-                x = 0f,
-                y = 0f,
-                z = 1f
-            };
-            attributes3d.forward = vector;
-
-            vector = new VECTOR
-            {
-                x = 0f,
-                y = 1f,
-                z = 0f
-            };
-            attributes3d.up = vector;
+            VECTOR v = default;
+            v.x = vector.X;
+            v.y = vector.Y;
+            return v;
         }
+
     }
 }

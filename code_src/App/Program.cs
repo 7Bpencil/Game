@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using App.Engine;
 using App.View;
 
 namespace App
@@ -15,8 +16,10 @@ namespace App
             }
             catch (SystemException e)
             {
-                Console.WriteLine(e);
+                Logger.Log(e.ToString(), MessageClass.ERROR);
             }
+
+            Logger.SaveLog();
         }
     }
 }

@@ -59,6 +59,7 @@
         <Compile Include="Engine\Audio\FMOD\fmod_studio.cs" />
         <Compile Include="Engine\Camera.cs" />
         <Compile Include="Engine\Core.cs" />
+        <Compile Include="Engine\Logger.cs" />
         <Compile Include="Engine\Particles\AnimatedParticle.cs" />
         <Compile Include="Engine\Particles\StaticParticle.cs" />
         <Compile Include="Engine\ParticleUnits\AutoBurnParticleUnit.cs" />
