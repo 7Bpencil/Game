@@ -97,8 +97,7 @@ namespace App.Engine
             {
                 ResetState();
             }
-            if (currentLevel.IsCompleted
-                && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
+            if (currentLevel.IsCompleted && CollisionDetector.GetCollisionInfo(player.CollisionShape, currentLevel.Exit) != null)
             {
                 currentLevel = LevelManager.MoveNextLevel();
                 InitState();
@@ -257,7 +256,8 @@ namespace App.Engine
             {
                 currentLevel.TryOptimize();
                 LevelDynamicEntitiesFactory.SpawnBots(
-                    currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots, currentLevel.Sprites, currentLevel.DynamicShapes, currentLevel.BotPatrolPoints);
+                    currentLevel.BotSpawnPoints, player.Position, currentLevel.Bots,
+                    currentLevel.Sprites, currentLevel.DynamicShapes, currentLevel.BotPatrolPoints);
                 livingBotsAmount += currentLevel.BotSpawnPoints.Count;
                 currentLevel.WavesAmount--;
             }
